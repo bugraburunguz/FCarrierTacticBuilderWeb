@@ -22,6 +22,7 @@ import type {
   Subscription,
   TacticRequest,
   TokenResponse,
+  Advice,
   ImportSummary,
   TeamProfile,
   TeamSummary,
@@ -88,6 +89,8 @@ export const endpoints = {
     api.post<FitRoleResult>('/fit/role', body, false),
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
+  advise: (body: { careerId: number; philosophyPresetId?: string; philosophyWeight: number; allowTransfers: boolean }) =>
+    api.post<Credited<Advice>>('/advisor/squad', body),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
     api.post<Recommendation>('/recommend/preview', body, false),

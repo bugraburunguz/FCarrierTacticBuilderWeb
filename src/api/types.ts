@@ -377,3 +377,50 @@ export interface TeamProfile {
   culture: string[]
   topPlayers: PlayerSummary[]
 }
+
+export interface AdvisorCandidate {
+  kind: 'STYLE' | 'REPLICA' | 'ADAPTIVE'
+  presetId?: string
+  name: string
+  formation: string
+  formationLabel: string
+  score: number
+  squadFit: number
+  intentFit?: number
+  tactic: TacticRequest
+  lineup?: SquadFit
+}
+
+export interface PositionOption {
+  position: string
+  roleName: string
+  score: number
+  natural: boolean
+}
+
+export interface PlayerPositionAdvice {
+  playerId: number
+  playerName: string
+  listedPositions: string[]
+  best: PositionOption[]
+  note?: string
+}
+
+export interface TransferSuggestion {
+  slotId: string
+  position: string
+  roleId: string
+  items: RecommendationItem[]
+}
+
+export interface Advice {
+  recommended: AdvisorCandidate
+  verdict: 'BEST_FIT' | 'PHILOSOPHY_OK' | 'BETTER_ELSEWHERE'
+  reasons: string[]
+  philosophy?: AdvisorCandidate
+  bestCustom?: AdvisorCandidate
+  alternatives: AdvisorCandidate[]
+  playerPositions: PlayerPositionAdvice[]
+  transferSuggestions?: TransferSuggestion[]
+  evaluated: number
+}
