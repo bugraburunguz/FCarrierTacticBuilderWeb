@@ -212,7 +212,7 @@ export function PlayersPage() {
                         <td className="pr-2 tabular-nums">{p.potential ?? '—'}</td>
                         <td className="pr-2">{p.club ?? '—'}</td>
                         <td className="pr-2">{p.nationality ?? '—'}</td>
-                        <td>{p.accelerate ? <Pill>{p.accelerate}</Pill> : '—'}</td>
+                        <td>{p.accelerate ? <Pill>{p.accelerate}</Pill> : '—'}{!!p.runStyle && <Pill>Özel #{p.runStyle}</Pill>}</td>
                       </tr>
                     ))}
                   </tbody>

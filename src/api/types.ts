@@ -34,6 +34,7 @@ export interface PlayerSummary {
   league?: string
   nationality?: string
   accelerate?: string
+  runStyle?: number
   potential?: number
   valueEur?: number
   valuationEstimated: boolean

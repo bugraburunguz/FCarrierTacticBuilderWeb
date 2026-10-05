@@ -43,6 +43,7 @@ export function PlayerDetailPage() {
                 </Pill>
               ))}
               {summary.accelerate && <Pill>{summary.accelerate}</Pill>}
+              {!!summary.runStyle && <Pill>Özel koşu #{summary.runStyle}</Pill>}
               {detail.data.preferredFoot && <Pill>{detail.data.preferredFoot === 'Left' ? 'Sol ayak' : 'Sağ ayak'}</Pill>}
             </div>
           </div>
