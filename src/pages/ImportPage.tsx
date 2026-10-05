@@ -20,8 +20,8 @@ const STEPS = [
   'Oyunu aç ve KARİYERİNİ yükle. Kariyerin içindeyken (ana menüde değil, kariyer ana ekranında) kal.',
   'Live Editor’ü başlat. Oyun açıkken Live Editor penceresinde “Lua Engine” sekmesine gir.',
   'Aşağıdaki “Script’i indir” ile fc27_career_export.lua dosyasını indir, Live Editor’ün Lua Engine bölümünden bu dosyayı seçip çalıştır.',
-  'İşlem bitince “Dışa aktarım bitti” penceresi çıkar. Script masaüstünde “careerexport” klasörünü kendisi oluşturur (zaten varsa dokunmaz) ve 5 küçük .csv dosyasını oraya yazar. Masaüstüne yazamazsa C:\\FC 27 Live Editor\\export\\ klasörünü kullanır; hangisi olduğu bitiş penceresinde yazar.',
-  'Aşağıdaki kutulara bu dosyaları sürükleyip bırak (ya da seç) ve “Yükle”ye bas. Yükleme birkaç saniye sürer.',
+  'İşlem bitince “Dışa aktarım bitti” penceresi çıkar. Live Editor verileri dosyaya değil kendi log dosyasına yazar: Live Editor klasörü → Logs → live_editor_<tarih>.log.',
+  'Aşağıdaki kutuya bu .log dosyasını bırak (ya da seç) ve “Yükle”ye bas. Dosya büyükse birkaç saniye sürebilir.',
   'Yükleme bitince takımını seç; kadron oyundaki gerçek kadronla (güncel overall ve potential dahil) kurulur.',
 ]
 
@@ -31,6 +31,7 @@ export function ImportPage() {
   const careerId = useActiveCareerId()
   const queryClient = useQueryClient()
   const [files, setFiles] = useState<Record<string, File | undefined>>({})
+  const [logFile, setLogFile] = useState<File | undefined>()
   const [result, setResult] = useState<ImportSummary | null>(null)
   const [term, setTerm] = useState('')
   const [teamId, setTeamId] = useState<number | undefined>()
@@ -38,6 +39,10 @@ export function ImportPage() {
   const upload = useMutation({
     mutationFn: () => {
       const form = new FormData()
+      if (logFile) {
+        form.append('log', logFile)
+        return endpoints.importCareer(careerId!, form)
+      }
       FILES.forEach((f) => {
         const file = files[f.key]
         if (file) {
@@ -61,7 +66,7 @@ export function ImportPage() {
     mutationFn: () => endpoints.syncSquad(careerId!, teamId!),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['squad'] }),
   })
-  const ready = FILES.filter((f) => f.required).every((f) => files[f.key])
+  const ready = !!logFile || FILES.filter((f) => f.required).every((f) => files[f.key])
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
@@ -93,6 +98,21 @@ export function ImportPage() {
 
       <Card title="Dosyaları yükle">
         <CareerSelect />
+        <Field label="Live Editor log dosyası (live_editor_….log)">
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault()
+              setLogFile(e.dataTransfer.files[0])
+            }}
+            className="rounded-xl border-2 border-dashed border-emerald-400 p-3 text-xs"
+          >
+            <input type="file" accept=".log,.txt" aria-label="Live Editor log dosyası" className="w-full text-xs" onChange={(e) => setLogFile(e.target.files?.[0])} />
+            {logFile && <div className="mt-1 text-emerald-700">✓ {logFile.name} ({Math.round(logFile.size / 1024 / 1024)} MB)</div>}
+          </div>
+        </Field>
+        <details className="mt-3 text-sm">
+          <summary className="cursor-pointer text-slate-500">Gelişmiş: log yerine ayrı CSV dosyaları yükle</summary>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {FILES.map((f) => (
             <Field key={f.key} label={`${f.label}${f.required ? ' *' : ' (isteğe bağlı)'}`}>
@@ -119,7 +139,8 @@ export function ImportPage() {
             </Field>
           ))}
         </div>
-        <p className="mt-2 text-xs text-slate-500">leagueteamlinks ve leagues dosyaları milli takımları ayıklamak için gerekir; eklemeni öneririz.</p>
+        </details>
+        <p className="mt-2 text-xs text-slate-500">Log dosyası milli takımları ayıklamak için gereken lig bilgilerini de içerir.</p>
         <Button className="mt-3" disabled={!premium || !ready || careerId === undefined || upload.isPending} onClick={() => upload.mutate()}>
           {upload.isPending ? 'Yükleniyor…' : 'Yükle'}
         </Button>
