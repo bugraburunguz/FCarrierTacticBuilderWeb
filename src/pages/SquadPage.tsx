@@ -5,6 +5,8 @@ import { endpoints } from '../api/endpoints'
 import type { Career, CareerPlayer, Club, RosterEvent, RosterEventType } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
 import { SquadCards } from '../components/SquadCards'
+import { analyzeDepth } from '../lib/depth'
+import { useTactic } from '../state/tacticStore'
 import { TransferDialog } from '../components/TransferDialog'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
 import { formatEur } from '../lib/format'
@@ -242,6 +244,11 @@ export function SquadPage() {
       await refresh()
     },
   })
+  const tactic = useTactic()
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
+  const formation = formations.data?.find((f) => f.id === tactic.formation)
+  const needs = formation ? analyzeDepth(squad.data ?? [], formation, tactic, roles.data ?? []) : []
   const squadIds = new Set((squad.data ?? []).map((s) => s.player.id))
 
   return (
@@ -260,6 +267,7 @@ export function SquadPage() {
               <SquadCards
                 squad={squad.data!}
                 busy={move.isPending}
+                needs={needs}
                 onSell={(entry) => { move.reset(); setDialog({ mode: 'SELL', entry }) }}
                 onLoanOut={(entry) => { move.reset(); setDialog({ mode: 'LOAN_OUT', entry }) }}
               />

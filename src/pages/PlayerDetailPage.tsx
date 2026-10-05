@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import { FitResultCard } from '../components/FitResultCard'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
+import { CompareButton } from '../components/CompareButton'
 import { AttrBar, Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
 import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
 
@@ -33,6 +34,7 @@ export function PlayerDetailPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">{summary.name}</h1>
+            <div className="mt-1"><CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? "" }} /></div>
             <p className="text-sm text-slate-500">
               {[summary.club, summary.league, summary.nationality].filter(Boolean).join(' · ')}
             </p>

@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { CompareTray } from './CompareTray'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
 
@@ -73,6 +74,7 @@ export function Layout() {
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6">
         <Outlet />
+        <CompareTray />
       </main>
     </div>
   )

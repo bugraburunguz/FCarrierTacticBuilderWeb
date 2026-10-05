@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints, type PlayerFilters } from '../api/endpoints'
+import { CompareButton } from '../components/CompareButton'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select, Spinner } from '../components/ui'
 import { ATTR_LABELS, POSITIONS } from '../lib/format'
 
@@ -196,6 +197,7 @@ export function PlayersPage() {
                       <SortHeader label="Kulüp" column="club" filters={filters} onSort={sortBy} />
                       <SortHeader label="Uyruk" column="nationality" filters={filters} onSort={sortBy} />
                       <SortHeader label="AcceleRATE" column="accelerate" filters={filters} onSort={sortBy} />
+                      <th />
                     </tr>
                   </thead>
                   <tbody>
@@ -213,6 +215,7 @@ export function PlayersPage() {
                         <td className="pr-2">{p.club ?? '—'}</td>
                         <td className="pr-2">{p.nationality ?? '—'}</td>
                         <td>{p.accelerate ? <Pill>{p.accelerate}</Pill> : '—'}{!!p.runStyle && <Pill>Özel #{p.runStyle}</Pill>}</td>
+                        <td><CompareButton compact entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? "" }} /></td>
                       </tr>
                     ))}
                   </tbody>
