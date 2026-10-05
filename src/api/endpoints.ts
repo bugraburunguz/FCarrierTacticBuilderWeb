@@ -1,4 +1,4 @@
-import { api } from './client'
+import { api, request } from './client'
 import type {
   BehaviorTag,
   Career,
@@ -7,6 +7,7 @@ import type {
   Credited,
   Formation,
   FitRoleResult,
+  LookupItem,
   Me,
   PageResponse,
   PlayerDetail,
@@ -31,7 +32,16 @@ export interface PlayerFilters {
   ovr_min?: number
   ovr_max?: number
   pot_min?: number
-  value_max?: number
+  pot_max?: number
+  age_min?: number
+  age_max?: number
+  wf_min?: number
+  sm_min?: number
+  foot?: string
+  club?: number
+  league?: number
+  nat?: number
+  gender?: number
   sort?: string
   order?: 'asc' | 'desc'
   page?: number
@@ -57,7 +67,10 @@ export const endpoints = {
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),
   player: (id: number) => api.get<PlayerDetail>(`/players/${id}`),
-  clubs: (q: string) => api.get<Club[]>('/clubs', { q, limit: 8 }),
+  clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
+    api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
+  leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),
+  nationalities: () => api.get<LookupItem[]>('/nationalities'),
 
   roles: () => api.get<Role[]>('/roles'),
   behaviorTags: (pos?: string) => api.get<BehaviorTag[]>('/behavior-tags', { pos }),
@@ -81,9 +94,16 @@ export const endpoints = {
   }) => api.post<Credited<Recommendation>>('/recommend/slot', body),
 
   careers: () => api.get<Career[]>('/careers'),
-  createCareer: (body: { clubId: number; budgetEur?: number }) => api.post<Career>('/careers', body),
+  createCareer: (body: { clubId: number; budgetEur?: number; name?: string }) => api.post<Career>('/careers', body),
+  updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number }) =>
+    request<Career>(`/careers/${careerId}`, { method: 'PATCH', body }),
+  deleteCareer: (careerId: number) => request<void>(`/careers/${careerId}`, { method: 'DELETE' }),
   squad: (careerId: number) => api.get<CareerPlayer[]>(`/careers/${careerId}/squad`),
   events: (careerId: number) => api.get<RosterEvent[]>(`/careers/${careerId}/events`),
-  applyEvent: (careerId: number, body: { type: RosterEventType; playerId: number; feeEur?: number }) =>
-    api.post<RosterEvent>(`/careers/${careerId}/events`, body),
+  applyEvent: (
+    careerId: number,
+    body: { type: RosterEventType; playerId: number; feeEur?: number; toClubId?: number },
+  ) => api.post<RosterEvent>(`/careers/${careerId}/events`, body),
+  undoEvent: (careerId: number, eventId: number) =>
+    request<RosterEvent>(`/careers/${careerId}/events/${eventId}`, { method: 'DELETE' }),
 }

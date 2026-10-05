@@ -20,9 +20,9 @@ export const ErrorCodes = {
   unauthorized: 'fc.exception.0016',
 } as const
 
-type Method = 'GET' | 'POST'
+type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE'
 
-interface RequestOptions {
+export interface RequestOptions {
   method?: Method
   body?: unknown
   query?: Record<string, string | number | boolean | undefined | string[]>

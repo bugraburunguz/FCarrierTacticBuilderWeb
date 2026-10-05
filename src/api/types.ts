@@ -21,6 +21,11 @@ export type WeaponState = 'GREEN' | 'YELLOW' | 'RED'
 
 export interface PlayerSummary {
   id: number
+  clubId?: number
+  gender?: number
+  preferredFoot?: string
+  weakFoot?: number
+  skillMoves?: number
   name: string
   age?: number
   overall: number
@@ -48,7 +53,16 @@ export interface PlayerDetail {
 export interface Club {
   id: number
   name: string
+  leagueId?: number
   league?: string
+  gender?: number
+}
+
+export interface LookupItem {
+  id: number
+  name: string
+  gender?: number
+  count: number
 }
 
 export interface RoleWeapon {
@@ -284,6 +298,8 @@ export interface Me {
 
 export interface Career {
   id: number
+  name?: string
+  gender?: number
   gameVersionId: number
   clubId: number
   clubName?: string
@@ -308,7 +324,12 @@ export interface RosterEvent {
   id: number
   type: RosterEventType
   playerId: number
+  playerName?: string
   feeEur?: number
+  fromClubId?: number
+  fromClubName?: string
+  toClubId?: number
+  toClubName?: string
   createdAt?: string
   budgetEurAfter?: number
 }

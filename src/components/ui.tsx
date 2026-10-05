@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react'
+import { useEffect, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
 import { ApiError } from '../api/client'
 import type { WeaponState } from '../api/types'
 import { BADGE_EMOJI } from '../lib/format'
@@ -7,7 +7,7 @@ const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).j
 
 export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cx('rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900', className)}>
+    <section className={cx('animate-fade-up rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-200/60 transition hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:shadow-none', className)}>
       {(title || actions) && (
         <header className="mb-3 flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{title}</h2>
@@ -130,4 +130,26 @@ export function AttrBar({ label, value }: { label: string; value: number }) {
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500 dark:border-slate-600">{children}</p>
+}
+
+export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <button type="button" aria-label="Kapat" className="absolute inset-0 animate-fade bg-slate-900/50" onClick={onClose} />
+      <div role="dialog" aria-modal="true" aria-label={title} className="relative w-full max-w-md animate-pop rounded-2xl bg-white p-5 shadow-xl dark:bg-slate-800">
+        <h2 className="mb-3 text-lg font-semibold">{title}</h2>
+        {children}
+      </div>
+    </div>
+  )
 }

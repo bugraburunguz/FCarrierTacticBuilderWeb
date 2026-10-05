@@ -5,7 +5,7 @@ import { endpoints } from '../api/endpoints'
 import { FitResultCard } from '../components/FitResultCard'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { AttrBar, Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
-import { ATTR_GROUPS, ATTR_LABELS, formatEur } from '../lib/format'
+import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
 
 export function PlayerDetailPage() {
   const id = Number(useParams().id)
@@ -46,7 +46,7 @@ export function PlayerDetailPage() {
               {detail.data.preferredFoot && <Pill>{detail.data.preferredFoot === 'Left' ? 'Sol ayak' : 'Sağ ayak'}</Pill>}
             </div>
           </div>
-          <dl className="grid grid-cols-3 gap-4 text-center">
+          <dl className="grid grid-cols-2 gap-6 text-center">
             <div>
               <dt className="text-xs text-slate-500">Genel</dt>
               <dd className="text-3xl font-bold">{summary.overall}</dd>
@@ -55,13 +55,9 @@ export function PlayerDetailPage() {
               <dt className="text-xs text-slate-500">Potential*</dt>
               <dd className="text-3xl font-bold">{summary.potential ?? '—'}</dd>
             </div>
-            <div>
-              <dt className="text-xs text-slate-500">Değer*</dt>
-              <dd className="text-xl font-bold">{formatEur(summary.valueEur)}</dd>
-            </div>
           </dl>
         </div>
-        <p className="mt-2 text-xs text-slate-500">* Model tahmini — EA’nın gerçek potential/değer verisi değildir.</p>
+        <p className="mt-2 text-xs text-slate-500">* Model tahmini — EA’nın gerçek potential verisi değildir.</p>
         <p className="mt-1 text-xs text-slate-500">
           {summary.age ? `${summary.age} yaş` : ''} {detail.data.heightCm ? `· ${detail.data.heightCm} cm` : ''} {detail.data.weightKg ? `· ${detail.data.weightKg} kg` : ''}
           {detail.data.weakFoot ? ` · Zayıf ayak ${detail.data.weakFoot}★` : ''} {detail.data.skillMoves ? ` · Hareket ${detail.data.skillMoves}★` : ''}
