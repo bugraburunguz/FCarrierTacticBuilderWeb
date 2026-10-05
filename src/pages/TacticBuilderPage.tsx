@@ -5,7 +5,7 @@ import { ApiError, ErrorCodes } from '../api/client'
 import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
-import { AdvisorResults } from '../components/AdvisorResults'
+import { AutoFitPanel } from '../components/AutoFitPanel'
 import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
 import { PitchView } from '../components/PitchView'
@@ -13,10 +13,12 @@ import { SlotSuggestions } from '../components/SlotSuggestions'
 import { TagChips } from '../components/TagChips'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
 import { useActiveCareerId } from '../state/careerStore'
-import { managerStore, useManager } from '../state/managerStore'
 import { tacticStore, toTacticRequest, useTactic } from '../state/tacticStore'
 
+const AUTO_FIT = '__auto_fit__'
+
 export function TacticBuilderPage() {
+  const [autoFit, setAutoFit] = useState(false)
   const tactic = useTactic()
   const { authenticated } = useAuth()
   const careerId = useActiveCareerId()
@@ -28,12 +30,6 @@ export function TacticBuilderPage() {
     mutationFn: () => endpoints.fitSquad({ careerId: careerId!, tactic: toTacticRequest(tactic) }),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
   })
-  const manager = useManager()
-  const advise = useMutation({
-    mutationFn: () => endpoints.advise({ careerId: careerId!, philosophyPresetId: manager.presetId, philosophyWeight: manager.weight, allowTransfers: manager.allowTransfers }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
-  })
-  const advice = advise.data?.result
   const fit = analyse.data?.result
   const outOfCredit = analyse.error instanceof ApiError && analyse.error.code === ErrorCodes.insufficientCredit
   const [selectedSlot, setSelectedSlot] = useState<string | undefined>()
@@ -91,6 +87,11 @@ export function TacticBuilderPage() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(320px,460px)_1fr]">
+      {autoFit && formations.data && presets.data && (
+        <div className="lg:col-span-2">
+          <AutoFitPanel formations={formations.data} presets={presets.data} />
+        </div>
+      )}
       <div className="space-y-3">
         <Card title="Başlangıç">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -108,8 +109,27 @@ export function TacticBuilderPage() {
               </Select>
             </Field>
             <Field label="Preset / replika">
-              <Select value={tactic.presetId ?? ''} onChange={(e) => { const p = presets.data?.find((x) => x.id === e.target.value); if (p) applyPreset(p) }}>
+              <Select
+                value={autoFit ? AUTO_FIT : tactic.presetId ?? ''}
+                onChange={(e) => {
+                  if (e.target.value === AUTO_FIT) {
+                    setAutoFit(true)
+                    return
+                  }
+                  setAutoFit(false)
+                  const p = presets.data?.find((x) => x.id === e.target.value)
+                  if (p) applyPreset(p)
+                }}
+              >
                 <option value="">Seçiniz…</option>
+                <optgroup label="Benim / otomatik">
+                  {presets.data?.filter((p) => p.kind === 'PERSONAL').map((p) => (
+                    <option key={p.id} value={p.id}>
+                      ★ Benim oyun anlayışım — {p.name}
+                    </option>
+                  ))}
+                  <option value={AUTO_FIT}>★ Takıma göre en iyi taktik (Auto-Fit)</option>
+                </optgroup>
                 <optgroup label="Oyun felsefeleri">
                   {presets.data?.filter((p) => p.kind === 'STYLE').map((p) => (
                     <option key={p.id} value={p.id}>
@@ -132,32 +152,6 @@ export function TacticBuilderPage() {
           </div>
           {preset?.signature && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{preset.signature}</p>}
           {preset?.sourceNote && <p className="mt-1 text-xs text-slate-500">{preset.sourceNote}</p>}
-        </Card>
-        <Card title="Yöneticinin mantığı (benim oyun anlayışım)">
-          <div className="space-y-3">
-            <Field label="Sevdiğim oyun anlayışı">
-              <Select value={manager.presetId ?? ''} onChange={(e) => managerStore.set({ presetId: e.target.value || undefined })}>
-                <option value="">Fark etmez — kadroya göre en iyisini bul</option>
-                {presets.data?.filter((p) => p.kind === 'STYLE').map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-            {manager.presetId && (
-              <Field label={`Anlayışıma sadakat: %${manager.weight}`}>
-                <input type="range" min={0} max={100} step={5} value={manager.weight} onChange={(e) => managerStore.set({ weight: Number(e.target.value) })} className="w-full" />
-                <p className="text-xs text-slate-500">
-                  Yüksekse kadro başka bir oyuna daha yatkın olsa bile anlayışımı öneririm; düşükse sadece kadroya bakarım.
-                </p>
-              </Field>
-            )}
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={manager.allowTransfers} onChange={(e) => managerStore.set({ allowTransfers: e.target.checked })} />
-              Transfer yapabilirim (zayıf slotlara oyuncu öner)
-            </label>
-          </div>
         </Card>
         {formation && <PitchView slots={formation.slots} selected={selectedSlot} onSelect={setSelectedSlot} info={info} />}
         <div className="flex gap-2">
@@ -218,16 +212,11 @@ export function TacticBuilderPage() {
             <div className="space-y-2">
               <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
                 <CareerSelect />
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="secondary" disabled={careerId === undefined || analyse.isPending} onClick={() => { advise.reset(); analyse.mutate() }}>
-                    {analyse.isPending ? 'Hesaplanıyor…' : 'Mevcut taktiği analiz et'}
-                  </Button>
-                  <Button disabled={careerId === undefined || advise.isPending} onClick={() => { analyse.reset(); advise.mutate() }}>
-                    {advise.isPending ? 'Kurulumlar deneniyor…' : 'Bana en iyi kurulumu bul (8 kredi)'}
-                  </Button>
-                </div>
+                <Button disabled={careerId === undefined || analyse.isPending} onClick={() => analyse.mutate()}>
+                  {analyse.isPending ? 'Hesaplanıyor…' : 'Mevcut taktiği analiz et'}
+                </Button>
               </div>
-              <ErrorBox error={analyse.error ?? advise.error} />
+              <ErrorBox error={analyse.error} />
               {outOfCredit && (
                 <p className="text-sm">
                   Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-emerald-700 underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
@@ -237,8 +226,7 @@ export function TacticBuilderPage() {
             </div>
           )}
         </Card>
-        {advice && <AdvisorResults advice={advice} squad={squad.data ?? []} budgetEur={career?.budgetEur} />}
-        {fit && !advice && (
+        {fit && (
           <FitResults
             result={fit}
             squad={squad.data ?? []}

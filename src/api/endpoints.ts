@@ -22,9 +22,9 @@ import type {
   Subscription,
   TacticRequest,
   TokenResponse,
-  Advice,
   PlayerPositionAdvice,
   ImportSummary,
+  TacticRecommendation,
   TeamProfile,
   TeamSummary,
 } from './types'
@@ -91,8 +91,8 @@ export const endpoints = {
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
-  advise: (body: { careerId: number; philosophyPresetId?: string; philosophyWeight: number; allowTransfers: boolean }) =>
-    api.post<Credited<Advice>>('/advisor/squad', body),
+  recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string }) =>
+    api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
     api.post<Recommendation>('/recommend/preview', body, false),

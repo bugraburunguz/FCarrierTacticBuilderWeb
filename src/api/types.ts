@@ -113,7 +113,7 @@ export interface Formation {
 
 export interface Preset {
   id: string
-  kind: 'STYLE' | 'REPLICA'
+  kind: 'STYLE' | 'REPLICA' | 'PERSONAL'
   name: string
   club?: string
   coach?: string
@@ -378,19 +378,6 @@ export interface TeamProfile {
   topPlayers: PlayerSummary[]
 }
 
-export interface AdvisorCandidate {
-  kind: 'STYLE' | 'REPLICA' | 'ADAPTIVE'
-  presetId?: string
-  name: string
-  formation: string
-  formationLabel: string
-  score: number
-  squadFit: number
-  intentFit?: number
-  tactic: TacticRequest
-  lineup?: SquadFit
-}
-
 export interface PositionOption {
   position: string
   roleName: string
@@ -408,21 +395,30 @@ export interface PlayerPositionAdvice {
   ownPositionBest: boolean
 }
 
-export interface TransferSuggestion {
-  slotId: string
-  position: string
-  roleId: string
-  items: RecommendationItem[]
+export interface RankedItem {
+  id: string
+  label: string
+  pct: number
+  note?: string
 }
 
-export interface Advice {
-  recommended: AdvisorCandidate
-  verdict: 'BEST_FIT' | 'PHILOSOPHY_OK' | 'BETTER_ELSEWHERE'
+export interface TacticCombo {
+  formation: string
+  formationLabel: string
+  presetId: string
+  presetName: string
+  pct: number
+  squadFit: number
+  intentFit?: number
+  feasibility: number
   reasons: string[]
-  philosophy?: AdvisorCandidate
-  bestCustom?: AdvisorCandidate
-  alternatives: AdvisorCandidate[]
-  playerPositions: PlayerPositionAdvice[]
-  transferSuggestions?: TransferSuggestion[]
+  weakLinks: WeakLink[]
+  tactic: TacticRequest
+}
+
+export interface TacticRecommendation {
+  formations: RankedItem[]
+  presets: RankedItem[]
+  bestCombos: TacticCombo[]
   evaluated: number
 }
