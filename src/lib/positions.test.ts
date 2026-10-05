@@ -14,10 +14,10 @@ describe('positions', () => {
     expect(canPlaySlot(['CB'], 'GK')).toBe(false)
   })
 
-  it('treats wing-back/full-back and winger/wide-midfielder as equivalents', () => {
-    expect(compatiblePositions('LB')).toEqual(['LB', 'LWB'])
-    expect(canPlaySlot(['RWB'], 'RB')).toBe(true)
-    expect(canPlaySlot(['LM'], 'LW')).toBe(true)
+  it('keeps winger and wide-midfielder positions separate', () => {
+    expect(compatiblePositions('LB')).toEqual(['LB'])
+    expect(canPlaySlot(['LM'], 'LW')).toBe(false)
+    expect(canPlaySlot(['LW'], 'LW')).toBe(true)
     expect(canPlaySlot(['LW'], 'RW')).toBe(false)
   })
 
@@ -25,7 +25,7 @@ describe('positions', () => {
     const groups = groupByPrimaryPosition([
       entry(1, 'ST küçük', ['ST'], 70),
       entry(2, 'Kaleci', ['GK'], 80),
-      entry(3, 'ST büyük', ['ST', 'CF'], 85),
+      entry(3, 'ST büyük', ['ST', 'LW'], 85),
       entry(4, 'Stoper', ['CB', 'CDM'], 75),
     ])
 

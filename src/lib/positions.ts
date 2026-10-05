@@ -1,14 +1,12 @@
 import type { CareerPlayer } from '../api/types'
 
-export const POSITION_ORDER = ['GK', 'CB', 'LB', 'RB', 'LWB', 'RWB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'CF', 'ST']
+export const POSITION_ORDER = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST']
 
 export const POSITION_LABELS: Record<string, string> = {
   GK: 'Kaleciler',
   CB: 'Stoperler',
   LB: 'Sol bekler',
   RB: 'Sağ bekler',
-  LWB: 'Sol kanat bekler',
-  RWB: 'Sağ kanat bekler',
   CDM: 'Defansif orta saha',
   CM: 'Merkez orta saha',
   CAM: 'Ofansif orta saha',
@@ -16,15 +14,11 @@ export const POSITION_LABELS: Record<string, string> = {
   RM: 'Sağ orta saha',
   LW: 'Sol kanatlar',
   RW: 'Sağ kanatlar',
-  CF: 'Santrfor (CF)',
   ST: 'Santrforlar',
 }
 
-const EQUIVALENTS: Record<string, string[]> = {
-  LB: ['LWB'], LWB: ['LB'], RB: ['RWB'], RWB: ['RB'],
-  LM: ['LW'], LW: ['LM'], RM: ['RW'], RW: ['RM'],
-  ST: ['CF'], CF: ['ST'],
-}
+// FC'de LWB/RWB/CF yok; LM/RM ile LW/RW da ayrı mevkilerdir (oyuncunun mevki listesi neyi söylüyorsa o).
+const EQUIVALENTS: Record<string, string[]> = {}
 
 /** Bir slotta oynayabilecek mevkiler: slotun kendisi + eşdeğerleri. Kaleci slotunda yalnızca GK. */
 export function compatiblePositions(slotPosition: string): string[] {
@@ -64,8 +58,8 @@ export function groupByPrimaryPosition(squad: CareerPlayer[]): PositionGroup[] {
 
 // Kabaca yönlendirme amaçlı derinlik rehberi (kadro büyüklüğüne göre değişebilir): [en az, en çok].
 export const DEPTH_GUIDE: Record<string, [number, number]> = {
-  GK: [2, 3], CB: [3, 5], LB: [1, 2], RB: [1, 2], LWB: [1, 2], RWB: [1, 2],
-  CDM: [2, 3], CM: [3, 4], CAM: [1, 2], LM: [1, 2], RM: [1, 2], LW: [1, 2], RW: [1, 2], CF: [1, 2], ST: [2, 3],
+  GK: [2, 3], CB: [3, 5], LB: [1, 2], RB: [1, 2],
+  CDM: [2, 3], CM: [3, 4], CAM: [1, 2], LM: [1, 2], RM: [1, 2], LW: [1, 2], RW: [1, 2], ST: [2, 3],
 }
 
 export type DepthState = 'thin' | 'ok' | 'dense'

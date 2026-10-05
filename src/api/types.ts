@@ -107,6 +107,7 @@ export interface FormationSlot {
 
 export interface Formation {
   id: string
+  label?: string
   slots: FormationSlot[]
 }
 
@@ -114,6 +115,9 @@ export interface Preset {
   id: string
   kind: 'STYLE' | 'REPLICA'
   name: string
+  club?: string
+  coach?: string
+  season?: string
   formation: string
   signature?: string
   roleHints?: Record<string, string>

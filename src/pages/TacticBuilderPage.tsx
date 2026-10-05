@@ -41,11 +41,20 @@ export function TacticBuilderPage() {
   })
 
   const formation = formations.data?.find((f) => f.id === tactic.formation)
+  const replicaGroups = useMemo(() => {
+    const groups = new Map<string, Preset[]>()
+    ;(presets.data ?? []).filter((p) => p.kind === 'REPLICA').forEach((p) => groups.set(p.club ?? 'Diğer', [...(groups.get(p.club ?? 'Diğer') ?? []), p]))
+    return [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0], 'tr')).map(([club, items]) => [club, [...items].sort((a, b) => (a.season ?? '').localeCompare(b.season ?? ''))] as [string, Preset[]])
+  }, [presets.data])
   const preset = presets.data?.find((p) => p.id === tactic.presetId)
   const slot = formation?.slots.find((s) => s.slotId === selectedSlot)
   const resolvedSlot = resolved.data?.slots.find((s) => s.slotId === selectedSlot)
   const slotTags = useMemo(() => (tags.data ?? []).filter((t) => t.position === slot?.group), [tags.data, slot])
   const slotRoles = (roles.data ?? []).filter((r) => slot && r.positions.includes(slot.position))
+
+  if (formations.data && !formation) {
+    queueMicrotask(() => tacticStore.set({ formation: '4-3-3', slots: {} }))
+  }
 
   function applyPreset(p: Preset) {
     const slots: Record<string, { tags: string[] }> = {}
@@ -79,8 +88,14 @@ export function TacticBuilderPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Formasyon">
               <Select value={tactic.formation} onChange={(e) => changeFormation(e.target.value)}>
-                {formations.data?.map((f) => (
-                  <option key={f.id}>{f.id}</option>
+                {[3, 4, 5].map((backs) => (
+                  <optgroup key={backs} label={`${backs} defans`}>
+                    {formations.data?.filter((f) => f.id.startsWith(String(backs))).map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.label ?? f.id}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </Select>
             </Field>
@@ -94,13 +109,16 @@ export function TacticBuilderPage() {
                     </option>
                   ))}
                 </optgroup>
-                <optgroup label="Efsane replikaları">
-                  {presets.data?.filter((p) => p.kind === 'REPLICA').map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </optgroup>
+                {replicaGroups.map(([club, items]) => (
+                  <optgroup key={club} label={club}>
+                    {items.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.season ? `${p.season} · ` : ''}
+                        {p.coach ?? p.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
               </Select>
             </Field>
           </div>

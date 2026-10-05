@@ -11,8 +11,8 @@ export interface RoleSelection {
 }
 
 export const POSITION_GROUP: Record<string, string> = {
-  GK: 'GK', RB: 'FB', LB: 'FB', RWB: 'FB', LWB: 'FB', CB: 'CB', CDM: 'CDM', CM: 'CM', CAM: 'CAM',
-  LM: 'WM', RM: 'WM', LW: 'W', RW: 'W', ST: 'ST', CF: 'ST',
+  GK: 'GK', RB: 'FB', LB: 'FB', CB: 'CB', CDM: 'CDM', CM: 'CM', CAM: 'CAM',
+  LM: 'WM', RM: 'WM', LW: 'W', RW: 'W', ST: 'ST',
 }
 
 const PICKER_POSITIONS = ['GK', 'RB', 'LB', 'CB', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST']
