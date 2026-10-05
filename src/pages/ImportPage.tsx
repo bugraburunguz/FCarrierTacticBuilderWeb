@@ -20,7 +20,7 @@ const STEPS = [
   'Oyunu aç ve KARİYERİNİ yükle. Kariyerin içindeyken (ana menüde değil, kariyer ana ekranında) kal.',
   'Live Editor’ü başlat. Oyun açıkken Live Editor penceresinde “Lua Engine” sekmesine gir.',
   'Aşağıdaki “Script’i indir” ile fc27_career_export.lua dosyasını indir, Live Editor’ün Lua Engine bölümünden bu dosyayı seçip çalıştır.',
-  'İşlem bitince “Dışa aktarım bitti” penceresi çıkar. Dosyalar C:\\FC 27 Live Editor\\export\\ klasörüne yazılır (5 küçük .csv dosyası).',
+  'İşlem bitince “Dışa aktarım bitti” penceresi çıkar. Script masaüstünde “careerexport” klasörünü kendisi oluşturur (zaten varsa dokunmaz) ve 5 küçük .csv dosyasını oraya yazar. Masaüstüne yazamazsa C:\\FC 27 Live Editor\\export\\ klasörünü kullanır; hangisi olduğu bitiş penceresinde yazar.',
   'Aşağıdaki kutulara bu dosyaları sürükleyip bırak (ya da seç) ve “Yükle”ye bas. Yükleme birkaç saniye sürer.',
   'Yükleme bitince takımını seç; kadron oyundaki gerçek kadronla (güncel overall ve potential dahil) kurulur.',
 ]
