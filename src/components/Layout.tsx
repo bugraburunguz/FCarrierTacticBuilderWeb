@@ -6,9 +6,8 @@ import { Button, Pill } from './ui'
 const NAV = [
   { to: '/players', label: 'Oyuncular' },
   { to: '/compare', label: 'Karşılaştır' },
-  { to: '/tactics/builder', label: 'Taktik' },
+  { to: '/tactics/builder', label: 'Taktik & Uyum' },
   { to: '/squad', label: 'Kadro' },
-  { to: '/fit', label: 'Uyum' },
   { to: '/recommend', label: 'Öneri' },
   { to: '/teams', label: 'Takımlar' },
   { to: '/career/import', label: 'İçe aktar' },

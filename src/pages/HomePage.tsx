@@ -3,7 +3,6 @@ import { Card } from '../components/ui'
 
 const FEATURES = [
   { to: '/tactics/builder', title: 'Taktik kur', text: 'Formasyon seç, her slota oyuncunun ne yapmasını istediğini davranışlarla söyle. Motor rolü senin yerine çıkarır.' },
-  { to: '/fit', title: 'Kadro uyumu', text: 'RoleFit ve IntentFit ayrı ayrı: oyuncu role uyuyor mu, ve senin seçtiğin oyunu gerçekten oynayabiliyor mu?' },
   { to: '/recommend', title: 'Slot önerisi', text: 'Zayıf halka için bütçene uygun, rolün silahlarını taşıyan oyuncuları sebepleriyle listele.' },
   { to: '/players', title: 'Oyuncu arama', text: 'Attribute, PlayStyle ve AcceleRATE filtreleriyle scout et.' },
 ]

@@ -1,15 +1,33 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ApiError, ErrorCodes } from '../api/client'
 import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
+import { useAuth } from '../auth/AuthContext'
+import { CareerSelect } from '../components/CareerSelect'
+import { FitResults } from '../components/FitResults'
 import { PitchView } from '../components/PitchView'
+import { SlotSuggestions } from '../components/SlotSuggestions'
 import { TagChips } from '../components/TagChips'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
+import { useActiveCareerId } from '../state/careerStore'
 import { tacticStore, toTacticRequest, useTactic } from '../state/tacticStore'
 
 export function TacticBuilderPage() {
   const tactic = useTactic()
+  const { authenticated } = useAuth()
+  const careerId = useActiveCareerId()
+  const queryClient = useQueryClient()
+  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
+  const career = careers.data?.find((c) => c.id === careerId)
+  const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: authenticated && careerId !== undefined })
+  const analyse = useMutation({
+    mutationFn: () => endpoints.fitSquad({ careerId: careerId!, tactic: toTacticRequest(tactic) }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
+  })
+  const fit = analyse.data?.result
+  const outOfCredit = analyse.error instanceof ApiError && analyse.error.code === ErrorCodes.insufficientCredit
   const [selectedSlot, setSelectedSlot] = useState<string | undefined>()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const presets = useQuery({ queryKey: ['presets'], queryFn: () => endpoints.presets() })
@@ -94,9 +112,6 @@ export function TacticBuilderPage() {
           <Button variant="secondary" onClick={() => { tacticStore.set({ formation: tactic.formation, slots: {} }); setSelectedSlot(undefined) }}>
             Davranışları sıfırla
           </Button>
-          <Link to="/fit" className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
-            Kadro uyumuna geç →
-          </Link>
         </div>
       </div>
 
@@ -137,6 +152,41 @@ export function TacticBuilderPage() {
               )}
             </div>
           </Card>
+        )}
+        {slot && <SlotSuggestions roleId={resolvedSlot?.roleId} position={slot.position} tags={tactic.slots[slot.slotId]?.tags ?? []} gender={career?.gender} />}
+      </div>
+
+      <div className="space-y-4 lg:col-span-2">
+        <Card title="Kadro analizi" actions={<Pill tone="amber">Kredi harcar</Pill>}>
+          {!authenticated ? (
+            <p className="text-sm">
+              Kendi kadronla uyumu, zayıf halkaları ve kimin kalıp kimin gitmesi gerektiğini görmek için <Link to="/login" className="text-emerald-700 underline">giriş yap</Link>.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                <CareerSelect />
+                <Button disabled={careerId === undefined || analyse.isPending} onClick={() => analyse.mutate()}>
+                  {analyse.isPending ? 'Hesaplanıyor…' : 'Kadro uyumunu hesapla'}
+                </Button>
+              </div>
+              <ErrorBox error={analyse.error} />
+              {outOfCredit && (
+                <p className="text-sm">
+                  Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-emerald-700 underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
+                </p>
+              )}
+              <p className="text-xs text-slate-500">Teknik hatada kredi iade edilir. Sonuçlar sahadaki oyuncu isimlerine de yansır.</p>
+            </div>
+          )}
+        </Card>
+        {fit && (
+          <FitResults
+            result={fit}
+            squad={squad.data ?? []}
+            budgetEur={career?.budgetEur}
+            chargedText={analyse.data && analyse.data.charged > 0 ? `${analyse.data.charged} kredi harcandı${analyse.data.balance !== undefined ? ` · kalan ${analyse.data.balance}` : ''}.` : undefined}
+          />
         )}
       </div>
     </div>

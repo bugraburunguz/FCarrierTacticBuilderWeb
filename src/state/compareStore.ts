@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 
 const KEY = 'fc.compare'
 export const MAX_COMPARE = 6
+export const DRAG_TYPE = 'application/x-fc-compare'
 
 export interface CompareEntry {
   id: number

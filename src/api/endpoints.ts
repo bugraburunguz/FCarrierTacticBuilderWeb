@@ -89,6 +89,8 @@ export const endpoints = {
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
+  previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
+    api.post<Recommendation>('/recommend/preview', body, false),
   recommendSlot: (body: {
     careerId?: number
     roleId: string

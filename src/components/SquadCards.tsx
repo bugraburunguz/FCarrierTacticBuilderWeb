@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CareerPlayer } from '../api/types'
 import { unusedPositionSuggestions, type DepthState, type PositionNeed } from '../lib/depth'
@@ -19,12 +20,34 @@ interface Props {
 }
 
 export function SquadCards({ squad, busy, onSell, onLoanOut, needs }: Props) {
+  const [dragged, setDragged] = useState<CareerPlayer | null>(null)
+  const [hover, setHover] = useState<'SELL' | 'LOAN' | null>(null)
   const groups = groupByPrimaryPosition(squad)
   const needByPosition = new Map(needs.map((n) => [n.position, n]))
   const suggestions = unusedPositionSuggestions(squad, needs)
 
   return (
     <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3" aria-label="Sürükle-bırak alanları">
+        {([['SELL', 'Sat', onSell], ['LOAN', 'Kiralık gönder', onLoanOut]] as const).map(([zone, label, action]) => (
+          <div
+            key={zone}
+            onDragOver={(e) => { e.preventDefault(); setHover(zone) }}
+            onDragLeave={() => setHover(null)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setHover(null)
+              if (dragged) {
+                action(dragged)
+              }
+              setDragged(null)
+            }}
+            className={`rounded-xl border-2 border-dashed p-3 text-center text-sm transition ${hover === zone ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-700' : 'border-slate-300 text-slate-500 dark:border-slate-600'} ${dragged ? 'animate-pulse' : ''}`}
+          >
+            {label} — oyuncu kartını buraya sürükle
+          </div>
+        ))}
+      </div>
       <div className="flex flex-wrap gap-2" aria-label="Kadro derinliği özeti">
         {needs.map((n) => (
           <span key={n.position} title={n.reason} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs dark:border-slate-600 dark:bg-slate-800">
@@ -52,7 +75,12 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs }: Props) {
               </header>
               <ul className="divide-y divide-slate-100 dark:divide-slate-700">
                 {g.players.map((entry) => (
-                  <li key={entry.player.id} className="group flex items-center justify-between gap-2 py-1.5 text-sm">
+                  <li
+                    key={entry.player.id}
+                    draggable
+                    onDragStart={() => setDragged(entry)}
+                    onDragEnd={() => { setDragged(null); setHover(null) }}
+                    className="group flex cursor-grab items-center justify-between gap-2 py-1.5 text-sm">
                     <div className="min-w-0">
                       <Link to={`/players/${entry.player.id}`} className="block truncate font-medium hover:underline">
                         {entry.player.name}
