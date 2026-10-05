@@ -75,7 +75,8 @@ async function refreshTokens(): Promise<boolean> {
 
 async function send(path: string, options: RequestOptions, allowRetry: boolean): Promise<Response> {
   const headers: Record<string, string> = { Accept: 'application/json' }
-  if (options.body !== undefined) {
+  const isForm = options.body instanceof FormData
+  if (options.body !== undefined && !isForm) {
     headers['Content-Type'] = 'application/json'
   }
   if (options.auth !== false && tokens.access) {
@@ -84,7 +85,7 @@ async function send(path: string, options: RequestOptions, allowRetry: boolean):
   const res = await fetch(buildUrl(path, options.query), {
     method: options.method ?? 'GET',
     headers,
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    body: options.body === undefined ? undefined : isForm ? (options.body as FormData) : JSON.stringify(options.body),
   })
   if (res.status === 401 && allowRetry && tokens.refresh && (await refreshTokens())) {
     return send(path, options, false)

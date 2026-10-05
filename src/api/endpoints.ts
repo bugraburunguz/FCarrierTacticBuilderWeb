@@ -22,6 +22,9 @@ import type {
   Subscription,
   TacticRequest,
   TokenResponse,
+  ImportSummary,
+  TeamProfile,
+  TeamSummary,
 } from './types'
 
 export interface PlayerFilters {
@@ -39,6 +42,9 @@ export interface PlayerFilters {
   sm_min?: number
   foot?: string
   club?: number
+  career?: number
+  team?: number
+  free_agent?: boolean
   league?: number
   nat?: number
   gender?: number
@@ -51,7 +57,7 @@ export interface PlayerFilters {
 
 function playerQuery(filters: PlayerFilters) {
   const { attrMin, ...rest } = filters
-  const query: Record<string, string | number | string[] | undefined> = { ...rest }
+  const query: Record<string, string | number | boolean | string[] | undefined> = { ...rest }
   Object.entries(attrMin ?? {}).forEach(([attr, value]) => {
     query[`${attr}_min`] = value
   })
@@ -97,6 +103,10 @@ export const endpoints = {
   createCareer: (body: { clubId: number; budgetEur?: number; name?: string }) => api.post<Career>('/careers', body),
   updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number }) =>
     request<Career>(`/careers/${careerId}`, { method: 'PATCH', body }),
+  importCareer: (careerId: number, form: FormData) => request<ImportSummary>(`/careers/${careerId}/import`, { method: 'POST', body: form }),
+  syncSquad: (careerId: number, teamId: number) => request<{ players: number }>(`/careers/${careerId}/import/squad`, { method: 'POST', query: { teamId } }),
+  careerTeams: (careerId: number, q: string) => api.get<TeamSummary[]>(`/careers/${careerId}/teams`, { q, limit: 30 }),
+  careerTeam: (careerId: number, teamId: number) => api.get<TeamProfile>(`/careers/${careerId}/teams/${teamId}`),
   deleteCareer: (careerId: number) => request<void>(`/careers/${careerId}`, { method: 'DELETE' }),
   squad: (careerId: number) => api.get<CareerPlayer[]>(`/careers/${careerId}/squad`),
   events: (careerId: number) => api.get<RosterEvent[]>(`/careers/${careerId}/events`),

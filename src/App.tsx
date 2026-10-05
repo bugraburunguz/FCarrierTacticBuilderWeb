@@ -13,6 +13,7 @@ import { ProfilePage } from './pages/ProfilePage'
 import { RecommendPage } from './pages/RecommendPage'
 import { SquadPage } from './pages/SquadPage'
 import { TacticBuilderPage } from './pages/TacticBuilderPage'
+import { TeamsPage } from './pages/TeamsPage'
 import type { ReactNode } from 'react'
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -42,6 +43,7 @@ export function App() {
         <Route path="fit" element={<RequireAuth><FitPage /></RequireAuth>} />
         <Route path="recommend" element={<RequireAuth><RecommendPage /></RequireAuth>} />
         <Route path="career/import" element={<RequireAuth><ImportPage /></RequireAuth>} />
+        <Route path="teams" element={<RequireAuth><TeamsPage /></RequireAuth>} />
         <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />

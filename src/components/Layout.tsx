@@ -10,6 +10,7 @@ const NAV = [
   { to: '/squad', label: 'Kadro' },
   { to: '/fit', label: 'Uyum' },
   { to: '/recommend', label: 'Öneri' },
+  { to: '/teams', label: 'Takımlar' },
   { to: '/career/import', label: 'İçe aktar' },
 ]
 

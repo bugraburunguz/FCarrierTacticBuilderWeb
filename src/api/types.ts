@@ -341,3 +341,35 @@ export interface Subscription {
   startedAt?: string
   expiresAt?: string
 }
+
+export interface ImportSummary {
+  players: number
+  unmatchedPlayers: number
+  teams: number
+  freeAgents: number
+  guessedTeamId?: number
+  guessedTeamName?: string
+}
+
+export interface TeamSummary {
+  teamId: number
+  name: string
+  league?: string
+  gender?: number
+  overall?: number
+  attack?: number
+  midfield?: number
+  defence?: number
+  playerCount: number
+}
+
+export interface TeamProfile {
+  team: TeamSummary
+  rivalTeamId?: number
+  rivalTeamName?: string
+  averageAge?: number
+  strengths: string[]
+  weaknesses: string[]
+  culture: string[]
+  topPlayers: PlayerSummary[]
+}

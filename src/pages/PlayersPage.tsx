@@ -2,13 +2,15 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints, type PlayerFilters } from '../api/endpoints'
+import { useAuth } from '../auth/AuthContext'
 import { CompareButton } from '../components/CompareButton'
+import { useActiveCareerId } from '../state/careerStore'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select, Spinner } from '../components/ui'
 import { ATTR_LABELS, POSITIONS } from '../lib/format'
 
 const FILTER_ATTRS = ['Finishing', 'Vision', 'Crossing', 'Acceleration', 'SprintSpeed', 'Dribbling', 'Stamina', 'Strength', 'DefAwareness', 'Heading']
 const PAGE_SIZE = 25
-const RESERVED = new Set(['ovr_min', 'pot_min', 'age_min', 'age_max', 'wf_min', 'sm_min', 'pot_max', 'ovr_max'])
+const RESERVED = new Set(['career', 'team', 'free_agent', 'ovr_min', 'pot_min', 'age_min', 'age_max', 'wf_min', 'sm_min', 'pot_max', 'ovr_max'])
 const TEXT_SORTS = new Set(['name', 'club', 'league', 'nationality', 'position', 'accelerate'])
 const GENDERS: [string, string][] = [['0', 'Erkek futbolu'], ['1', 'Kadın futbolu'], ['', 'Hepsi']]
 
@@ -25,6 +27,9 @@ function readFilters(params: URLSearchParams): PlayerFilters {
     pos: params.getAll('pos'),
     gender: params.has('gender') ? num('gender') : 0,
     league: num('league'),
+    career: num('career'),
+    team: num('team'),
+    free_agent: params.get('free_agent') === '1' ? true : undefined,
     nat: num('nat'),
     ovr_min: num('ovr_min'),
     pot_min: num('pot_min'),
@@ -54,6 +59,14 @@ function SortHeader({ label, column, filters, onSort }: { label: string; column:
 export function PlayersPage() {
   const [params, setParams] = useSearchParams()
   const filters = readFilters(params)
+  const { authenticated } = useAuth()
+  const activeCareer = useActiveCareerId()
+  const [teamTerm, setTeamTerm] = useState('')
+  const careerTeams = useQuery({
+    queryKey: ['career-teams', activeCareer, teamTerm],
+    queryFn: () => endpoints.careerTeams(activeCareer!, teamTerm),
+    enabled: authenticated && activeCareer !== undefined && filters.career !== undefined,
+  })
   const [draftAttr, setDraftAttr] = useState({ attr: FILTER_ATTRS[0], min: '' })
   const query = useQuery({ queryKey: ['players', params.toString()], queryFn: () => endpoints.players(filters), placeholderData: keepPreviousData })
   const leagues = useQuery({ queryKey: ['leagues', filters.gender], queryFn: () => endpoints.leagues(filters.gender), staleTime: 300_000 })
@@ -93,6 +106,36 @@ export function PlayersPage() {
               ))}
             </Select>
           </Field>
+          {authenticated && activeCareer !== undefined && (
+            <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50/50 p-2 dark:border-slate-600 dark:bg-slate-800">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input
+                  type="checkbox"
+                  checked={filters.career !== undefined}
+                  onChange={(e) => update({ career: e.target.checked ? String(activeCareer) : undefined, team: undefined, free_agent: undefined })}
+                />
+                Kariyer verisiyle göster (güncel overall/potential)
+              </label>
+              {filters.career !== undefined && (
+                <>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={!!filters.free_agent} onChange={(e) => update({ free_agent: e.target.checked ? '1' : undefined, team: undefined })} />
+                    Sadece serbest oyuncular
+                  </label>
+                  <Field label="Takım">
+                    <Input value={teamTerm} onChange={(e) => setTeamTerm(e.target.value)} placeholder="Takım ara…" />
+                    <Select className="mt-1" value={filters.team ?? ''} onChange={(e) => update({ team: e.target.value, free_agent: undefined })}>
+                      <option value="">Tüm takımlar</option>
+                      {(careerTeams.data ?? []).map((t) => (
+                        <option key={t.teamId} value={t.teamId}>{t.name}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <p className="text-xs text-slate-500">Veri yoksa önce <Link to="/career/import" className="underline">içe aktar</Link>.</p>
+                </>
+              )}
+            </div>
+          )}
           <Field label="İsim">
             <Input value={filters.q ?? ''} onChange={(e) => update({ q: e.target.value })} placeholder="Oyuncu ara…" />
           </Field>
