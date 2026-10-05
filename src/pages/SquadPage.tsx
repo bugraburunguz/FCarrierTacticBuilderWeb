@@ -244,6 +244,7 @@ export function SquadPage() {
       await refresh()
     },
   })
+  const positionAdvice = useQuery({ queryKey: ['position-advice', careerId, squad.data?.length], queryFn: () => endpoints.positionAdvice(careerId!), enabled: careerId !== undefined && (squad.data?.length ?? 0) > 0, staleTime: 120_000 })
   const tactic = useTactic()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
@@ -268,6 +269,7 @@ export function SquadPage() {
                 squad={squad.data!}
                 busy={move.isPending}
                 needs={needs}
+                positionAdvice={positionAdvice.data ?? []}
                 onSell={(entry) => { move.reset(); setDialog({ mode: 'SELL', entry }) }}
                 onLoanOut={(entry) => { move.reset(); setDialog({ mode: 'LOAN_OUT', entry }) }}
               />

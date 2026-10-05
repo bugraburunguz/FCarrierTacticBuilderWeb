@@ -396,6 +396,7 @@ export interface PositionOption {
   roleName: string
   score: number
   natural: boolean
+  reasons?: string[]
 }
 
 export interface PlayerPositionAdvice {
@@ -404,6 +405,7 @@ export interface PlayerPositionAdvice {
   listedPositions: string[]
   best: PositionOption[]
   note?: string
+  ownPositionBest: boolean
 }
 
 export interface TransferSuggestion {

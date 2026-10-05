@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { CareerPlayer } from '../api/types'
+import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { unusedPositionSuggestions, type DepthState, type PositionNeed } from '../lib/depth'
 import { groupByPrimaryPosition, primaryPosition } from '../lib/positions'
 import { Button, Pill } from './ui'
@@ -17,9 +17,11 @@ interface Props {
   onSell: (entry: CareerPlayer) => void
   onLoanOut: (entry: CareerPlayer) => void
   needs: PositionNeed[]
+  positionAdvice: PlayerPositionAdvice[]
 }
 
-export function SquadCards({ squad, busy, onSell, onLoanOut, needs }: Props) {
+export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvice }: Props) {
+  const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
   const [dragged, setDragged] = useState<CareerPlayer | null>(null)
   const [hover, setHover] = useState<'SELL' | 'LOAN' | null>(null)
   const groups = groupByPrimaryPosition(squad)
@@ -91,6 +93,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs }: Props) {
                         {entry.onLoan && ' · '}
                         {entry.onLoan && <Pill tone="amber">Kiralık</Pill>}
                       </span>
+                      <PositionHint advice={adviceById.get(entry.player.id)} />
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                       <span className="text-right text-xs tabular-nums">
@@ -127,5 +130,28 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs }: Props) {
       )}
       <p className="text-xs text-slate-500">GEN / POT* (POT model tahminidir). Derinlik etiketleri seçili taktikten hesaplanır: ilk 11 slotları + yüksek tempolu rollerde rotasyon yedeği (asıl+alternatif / gereken).</p>
     </div>
+  )
+}
+
+function PositionHint({ advice }: { advice?: PlayerPositionAdvice }) {
+  if (!advice || advice.best.length === 0) {
+    return null
+  }
+  const top = advice.best[0]
+  const tooltip = advice.best
+    .map((b) => `${b.position} · ${b.roleName} · %${Math.round(b.score)}${b.natural ? '' : ' (listede yok)'}${b.reasons?.length ? ' — ' + b.reasons.join('; ') : ''}`)
+    .join(String.fromCharCode(10))
+  return (
+    <span className="mt-0.5 block text-xs" title={tooltip}>
+      {advice.ownPositionBest ? (
+        <span className="text-emerald-700 dark:text-emerald-400">
+          ✓ Kendi mevkisi iyi: {advice.listedPositions[0]} {top.natural ? `(%${Math.round(top.score)})` : ''}
+        </span>
+      ) : (
+        <span className="text-amber-700 dark:text-amber-400">
+          → {top.position} ({top.roleName}) daha iyi: %{Math.round(top.score)}
+        </span>
+      )}
+    </span>
   )
 }
