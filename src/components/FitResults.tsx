@@ -26,6 +26,12 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
           <ScoreBar label="SquadFit" value={result.squadFit} hint="Kadro bu rollere uyuyor mu?" />
           <ScoreBar label="IntentFit" value={result.intentFit} hint={result.intentFit === undefined ? 'Slotlara davranış seçersen hesaplanır' : 'Seçtiğin oyunu oynayabiliyor mu?'} />
         </div>
+        {result.setupDelta !== undefined && (
+          <p className="mt-3 text-sm" aria-label="Takım ayarı etkisi">
+            Takım ayarı etkisi: <b className={result.setupDelta < 0 ? 'text-rose-700' : 'text-emerald-700'}>{result.setupDelta > 0 ? '+' : ''}{result.setupDelta.toFixed(1)} puan</b>
+            <span className="text-xs text-slate-500"> — Build-Up ve Defensive Depth ayarının oyuncu özelliklerine uyumu SquadFit'e işlendi.</span>
+          </p>
+        )}
         <p className="mt-3 text-sm">{result.summary}</p>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{result.attackPattern}</p>
         {chargedText && <p className="mt-2 text-xs text-slate-500">{chargedText}</p>}

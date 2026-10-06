@@ -137,6 +137,7 @@ export interface TacticRequest {
   formation?: string
   presetId?: string
   slots: SlotSelection[]
+  setup?: { buildUp: string; depth: number }
 }
 
 export interface ResolvedSlot {
@@ -254,6 +255,7 @@ export interface RuleFinding {
 export interface SquadFit {
   mirrored?: boolean
   squadFit: number
+  setupDelta?: number
   intentFit?: number
   summary: string
   slots: SlotAssignment[]

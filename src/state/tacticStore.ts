@@ -72,7 +72,7 @@ export function toTacticRequest(state: TacticState): TacticRequest {
     tags: selection.tags,
     roleId: selection.roleId,
   }))
-  return { formation: state.formation, presetId: state.presetId, slots }
+  return { formation: state.formation, presetId: state.presetId, slots, setup: state.setup }
 }
 
 /** Seçili davranışlarla çelişen tag'leri döner (client'ta kilitlenir). */
