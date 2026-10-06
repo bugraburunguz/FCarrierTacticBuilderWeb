@@ -1,21 +1,44 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { CompareTray } from './CompareTray'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
 
-const NAV = [
-  { to: '/players', label: 'Oyuncular' },
-  { to: '/compare', label: 'Karşılaştır' },
-  { to: '/tactics/builder', label: 'Taktik & Uyum' },
-  { to: '/squad', label: 'Kadro' },
-  { to: '/recommend', label: 'Öneri' },
-  { to: '/teams', label: 'Takımlar' },
-  { to: '/career/import', label: 'İçe aktar' },
+interface NavGroup {
+  to: string
+  label: string
+  match: string[]
+  tabs?: { to: string; label: string }[]
+}
+
+const NAV: NavGroup[] = [
+  {
+    to: '/players',
+    label: 'Oyuncular',
+    match: ['/players', '/compare'],
+    tabs: [
+      { to: '/players', label: 'Oyuncu ara' },
+      { to: '/compare', label: 'Karşılaştır' },
+    ],
+  },
+  {
+    to: '/tactics/builder',
+    label: 'Taktik & Kadro',
+    match: ['/tactics', '/squad', '/recommend'],
+    tabs: [
+      { to: '/tactics/builder', label: 'Taktik & Uyum' },
+      { to: '/squad', label: 'Kadro' },
+      { to: '/recommend', label: 'Transfer önerisi' },
+    ],
+  },
+  { to: '/teams', label: 'Takımlar', match: ['/teams'] },
+  { to: '/career/import', label: 'İçe aktar', match: ['/career'] },
 ]
 
 export function Layout() {
   const { authenticated, me, logout } = useAuth()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const activeGroup = NAV.find((g) => g.match.some((m) => pathname === m || pathname.startsWith(`${m}/`)))
 
   return (
     <div className="min-h-screen">
@@ -29,9 +52,7 @@ export function Layout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) =>
-                  `rounded-lg px-3 py-1.5 text-sm font-medium ${isActive ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'}`
-                }
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium ${activeGroup === item ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'}`}
               >
                 {item.label}
               </NavLink>
@@ -73,6 +94,21 @@ export function Layout() {
         )}
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6">
+        {activeGroup?.tabs && !/^\/players\/\d+/.test(pathname) && (
+          <nav aria-label={`${activeGroup.label} sekmeleri`} className="mb-4 flex gap-1 border-b border-slate-200 dark:border-slate-700">
+            {activeGroup.tabs.map((tab) => (
+              <NavLink
+                key={tab.to}
+                to={tab.to}
+                className={({ isActive }) =>
+                  `-mb-px border-b-2 px-3 py-1.5 text-sm font-medium transition ${isActive ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400' : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100'}`
+                }
+              >
+                {tab.label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
         <Outlet />
         <CompareTray />
       </main>

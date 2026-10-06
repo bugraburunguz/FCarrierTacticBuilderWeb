@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { unusedPositionSuggestions, type DepthState, type PositionNeed } from '../lib/depth'
+import { setCardDragImage } from '../lib/dragCard'
 import { groupByPrimaryPosition, primaryPosition } from '../lib/positions'
 import { Button, Pill } from './ui'
 
@@ -80,9 +81,12 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                   <li
                     key={entry.player.id}
                     draggable
-                    onDragStart={() => setDragged(entry)}
+                    onDragStart={(e) => {
+                      setCardDragImage(e, { name: entry.player.name, overall: entry.player.overall, position: primaryPosition(entry.player.positions), detail: entry.player.age ? `${entry.player.age} yaş` : undefined })
+                      setDragged(entry)
+                    }}
                     onDragEnd={() => { setDragged(null); setHover(null) }}
-                    className="group flex cursor-grab items-center justify-between gap-2 py-1.5 text-sm">
+                    className={`group flex cursor-grab items-center justify-between gap-2 rounded-lg px-1 py-1.5 text-sm transition active:cursor-grabbing ${dragged?.player.id === entry.player.id ? 'scale-95 border border-dashed border-emerald-400 bg-emerald-50/60 opacity-50 dark:bg-slate-700' : 'hover:bg-slate-50 dark:hover:bg-slate-700/40'}`}>
                     <div className="min-w-0">
                       <Link to={`/players/${entry.player.id}`} className="block truncate font-medium hover:underline">
                         {entry.player.name}

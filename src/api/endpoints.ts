@@ -97,6 +97,11 @@ export const endpoints = {
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
+  slotView: (body: {
+    careerId: number
+    scope: 'SQUAD' | 'LEAGUE' | 'MARKET'
+    slot: { roleId: string; position: string; tags?: string[]; leagueId?: number; limit?: number }
+  }) => api.post<Recommendation>('/recommend/slot-view', body),
   recommendSlot: (body: {
     careerId?: number
     roleId: string

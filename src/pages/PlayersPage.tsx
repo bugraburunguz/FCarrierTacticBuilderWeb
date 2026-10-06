@@ -7,6 +7,7 @@ import { CompareButton } from '../components/CompareButton'
 import { useActiveCareerId } from '../state/careerStore'
 import { DRAG_TYPE } from '../state/compareStore'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select, Spinner } from '../components/ui'
+import { setCardDragImage } from '../lib/dragCard'
 import { ATTR_LABELS, POSITIONS } from '../lib/format'
 
 const FILTER_ATTRS = ['Finishing', 'Vision', 'Crossing', 'Acceleration', 'SprintSpeed', 'Dribbling', 'Stamina', 'Strength', 'DefAwareness', 'Heading']
@@ -249,7 +250,10 @@ export function PlayersPage() {
                       <tr
                         key={p.id}
                         draggable
-                        onDragStart={(e) => e.dataTransfer.setData(DRAG_TYPE, JSON.stringify({ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }))}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData(DRAG_TYPE, JSON.stringify({ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }))
+                          setCardDragImage(e, { name: p.name, overall: p.overall, position: p.positions[0] ?? '', detail: p.club ?? undefined })
+                        }}
                         className="cursor-grab border-t border-slate-100 transition hover:bg-emerald-50/60 dark:border-slate-700 dark:hover:bg-slate-700/40">
                         <td className="py-1.5 pr-2 font-medium">
                           <Link to={`/players/${p.id}`} className="text-emerald-700 hover:underline dark:text-emerald-400">
