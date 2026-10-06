@@ -252,6 +252,7 @@ export interface RuleFinding {
 }
 
 export interface SquadFit {
+  mirrored?: boolean
   squadFit: number
   intentFit?: number
   summary: string
@@ -415,6 +416,7 @@ export interface TacticCombo {
   squadFit: number
   intentFit?: number
   feasibility: number
+  mirrored?: boolean
   reasons: string[]
   weakLinks: WeakLink[]
   tactic: TacticRequest

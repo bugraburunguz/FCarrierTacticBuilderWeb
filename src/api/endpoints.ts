@@ -93,6 +93,7 @@ export const endpoints = {
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
+  lineup: (careerId: number, tactic: TacticRequest) => api.post<SquadFit>('/fit/lineup', { careerId, tactic }),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
     api.post<Recommendation>('/recommend/preview', body, false),

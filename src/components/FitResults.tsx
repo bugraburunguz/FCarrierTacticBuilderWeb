@@ -29,6 +29,7 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
         <p className="mt-3 text-sm">{result.summary}</p>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{result.attackPattern}</p>
         {chargedText && <p className="mt-2 text-xs text-slate-500">{chargedText}</p>}
+        {result.mirrored && <p className="mt-2 text-sm text-amber-700">Taktik kadronuza göre sağ-sol aynalandı (sağ/sol görevleri yer değiştirdi).</p>}
       </Card>
 
       <Card title="Zayıf halkalar">

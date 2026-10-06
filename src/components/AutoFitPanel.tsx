@@ -149,7 +149,7 @@ export function AutoFitPanel({ formations, presets }: Props) {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <Pill tone={index === 0 ? 'emerald' : 'sky'}>{index === 0 ? 'En iyi' : 'Alternatif'}</Pill>
-                    <h4 className="mt-1 font-bold">{combo.formationLabel}</h4>
+                    <h4 className="mt-1 font-bold">{combo.formationLabel}{combo.mirrored ? ' · aynalı' : ''}</h4>
                     <p className="text-sm">{combo.presetName}</p>
                   </div>
                   <div className="text-right">

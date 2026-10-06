@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints'
 import type { Career, CareerPlayer, Club, RosterEvent, RosterEventType } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
 import { SquadCards } from '../components/SquadCards'
+import { TacticLineup } from '../components/TacticLineup'
 import { analyzeDepth } from '../lib/depth'
 import { useTactic } from '../state/tacticStore'
 import { TransferDialog } from '../components/TransferDialog'
@@ -275,6 +276,7 @@ export function SquadPage() {
               />
             )}
           </Card>
+          {formations.data && <TacticLineup careerId={career.id} squad={squad.data ?? []} formations={formations.data} />}
           <TransferPanel career={career} squadIds={squadIds} />
           <History careerId={career.id} events={events.data ?? []} />
         </>
