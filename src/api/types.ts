@@ -479,3 +479,19 @@ export interface SetupCheck {
   detail: string
   players: { id: number; name: string; position: string; value: number; ok: boolean }[]
 }
+
+export interface TacticCodeExport {
+  code: string
+  formation: string
+  exact: boolean
+  warnings: string[]
+}
+
+export interface TacticCodeImport {
+  formation: string
+  buildUp: string
+  depth: number
+  slots: { slotId: string; roleId: string; roleName: string }[]
+  exact: boolean
+  warnings: string[]
+}
