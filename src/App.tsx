@@ -3,6 +3,7 @@ import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
 import { ComparePage } from './pages/ComparePage'
+import { WonderkidsPage } from './pages/WonderkidsPage'
 import { HomePage } from './pages/HomePage'
 import { ImportPage } from './pages/ImportPage'
 import { LoginPage, RegisterPage } from './pages/AuthPages'
@@ -37,6 +38,7 @@ export function App() {
         <Route path="players" element={<PlayersPage />} />
         <Route path="players/:id" element={<PlayerDetailPage />} />
         <Route path="compare" element={<ComparePage />} />
+        <Route path="wonderkids" element={<WonderkidsPage />} />
         <Route path="tactics/builder" element={<TacticBuilderPage />} />
         <Route path="squad" element={<RequireAuth><SquadPage /></RequireAuth>} />
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />

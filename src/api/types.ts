@@ -452,3 +452,8 @@ export interface TransferTargetsResult {
   budgetEur?: number
   positions: PositionTargets[]
 }
+
+export interface SimilarPlayer {
+  player: PlayerSummary
+  similarity: number
+}

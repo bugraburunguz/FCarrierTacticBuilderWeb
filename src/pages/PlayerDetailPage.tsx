@@ -5,7 +5,9 @@ import { endpoints } from '../api/endpoints'
 import { FitResultCard } from '../components/FitResultCard'
 import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
+import { AttributeRadar } from '../components/AttributeRadar'
 import { CompareButton } from '../components/CompareButton'
+import { SimilarPlayers } from '../components/SimilarPlayers'
 import { AttrBar, Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
 import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
 
@@ -71,6 +73,7 @@ export function PlayerDetailPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Attribute'lar">
           <div className="space-y-4">
+            <AttributeRadar series={[{ name: summary.name, attrs }]} goalkeeper={isGoalkeeper} />
             {ATTR_GROUPS.filter((g) => (g.title === 'Kaleci') === isGoalkeeper || g.title !== 'Kaleci').map((group) => (
               <div key={group.title}>
                 <h3 className="mb-1 text-xs font-semibold uppercase text-slate-500">{group.title}</h3>
@@ -111,6 +114,7 @@ export function PlayerDetailPage() {
           </div>
         </Card>
       </div>
+      <SimilarPlayers playerId={summary.id} potential={summary.potential} />
     </div>
   )
 }

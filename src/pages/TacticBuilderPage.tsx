@@ -10,6 +10,7 @@ import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
 import { PitchView } from '../components/PitchView'
 import { SlotSuggestions } from '../components/SlotSuggestions'
+import { SetupChips } from '../components/SetupChips'
 import { TagChips } from '../components/TagChips'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
 import { useActiveCareerId } from '../state/careerStore'
@@ -151,6 +152,7 @@ export function TacticBuilderPage() {
             </Field>
           </div>
           {preset?.signature && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{preset.signature}</p>}
+          <SetupChips settings={preset?.settings} />
           {preset?.sourceNote && <p className="mt-1 text-xs text-slate-500">{preset.sourceNote}</p>}
         </Card>
         {formation && <PitchView slots={formation.slots} selected={selectedSlot} onSelect={setSelectedSlot} info={info} />}

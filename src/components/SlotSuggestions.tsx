@@ -7,6 +7,7 @@ import { useAuth } from '../auth/AuthContext'
 import { useActiveCareerId } from '../state/careerStore'
 import { BadgeDot, Card, ErrorBox, Pill, Select, Spinner } from './ui'
 import { CompareButton } from './CompareButton'
+import { FitMeter } from './FitMeter'
 
 interface Props {
   roleId?: string
@@ -94,7 +95,7 @@ export function SlotSuggestions({ roleId, position, tags, gender }: Props) {
                   </span>
                 </span>
                 <span className="flex shrink-0 items-center gap-2">
-                  <span className="tabular-nums">%{Math.round(item.combined)}</span>
+                  <FitMeter score={item.combined} badge={item.roleFit.badge} size={36} />
                   <CompareButton compact entry={{ id: item.player.id, name: item.player.name, overall: item.player.overall, position: item.player.positions[0] ?? '' }} />
                 </span>
               </li>

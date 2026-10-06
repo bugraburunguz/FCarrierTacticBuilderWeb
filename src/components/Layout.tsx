@@ -14,9 +14,10 @@ const NAV: NavGroup[] = [
   {
     to: '/players',
     label: 'Oyuncular',
-    match: ['/players', '/compare'],
+    match: ['/players', '/compare', '/wonderkids'],
     tabs: [
       { to: '/players', label: 'Oyuncu ara' },
+      { to: '/wonderkids', label: 'Wonderkids' },
       { to: '/compare', label: 'Karşılaştır' },
     ],
   },

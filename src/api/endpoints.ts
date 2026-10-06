@@ -28,6 +28,7 @@ import type {
   TeamProfile,
   TeamSummary,
   TransferTargetsResult,
+  SimilarPlayer,
 } from './types'
 
 export interface PlayerFilters {
@@ -76,6 +77,8 @@ export const endpoints = {
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),
   player: (id: number) => api.get<PlayerDetail>(`/players/${id}`),
+  similarPlayers: (id: number, options: { ageMax?: number; potentialMin?: number; limit?: number } = {}) =>
+    api.get<SimilarPlayer[]>(`/players/${id}/similar`, { age_max: options.ageMax, pot_min: options.potentialMin, limit: options.limit }),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),

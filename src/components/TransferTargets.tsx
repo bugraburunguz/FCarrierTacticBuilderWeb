@@ -6,6 +6,7 @@ import { formatEur } from '../lib/format'
 import { POSITION_ORDER } from '../lib/positions'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Pill, Spinner } from './ui'
 import { CompareButton } from './CompareButton'
+import { FitMeter } from './FitMeter'
 
 const ACQUISITION: Record<Acquisition, { label: string; tone: 'emerald' | 'sky' | 'amber' }> = {
   FREE: { label: 'Bedava', tone: 'emerald' },
@@ -77,7 +78,7 @@ export function TransferTargets({ careerId, slots }: Props) {
                           </span>
                           <span className="flex shrink-0 items-center gap-1.5">
                             <Pill tone={ACQUISITION[t.acquisition].tone}>{ACQUISITION[t.acquisition].label}</Pill>
-                            <span className="tabular-nums">%{Math.round(t.combined)}</span>
+                            <FitMeter score={t.combined} badge={t.roleFit.badge} size={36} />
                             <CompareButton compact entry={{ id: t.player.id, name: t.player.name, overall: t.player.overall, position: t.player.positions[0] ?? '' }} />
                           </span>
                         </div>

@@ -52,12 +52,15 @@ export function PitchView({ slots, selected, onSelect, info = {} }: Props) {
               {slot.position}
             </text>
             {entry?.title && (
-              <text textAnchor="middle" y="9.4" fontSize="2.8" fill="#ffffff" stroke="#00000066" strokeWidth="0.5" paintOrder="stroke">
-                {entry.title.length > 14 ? `${entry.title.slice(0, 13)}…` : entry.title}
-              </text>
+              <g>
+                <rect x={-(Math.min(entry.title.length, 14) * 0.95 + 2)} y="6.6" width={Math.min(entry.title.length, 14) * 1.9 + 4} height="4.4" rx="2.2" fill="#0f172acc" stroke="#ffffff55" strokeWidth="0.3" />
+                <text textAnchor="middle" y="9.7" fontSize="2.7" fontWeight="600" fill="#ffffff">
+                  {entry.title.length > 14 ? `${entry.title.slice(0, 13)}…` : entry.title}
+                </text>
+              </g>
             )}
             {entry?.subtitle && (
-              <text textAnchor="middle" y="12.6" fontSize="2.4" fill="#e2e8f0" stroke="#00000066" strokeWidth="0.4" paintOrder="stroke">
+              <text textAnchor="middle" y="13.4" fontSize="2.3" fill="#e2e8f0" stroke="#00000066" strokeWidth="0.4" paintOrder="stroke">
                 {entry.subtitle}
               </text>
             )}

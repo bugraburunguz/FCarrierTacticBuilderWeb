@@ -2,6 +2,7 @@ import { useMutation, useQueries, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
+import { AttributeRadar } from '../components/AttributeRadar'
 import { FitResultCard } from '../components/FitResultCard'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
@@ -66,6 +67,11 @@ export function ComparePage() {
           </div>
         </div>
       </Card>
+      {loaded.length > 0 && (
+        <Card title="Profil radarı (üst üste)">
+          <AttributeRadar series={loaded.map((d) => ({ name: d.summary.name, attrs: d.attrs }))} goalkeeper={hasGoalkeeper} />
+        </Card>
+      )}
 
       {list.length < 2 ? (
         <EmptyState>Karşılaştırmak için en az 2 oyuncu ekle.</EmptyState>
