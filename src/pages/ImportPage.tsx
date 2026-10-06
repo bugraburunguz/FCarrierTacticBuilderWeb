@@ -150,7 +150,7 @@ export function ImportPage() {
       {result && (
         <Card title="Yükleme tamamlandı">
           <p className="text-sm">
-            {result.players} oyuncu, {result.teams} takım içe aktarıldı · <strong>{result.freeAgents} serbest oyuncu</strong> bulundu.
+            {result.players} oyuncu, {result.teams} takım içe aktarıldı{result.generatedPlayers ? ` (${result.generatedPlayers} tanesi kariyerinde üretilmiş oyuncu; sadece bu kariyerde görünür)` : ''} · <strong>{result.freeAgents} serbest oyuncu</strong> bulundu.
             {result.unmatchedPlayers > 0 && ` (${result.unmatchedPlayers} oyuncu kataloğumuzda yok, atlandı.)`}
           </p>
           <div className="mt-3 space-y-2">

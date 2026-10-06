@@ -348,6 +348,7 @@ export interface Subscription {
 
 export interface ImportSummary {
   players: number
+  generatedPlayers?: number
   unmatchedPlayers: number
   teams: number
   freeAgents: number
