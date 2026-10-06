@@ -259,7 +259,9 @@ export function SquadPage() {
 
   return (
     <div className="space-y-4">
-      <CareerSelect />
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-[220px] max-w-xs flex-1"><CareerSelect /></div>
+        <div className="flex-1">
       <Tabs
         value={tab}
         onChange={setTab}
@@ -270,6 +272,8 @@ export function SquadPage() {
           { id: 'career', label: 'Kariyer' },
         ]}
       />
+        </div>
+      </div>
       {tab === 'career' && (
         <>
           <NewCareer />
@@ -277,10 +281,12 @@ export function SquadPage() {
         </>
       )}
       {career && tab === 'squad' && (
-        <>
-          <Card title="Bölgesel yoğunluk">
-            {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} formation={formation} />}
-          </Card>
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(420px,500px)_1fr]">
+          <div className="lg:sticky lg:top-24">
+            <Card title="Bölgesel yoğunluk">
+              {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} formation={formation} compact />}
+            </Card>
+          </div>
           <Card
             title={`Oyuncular · ${squad.data?.length ?? 0}`}
             actions={
@@ -311,7 +317,7 @@ export function SquadPage() {
               />
             )}
           </Card>
-        </>
+        </div>
       )}
       {career && tab === 'lineup' && formations.data && <TacticLineup careerId={career.id} squad={squad.data ?? []} formations={formations.data} />}
       {career && tab === 'moves' && (

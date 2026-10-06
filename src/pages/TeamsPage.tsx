@@ -30,11 +30,11 @@ export function TeamsPage() {
         </EmptyState>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-          <Card title="Takımlar">
+          <Card title="Takımlar" className="lg:sticky lg:top-24 lg:self-start">
             <Field label="Ara">
               <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Takım adı…" />
             </Field>
-            <ul className="mt-2 max-h-[60vh] space-y-1 overflow-y-auto text-sm">
+            <ul className="mt-2 max-h-[calc(100vh-17rem)] space-y-1 overflow-y-auto text-sm">
               {(teams.data ?? []).map((t) => (
                 <li key={t.teamId}>
                   <button
@@ -52,14 +52,14 @@ export function TeamsPage() {
             </ul>
           </Card>
 
-          <div className="space-y-4">
+          <div className="grid items-start gap-4 xl:grid-cols-2">
             {selected === undefined ? (
               <EmptyState>Soldan bir takım seç: güçlü/zayıf yönler, kulüp kültürü ve kilit oyuncular burada görünür.</EmptyState>
             ) : profile.isLoading ? (
               <Spinner />
             ) : profile.data ? (
               <>
-                <Card title={profile.data.team.name} actions={<Pill>{profile.data.team.league ?? ''}</Pill>}>
+                <Card className="xl:col-span-2" title={profile.data.team.name} actions={<Pill>{profile.data.team.league ?? ''}</Pill>}>
                   <dl className="grid grid-cols-4 gap-3 text-center text-sm">
                     <Stat label="Genel" value={profile.data.team.overall} />
                     <Stat label="Hücum" value={profile.data.team.attack} />
@@ -69,19 +69,19 @@ export function TeamsPage() {
                   {profile.data.averageAge && <p className="mt-2 text-xs text-slate-500">İlk 18 yaş ortalaması: {profile.data.averageAge}</p>}
                   {profile.data.rivalTeamName && <p className="text-xs text-slate-500">Ezeli rakip: {profile.data.rivalTeamName}</p>}
                 </Card>
-                <div className="grid gap-4 md:grid-cols-2">
+                <>
                   <Card title="Güçlü yönler (kendi takımınsa avantaj / rakipse dikkat)">
                     <Bullets items={profile.data.strengths} tone="emerald" />
                   </Card>
                   <Card title="Zayıf yönler (kendi takımınsa iyileştir / rakipse sömür)">
                     <Bullets items={profile.data.weaknesses} tone="rose" />
                   </Card>
-                </div>
+                </>
                 <Card title="Kulüp kültürü (sayısal verilerden çıkarım)">
                   <Bullets items={profile.data.culture} tone="sky" />
                 </Card>
                 <Card title="Kilit oyuncular">
-                  <ul className="grid gap-1 text-sm sm:grid-cols-2">
+                  <ul className="grid gap-1 text-sm">
                     {profile.data.topPlayers.map((p) => (
                       <li key={p.id} className="flex justify-between">
                         <Link to={`/players/${p.id}`} className="hover:underline">

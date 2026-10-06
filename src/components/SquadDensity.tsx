@@ -129,15 +129,15 @@ function buildCell(spec: CellSpec, base: Map<string, Cell>): Cell {
   return summarize(spec.key, spec.base, natural, flex, state, SIDED_GUIDE)
 }
 
-export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[]; needs: PositionNeed[]; formation?: Formation }) {
+export function SquadDensity({ squad, needs, formation, compact = false }: { squad: CareerPlayer[]; needs: PositionNeed[]; formation?: Formation; compact?: boolean }) {
   const [mode, setMode] = useState<'tactic' | 'general'>('tactic')
   const cells = buildBaseCells(squad, needs)
   const byTactic = formation !== undefined && mode === 'tactic'
   const usingTactic = needs.length > 0
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4" aria-label="Bölge özeti">
+    <div className={compact ? 'space-y-2' : 'space-y-4'}>
+      <div className={compact ? 'grid grid-cols-2 gap-1.5' : 'grid gap-2 sm:grid-cols-2 lg:grid-cols-4'} aria-label="Bölge özeti">
         {REGIONS.map((region) => {
           const players = squad.filter((s) => region.positions.includes(primaryPosition(s.player.positions)))
           const avgOverall = average(players.map((p) => p.player.overall))
@@ -146,12 +146,12 @@ export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[
           const thin = regionCells.filter((c) => c.state === 'thin').map((c) => c.position)
           const dense = regionCells.filter((c) => c.state === 'dense').map((c) => c.position)
           return (
-            <div key={region.label} className="rounded-xl border border-slate-200 p-3 text-sm dark:border-slate-600">
+            <div key={region.label} className={`rounded-xl border border-slate-200 text-sm dark:border-slate-600 ${compact ? 'p-2' : 'p-3'}`}>
               <div className="flex items-center justify-between">
                 <strong>{region.label}</strong>
                 <span className="text-slate-500">{players.length} oyuncu</span>
               </div>
-              <div className="mt-1 text-xs text-slate-500">
+              <div className="mt-0.5 text-xs text-slate-500">
                 Ort. overall <b className="text-slate-800 dark:text-slate-100">{avgOverall ? avgOverall.toFixed(1) : '—'}</b>
                 {avgAge ? <> · ort. yaş <b className="text-slate-800 dark:text-slate-100">{avgAge.toFixed(1)}</b></> : null}
               </div>
@@ -181,11 +181,11 @@ export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[
         )}
         {byTactic ? (
           <div className="overflow-x-auto">
-            <div className="relative mx-auto aspect-[100/130] w-full min-w-[560px] max-w-[640px] overflow-hidden rounded-xl shadow-inner ring-1 ring-emerald-900/30">
+            <div className={`relative mx-auto aspect-[100/130] w-full overflow-hidden rounded-xl shadow-inner ring-1 ring-emerald-900/30 ${compact ? 'min-w-[400px] max-w-[470px]' : 'min-w-[560px] max-w-[640px]'}`}>
               <PitchBackground />
               {formation.slots.map((slot) => (
-                <div key={slot.slotId} className="absolute z-10 w-[17%] min-w-[96px] -translate-x-1/2 -translate-y-1/2" style={{ left: `${slot.x}%`, top: `${slotTop(slot, formation.slots)}%` }}>
-                  <DensityCell cell={buildCell(slotSpec(slot, formation.slots), cells)} />
+                <div key={slot.slotId} className={`absolute z-10 w-[17%] -translate-x-1/2 -translate-y-1/2 ${compact ? 'min-w-[70px]' : 'min-w-[96px]'}`} style={{ left: `${slot.x}%`, top: `${slotTop(slot, formation.slots)}%` }}>
+                  <DensityCell cell={buildCell(slotSpec(slot, formation.slots), cells)} compact={compact} />
                 </div>
               ))}
             </div>
@@ -195,20 +195,23 @@ export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[
             {ROWS.map((row, index) => (
               <div key={index} className="flex justify-center gap-2">
                 {row.map((cellSpec) => (
-                  <div key={cellSpec.key} className="w-1/5 min-w-[96px]">
-                    <DensityCell cell={buildCell(cellSpec, cells)} />
+                  <div key={cellSpec.key} className={`w-1/5 ${compact ? 'min-w-[70px]' : 'min-w-[96px]'}`}>
+                    <DensityCell cell={buildCell(cellSpec, cells)} compact={compact} />
                   </div>
                 ))}
               </div>
             ))}
           </div>
         )}
-        <p className="mt-3 text-xs text-slate-500">
+        <details className="mt-2 text-xs text-slate-500">
+          <summary className="cursor-pointer">Nasıl okunur?</summary>
+          <p className="mt-1">
           {usingTactic
             ? 'Renkler seçili taktiğin ihtiyacına göre (ilk 11 + rotasyon). '
             : 'Renkler genel derinlik rehberine göre (taktik seçilmedi). '}
           Sayı: asıl mevkisi o olan + (alternatif mevkisi o olan). Soldaki hücrelerde sol ayaklılar, sağdakilerde sağ ayaklılar; iki ayaklılar (zayıf ayak 4+) iki tarafta da sayılır.
-        </p>
+          </p>
+        </details>
       </div>
     </div>
   )
@@ -259,7 +262,7 @@ function footMark(p: CareerPlayer): string {
   return p.player.preferredFoot === 'Left' ? 'sol ayak' : 'sağ ayak'
 }
 
-function DensityCell({ cell }: { cell: Cell }) {
+function DensityCell({ cell, compact = false }: { cell: Cell; compact?: boolean }) {
   const [min, max] = cell.guide
   const label = STATE_LABEL[cell.state]
   const names = [...cell.natural].sort((a, b) => b.player.overall - a.player.overall)
@@ -268,12 +271,12 @@ function DensityCell({ cell }: { cell: Cell }) {
     ...cell.flex.map((s) => `${s.player.name} (${s.player.overall}) · ${footMark(s)} — alternatif`),
   ].join(String.fromCharCode(10))
   return (
-    <div title={title} className={`rounded-xl border p-2 text-xs shadow-md backdrop-blur-sm transition hover:shadow-lg ${STATE_STYLE[cell.state]}`}>
+    <div title={title} className={`rounded-xl border text-xs shadow-md backdrop-blur-sm transition hover:shadow-lg ${compact ? 'p-1.5' : 'p-2'} ${STATE_STYLE[cell.state]}`}>
       <div className="flex items-center justify-between gap-1">
         <strong className="text-sm">{cell.position}</strong>
-        <Pill tone={label.tone}>{label.text}</Pill>
+        {compact ? <span className="text-[10px] font-semibold">{label.text}</span> : <Pill tone={label.tone}>{label.text}</Pill>}
       </div>
-      <div className="mt-0.5 truncate text-slate-500">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</div>
+      {!compact && <div className="mt-0.5 truncate text-slate-500">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</div>}
       <div className="mt-1 flex items-baseline gap-1">
         <span className="text-lg font-bold tabular-nums">{cell.natural.length}</span>
         {cell.flex.length > 0 && <span className="text-slate-500">+{cell.flex.length}</span>}
@@ -282,7 +285,7 @@ function DensityCell({ cell }: { cell: Cell }) {
       <div className="text-slate-500">
         {cell.best ? (
           <>
-            En iyi <b className="text-slate-800 dark:text-slate-100">{cell.best}</b> · ort. {cell.avg?.toFixed(0)}
+            {compact ? '' : 'En iyi '}<b className="text-slate-800 dark:text-slate-100">{cell.best}</b>{compact ? '' : ` · ort. ${cell.avg?.toFixed(0)}`}
           </>
         ) : (
           'Oyuncu yok'

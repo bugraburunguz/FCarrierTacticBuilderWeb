@@ -457,3 +457,15 @@ export interface SimilarPlayer {
   player: PlayerSummary
   similarity: number
 }
+
+export interface PlayerRoleFit {
+  position: string
+  roleId: string
+  roleName: string
+  focus?: string
+  score: number
+  projectedRating: number
+  badge: WeaponState
+  badgeText: string
+  reasons: string[]
+}

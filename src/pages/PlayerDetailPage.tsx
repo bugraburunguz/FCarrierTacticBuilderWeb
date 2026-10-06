@@ -7,6 +7,7 @@ import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { AttributeRadar } from '../components/AttributeRadar'
 import { CompareButton } from '../components/CompareButton'
+import { PlayerRoles } from '../components/PlayerRoles'
 import { SimilarPlayers } from '../components/SimilarPlayers'
 import { AttrBar, Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
 import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
@@ -69,6 +70,8 @@ export function PlayerDetailPage() {
           {detail.data.weakFoot ? ` · Zayıf ayak ${detail.data.weakFoot}★` : ''} {detail.data.skillMoves ? ` · Hareket ${detail.data.skillMoves}★` : ''}
         </p>
       </Card>
+
+      <PlayerRoles playerId={summary.id} listed={summary.positions} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Attribute'lar">
