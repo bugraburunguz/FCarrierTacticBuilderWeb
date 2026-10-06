@@ -83,7 +83,12 @@ export function TacticBuilderPage() {
   }
 
   const info = Object.fromEntries(
-    (resolved.data?.slots ?? []).map((s) => [s.slotId, { title: s.roleName.replace(/\s*\(.*\)/, ''), subtitle: s.tags.length ? `${s.tags.length} davranış` : undefined }]),
+    (resolved.data?.slots ?? []).map((s) => {
+      const match = s.roleName.match(/^(.*?)\s*\((.*)\)\s*$/)
+      const focus = match?.[2]
+      const subtitle = [focus, s.tags.length ? `${s.tags.length} davranış` : undefined].filter(Boolean).join(' · ')
+      return [s.slotId, { title: match ? match[1] : s.roleName, subtitle: subtitle || undefined }]
+    }),
   )
 
   return (
