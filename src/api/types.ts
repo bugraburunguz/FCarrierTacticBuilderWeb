@@ -428,3 +428,25 @@ export interface TacticRecommendation {
   bestCombos: TacticCombo[]
   evaluated: number
 }
+
+export type Acquisition = 'FREE' | 'LOAN' | 'BUY'
+
+export interface TransferTarget {
+  player: PlayerSummary
+  roleFit: RoleFit
+  combined: number
+  acquisition: Acquisition
+  reason: string
+}
+
+export interface PositionTargets {
+  position: string
+  roleId: string
+  targets: TransferTarget[]
+}
+
+export interface TransferTargetsResult {
+  squadAverage?: number
+  budgetEur?: number
+  positions: PositionTargets[]
+}

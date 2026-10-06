@@ -27,6 +27,7 @@ import type {
   TacticRecommendation,
   TeamProfile,
   TeamSummary,
+  TransferTargetsResult,
 } from './types'
 
 export interface PlayerFilters {
@@ -97,6 +98,8 @@ export const endpoints = {
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
+  transferTargets: (body: { careerId: number; perPosition?: number; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
+    api.post<TransferTargetsResult>('/recommend/transfer-targets', body),
   slotView: (body: {
     careerId: number
     scope: 'SQUAD' | 'LEAGUE' | 'MARKET'

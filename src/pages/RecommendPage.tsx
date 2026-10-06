@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import { CareerSelect } from '../components/CareerSelect'
+import { TransferTargets } from '../components/TransferTargets'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Select } from '../components/ui'
 import { canPlaySlot, POSITION_LABELS } from '../lib/positions'
 import { scoutLink } from '../lib/scout'
@@ -42,9 +43,10 @@ export function RecommendPage() {
 
   return (
     <div className="space-y-4">
-      <Card title="Slot önerisi">
+      <CareerSelect />
+      <TransferTargets careerId={careerId} slots={resolved.data?.slots ?? []} />
+      <Card title="Slot önerisi (detaylı, 3 kredi)">
         <div className="grid gap-3 md:grid-cols-2">
-          <CareerSelect />
           <Field label="Slot">
             <Select value={slotId} onChange={(e) => { setSlotId(e.target.value); setCurrentId('') }}>
               <option value="">Seçiniz…</option>
