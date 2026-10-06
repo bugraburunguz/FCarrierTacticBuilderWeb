@@ -94,8 +94,9 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                       <span className="text-xs text-slate-500">
                         {entry.player.age ? `${entry.player.age} yaş · ` : ''}
                         {entry.player.positions.slice(1, 3).join(', ')}
-                        {entry.onLoan && ' · '}
-                        {entry.onLoan && <Pill tone="amber">Kiralık</Pill>}
+                        {(entry.onLoan || entry.loanedOut) && ' · '}
+                        {entry.onLoan && <Pill tone="amber">Kiralık (bizde)</Pill>}
+                        {entry.loanedOut && <Pill tone="sky">Kiralıkta</Pill>}
                       </span>
                       <PositionHint advice={adviceById.get(entry.player.id)} />
                     </div>

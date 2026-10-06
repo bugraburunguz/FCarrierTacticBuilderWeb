@@ -153,8 +153,13 @@ export function ImportPage() {
             {result.players} oyuncu, {result.teams} takım içe aktarıldı{result.generatedPlayers ? ` (${result.generatedPlayers} tanesi kariyerinde üretilmiş oyuncu; sadece bu kariyerde görünür)` : ''} · <strong>{result.freeAgents} serbest oyuncu</strong> bulundu.
             {result.unmatchedPlayers > 0 && ` (${result.unmatchedPlayers} oyuncu kataloğumuzda yok, atlandı.)`}
           </p>
+          {result.squadSynced !== undefined && (
+            <p className="mt-1 text-sm text-emerald-700">
+              Kadron {result.guessedTeamName} takımından otomatik kuruldu: <strong>{result.squadSynced} oyuncu</strong> (kiralık gelenler ve kiralık gidenler dahil). <Link to="/squad" className="underline">Kadroya git</Link>
+            </p>
+          )}
           <div className="mt-3 space-y-2">
-            <Field label="Takımını seç (kadron buradan kurulacak)">
+            <Field label="Takım farklıysa buradan seç ve kadroyu yeniden kur">
               <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Takım ara…" />
             </Field>
             <ul className="max-h-48 space-y-1 overflow-y-auto text-sm">

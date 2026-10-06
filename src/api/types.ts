@@ -319,6 +319,7 @@ export interface Career {
 export interface CareerPlayer {
   player: PlayerSummary
   onLoan: boolean
+  loanedOut?: boolean
   dynamicPotential?: number
   valueEur?: number
   form?: number
@@ -356,6 +357,7 @@ export interface ImportSummary {
   freeAgents: number
   guessedTeamId?: number
   guessedTeamName?: string
+  squadSynced?: number
 }
 
 export interface TeamSummary {

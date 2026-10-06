@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints'
 import type { Career, CareerPlayer, Club, RosterEvent, RosterEventType } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
 import { SquadCards } from '../components/SquadCards'
+import { SquadList } from '../components/SquadList'
 import { SquadDensity } from '../components/SquadDensity'
 import { TacticLineup } from '../components/TacticLineup'
 import { analyzeDepth } from '../lib/depth'
@@ -239,6 +240,7 @@ export function SquadPage() {
   const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: careerId !== undefined })
   const events = useQuery({ queryKey: ['events', careerId], queryFn: () => endpoints.events(careerId!), enabled: careerId !== undefined })
   const [tab, setTab] = useState<SquadTab>('squad')
+  const [view, setView] = useState<'list' | 'cards'>('list')
   const [dialog, setDialog] = useState<{ mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer } | null>(null)
   const move = useMutation({
     mutationFn: (v: { type: RosterEventType; playerId: number; feeEur: number; toClubId?: number }) => endpoints.applyEvent(careerId!, v),
@@ -279,11 +281,25 @@ export function SquadPage() {
           <Card title="Bölgesel yoğunluk">
             {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} formation={formation} />}
           </Card>
-          <Card title={`Oyuncular · ${squad.data?.length ?? 0}`}>
+          <Card
+            title={`Oyuncular · ${squad.data?.length ?? 0}`}
+            actions={
+              <div role="tablist" className="flex gap-1">
+                {(['list', 'cards'] as const).map((v) => (
+                  <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${view === v ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
+                    {v === 'list' ? 'Tam liste' : 'Kartlar (sat/kirala)'}
+                  </button>
+                ))}
+              </div>
+            }
+          >
             {squad.isLoading ? (
               <Spinner />
             ) : (squad.data ?? []).length === 0 ? (
               <EmptyState>Kadro boş. “Transferler & Geçmiş” sekmesinden oyuncu al.</EmptyState>
+            ) : view === 'list' ? (
+              <SquadList squad={squad.data!} positionAdvice={positionAdvice.data ?? []} />
             ) : (
               <SquadCards
                 squad={squad.data!}
