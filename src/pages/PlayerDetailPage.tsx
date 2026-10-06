@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import { FitResultCard } from '../components/FitResultCard'
+import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { CompareButton } from '../components/CompareButton'
 import { AttrBar, Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
@@ -98,6 +99,9 @@ export function PlayerDetailPage() {
 
         <Card title="Bu oyuncu hangi rolde nasıl oynar?">
           <div className="space-y-3">
+            {detail.data.positionOveralls && Object.keys(detail.data.positionOveralls).length > 1 && (
+              <PositionOverallPitch overalls={detail.data.positionOveralls} listed={summary.positions} />
+            )}
             <RolePicker value={selection} onChange={setSelection} />
             <Button onClick={() => fit.mutate()} disabled={!selection.roleId || fit.isPending}>
               {fit.isPending ? 'Hesaplanıyor…' : 'Uyumu hesapla'}

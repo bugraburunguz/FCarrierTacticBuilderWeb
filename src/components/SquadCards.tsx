@@ -143,6 +143,9 @@ function PositionHint({ advice }: { advice?: PlayerPositionAdvice }) {
     .join(String.fromCharCode(10))
   return (
     <span className="mt-0.5 block text-xs" title={tooltip}>
+      {advice.bestOverallPosition && advice.bestOverall !== undefined && (
+        <span className="mr-2 text-sky-700 dark:text-sky-400">En yüksek overall: {advice.bestOverallPosition} {advice.bestOverall}</span>
+      )}
       {advice.ownPositionBest ? (
         <span className="text-emerald-700 dark:text-emerald-400">
           ✓ Kendi mevkisi iyi: {advice.listedPositions[0]} {top.natural ? `(%${Math.round(top.score)})` : ''}

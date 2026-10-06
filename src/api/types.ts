@@ -49,6 +49,7 @@ export interface PlayerDetail {
   skillMoves?: number
   attrs: Record<string, number>
   playstyles: Record<string, number>
+  positionOveralls?: Record<string, number>
 }
 
 export interface Club {
@@ -394,6 +395,8 @@ export interface PlayerPositionAdvice {
   best: PositionOption[]
   note?: string
   ownPositionBest: boolean
+  bestOverallPosition?: string
+  bestOverall?: number
 }
 
 export interface RankedItem {
