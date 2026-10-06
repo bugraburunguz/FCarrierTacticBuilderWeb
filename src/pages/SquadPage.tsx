@@ -277,7 +277,7 @@ export function SquadPage() {
       {career && tab === 'squad' && (
         <>
           <Card title="Bölgesel yoğunluk">
-            {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} />}
+            {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} formation={formation} />}
           </Card>
           <Card title={`Oyuncular · ${squad.data?.length ?? 0}`}>
             {squad.isLoading ? (

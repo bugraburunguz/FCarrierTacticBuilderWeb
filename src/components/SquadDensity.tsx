@@ -1,4 +1,5 @@
-import type { CareerPlayer } from '../api/types'
+import { useState } from 'react'
+import type { CareerPlayer, Formation, FormationSlot } from '../api/types'
 import type { PositionNeed } from '../lib/depth'
 import { DEPTH_GUIDE, depthState, POSITION_LABELS, primaryPosition, type DepthState } from '../lib/positions'
 import { Pill } from './ui'
@@ -7,6 +8,7 @@ interface CellSpec {
   key: string
   base: string
   side?: 'L' | 'R'
+  multi?: boolean
 }
 
 const spec = (key: string, base: string, side?: 'L' | 'R'): CellSpec => ({ key, base, side })
@@ -52,6 +54,7 @@ const average = (values: number[]) => (values.length === 0 ? undefined : values.
 
 interface Cell {
   position: string
+  base: string
   natural: CareerPlayer[]
   flex: CareerPlayer[]
   state: DepthState
@@ -61,7 +64,26 @@ interface Cell {
   guide: [number, number]
 }
 
-const BASE_POSITIONS = [...new Set(ROWS.flat().map((c) => c.base))]
+const SIDED_BASES = ['CB', 'CDM', 'CM', 'CAM', 'ST']
+
+function slotSpec(slot: FormationSlot, slots: FormationSlot[]): CellSpec {
+  if (!SIDED_BASES.includes(slot.position)) {
+    return spec(slot.slotId, slot.position)
+  }
+  const peers = slots.filter((s) => s.position === slot.position).sort((a, b) => a.x - b.x)
+  if (peers.length < 2) {
+    return spec(slot.slotId, slot.position)
+  }
+  if (peers[0].slotId === slot.slotId) {
+    return spec(slot.slotId, slot.position, 'L')
+  }
+  if (peers[peers.length - 1].slotId === slot.slotId) {
+    return spec(slot.slotId, slot.position, 'R')
+  }
+  return { key: slot.slotId, base: slot.position, multi: true }
+}
+
+const BASE_POSITIONS = [...new Set([...ROWS.flat().map((c) => c.base), ...['GK', 'LB', 'RB', 'LM', 'RM', 'LW', 'RW', 'CAM', 'CDM', 'CM', 'CB', 'ST']])]
 
 const isTwoFooted = (p: CareerPlayer) => (p.player.weakFoot ?? 0) >= TWO_FOOTED_WEAK_FOOT
 
@@ -72,9 +94,9 @@ function playsSide(p: CareerPlayer, side: 'L' | 'R'): boolean {
   return p.player.preferredFoot === (side === 'L' ? 'Left' : 'Right')
 }
 
-function summarize(key: string, natural: CareerPlayer[], flex: CareerPlayer[], state: DepthState, guide: [number, number], required?: number): Cell {
+function summarize(key: string, base: string, natural: CareerPlayer[], flex: CareerPlayer[], state: DepthState, guide: [number, number], required?: number): Cell {
   const overalls = natural.map((s) => s.player.overall)
-  return { position: key, natural, flex, state, guide, required, best: overalls.length ? Math.max(...overalls) : undefined, avg: average(overalls) }
+  return { position: key, base, natural, flex, state, guide, required, best: overalls.length ? Math.max(...overalls) : undefined, avg: average(overalls) }
 }
 
 function buildBaseCells(squad: CareerPlayer[], needs: PositionNeed[]): Map<string, Cell> {
@@ -84,13 +106,18 @@ function buildBaseCells(squad: CareerPlayer[], needs: PositionNeed[]): Map<strin
     const natural = squad.filter((s) => primaryPosition(s.player.positions) === position)
     const flex = squad.filter((s) => primaryPosition(s.player.positions) !== position && s.player.positions.includes(position))
     const need = needByPosition.get(position)
-    cells.set(position, summarize(position, natural, flex, need ? need.state : depthState(position, natural.length), DEPTH_GUIDE[position] ?? [1, 3], need?.required))
+    cells.set(position, summarize(position, position, natural, flex, need ? need.state : depthState(position, natural.length), DEPTH_GUIDE[position] ?? [1, 3], need?.required))
   }
   return cells
 }
 
 function buildCell(spec: CellSpec, base: Map<string, Cell>): Cell {
   const baseCell = base.get(spec.base)!
+  if (!spec.side && spec.multi) {
+    const [min, max] = SIDED_GUIDE
+    const count = baseCell.natural.length
+    return { ...baseCell, position: spec.key, guide: SIDED_GUIDE, required: undefined, state: count < min ? 'thin' : count > max ? 'dense' : 'ok' }
+  }
   if (!spec.side) {
     return { ...baseCell, position: spec.key }
   }
@@ -99,11 +126,13 @@ function buildCell(spec: CellSpec, base: Map<string, Cell>): Cell {
   const flex = baseCell.flex.filter((p) => playsSide(p, side))
   const [min, max] = SIDED_GUIDE
   const state: DepthState = natural.length < min ? 'thin' : natural.length > max ? 'dense' : 'ok'
-  return summarize(spec.key, natural, flex, state, SIDED_GUIDE)
+  return summarize(spec.key, spec.base, natural, flex, state, SIDED_GUIDE)
 }
 
-export function SquadDensity({ squad, needs }: { squad: CareerPlayer[]; needs: PositionNeed[] }) {
+export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[]; needs: PositionNeed[]; formation?: Formation }) {
+  const [mode, setMode] = useState<'tactic' | 'general'>('tactic')
   const cells = buildBaseCells(squad, needs)
+  const byTactic = formation !== undefined && mode === 'tactic'
   const usingTactic = needs.length > 0
 
   return (
@@ -137,17 +166,42 @@ export function SquadDensity({ squad, needs }: { squad: CareerPlayer[]; needs: P
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-emerald-50 to-white p-3 dark:border-slate-600 dark:from-slate-800 dark:to-slate-800" aria-label="Mevki yoğunluk haritası">
-        <div className="space-y-2">
-          {ROWS.map((row, index) => (
-            <div key={index} className="flex justify-center gap-2">
-              {row.map((cellSpec) => (
-                <div key={cellSpec.key} className="w-1/5 min-w-[96px]">
-                  <DensityCell cell={buildCell(cellSpec, cells)} />
+        {formation && (
+          <div className="mb-2 flex items-center justify-between gap-2 text-xs">
+            <strong>{byTactic ? `Dizilim: ${formation.label ?? formation.id}` : 'Genel mevki haritası'}</strong>
+            <div role="tablist" className="flex gap-1">
+              {(['tactic', 'general'] as const).map((m) => (
+                <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)}
+                  className={`rounded-full px-2.5 py-1 font-medium ${mode === m ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
+                  {m === 'tactic' ? 'Taktiğe göre' : 'Genel'}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {byTactic ? (
+          <div className="overflow-x-auto">
+            <div className="relative mx-auto h-[700px] min-w-[560px] max-w-3xl rounded-xl bg-emerald-50/60 ring-1 ring-emerald-200 dark:ring-slate-600">
+              {formation.slots.map((slot) => (
+                <div key={slot.slotId} className="absolute w-[17%] min-w-[96px] -translate-x-1/2 -translate-y-1/2" style={{ left: `${slot.x}%`, top: `${3 + (slot.y / 100) * 94}%` }}>
+                  <DensityCell cell={buildCell(slotSpec(slot, formation.slots), cells)} />
                 </div>
               ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {ROWS.map((row, index) => (
+              <div key={index} className="flex justify-center gap-2">
+                {row.map((cellSpec) => (
+                  <div key={cellSpec.key} className="w-1/5 min-w-[96px]">
+                    <DensityCell cell={buildCell(cellSpec, cells)} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
         <p className="mt-3 text-xs text-slate-500">
           {usingTactic
             ? 'Renkler seçili taktiğin ihtiyacına göre (ilk 11 + rotasyon). '
@@ -180,7 +234,7 @@ function DensityCell({ cell }: { cell: Cell }) {
         <strong className="text-sm">{cell.position}</strong>
         <Pill tone={label.tone}>{label.text}</Pill>
       </div>
-      <div className="mt-0.5 truncate text-slate-500">{POSITION_LABELS[cell.position] ?? SIDED_LABELS[cell.position]}</div>
+      <div className="mt-0.5 truncate text-slate-500">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</div>
       <div className="mt-1 flex items-baseline gap-1">
         <span className="text-lg font-bold tabular-nums">{cell.natural.length}</span>
         {cell.flex.length > 0 && <span className="text-slate-500">+{cell.flex.length}</span>}
