@@ -468,4 +468,5 @@ export interface PlayerRoleFit {
   badge: WeaponState
   badgeText: string
   reasons: string[]
+  gaps: { attr: string; value: number; needed: number }[]
 }

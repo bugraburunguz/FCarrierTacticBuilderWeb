@@ -7,6 +7,7 @@ import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { AttributeRadar } from '../components/AttributeRadar'
 import { CompareButton } from '../components/CompareButton'
+import { DevelopmentPlan } from '../components/DevelopmentPlan'
 import { PlayerRoles } from '../components/PlayerRoles'
 import { SimilarPlayers } from '../components/SimilarPlayers'
 import { AttrBar, Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
@@ -72,6 +73,7 @@ export function PlayerDetailPage() {
       </Card>
 
       <PlayerRoles playerId={summary.id} listed={summary.positions} />
+      <DevelopmentPlan playerId={summary.id} overall={summary.overall} potential={summary.potential} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Attribute'lar">

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Card } from '../components/ui'
 
 const FEATURES = [
+  { to: '/tactics/wizard', title: 'Taktik sihirbazı', text: 'Beş soruya cevap ver; sana en yakın hazır taktikleri ve FC27 kurulumunu gör.' },
   { to: '/tactics/builder', title: 'Taktik kur', text: 'Formasyon seç, her slota oyuncunun ne yapmasını istediğini davranışlarla söyle. Motor rolü senin yerine çıkarır.' },
   { to: '/recommend', title: 'Slot önerisi', text: 'Zayıf halka için bütçene uygun, rolün silahlarını taşıyan oyuncuları sebepleriyle listele.' },
   { to: '/players', title: 'Oyuncu arama', text: 'Attribute, PlayStyle ve AcceleRATE filtreleriyle scout et.' },
