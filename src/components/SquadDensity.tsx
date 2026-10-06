@@ -181,9 +181,10 @@ export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[
         )}
         {byTactic ? (
           <div className="overflow-x-auto">
-            <div className="relative mx-auto h-[700px] min-w-[560px] max-w-3xl rounded-xl bg-emerald-50/60 ring-1 ring-emerald-200 dark:ring-slate-600">
+            <div className="relative mx-auto aspect-[100/115] w-full min-w-[560px] max-w-[640px] overflow-hidden rounded-xl shadow-inner ring-1 ring-emerald-900/30">
+              <PitchBackground />
               {formation.slots.map((slot) => (
-                <div key={slot.slotId} className="absolute w-[17%] min-w-[96px] -translate-x-1/2 -translate-y-1/2" style={{ left: `${slot.x}%`, top: `${3 + (slot.y / 100) * 94}%` }}>
+                <div key={slot.slotId} className="absolute z-10 w-[17%] min-w-[96px] -translate-x-1/2 -translate-y-1/2" style={{ left: `${slot.x}%`, top: `${3 + (slot.y / 100) * 94}%` }}>
                   <DensityCell cell={buildCell(slotSpec(slot, formation.slots), cells)} />
                 </div>
               ))}
@@ -213,6 +214,29 @@ export function SquadDensity({ squad, needs, formation }: { squad: CareerPlayer[
   )
 }
 
+function PitchBackground() {
+  const bands = Array.from({ length: 10 }, (_, i) => i)
+  return (
+    <svg viewBox="0 0 100 115" preserveAspectRatio="none" aria-hidden className="absolute inset-0 h-full w-full">
+      {bands.map((i) => (
+        <rect key={i} x="0" y={i * 11.5} width="100" height="11.5" fill={i % 2 === 0 ? '#2f8f4e' : '#34a056'} />
+      ))}
+      <g stroke="#ffffffcc" strokeWidth="0.5" fill="none" vectorEffect="non-scaling-stroke">
+        <rect x="2.5" y="2.5" width="95" height="110" />
+        <line x1="2.5" y1="57.5" x2="97.5" y2="57.5" />
+        <circle cx="50" cy="57.5" r="10" />
+        <rect x="24" y="2.5" width="52" height="17" />
+        <rect x="38" y="2.5" width="24" height="6.5" />
+        <rect x="24" y="95.5" width="52" height="17" />
+        <rect x="38" y="106" width="24" height="6.5" />
+        <path d="M 40 19.5 A 10 10 0 0 0 60 19.5" />
+        <path d="M 40 95.5 A 10 10 0 0 1 60 95.5" />
+      </g>
+      <circle cx="50" cy="57.5" r="0.9" fill="#ffffffcc" />
+    </svg>
+  )
+}
+
 function footMark(p: CareerPlayer): string {
   if (isTwoFooted(p)) {
     return 'iki ayaklı'
@@ -229,7 +253,7 @@ function DensityCell({ cell }: { cell: Cell }) {
     ...cell.flex.map((s) => `${s.player.name} (${s.player.overall}) · ${footMark(s)} — alternatif`),
   ].join(String.fromCharCode(10))
   return (
-    <div title={title} className={`rounded-xl border p-2 text-xs transition hover:shadow-md ${STATE_STYLE[cell.state]}`}>
+    <div title={title} className={`rounded-xl border p-2 text-xs shadow-md backdrop-blur-sm transition hover:shadow-lg ${STATE_STYLE[cell.state]}`}>
       <div className="flex items-center justify-between gap-1">
         <strong className="text-sm">{cell.position}</strong>
         <Pill tone={label.tone}>{label.text}</Pill>
