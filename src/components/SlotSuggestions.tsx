@@ -20,7 +20,7 @@ type Tab = 'SQUAD' | 'LEAGUE' | 'MARKET' | 'ALL'
 const TABS: { id: Tab; label: string; hint: string; needsCareer: boolean }[] = [
   { id: 'SQUAD', label: 'Kadromda', hint: 'Takımındaki oyuncular bu slota ne kadar uyuyor.', needsCareer: true },
   { id: 'LEAGUE', label: 'Ligde', hint: 'Seçtiğin ligdeki, kadron dışındaki en uygun oyuncular.', needsCareer: true },
-  { id: 'MARKET', label: 'Alınabilir', hint: 'Kariyer bütçene sığan, kadron dışındaki en uygun oyuncular.', needsCareer: true },
+  { id: 'MARKET', label: 'Alınabilir', hint: 'Kadro ortalamana yakın overall’a sahip, ligi kendi ligine denk veya daha zayıf (kalite ortalamasına göre) ve bütçene sığan oyuncular; serbest oyuncular dahil.', needsCareer: true },
   { id: 'ALL', label: 'Tüm katalog', hint: 'Tüm kataloğun en uygun adayları.', needsCareer: false },
 ]
 

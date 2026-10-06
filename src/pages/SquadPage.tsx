@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints'
 import type { Career, CareerPlayer, Club, RosterEvent, RosterEventType } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
 import { SquadCards } from '../components/SquadCards'
+import { SquadDensity } from '../components/SquadDensity'
 import { TacticLineup } from '../components/TacticLineup'
 import { analyzeDepth } from '../lib/depth'
 import { useTactic } from '../state/tacticStore'
@@ -199,7 +200,7 @@ function History({ careerId, events }: { careerId: number; events: RosterEvent[]
   const undo = useMutation({ mutationFn: (eventId: number) => endpoints.undoEvent(careerId, eventId), onSuccess: refresh })
 
   return (
-    <Card title="Hareket geçmişi">
+    <Card title="Satış / alış / kiralık geçmişi">
       {events.length === 0 ? (
         <p className="text-sm text-slate-500">Henüz hareket yok.</p>
       ) : (
@@ -237,6 +238,7 @@ export function SquadPage() {
   const career = careers.data?.find((c) => c.id === careerId)
   const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: careerId !== undefined })
   const events = useQuery({ queryKey: ['events', careerId], queryFn: () => endpoints.events(careerId!), enabled: careerId !== undefined })
+  const [tab, setTab] = useState<SquadTab>('squad')
   const [dialog, setDialog] = useState<{ mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer } | null>(null)
   const move = useMutation({
     mutationFn: (v: { type: RosterEventType; playerId: number; feeEur: number; toClubId?: number }) => endpoints.applyEvent(careerId!, v),
@@ -255,16 +257,33 @@ export function SquadPage() {
 
   return (
     <div className="space-y-4">
-      <NewCareer />
       <CareerSelect />
-      {career && (
+      <Tabs
+        value={tab}
+        onChange={setTab}
+        items={[
+          { id: 'squad', label: `Kadro (${squad.data?.length ?? 0})` },
+          { id: 'lineup', label: 'İlk 11 & Yedekler' },
+          { id: 'moves', label: `Transferler & Geçmiş (${events.data?.length ?? 0})` },
+          { id: 'career', label: 'Kariyer' },
+        ]}
+      />
+      {tab === 'career' && (
         <>
-          <CareerSettings career={career} />
-          <Card title={`Kadro · ${squad.data?.length ?? 0} oyuncu`}>
+          <NewCareer />
+          {career && <CareerSettings career={career} />}
+        </>
+      )}
+      {career && tab === 'squad' && (
+        <>
+          <Card title="Bölgesel yoğunluk">
+            {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} />}
+          </Card>
+          <Card title={`Oyuncular · ${squad.data?.length ?? 0}`}>
             {squad.isLoading ? (
               <Spinner />
             ) : (squad.data ?? []).length === 0 ? (
-              <EmptyState>Kadro boş. Aşağıdan oyuncu al.</EmptyState>
+              <EmptyState>Kadro boş. “Transferler & Geçmiş” sekmesinden oyuncu al.</EmptyState>
             ) : (
               <SquadCards
                 squad={squad.data!}
@@ -276,11 +295,16 @@ export function SquadPage() {
               />
             )}
           </Card>
-          {formations.data && <TacticLineup careerId={career.id} squad={squad.data ?? []} formations={formations.data} />}
-          <TransferPanel career={career} squadIds={squadIds} />
-          <History careerId={career.id} events={events.data ?? []} />
         </>
       )}
+      {career && tab === 'lineup' && formations.data && <TacticLineup careerId={career.id} squad={squad.data ?? []} formations={formations.data} />}
+      {career && tab === 'moves' && (
+        <>
+          <History careerId={career.id} events={events.data ?? []} />
+          <TransferPanel career={career} squadIds={squadIds} />
+        </>
+      )}
+      {!career && tab !== 'career' && <EmptyState>Önce “Kariyer” sekmesinden bir kariyer seç veya oluştur.</EmptyState>}
       {dialog && (
         <TransferDialog
           mode={dialog.mode}
@@ -292,6 +316,27 @@ export function SquadPage() {
           onSubmit={(v) => move.mutate({ type: dialog.mode, playerId: dialog.entry.player.id, ...v })}
         />
       )}
+    </div>
+  )
+}
+
+type SquadTab = 'squad' | 'lineup' | 'moves' | 'career'
+
+function Tabs({ value, onChange, items }: { value: SquadTab; onChange: (tab: SquadTab) => void; items: { id: SquadTab; label: string }[] }) {
+  return (
+    <div role="tablist" className="flex flex-wrap gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-700">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          role="tab"
+          aria-selected={value === item.id}
+          onClick={() => onChange(item.id)}
+          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${value === item.id ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-800 dark:text-emerald-400' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'}`}
+        >
+          {item.label}
+        </button>
+      ))}
     </div>
   )
 }
