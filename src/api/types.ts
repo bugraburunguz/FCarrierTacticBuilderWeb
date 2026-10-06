@@ -470,3 +470,10 @@ export interface PlayerRoleFit {
   reasons: string[]
   gaps: { attr: string; value: number; needed: number }[]
 }
+
+export interface SetupCheck {
+  title: string
+  status: WeaponState
+  detail: string
+  players: { id: number; name: string; position: string; value: number; ok: boolean }[]
+}

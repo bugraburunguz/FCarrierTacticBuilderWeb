@@ -2,6 +2,8 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
+import { useAuth } from '../auth/AuthContext'
+import { useActiveCareerId } from '../state/careerStore'
 import { FitResultCard } from '../components/FitResultCard'
 import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
@@ -15,7 +17,10 @@ import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
 
 export function PlayerDetailPage() {
   const id = Number(useParams().id)
-  const detail = useQuery({ queryKey: ['player', id], queryFn: () => endpoints.player(id), enabled: Number.isFinite(id) })
+  const { authenticated } = useAuth()
+  const activeCareer = useActiveCareerId()
+  const careerId = authenticated ? activeCareer : undefined
+  const detail = useQuery({ queryKey: ['player', id, careerId], queryFn: () => endpoints.player(id, careerId), enabled: Number.isFinite(id) })
   const [selection, setSelection] = useState<RoleSelection>({ position: 'RW', roleId: 'winger_attack', tags: [] })
   const fit = useMutation({
     mutationFn: () => endpoints.fitRole({ playerId: id, roleId: selection.roleId, position: selection.position, tags: selection.tags }),
@@ -52,6 +57,7 @@ export function PlayerDetailPage() {
               {summary.accelerate && <Pill>{summary.accelerate}</Pill>}
               {!!summary.runStyle && <Pill>Özel koşu #{summary.runStyle}</Pill>}
               {detail.data.preferredFoot && <Pill>{detail.data.preferredFoot === 'Left' ? 'Sol ayak' : 'Sağ ayak'}</Pill>}
+              {careerId !== undefined && <Pill tone="emerald">Kariyer verisi</Pill>}
             </div>
           </div>
           <dl className="grid grid-cols-2 gap-6 text-center">

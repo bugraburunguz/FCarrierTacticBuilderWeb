@@ -11,6 +11,8 @@ import { FitResults } from '../components/FitResults'
 import { PitchView } from '../components/PitchView'
 import { SlotSuggestions } from '../components/SlotSuggestions'
 import { SetupChips } from '../components/SetupChips'
+import { TeamSetup } from '../components/TeamSetup'
+import { profileOf } from '../lib/wizard'
 import { TagChips } from '../components/TagChips'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
 import { useActiveCareerId } from '../state/careerStore'
@@ -64,12 +66,13 @@ export function TacticBuilderPage() {
   function applyPreset(p: Preset) {
     const slots: Record<string, { tags: string[] }> = {}
     Object.entries(p.slotTags ?? {}).forEach(([slotId, ids]) => (slots[slotId] = { tags: ids }))
-    tacticStore.set({ formation: p.formation, presetId: p.id, slots })
+    const profile = profileOf(p)
+    tacticStore.set({ formation: p.formation, presetId: p.id, slots, setup: { buildUp: profile.buildUp, depth: profile.depth } })
     setSelectedSlot(undefined)
   }
 
   function changeFormation(id: string) {
-    tacticStore.set({ formation: id, presetId: preset?.formation === id ? tactic.presetId : undefined, slots: preset?.formation === id ? tactic.slots : {} })
+    tacticStore.set({ formation: id, presetId: preset?.formation === id ? tactic.presetId : undefined, slots: preset?.formation === id ? tactic.slots : {}, setup: tactic.setup })
     setSelectedSlot(undefined)
   }
 
@@ -160,9 +163,10 @@ export function TacticBuilderPage() {
           <SetupChips settings={preset?.settings} />
           {preset?.sourceNote && <p className="mt-1 text-xs text-slate-500">{preset.sourceNote}</p>}
         </Card>
+        <TeamSetup careerId={careerId} />
         {formation && <PitchView slots={formation.slots} selected={selectedSlot} onSelect={setSelectedSlot} info={info} />}
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => { tacticStore.set({ formation: tactic.formation, slots: {} }); setSelectedSlot(undefined) }}>
+          <Button variant="secondary" onClick={() => { tacticStore.set({ formation: tactic.formation, slots: {}, setup: tactic.setup }); setSelectedSlot(undefined) }}>
             Davranışları sıfırla
           </Button>
         </div>

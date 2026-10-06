@@ -29,6 +29,7 @@ import type {
   TeamSummary,
   TransferTargetsResult,
   SimilarPlayer,
+  SetupCheck,
   PlayerRoleFit,
 } from './types'
 
@@ -77,7 +78,7 @@ export const endpoints = {
   subscribe: () => api.post<Subscription>('/billing/subscribe'),
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),
-  player: (id: number) => api.get<PlayerDetail>(`/players/${id}`),
+  player: (id: number, careerId?: number) => api.get<PlayerDetail>(`/players/${id}`, { career: careerId }),
   playerRoles: (id: number, careerId?: number) => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId }),
   similarPlayers: (id: number, options: { ageMax?: number; potentialMin?: number; limit?: number } = {}) =>
     api.get<SimilarPlayer[]>(`/players/${id}/similar`, { age_max: options.ageMax, pot_min: options.potentialMin, limit: options.limit }),
@@ -105,6 +106,7 @@ export const endpoints = {
     api.post<Recommendation>('/recommend/preview', body, false),
   transferTargets: (body: { careerId: number; perPosition?: number; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
     api.post<TransferTargetsResult>('/recommend/transfer-targets', body),
+  setupCheck: (body: { careerId: number; buildUp: string; depth: number }) => api.post<SetupCheck[]>('/fit/setup-check', body),
   slotView: (body: {
     careerId: number
     scope: 'SQUAD' | 'LEAGUE' | 'MARKET'

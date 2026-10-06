@@ -3,9 +3,17 @@ import type { SlotSelection, TacticRequest } from '../api/types'
 
 const KEY = 'fc.tactic'
 
+export interface TeamSetupState {
+  buildUp: 'Short' | 'Balanced' | 'Counter'
+  depth: number
+}
+
+export const DEFAULT_SETUP: TeamSetupState = { buildUp: 'Balanced', depth: 50 }
+
 export interface TacticState {
   formation: string
   presetId?: string
+  setup?: TeamSetupState
   slots: Record<string, { tags: string[]; roleId?: string }>
 }
 

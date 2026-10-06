@@ -15,6 +15,16 @@ export interface WizardAnswers {
 
 export const DEFAULT_ANSWERS: WizardAnswers = { buildUp: 'Balanced', depth: 50, width: 'mixed', striker: 'any', formation: 'any' }
 
+export function depthBand(depth: number): string {
+  if (depth <= 30) {
+    return 'Deep'
+  }
+  if (depth <= 60) {
+    return 'Balanced'
+  }
+  return depth <= 90 ? 'High' : 'Aggressive'
+}
+
 export interface PresetProfile {
   buildUp: BuildUp
   depth: number

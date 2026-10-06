@@ -2,6 +2,8 @@ import { useMutation, useQueries, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
+import { useAuth } from '../auth/AuthContext'
+import { useActiveCareerId } from '../state/careerStore'
 import { AttributeRadar } from '../components/AttributeRadar'
 import { FitResultCard } from '../components/FitResultCard'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
@@ -18,7 +20,10 @@ export function ComparePage() {
     queryFn: () => endpoints.players({ q: term, size: 6 }),
     enabled: term.trim().length >= 2,
   })
-  const details = useQueries({ queries: list.map((c) => ({ queryKey: ['player', c.id], queryFn: () => endpoints.player(c.id) })) })
+  const { authenticated } = useAuth()
+  const activeCareer = useActiveCareerId()
+  const careerId = authenticated ? activeCareer : undefined
+  const details = useQueries({ queries: list.map((c) => ({ queryKey: ['player', c.id, careerId], queryFn: () => endpoints.player(c.id, careerId) })) })
   const loaded = details.map((d) => d.data).filter((d): d is NonNullable<typeof d> => !!d)
   const fit = useMutation({
     mutationFn: () => endpoints.compare({ ids: list.map((c) => c.id), roleId: selection.roleId, position: selection.position, tags: selection.tags }),

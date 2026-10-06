@@ -5,7 +5,7 @@ import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
 import { SetupChips } from '../components/SetupChips'
 import { Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
-import { DEFAULT_ANSWERS, recommend, type BuildUp, type FormationPref, type Striker, type Width, type WizardAnswers } from '../lib/wizard'
+import { DEFAULT_ANSWERS, profileOf, recommend, type BuildUp, type FormationPref, type Striker, type Width, type WizardAnswers } from '../lib/wizard'
 import { tacticStore } from '../state/tacticStore'
 
 interface Option<T> {
@@ -77,7 +77,8 @@ export function WizardPage() {
   function apply(preset: Preset) {
     const slots: Record<string, { tags: string[] }> = {}
     Object.entries(preset.slotTags ?? {}).forEach(([slotId, ids]) => (slots[slotId] = { tags: ids }))
-    tacticStore.set({ formation: preset.formation, presetId: preset.id, slots })
+    const profile = profileOf(preset)
+    tacticStore.set({ formation: preset.formation, presetId: preset.id, slots, setup: { buildUp: profile.buildUp, depth: profile.depth } })
     navigate('/tactics/builder')
   }
 

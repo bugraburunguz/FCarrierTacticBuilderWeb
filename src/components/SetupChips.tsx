@@ -1,16 +1,7 @@
+import { depthBand } from '../lib/wizard'
 import { Pill } from './ui'
 
 const BUILD_UP: Record<string, string> = { Short: 'Kısa pas', Balanced: 'Dengeli', Counter: 'Kontra' }
-
-function depthBand(depth: number): string {
-  if (depth <= 30) {
-    return 'Deep'
-  }
-  if (depth <= 60) {
-    return 'Balanced'
-  }
-  return depth <= 90 ? 'High' : 'Aggressive'
-}
 
 export function SetupChips({ settings }: { settings?: Record<string, unknown> }) {
   if (!settings) {
