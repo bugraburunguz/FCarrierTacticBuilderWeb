@@ -3,14 +3,31 @@ import type { PositionNeed } from '../lib/depth'
 import { DEPTH_GUIDE, depthState, POSITION_LABELS, primaryPosition, type DepthState } from '../lib/positions'
 import { Pill } from './ui'
 
-const ROWS: (string | null)[][] = [
-  ['LW', 'ST', 'RW'],
-  ['LM', 'CAM', 'RM'],
-  [null, 'CM', null],
-  [null, 'CDM', null],
-  ['LB', 'CB', 'RB'],
-  [null, 'GK', null],
+interface CellSpec {
+  key: string
+  base: string
+  side?: 'L' | 'R'
+}
+
+const spec = (key: string, base: string, side?: 'L' | 'R'): CellSpec => ({ key, base, side })
+
+const ROWS: CellSpec[][] = [
+  [spec('LW', 'LW'), spec('LST', 'ST', 'L'), spec('ST', 'ST'), spec('RST', 'ST', 'R'), spec('RW', 'RW')],
+  [spec('LCAM', 'CAM', 'L'), spec('CAM', 'CAM'), spec('RCAM', 'CAM', 'R')],
+  [spec('LM', 'LM'), spec('LCM', 'CM', 'L'), spec('CM', 'CM'), spec('RCM', 'CM', 'R'), spec('RM', 'RM')],
+  [spec('LCDM', 'CDM', 'L'), spec('CDM', 'CDM'), spec('RCDM', 'CDM', 'R')],
+  [spec('LB', 'LB'), spec('LCB', 'CB', 'L'), spec('RCB', 'CB', 'R'), spec('RB', 'RB')],
+  [spec('GK', 'GK')],
 ]
+
+const SIDED_LABELS: Record<string, string> = {
+  LST: 'Sol santrfor', RST: 'Sağ santrfor', LCAM: 'Sol ofansif OS', RCAM: 'Sağ ofansif OS',
+  LCM: 'Sol merkez OS', RCM: 'Sağ merkez OS', LCDM: 'Sol defansif OS', RCDM: 'Sağ defansif OS',
+  LCB: 'Sol stoper', RCB: 'Sağ stoper',
+}
+
+const SIDED_GUIDE: [number, number] = [1, 2]
+const TWO_FOOTED_WEAK_FOOT = 4
 
 const REGIONS: { label: string; positions: string[] }[] = [
   { label: 'Hücum', positions: ['LW', 'ST', 'RW'] },
@@ -41,31 +58,52 @@ interface Cell {
   best?: number
   avg?: number
   required?: number
+  guide: [number, number]
 }
 
-function buildCells(squad: CareerPlayer[], needs: PositionNeed[]): Map<string, Cell> {
+const BASE_POSITIONS = [...new Set(ROWS.flat().map((c) => c.base))]
+
+const isTwoFooted = (p: CareerPlayer) => (p.player.weakFoot ?? 0) >= TWO_FOOTED_WEAK_FOOT
+
+function playsSide(p: CareerPlayer, side: 'L' | 'R'): boolean {
+  if (isTwoFooted(p)) {
+    return true
+  }
+  return p.player.preferredFoot === (side === 'L' ? 'Left' : 'Right')
+}
+
+function summarize(key: string, natural: CareerPlayer[], flex: CareerPlayer[], state: DepthState, guide: [number, number], required?: number): Cell {
+  const overalls = natural.map((s) => s.player.overall)
+  return { position: key, natural, flex, state, guide, required, best: overalls.length ? Math.max(...overalls) : undefined, avg: average(overalls) }
+}
+
+function buildBaseCells(squad: CareerPlayer[], needs: PositionNeed[]): Map<string, Cell> {
   const needByPosition = new Map(needs.map((n) => [n.position, n]))
   const cells = new Map<string, Cell>()
-  for (const position of ROWS.flat().filter((p): p is string => p !== null)) {
+  for (const position of BASE_POSITIONS) {
     const natural = squad.filter((s) => primaryPosition(s.player.positions) === position)
     const flex = squad.filter((s) => primaryPosition(s.player.positions) !== position && s.player.positions.includes(position))
     const need = needByPosition.get(position)
-    const overalls = natural.map((s) => s.player.overall)
-    cells.set(position, {
-      position,
-      natural,
-      flex,
-      state: need ? need.state : depthState(position, natural.length),
-      best: overalls.length ? Math.max(...overalls) : undefined,
-      avg: average(overalls),
-      required: need?.required,
-    })
+    cells.set(position, summarize(position, natural, flex, need ? need.state : depthState(position, natural.length), DEPTH_GUIDE[position] ?? [1, 3], need?.required))
   }
   return cells
 }
 
+function buildCell(spec: CellSpec, base: Map<string, Cell>): Cell {
+  const baseCell = base.get(spec.base)!
+  if (!spec.side) {
+    return { ...baseCell, position: spec.key }
+  }
+  const side = spec.side
+  const natural = baseCell.natural.filter((p) => playsSide(p, side))
+  const flex = baseCell.flex.filter((p) => playsSide(p, side))
+  const [min, max] = SIDED_GUIDE
+  const state: DepthState = natural.length < min ? 'thin' : natural.length > max ? 'dense' : 'ok'
+  return summarize(spec.key, natural, flex, state, SIDED_GUIDE)
+}
+
 export function SquadDensity({ squad, needs }: { squad: CareerPlayer[]; needs: PositionNeed[] }) {
-  const cells = buildCells(squad, needs)
+  const cells = buildBaseCells(squad, needs)
   const usingTactic = needs.length > 0
 
   return (
@@ -101,14 +139,12 @@ export function SquadDensity({ squad, needs }: { squad: CareerPlayer[]; needs: P
       <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-emerald-50 to-white p-3 dark:border-slate-600 dark:from-slate-800 dark:to-slate-800" aria-label="Mevki yoğunluk haritası">
         <div className="space-y-2">
           {ROWS.map((row, index) => (
-            <div key={index} className="grid grid-cols-3 gap-2">
-              {row.map((position, col) =>
-                position === null ? (
-                  <div key={col} />
-                ) : (
-                  <DensityCell key={position} cell={cells.get(position)!} />
-                ),
-              )}
+            <div key={index} className="flex justify-center gap-2">
+              {row.map((cellSpec) => (
+                <div key={cellSpec.key} className="w-1/5 min-w-[96px]">
+                  <DensityCell cell={buildCell(cellSpec, cells)} />
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -116,20 +152,27 @@ export function SquadDensity({ squad, needs }: { squad: CareerPlayer[]; needs: P
           {usingTactic
             ? 'Renkler seçili taktiğin ihtiyacına göre (ilk 11 + rotasyon). '
             : 'Renkler genel derinlik rehberine göre (taktik seçilmedi). '}
-          Sayı: asıl mevkisi o olan oyuncu + (alternatif mevkisi o olan).
+          Sayı: asıl mevkisi o olan + (alternatif mevkisi o olan). Soldaki hücrelerde sol ayaklılar, sağdakilerde sağ ayaklılar; iki ayaklılar (zayıf ayak 4+) iki tarafta da sayılır.
         </p>
       </div>
     </div>
   )
 }
 
+function footMark(p: CareerPlayer): string {
+  if (isTwoFooted(p)) {
+    return 'iki ayaklı'
+  }
+  return p.player.preferredFoot === 'Left' ? 'sol ayak' : 'sağ ayak'
+}
+
 function DensityCell({ cell }: { cell: Cell }) {
-  const [min, max] = DEPTH_GUIDE[cell.position] ?? [1, 3]
+  const [min, max] = cell.guide
   const label = STATE_LABEL[cell.state]
   const names = [...cell.natural].sort((a, b) => b.player.overall - a.player.overall)
   const title = [
-    ...names.map((s) => `${s.player.name} (${s.player.overall})`),
-    ...cell.flex.map((s) => `${s.player.name} (${s.player.overall}) — alternatif`),
+    ...names.map((s) => `${s.player.name} (${s.player.overall}) · ${footMark(s)}`),
+    ...cell.flex.map((s) => `${s.player.name} (${s.player.overall}) · ${footMark(s)} — alternatif`),
   ].join(String.fromCharCode(10))
   return (
     <div title={title} className={`rounded-xl border p-2 text-xs transition hover:shadow-md ${STATE_STYLE[cell.state]}`}>
@@ -137,7 +180,7 @@ function DensityCell({ cell }: { cell: Cell }) {
         <strong className="text-sm">{cell.position}</strong>
         <Pill tone={label.tone}>{label.text}</Pill>
       </div>
-      <div className="mt-0.5 text-slate-500">{POSITION_LABELS[cell.position]}</div>
+      <div className="mt-0.5 truncate text-slate-500">{POSITION_LABELS[cell.position] ?? SIDED_LABELS[cell.position]}</div>
       <div className="mt-1 flex items-baseline gap-1">
         <span className="text-lg font-bold tabular-nums">{cell.natural.length}</span>
         {cell.flex.length > 0 && <span className="text-slate-500">+{cell.flex.length}</span>}
