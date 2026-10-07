@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { CompareTray } from './CompareTray'
 import { useAuth } from '../auth/AuthContext'
@@ -56,6 +57,11 @@ export function Layout() {
   const { authenticated, me, logout } = useAuth()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  useEffect(() => {
+    if (pathname.startsWith('/ut/') && modeStore.get() !== 'ut') {
+      modeStore.set('ut')
+    }
+  }, [pathname])
   const activeGroup = nav.find((g) => g.match.some((m) => pathname === m || pathname.startsWith(`${m}/`)))
 
   return (
