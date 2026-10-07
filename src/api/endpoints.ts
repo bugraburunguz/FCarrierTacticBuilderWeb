@@ -35,6 +35,8 @@ import type {
   PlayerRoleFit,
   DevelopmentPlanResult,
   Wonderkid,
+  MetaCard,
+  MetaFormation,
 } from './types'
 
 export interface PlayerFilters {
@@ -90,6 +92,10 @@ export const endpoints = {
     api.post<DevelopmentPlanResult>(`/players/${id}/development`, body, false),
   wonderkids: (params: { career?: number; pos?: string; maxAge?: number; minPot?: number; league?: number; budgetMax?: number; role?: string; sort?: string; gender?: number; limit?: number }) =>
     api.get<Wonderkid[]>('/wonderkids', params),
+  utFormations: () => api.get<{ snapshotNote: string; formations: MetaFormation[] }>('/ut/meta/formations'),
+  utTier: (pos: string, options: { gender?: number; limit?: number } = {}) =>
+    api.get<MetaCard[]>('/ut/meta/tier', { pos, gender: options.gender, limit: options.limit }),
+  utChemStyle: (id: number, pos?: string) => api.post<MetaCard>(`/ut/card/${id}/chemstyle?${pos ? `pos=${pos}` : ''}`, undefined, false),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),

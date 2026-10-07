@@ -560,3 +560,32 @@ export interface Wonderkid {
   roleBadge?: WeaponState
   projectedBadge?: WeaponState
 }
+
+export interface MetaFormation {
+  id: string
+  share?: number
+  note: string
+  buildUp: string
+  lineHeight: string
+  keyRoles: string[]
+}
+
+export interface ChemStyleResult {
+  style: string
+  metaRating: number
+  delta: number
+  tier: string
+}
+
+export interface MetaCard {
+  id: number
+  name: string
+  age?: number
+  overall: number
+  position: string
+  metaRating: number
+  tier: string
+  bestChemStyle?: string
+  chemStyles?: ChemStyleResult[]
+  assumption: boolean
+}

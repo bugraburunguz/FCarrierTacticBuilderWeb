@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { CompareTray } from './CompareTray'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
+import { modeStore, useMode, type AppMode } from '../state/modeStore'
 
 interface NavGroup {
   to: string
@@ -36,11 +37,24 @@ const NAV: NavGroup[] = [
   { to: '/career/import', label: 'İçe aktar', match: ['/career'] },
 ]
 
+const UT_NAV: NavGroup[] = [
+  { to: '/players', label: 'Kart veritabanı', match: ['/players', '/compare'] },
+  { to: '/ut/squad', label: 'Kadro kurucu', match: ['/ut/squad'] },
+  { to: '/ut/meta', label: 'Meta', match: ['/ut/meta'] },
+]
+
+const MODES: { id: AppMode; label: string; home: string }[] = [
+  { id: 'career', label: 'FC Career', home: '/' },
+  { id: 'ut', label: 'Ultimate Team', home: '/ut/squad' },
+]
+
 export function Layout() {
+  const mode = useMode()
+  const nav = mode === 'ut' ? UT_NAV : NAV
   const { authenticated, me, logout } = useAuth()
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const activeGroup = NAV.find((g) => g.match.some((m) => pathname === m || pathname.startsWith(`${m}/`)))
+  const activeGroup = nav.find((g) => g.match.some((m) => pathname === m || pathname.startsWith(`${m}/`)))
 
   return (
     <div className="min-h-screen">
@@ -49,8 +63,24 @@ export function Layout() {
           <NavLink to="/" className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
             FC Kariyer
           </NavLink>
+          <div role="group" aria-label="Mod" className="flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-600">
+            {MODES.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                aria-pressed={mode === m.id}
+                onClick={() => {
+                  modeStore.set(m.id)
+                  navigate(m.home)
+                }}
+                className={`rounded-md px-2.5 py-1 text-xs font-semibold ${mode === m.id ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
           <nav aria-label="Ana menü" className="flex flex-1 flex-wrap gap-1">
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
