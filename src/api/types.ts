@@ -660,3 +660,85 @@ export interface UtSquadEvaluation {
   averageOverall: number
   assumption: boolean
 }
+
+export interface CaptureCard {
+  instanceId: number
+  assetId: number
+  name?: string
+  rating: number
+  position?: string
+  positions: string[]
+  rarity?: string
+  rarityId?: number
+  cardType?: 'ICON' | 'HERO' | 'HOF'
+  teamId: number
+  leagueId: number
+  nation: number
+  untradeable: boolean
+  faceLabels: string[]
+  faceStats: number[]
+  lastSalePrice?: number
+  marketMin?: number
+  marketMax?: number
+  marketAverage?: number
+  duplicate: boolean
+  pile: string
+}
+
+export interface CaptureReward {
+  type?: string
+  value?: number
+  count: number
+}
+
+export interface CaptureObjective {
+  id: number
+  name?: string
+  description?: string
+  progress: number
+  total: number
+  status?: string
+  lockedBy: number[]
+  rewards: CaptureReward[]
+}
+
+export interface CaptureObjectiveGroup {
+  groupId: number
+  name?: string
+  gameMode?: string
+  status?: string
+  startTime?: number
+  endTime?: number
+  rewards: CaptureReward[]
+  objectives: CaptureObjective[]
+}
+
+export interface CaptureResult {
+  stats: {
+    received: number
+    processed: number
+    stripped: number
+    ignored: number
+    invalid: number
+    byKind: Record<string, number>
+    definitionNames: number
+    definitionsTruncated: boolean
+    warnings: string[]
+  }
+  cards: CaptureCard[]
+  activeSquad?: {
+    formation?: string
+    formationLabel?: string
+    chemistry?: number
+    name?: string
+    slots: { index: number; starter: boolean; position?: string; chemistry?: number; card?: CaptureCard }[]
+  }
+  squads: { id: number; name?: string; formationLabel?: string; rating?: number; chemistry?: number }[]
+  prices: { source: string; assetId: number; name?: string; rating: number; buyNow?: number; currentBid?: number; lastSale?: number }[]
+  objectives: CaptureObjectiveGroup[]
+  sbcSets: { setId: number; name?: string; category?: string; challengesCount: number; challengesCompleted: number; repeatable: boolean; endTime?: number }[]
+  evolutions: { id: number; name?: string; status?: string; levels: number }[]
+  coins?: number
+  currencies: { name: string; funds: number }[]
+  config: { formations: { id: number; name: string; label: string; positionNames: string[] }[] }
+}

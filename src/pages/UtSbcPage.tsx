@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { SbcPoolEntry, SbcRarity } from '../api/types'
+import { sbcPoolStore } from '../state/sbcPoolStore'
 import { TraditionalSbc } from '../components/TraditionalSbc'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
 
@@ -25,11 +26,17 @@ const emptyRow = (): Row => ({ rating: '80', rarity: 'REGULAR', count: '1', untr
 export function UtSbcPage() {
   const [target, setTarget] = useState('1000')
   const [minRating, setMinRating] = useState('')
-  const [rows, setRows] = useState<Row[]>([
+  const [rows, setRows] = useState<Row[]>(() => {
+    const stored = sbcPoolStore.get()
+    if (stored && stored.length > 0) {
+      return stored.map((p) => ({ rating: String(p.rating), rarity: p.rarity, count: String(p.count), untradeable: p.untradeable, price: p.priceEach === undefined ? '' : String(p.priceEach) }))
+    }
+    return [
     { rating: '80', rarity: 'REGULAR', count: '10', untradeable: true, price: '' },
     { rating: '82', rarity: 'REGULAR', count: '4', untradeable: false, price: '1200' },
     { rating: '84', rarity: 'REGULAR', count: '2', untradeable: false, price: '3500' },
-  ])
+    ]
+  })
   const setRow = (index: number, patch: Partial<Row>) => setRows((cur) => cur.map((r, i) => (i === index ? { ...r, ...patch } : r)))
 
   const solve = useMutation({
