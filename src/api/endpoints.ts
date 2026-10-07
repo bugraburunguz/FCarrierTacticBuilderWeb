@@ -39,6 +39,11 @@ import type {
   MetaFormation,
 } from './types'
 
+export interface SetupBody {
+  buildUp?: string
+  depth?: number
+}
+
 export interface PlayerFilters {
   q?: string
   pos?: string[]
@@ -112,13 +117,13 @@ export const endpoints = {
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
-  recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string }) =>
+  recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   lineup: (careerId: number, tactic: TacticRequest) => api.post<SquadFit>('/fit/lineup', { careerId, tactic }),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
-  previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number }) =>
+  previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number; setup?: SetupBody }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
-  transferTargets: (body: { careerId: number; perPosition?: number; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
+  transferTargets: (body: { careerId: number; perPosition?: number; setup?: SetupBody; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
     api.post<TransferTargetsResult>('/recommend/transfer-targets', body),
   setupCheck: (body: { careerId: number; buildUp: string; depth: number }) => api.post<SetupCheck[]>('/fit/setup-check', body),
   exportTacticCode: (tactic: TacticRequest) => api.post<TacticCodeExport>('/tactics/export-code', tactic, false),
@@ -126,7 +131,7 @@ export const endpoints = {
   slotView: (body: {
     careerId: number
     scope: 'SQUAD' | 'LEAGUE' | 'MARKET'
-    slot: { roleId: string; position: string; tags?: string[]; leagueId?: number; limit?: number }
+    slot: { roleId: string; position: string; tags?: string[]; leagueId?: number; limit?: number; setup?: SetupBody }
   }) => api.post<Recommendation>('/recommend/slot-view', body),
   recommendSlot: (body: {
     careerId?: number
@@ -134,6 +139,7 @@ export const endpoints = {
     position: string
     tags?: string[]
     budgetMax?: number
+    setup?: SetupBody
     currentPlayerId?: number
     limit?: number
   }) => api.post<Credited<Recommendation>>('/recommend/slot', body),

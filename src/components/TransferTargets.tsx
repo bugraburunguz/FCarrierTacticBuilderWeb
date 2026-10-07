@@ -17,9 +17,10 @@ const ACQUISITION: Record<Acquisition, { label: string; tone: 'emerald' | 'sky' 
 interface Props {
   careerId?: number
   slots: ResolvedSlot[]
+  setup?: { buildUp?: string; depth?: number }
 }
 
-export function TransferTargets({ careerId, slots }: Props) {
+export function TransferTargets({ careerId, slots, setup }: Props) {
   const run = useMutation({
     mutationFn: () => {
       const byPosition = new Map<string, ResolvedSlot>()
@@ -28,6 +29,7 @@ export function TransferTargets({ careerId, slots }: Props) {
       return endpoints.transferTargets({
         careerId: careerId!,
         perPosition: 3,
+        setup,
         slots: ordered.map((s) => ({ position: s.position, roleId: s.roleId, tags: s.tags })),
       })
     },

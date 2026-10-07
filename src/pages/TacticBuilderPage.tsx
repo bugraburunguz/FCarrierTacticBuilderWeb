@@ -99,7 +99,7 @@ export function TacticBuilderPage() {
     <div className="grid gap-4 lg:grid-cols-[minmax(320px,460px)_1fr]">
       {autoFit && formations.data && presets.data && (
         <div className="lg:col-span-2">
-          <AutoFitPanel formations={formations.data} presets={presets.data} />
+          <AutoFitPanel formations={formations.data} presets={presets.data} setup={tactic.setup} />
         </div>
       )}
       <div className="space-y-3">
@@ -212,7 +212,7 @@ export function TacticBuilderPage() {
             </div>
           </Card>
         )}
-        {slot && <SlotSuggestions roleId={resolvedSlot?.roleId} position={slot.position} tags={tactic.slots[slot.slotId]?.tags ?? []} gender={career?.gender} />}
+        {slot && <SlotSuggestions roleId={resolvedSlot?.roleId} position={slot.position} tags={tactic.slots[slot.slotId]?.tags ?? []} gender={career?.gender} setup={tactic.setup} />}
       </div>
 
       <div className="space-y-4 lg:col-span-2">

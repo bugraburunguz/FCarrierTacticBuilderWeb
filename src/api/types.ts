@@ -496,6 +496,10 @@ export interface TacticCodeImport {
   warnings: string[]
 }
 
+export interface RecommendationSetupFields {
+  setupDelta?: number
+}
+
 export interface DevelopmentGap {
   attr: string
   value: number

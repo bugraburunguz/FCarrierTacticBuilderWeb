@@ -4,6 +4,8 @@ import { Link, useParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import { useAuth } from '../auth/AuthContext'
 import { useActiveCareerId } from '../state/careerStore'
+import { useMode } from '../state/modeStore'
+import { ChemStylePanel } from '../components/ChemStylePanel'
 import { FitResultCard } from '../components/FitResultCard'
 import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
@@ -18,6 +20,7 @@ import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
 export function PlayerDetailPage() {
   const id = Number(useParams().id)
   const { authenticated } = useAuth()
+  const mode = useMode()
   const activeCareer = useActiveCareerId()
   const careerId = authenticated ? activeCareer : undefined
   const detail = useQuery({ queryKey: ['player', id, careerId], queryFn: () => endpoints.player(id, careerId), enabled: Number.isFinite(id) })
@@ -79,7 +82,11 @@ export function PlayerDetailPage() {
       </Card>
 
       <PlayerRoles playerId={summary.id} listed={summary.positions} />
-      <DevelopmentPlan playerId={summary.id} overall={summary.overall} potential={summary.potential} />
+      {mode === 'ut' ? (
+        <ChemStylePanel playerId={summary.id} positions={summary.positions} />
+      ) : (
+        <DevelopmentPlan playerId={summary.id} overall={summary.overall} potential={summary.potential} />
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Attribute'lar">

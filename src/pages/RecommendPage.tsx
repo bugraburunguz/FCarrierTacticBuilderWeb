@@ -34,6 +34,7 @@ export function RecommendPage() {
         position: slot!.position,
         tags: slot!.tags,
         budgetMax: budget ? Number(budget) : undefined,
+        setup: tactic.setup,
         currentPlayerId: currentId ? Number(currentId) : undefined,
         limit: 10,
       }),
@@ -44,7 +45,7 @@ export function RecommendPage() {
   return (
     <div className="space-y-4">
       <CareerSelect />
-      <TransferTargets careerId={careerId} slots={resolved.data?.slots ?? []} />
+      <TransferTargets careerId={careerId} slots={resolved.data?.slots ?? []} setup={tactic.setup} />
       <Card title="Slot önerisi (detaylı, 3 kredi)">
         <div className="grid gap-3 md:grid-cols-2">
           <Field label="Slot">

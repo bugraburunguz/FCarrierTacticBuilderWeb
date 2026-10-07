@@ -68,7 +68,7 @@ export function UtSquadPage() {
           <p className="text-3xl font-bold tabular-nums">{chem.total}<span className="text-base font-normal text-slate-500"> / {MAX_SQUAD_CHEM}</span></p>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Kadro ortalaması: <b>{average || '—'}</b> · {filled.length}/11 slot dolu</p>
           <p className="mt-2 text-xs text-slate-500">
-            Kulüp 2/4/7, lig 3/5/8, ülke 2/5/8 eşikleri; kendi mevkisinde olmayan oyuncu 0 kimya alır. Icon, Hero ve Evolution kartlarının özel kuralları henüz yok. Fiyat verisi olmadığı için bütçe hesaplanmaz.
+            Kulüp 2/4/7, lig 3/5/8, ülke 2/5/8 eşikleri; kendi mevkisinde olmayan oyuncu 0 kimya alır. Icon/Hero ve menajer kuralları motorda hazır, ancak katalogda Icon/Hero kartı olmadığı için şu an devreye girmez (özel kart verisi bekleniyor). Fiyat verisi olmadığı için bütçe hesaplanmaz.
           </p>
           <Button variant="ghost" className="mt-2" onClick={() => setPicked({})}>Kadroyu temizle</Button>
         </Card>

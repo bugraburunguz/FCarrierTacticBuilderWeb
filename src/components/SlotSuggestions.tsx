@@ -14,6 +14,7 @@ interface Props {
   position: string
   tags: string[]
   gender?: number
+  setup?: { buildUp?: string; depth?: number }
 }
 
 type Tab = 'SQUAD' | 'LEAGUE' | 'MARKET' | 'ALL'
@@ -25,7 +26,7 @@ const TABS: { id: Tab; label: string; hint: string; needsCareer: boolean }[] = [
   { id: 'ALL', label: 'Tüm katalog', hint: 'Tüm kataloğun en uygun adayları.', needsCareer: false },
 ]
 
-export function SlotSuggestions({ roleId, position, tags, gender }: Props) {
+export function SlotSuggestions({ roleId, position, tags, gender, setup }: Props) {
   const { authenticated } = useAuth()
   const careerId = useActiveCareerId()
   const hasCareer = authenticated && careerId !== undefined
@@ -36,11 +37,11 @@ export function SlotSuggestions({ roleId, position, tags, gender }: Props) {
   const leagues = useQuery({ queryKey: ['leagues', gender], queryFn: () => endpoints.leagues(gender), enabled: hasCareer && active === 'LEAGUE', staleTime: 600_000 })
   const tagKey = tags.join(',')
   const suggestions = useQuery<Recommendation>({
-    queryKey: ['slot-view', active, careerId, roleId, position, tagKey, gender, leagueId],
+    queryKey: ['slot-view', active, careerId, roleId, position, tagKey, gender, leagueId, setup?.buildUp, setup?.depth],
     queryFn: () =>
       active === 'ALL'
-        ? endpoints.previewSlot({ roleId: roleId!, position, tags, gender, limit: 8 })
-        : endpoints.slotView({ careerId: careerId!, scope: active, slot: { roleId: roleId!, position, tags, leagueId, limit: 8 } }),
+        ? endpoints.previewSlot({ roleId: roleId!, position, tags, gender, limit: 8, setup })
+        : endpoints.slotView({ careerId: careerId!, scope: active, slot: { roleId: roleId!, position, tags, leagueId, limit: 8, setup } }),
     enabled: roleId !== undefined && (active !== 'LEAGUE' || leagueId !== undefined),
     staleTime: 60_000,
     retry: false,

@@ -52,20 +52,22 @@ function applyCombo(combo: TacticCombo) {
 interface Props {
   formations: Formation[]
   presets: Preset[]
+  setup?: { buildUp?: string; depth?: number }
 }
 
-export function AutoFitPanel({ formations, presets }: Props) {
+export function AutoFitPanel({ formations, presets, setup }: Props) {
   const { authenticated } = useAuth()
   const careerId = useActiveCareerId()
   const queryClient = useQueryClient()
   const [lockFormation, setLockFormation] = useState('')
   const [lockPreset, setLockPreset] = useState('')
   const [mode, setMode] = useState<DiversityMode>('auto')
+  const [useMySetup, setUseMySetup] = useState(false)
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
   const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: authenticated && careerId !== undefined })
   const run = useMutation({
     mutationFn: (nextMode: DiversityMode) =>
-      endpoints.recommendTactic({ careerId: careerId!, lockFormation: lockFormation || undefined, lockPreset: lockPreset || undefined, topN: 2, diversityMode: nextMode }),
+      endpoints.recommendTactic({ careerId: careerId!, lockFormation: lockFormation || undefined, lockPreset: lockPreset || undefined, topN: 2, diversityMode: nextMode, setup: useMySetup ? setup : undefined }),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
   })
   const result = run.data?.result
@@ -125,6 +127,11 @@ export function AutoFitPanel({ formations, presets }: Props) {
             </Select>
           </Field>
         </div>
+        <label className="mb-3 flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={useMySetup} disabled={!setup} onChange={(e) => setUseMySetup(e.target.checked)} />
+          Build-Up ve Depth ayarımı tüm adaylarda sabitle
+          <span className="text-xs text-slate-500">(kapalıyken her anlayış kendi ayarıyla değerlendirilir)</span>
+        </label>
         <Button disabled={careerId === undefined || run.isPending || tooSmall} onClick={() => start(mode)}>
           {run.isPending ? 'Kombinasyonlar deneniyor…' : 'En iyi taktiği bul'}
         </Button>
