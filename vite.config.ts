@@ -5,7 +5,10 @@ import { defineConfig } from 'vite'
 
 const backend = process.env.VITE_BACKEND_URL ?? 'http://localhost:8080'
 
+const base = process.env.VITE_BASE ?? '/'
+
 export default defineConfig({
+  base,
   plugins: [react(), tailwindcss()],
   server: {
     port: 5173,

@@ -1,7 +1,8 @@
 import { tokens } from './tokens'
 import type { Envelope, TokenResponse } from './types'
 
-const BASE = '/api/v1'
+const API_ORIGIN = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '').replace(/\/$/, '')
+const BASE = API_ORIGIN + '/api/v1'
 
 export class ApiError extends Error {
   code: string
@@ -41,7 +42,7 @@ function buildUrl(path: string, query?: RequestOptions['query']): string {
       url.searchParams.set(key, String(value))
     }
   })
-  return url.pathname + url.search
+  return API_ORIGIN ? url.toString() : url.pathname + url.search
 }
 
 let refreshing: Promise<boolean> | null = null
