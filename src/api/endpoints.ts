@@ -115,6 +115,7 @@ export const endpoints = {
   }) =>
     api.post<UtSquadEvaluation>('/ut/squad/evaluate', body, false),
   utCapture: (captures: unknown[]) => api.post<CaptureResult>('/ut/capture', { captures }),
+  keyAttributes: () => api.get<{ source: string; positions: Record<string, string[]> }>('/config/key-attributes'),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),

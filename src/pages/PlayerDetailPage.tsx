@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext'
 import { useActiveCareerId } from '../state/careerStore'
 import { useMode } from '../state/modeStore'
 import { ChemStylePanel } from '../components/ChemStylePanel'
+import { KeyAttributes } from '../components/KeyAttributes'
 import { FitResultCard } from '../components/FitResultCard'
 import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
@@ -81,6 +82,7 @@ export function PlayerDetailPage() {
         </p>
       </Card>
 
+      <KeyAttributes positions={summary.positions} attrs={attrs} />
       <PlayerRoles playerId={summary.id} listed={summary.positions} />
       {mode === 'ut' ? (
         <ChemStylePanel playerId={summary.id} positions={summary.positions} />

@@ -6,6 +6,8 @@ import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import { AutoFitPanel } from '../components/AutoFitPanel'
+import { FormationStyleChips } from '../components/FormationStyleChips'
+import { ProtectLeadCard } from '../components/ProtectLeadCard'
 import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
 import { PitchView } from '../components/PitchView'
@@ -117,6 +119,7 @@ export function TacticBuilderPage() {
                   </optgroup>
                 ))}
               </Select>
+              <FormationStyleChips formationId={tactic.formation} />
             </Field>
             <Field label="Preset / replika">
               <Select
@@ -165,6 +168,7 @@ export function TacticBuilderPage() {
           {preset?.sourceNote && <p className="mt-1 text-xs text-slate-500">{preset.sourceNote}</p>}
         </Card>
         <TeamSetup careerId={careerId} />
+        <ProtectLeadCard slots={resolved.data?.slots ?? []} roles={roles.data ?? []} />
         <EaTacticCode onLoaded={() => { setAutoFit(false); setSelectedSlot(undefined) }} />
         {formation && <PitchView slots={formation.slots} selected={selectedSlot} onSelect={setSelectedSlot} info={info} />}
         <div className="flex gap-2">

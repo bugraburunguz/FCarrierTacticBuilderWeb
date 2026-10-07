@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { TacticRequest, WeaponState } from '../api/types'
+import { FormationStyleChips } from '../components/FormationStyleChips'
 import { PitchView } from '../components/PitchView'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Modal, Pill, Select, Spinner } from '../components/ui'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
@@ -145,6 +146,7 @@ export function UtSquadPage() {
                 <Input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} />
               </Field>
             </div>
+            <FormationStyleChips formationId={formation?.id} />
             <PitchView slots={slots} selected={selected} onSelect={setSelected} info={info} />
             <p className="mt-2 text-xs text-slate-500">Slota tıkla: rol ve focus seç, kart ata. Sahada: meta skor · kimya (k) · fiyat. Formasyon değiştirince kartlar aynı mevkideki slotlara taşınır.</p>
           </>
