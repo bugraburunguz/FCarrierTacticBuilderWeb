@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import { toTacticRequest, tacticStore, useTactic } from '../state/tacticStore'
@@ -9,7 +9,13 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
   const [input, setInput] = useState('')
   const [notice, setNotice] = useState<string | undefined>()
 
-  const exportCode = useMutation({ mutationFn: () => endpoints.exportTacticCode(toTacticRequest(tactic)) })
+  const request = toTacticRequest(tactic)
+  const exportCode = useQuery({
+    queryKey: ['ea-code', JSON.stringify(request)],
+    queryFn: () => endpoints.exportTacticCode(request),
+    retry: false,
+    staleTime: 300_000,
+  })
   const importCode = useMutation({
     mutationFn: () => endpoints.importTacticCode(input.trim()),
     onSuccess: (result) => {
@@ -37,9 +43,7 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
     <Card title="EA taktik kodu" actions={<Pill tone="emerald">Ücretsiz</Pill>}>
       <div className="space-y-3">
         <div>
-          <Button variant="secondary" disabled={exportCode.isPending} onClick={() => { setNotice(undefined); exportCode.mutate() }}>
-            {exportCode.isPending ? 'Üretiliyor…' : 'Oyuna aktar (kod üret)'}
-          </Button>
+          <p className="text-xs text-slate-500">{exportCode.isFetching ? 'Kod üretiliyor…' : 'Kod taktik değiştikçe otomatik güncellenir.'}</p>
           {exported && (
             <div className="mt-2 space-y-1.5">
               <div className="flex items-center gap-2">

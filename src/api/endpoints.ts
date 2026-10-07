@@ -109,7 +109,10 @@ export const endpoints = {
   utUpgrades: (id: number, pos?: string) => api.get<UpgradeResult>(`/ut/card/${id}/upgrades`, { pos, limit: 8 }),
   sbcStreamlined: (body: { targetScore: number; minRating?: number; pool: SbcPoolEntry[] }) =>
     api.post<SbcResult>('/ut/sbc/streamlined', body, false),
-  utSquadEvaluate: (body: { slots: { slotId: string; position: string; playerId: number; roleId?: string }[]; setup?: SetupBody }) =>
+  utSquadEvaluate: (body: {
+    slots: { slotId: string; position: string; playerId?: number; roleId?: string; card?: { name?: string; overall: number; positions?: string[]; attrs: Record<string, number> } }[]
+    setup?: SetupBody
+  }) =>
     api.post<UtSquadEvaluation>('/ut/squad/evaluate', body, false),
   utCapture: (captures: unknown[]) => api.post<CaptureResult>('/ut/capture', { captures }),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>

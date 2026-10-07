@@ -674,6 +674,12 @@ export interface CaptureCard {
   teamId: number
   leagueId: number
   nation: number
+  gender?: number
+  playerId?: number
+  club?: string
+  league?: string
+  nationality?: string
+  attrs?: Record<string, number>
   untradeable: boolean
   faceLabels: string[]
   faceStats: number[]
@@ -734,7 +740,7 @@ export interface CaptureResult {
     slots: { index: number; starter: boolean; position?: string; chemistry?: number; card?: CaptureCard }[]
   }
   squads: { id: number; name?: string; formationLabel?: string; rating?: number; chemistry?: number }[]
-  prices: { source: string; assetId: number; name?: string; rating: number; buyNow?: number; currentBid?: number; lastSale?: number }[]
+  prices: { source: string; assetId: number; name?: string; rating: number; buyNow?: number; currentBid?: number; startingBid?: number; lastSale?: number; card?: CaptureCard }[]
   objectives: CaptureObjectiveGroup[]
   sbcSets: { setId: number; name?: string; category?: string; challengesCount: number; challengesCompleted: number; repeatable: boolean; endTime?: number }[]
   evolutions: { id: number; name?: string; status?: string; levels: number }[]

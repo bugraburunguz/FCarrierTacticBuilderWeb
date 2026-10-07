@@ -7,7 +7,9 @@ import { useAuth } from '../auth/AuthContext'
 import { Button, Card, EmptyState, ErrorBox, Pill } from '../components/ui'
 import { toPlannerObjectives, toSbcPool } from '../lib/capture'
 import { objectiveStore } from '../state/objectiveStore'
+import { fromCapture, cardPrice, type UtCard } from '../lib/utCard'
 import { sbcPoolStore } from '../state/sbcPoolStore'
+import { utCardStore } from '../state/utCardStore'
 
 const TOP_CARDS = 25
 const TOP_PRICES = 15
@@ -24,6 +26,12 @@ function parseCaptures(text: string): unknown[] {
   throw new Error('Dosya bir yakalama listesi değil.')
 }
 
+function toLibrary(result: CaptureResult): UtCard[] {
+  const own = result.cards.map((c) => fromCapture(c, 'club', cardPrice(c)))
+  const listings = result.prices.flatMap((p, i) => (p.card ? [fromCapture(p.card, 'market', p.buyNow ?? p.currentBid ?? p.startingBid, `-${i}`)] : []))
+  return [...own, ...listings]
+}
+
 function coins(value?: number) {
   return value === undefined ? '—' : value.toLocaleString('tr-TR')
 }
@@ -35,6 +43,10 @@ export function UtImportPage() {
   const [notice, setNotice] = useState<string>()
   const upload = useMutation({
     mutationFn: async (file: File) => endpoints.utCapture(parseCaptures(await file.text())),
+    onSuccess: (data) => {
+      const saved = utCardStore.set(toLibrary(data))
+      setNotice(saved ? 'Kulüp kartların ve gördüğün market ilanları kadro kurucuda kullanılabilir.' : 'Kartlar tarayıcıda saklanamadı (alan dolu).')
+    },
     onError: (e) => setFileError(e instanceof SyntaxError ? 'Dosya geçerli bir JSON değil.' : undefined),
   })
   const result = upload.data
