@@ -495,3 +495,68 @@ export interface TacticCodeImport {
   exact: boolean
   warnings: string[]
 }
+
+export interface DevelopmentGap {
+  attr: string
+  value: number
+  needed: number
+  gap: number
+  maxGain: number
+  closable: boolean
+  hardToTrain: boolean
+}
+
+export interface RoleDevelopment {
+  roleId: string
+  roleName: string
+  position: string
+  focus?: string
+  currentScore: number
+  currentBadge: WeaponState
+  gaps: DevelopmentGap[]
+  totalGap: number
+  projectedScore: number
+  projectedBadge: WeaponState
+  projectedRating: number
+  unlocks: boolean
+}
+
+export interface TrainingPriority {
+  attr: string
+  totalGap: number
+  roles: number
+  hardToTrain: boolean
+}
+
+export interface DevelopmentPlanResult {
+  playerId: number
+  playerName: string
+  age?: number
+  overall: number
+  potential?: number
+  headroom: number
+  estimated: boolean
+  perRole: RoleDevelopment[]
+  bestPath?: RoleDevelopment
+  trainingPriorities: TrainingPriority[]
+}
+
+export interface Wonderkid {
+  id: number
+  name: string
+  age?: number
+  overall: number
+  potential: number
+  gap: number
+  positions: string[]
+  club?: string
+  league?: string
+  valueEur?: number
+  potentialPerMillion?: number
+  roleId?: string
+  roleName?: string
+  rolePosition?: string
+  roleScore?: number
+  roleBadge?: WeaponState
+  projectedBadge?: WeaponState
+}

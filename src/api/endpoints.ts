@@ -33,6 +33,8 @@ import type {
   TacticCodeImport,
   SetupCheck,
   PlayerRoleFit,
+  DevelopmentPlanResult,
+  Wonderkid,
 } from './types'
 
 export interface PlayerFilters {
@@ -84,6 +86,10 @@ export const endpoints = {
   playerRoles: (id: number, careerId?: number) => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId }),
   similarPlayers: (id: number, options: { ageMax?: number; potentialMin?: number; limit?: number } = {}) =>
     api.get<SimilarPlayer[]>(`/players/${id}/similar`, { age_max: options.ageMax, pot_min: options.potentialMin, limit: options.limit }),
+  development: (id: number, body: { targetRoles?: string[]; careerId?: number } = {}) =>
+    api.post<DevelopmentPlanResult>(`/players/${id}/development`, body, false),
+  wonderkids: (params: { career?: number; pos?: string; maxAge?: number; minPot?: number; league?: number; budgetMax?: number; role?: string; sort?: string; gender?: number; limit?: number }) =>
+    api.get<Wonderkid[]>('/wonderkids', params),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),
