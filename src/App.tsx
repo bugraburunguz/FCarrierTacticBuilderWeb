@@ -16,6 +16,7 @@ import { SquadPage } from './pages/SquadPage'
 import { TacticBuilderPage } from './pages/TacticBuilderPage'
 import { TeamsPage } from './pages/TeamsPage'
 import { UtMetaPage } from './pages/UtMetaPage'
+import { UtObjectivesPage } from './pages/UtObjectivesPage'
 import { UtSbcPage } from './pages/UtSbcPage'
 import { UtSquadPage } from './pages/UtSquadPage'
 import type { ReactNode } from 'react'
@@ -53,6 +54,7 @@ export function App() {
         <Route path="ut/squad" element={<UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />
         <Route path="ut/sbc" element={<UtSbcPage />} />
+        <Route path="ut/objectives" element={<UtObjectivesPage />} />
         <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />

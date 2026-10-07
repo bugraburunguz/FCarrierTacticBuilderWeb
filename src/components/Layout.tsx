@@ -42,6 +42,7 @@ const UT_NAV: NavGroup[] = [
   { to: '/ut/squad', label: 'Kadro kurucu', match: ['/ut/squad'] },
   { to: '/ut/meta', label: 'Meta', match: ['/ut/meta'] },
   { to: '/ut/sbc', label: 'SBC çözücü', match: ['/ut/sbc'] },
+  { to: '/ut/objectives', label: 'Objective planı', match: ['/ut/objectives'] },
 ]
 
 const MODES: { id: AppMode; label: string; home: string }[] = [

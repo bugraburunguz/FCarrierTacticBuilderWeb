@@ -18,6 +18,7 @@ export interface SbcConstraints {
   minSameNation?: number
   minSameClub?: number
   minOverallEach?: number
+  required?: { league?: Record<string, number>; nationality?: Record<string, number>; club?: Record<string, number> }
 }
 
 export interface SbcSolution {
@@ -33,6 +34,7 @@ const DEFAULT_BEAM = 300
 const CHEM_WEIGHT = 3
 const RATING_WEIGHT = 40
 const MIN_PLAYERS = 11
+const REQUIRED_WEIGHT = 60
 
 /** Takım rating'i: (toplam + ortalamanın üstündeki fazlaların toplamı) / 11, yuvarlanmış. */
 export function teamRating(ratings: number[]): number {
@@ -83,10 +85,28 @@ export function checkConstraints(slots: SbcSlot[], picks: (SbcCandidate | undefi
       violations.push(`Aynı ${label}den en az ${min} oyuncu gerekli`)
     }
   })
+  requiredViolations(cards, constraints).forEach((v) => violations.push(v))
   if (constraints.minOverallEach && cards.some((c) => c.overall < constraints.minOverallEach!)) {
     violations.push(`Her oyuncu en az ${constraints.minOverallEach} olmalı`)
   }
   return { teamRating: rating, chemistry, violations }
+}
+
+const REQUIRED_LABELS = { league: 'lig', nationality: 'ülke', club: 'kulüp' } as const
+
+function requiredEntries(constraints: SbcConstraints): { key: 'league' | 'nationality' | 'club'; name: string; count: number }[] {
+  const required = constraints.required ?? {}
+  return (['league', 'nationality', 'club'] as const).flatMap((key) => Object.entries(required[key] ?? {}).map(([name, count]) => ({ key, name, count })))
+}
+
+function countOf(cards: SbcCandidate[], key: 'league' | 'nationality' | 'club', name: string): number {
+  return cards.filter((c) => c[key] === name).length
+}
+
+function requiredViolations(cards: SbcCandidate[], constraints: SbcConstraints): string[] {
+  return requiredEntries(constraints)
+    .filter((r) => countOf(cards, r.key, r.name) < r.count)
+    .map((r) => `XI'de en az ${r.count} ${REQUIRED_LABELS[r.key]} ${r.name} oyuncusu gerekli`)
 }
 
 interface State {
@@ -142,5 +162,6 @@ function penalty(picks: SbcCandidate[], slots: SbcSlot[], constraints: SbcConstr
   const chem = squadChemistry(slots.map((s, i) => ({ position: s.position, card: picks[i] }))).total
   const projectedChem = (chem * MIN_PLAYERS) / picks.length
   const average = picks.reduce((sum, c) => sum + c.overall, 0) / picks.length
-  return Math.max(0, constraints.chemMin - projectedChem) * CHEM_WEIGHT + Math.max(0, constraints.teamRatingMin - average) * RATING_WEIGHT
+  const missing = requiredEntries(constraints).reduce((sum, r) => sum + Math.max(0, r.count - countOf(picks, r.key, r.name)), 0)
+  return Math.max(0, constraints.chemMin - projectedChem) * CHEM_WEIGHT + Math.max(0, constraints.teamRatingMin - average) * RATING_WEIGHT + missing * REQUIRED_WEIGHT
 }

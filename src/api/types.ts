@@ -640,3 +640,23 @@ export interface UpgradeResult {
   options: UpgradeOption[]
   note?: string
 }
+
+export interface UtSlotEvaluation {
+  slotId: string
+  position: string
+  card: MetaCard
+  roleId?: string
+  roleName?: string
+  roleFit?: number
+  badge?: WeaponState
+  badgeText?: string
+  reason?: string
+  setupDelta?: number
+}
+
+export interface UtSquadEvaluation {
+  slots: UtSlotEvaluation[]
+  averageMeta: number
+  averageOverall: number
+  assumption: boolean
+}

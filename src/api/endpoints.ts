@@ -40,6 +40,7 @@ import type {
   SbcPoolEntry,
   SbcResult,
   UpgradeResult,
+  UtSquadEvaluation,
 } from './types'
 
 export interface SetupBody {
@@ -107,6 +108,8 @@ export const endpoints = {
   utUpgrades: (id: number, pos?: string) => api.get<UpgradeResult>(`/ut/card/${id}/upgrades`, { pos, limit: 8 }),
   sbcStreamlined: (body: { targetScore: number; minRating?: number; pool: SbcPoolEntry[] }) =>
     api.post<SbcResult>('/ut/sbc/streamlined', body, false),
+  utSquadEvaluate: (body: { slots: { slotId: string; position: string; playerId: number; roleId?: string }[]; setup?: SetupBody }) =>
+    api.post<UtSquadEvaluation>('/ut/squad/evaluate', body, false),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),

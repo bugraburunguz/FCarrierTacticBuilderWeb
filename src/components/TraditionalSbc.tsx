@@ -4,12 +4,21 @@ import { endpoints } from '../api/endpoints'
 import type { WeaponState } from '../api/types'
 import { solveTraditional, type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
 import { squadChemistry } from '../lib/chemistry'
+import { parseXiText } from '../lib/objectives'
+import type { LookupItem } from '../api/types'
 import { PitchView } from './PitchView'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from './ui'
 
 const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
 const POOL_SPREAD_DOWN = 8
 const POOL_SPREAD_UP = 6
+
+function resolveNames(wanted: Record<string, number>, list: LookupItem[]): { id: number; name: string; count: number }[] {
+  return Object.entries(wanted).flatMap(([name, count]) => {
+    const hit = list.find((l) => l.name.toLowerCase() === name.toLowerCase()) ?? list.find((l) => l.name.toLowerCase().includes(name.toLowerCase()))
+    return hit ? [{ id: hit.id, name: hit.name, count }] : []
+  })
+}
 
 export function TraditionalSbc() {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
@@ -19,6 +28,7 @@ export function TraditionalSbc() {
   const [sameLeague, setSameLeague] = useState('')
   const [sameNation, setSameNation] = useState('')
   const [sameClub, setSameClub] = useState('')
+  const [xiText, setXiText] = useState('')
   const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
 
   const solve = useMutation({
@@ -29,11 +39,25 @@ export function TraditionalSbc() {
       const pages = await Promise.all(
         positions.map((pos) => endpoints.players({ pos: [pos], ovr_min: min - POOL_SPREAD_DOWN, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 100, gender: 0 })),
       )
+      const xi = parseXiText(xiText)
+      const [leagueList, nationList] = await Promise.all([endpoints.leagues(0), endpoints.nationalities()])
+      const leagueRequired = resolveNames(xi.league, leagueList)
+      const nationRequired = resolveNames(xi.nationality, nationList)
+      const extraPages = await Promise.all([
+        ...leagueRequired.flatMap((r) => positions.map((pos) => endpoints.players({ pos: [pos], league: r.id, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 40, gender: 0 }))),
+        ...nationRequired.flatMap((r) => positions.map((pos) => endpoints.players({ pos: [pos], nat: r.id, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 40, gender: 0 }))),
+      ])
       const byId = new Map<number, SbcCandidate>()
-      pages.flatMap((p) => p.items).forEach((p) =>
+      pages.concat(extraPages).flatMap((p) => p.items).forEach((p) =>
         byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions }),
       )
+      const required = {
+        league: Object.fromEntries(leagueRequired.map((r) => [r.name, r.count])),
+        nationality: Object.fromEntries(nationRequired.map((r) => [r.name, r.count])),
+        club: xi.club,
+      }
       const constraints: SbcConstraints = {
+        required,
         teamRatingMin: min,
         chemMin: Number(chem),
         minSameLeague: sameLeague ? Number(sameLeague) : undefined,
@@ -73,6 +97,11 @@ export function TraditionalSbc() {
         <Field label="Aynı ligden min"><Input type="number" min={0} max={11} value={sameLeague} onChange={(e) => setSameLeague(e.target.value)} /></Field>
         <Field label="Aynı ülkeden min"><Input type="number" min={0} max={11} value={sameNation} onChange={(e) => setSameNation(e.target.value)} /></Field>
         <Field label="Aynı kulüpten min"><Input type="number" min={0} max={11} value={sameClub} onChange={(e) => setSameClub(e.target.value)} /></Field>
+      </div>
+      <div className="mt-3">
+        <Field label="XI şartları (isteğe bağlı)">
+          <Input value={xiText} onChange={(e) => setXiText(e.target.value)} placeholder="lig:Premier League=1; ülke:Brazil=2" className="font-mono" />
+        </Field>
       </div>
       <Button className="mt-3" disabled={!formation || solve.isPending} onClick={() => solve.mutate()}>{solve.isPending ? 'Aranıyor…' : 'Çöz'}</Button>
       {solve.error && <ErrorBox error={solve.error} />}

@@ -48,4 +48,17 @@ describe('sbc traditional', () => {
     result.picks.forEach((p) => counts.set(p!.league!, (counts.get(p!.league!) ?? 0) + 1))
     expect(Math.max(...counts.values())).toBeGreaterThanOrEqual(6)
   })
+
+  it('XI şartı: belirli ligden en az N oyuncu', () => {
+    const mixed = pool().map((c, i) => ({ ...c, league: i % 5 === 0 ? 'Rare League' : 'League', club: 'C' + (i % 7), nationality: 'N' + (i % 3) }))
+    const result = solveTraditional(SLOTS, mixed, { teamRatingMin: 78, chemMin: 0, required: { league: { 'Rare League': 2 } } })
+    expect(result.feasible).toBe(true)
+    expect(result.picks.filter((p) => p?.league === 'Rare League').length).toBeGreaterThanOrEqual(2)
+  })
+
+  it('XI şartı sağlanamazsa ihlali raporlar', () => {
+    const result = solveTraditional(SLOTS, pool(), { teamRatingMin: 78, chemMin: 0, required: { league: { Yok: 1 } } })
+    expect(result.feasible).toBe(false)
+    expect(result.violations.join(' ')).toContain('Yok')
+  })
 })
