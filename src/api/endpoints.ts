@@ -37,6 +37,9 @@ import type {
   Wonderkid,
   MetaCard,
   MetaFormation,
+  SbcPoolEntry,
+  SbcResult,
+  UpgradeResult,
 } from './types'
 
 export interface SetupBody {
@@ -101,6 +104,9 @@ export const endpoints = {
   utTier: (pos: string, options: { gender?: number; limit?: number } = {}) =>
     api.get<MetaCard[]>('/ut/meta/tier', { pos, gender: options.gender, limit: options.limit }),
   utChemStyle: (id: number, pos?: string) => api.post<MetaCard>(`/ut/card/${id}/chemstyle?${pos ? `pos=${pos}` : ''}`, undefined, false),
+  utUpgrades: (id: number, pos?: string) => api.get<UpgradeResult>(`/ut/card/${id}/upgrades`, { pos, limit: 8 }),
+  sbcStreamlined: (body: { targetScore: number; minRating?: number; pool: SbcPoolEntry[] }) =>
+    api.post<SbcResult>('/ut/sbc/streamlined', body, false),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),

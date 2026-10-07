@@ -593,3 +593,50 @@ export interface MetaCard {
   chemStyles?: ChemStyleResult[]
   assumption: boolean
 }
+
+export type SbcRarity = 'REGULAR' | 'TOTW' | 'HERO' | 'ICON'
+
+export interface SbcPoolEntry {
+  rating: number
+  rarity: SbcRarity
+  count: number
+  untradeable: boolean
+  priceEach?: number
+}
+
+export interface SbcPick {
+  rating: number
+  rarity: SbcRarity
+  untradeable: boolean
+  count: number
+  scoreEach: number
+  priceEach?: number
+  totalScore: number
+  totalCost: number
+}
+
+export interface SbcResult {
+  feasible: boolean
+  targetScore: number
+  totalScore: number
+  overshoot: number
+  totalCost: number
+  itemCount: number
+  coinless: boolean
+  approximate: boolean
+  picks: SbcPick[]
+  maxReachableScore?: number
+  note?: string
+}
+
+export interface UpgradeOption {
+  card: MetaCard
+  deltaMeta: number
+  deltaOverall: number
+}
+
+export interface UpgradeResult {
+  current: MetaCard
+  options: UpgradeOption[]
+  note?: string
+}

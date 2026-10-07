@@ -47,13 +47,24 @@ describe('chemistry', () => {
     expect(result.perSlot[1]).toBe(1) // ülke 2+1=3 → +1; lig L1 1+1=2 → 0; kulüp 1 → 0
   })
 
-  it('Hero ülkeye +1, kendi ligine +2 katkı verir', () => {
+  it('Hero ve Hall of FUT doğru mevkide 3 alır, ülkesine ve ligine +1 katkı verir', () => {
     const slots: ChemSlot[] = [
       { position: 'ST', card: { ...card(1, 'X', 'L', 'N'), cardType: 'HERO' } },
-      { position: 'ST', card: card(2, 'Y', 'L', 'M') },
+      { position: 'ST', card: { ...card(2, 'W', 'L', 'M'), cardType: 'HOF' } },
+      { position: 'ST', card: card(3, 'Y', 'L', 'K') },
     ]
-    // lig L: 2 + 1 = 3 → +1 (hero kendi ligine 2, diğeri 1)
-    expect(squadChemistry(slots).perSlot[1]).toBe(1)
+    const result = squadChemistry(slots)
+    expect(result.perSlot.slice(0, 2)).toEqual([3, 3])
+    expect(result.perSlot[2]).toBe(1) // lig L: 3 oyuncu → +1
+  })
+
+  it('kadın ve erkek ligleri birbirine bağlanmaz', () => {
+    const slots: ChemSlot[] = [
+      { position: 'ST', card: { ...card(1, 'A', 'L', 'N1'), gender: 0 } },
+      { position: 'ST', card: { ...card(2, 'B', 'L', 'N2'), gender: 0 } },
+      { position: 'ST', card: { ...card(3, 'C', 'L', 'N3'), gender: 1 } },
+    ]
+    expect(squadChemistry(slots).perSlot).toEqual([0, 0, 0])
   })
 
   it('menajer aynı ülke veya lig için +1 verir, en fazla 1', () => {
