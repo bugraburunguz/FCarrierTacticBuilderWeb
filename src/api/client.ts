@@ -1,7 +1,12 @@
 import { tokens } from './tokens'
 import type { Envelope, TokenResponse } from './types'
 
-const API_ORIGIN = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '').replace(/\/$/, '')
+export const API_ORIGIN = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '').replace(/\/$/, '')
+
+/** GitHub Pages gibi statik barındırmada API adresi tanımlı değilse arayüz açılır ama veri gelmez. */
+export function isStaticHostWithoutApi(hostname: string = window.location.hostname): boolean {
+  return hostname.endsWith('.github.io') && API_ORIGIN === ''
+}
 const BASE = API_ORIGIN + '/api/v1'
 
 export class ApiError extends Error {

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { isStaticHostWithoutApi } from '../api/client'
 import { CompareTray } from './CompareTray'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
@@ -134,6 +135,11 @@ export function Layout() {
           </div>
         )}
       </header>
+      {isStaticHostWithoutApi() && (
+        <div role="alert" className="border-b border-amber-300 bg-amber-50 px-4 py-2 text-center text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
+          Bu yayın yalnızca arayüzdür: API adresi (<code>VITE_API_BASE_URL</code>) tanımlı olmadığı için veri yüklenmez.
+        </div>
+      )}
       <main className="mx-auto max-w-7xl px-4 py-6">
         {activeGroup?.tabs && !/^\/players\/\d+/.test(pathname) && (
           <nav aria-label={`${activeGroup.label} sekmeleri`} className="mb-4 flex gap-1 border-b border-slate-200 dark:border-slate-700">
