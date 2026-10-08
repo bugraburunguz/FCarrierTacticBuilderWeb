@@ -239,7 +239,7 @@ export function TacticBuilderPage() {
         </div>
       </div>
 
-      <div className="space-y-3 lg:sticky lg:top-24">
+      <div className="space-y-3">
         <ErrorBox error={resolved.error} />
         {formation && (
           <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
