@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
@@ -11,6 +11,8 @@ import { fromCapture, cardPrice, type UtCard } from '../lib/utCard'
 import { sbcPoolStore } from '../state/sbcPoolStore'
 import { utCardStore } from '../state/utCardStore'
 import { utCaptureStore } from '../state/utCaptureStore'
+import { mapActiveSquad } from '../lib/activeSquad'
+import { DEFAULT_UT_SETUP, utSquadStore } from '../state/utSquadStore'
 
 const TOP_CARDS = 25
 const TOP_PRICES = 15
@@ -40,14 +42,28 @@ function coins(value?: number) {
 export function UtImportPage() {
   const { authenticated } = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [fileError, setFileError] = useState<string>()
   const [notice, setNotice] = useState<string>()
   const upload = useMutation({
     mutationFn: async (file: File) => endpoints.utCapture(parseCaptures(await file.text())),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       const saved = utCardStore.set(toLibrary(data))
       utCaptureStore.set(data)
-      setNotice(saved ? 'Kulüp kartların ve gördüğün market ilanları kadro kurucuda kullanılabilir.' : 'Kartlar tarayıcıda saklanamadı (alan dolu).')
+      let placed = ''
+      if (data.activeSquad) {
+        try {
+          const formations = await queryClient.fetchQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
+          const loaded = mapActiveSquad(data.activeSquad, formations)
+          if (loaded.formationId) {
+            utSquadStore.set({ formationId: loaded.formationId, setup: DEFAULT_UT_SETUP, picked: loaded.picked, roleOverride: {}, origin: 'active-squad' })
+            placed = ` Aktif kadron kadro kurucuya yerleştirildi (${Object.keys(loaded.picked).length} kart${data.activeSquad.tactic?.tacticName ? ` · taktik: ${data.activeSquad.tactic.tacticName}` : ''}).`
+          }
+        } catch {
+          placed = ' Aktif kadro yerleştirilemedi; kadro kurucudan "Kulüp aktif kadrosunu yükle" ile dene.'
+        }
+      }
+      setNotice((saved ? 'Kulüp kartların ve gördüğün market ilanları kadro kurucuda kullanılabilir.' : 'Kartlar tarayıcıda saklanamadı (alan dolu).') + placed)
     },
     onError: (e) => setFileError(e instanceof SyntaxError ? 'Dosya geçerli bir JSON değil.' : undefined),
   })

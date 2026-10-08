@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { TacticRequest, WeaponState } from '../api/types'
@@ -15,6 +15,7 @@ import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } fr
 import { mapActiveSquad } from '../lib/activeSquad'
 import { useUtCapture } from '../state/utCaptureStore'
 import { utCardStore } from '../state/utCardStore'
+import { DEFAULT_UT_FORMATION, DEFAULT_UT_SETUP, utSquadStore } from '../state/utSquadStore'
 
 const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
 const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
@@ -46,10 +47,12 @@ function shortCoins(value?: number) {
 export function UtSquadPage() {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
-  const [formationId, setFormationId] = useState('4-2-3-1 (2)')
-  const [setup, setSetup] = useState<Setup>({ buildUp: 'Balanced', depth: 55 })
-  const [picked, setPicked] = useState<Record<string, UtCard>>({})
-  const [roleOverride, setRoleOverride] = useState<Record<string, string>>({})
+  const saved = useMemo(() => utSquadStore.get(), [])
+  const [formationId, setFormationId] = useState(saved?.formationId ?? DEFAULT_UT_FORMATION)
+  const [setup, setSetup] = useState<Setup>(saved?.setup ?? DEFAULT_UT_SETUP)
+  const [picked, setPicked] = useState<Record<string, UtCard>>(saved?.picked ?? {})
+  const [roleOverride, setRoleOverride] = useState<Record<string, string>>(saved?.roleOverride ?? {})
+  const origin = useRef<'manual' | 'active-squad'>(saved?.origin ?? 'manual')
   const [dialog, setDialog] = useState<Dialog | null>(null)
   const capture = useUtCapture()
   const [loadNote, setLoadNote] = useState<string>()
@@ -137,6 +140,30 @@ export function UtSquadPage() {
     setDialog(null)
   }
 
+  // Kadro her değişimde kaydedilir; sayfa yenilenince ya da dosya tekrar yüklenmeden geri gelir.
+  useEffect(() => {
+    if (!saved && Object.keys(picked).length === 0) {
+      return // henüz kullanıcı bir şey yapmadıysa boş kadro kaydedilmez (aktif kadro otomatik yüklenebilsin)
+    }
+    utSquadStore.set({ formationId, setup, picked, roleOverride, origin: origin.current })
+  }, [saved, formationId, setup, picked, roleOverride])
+
+  // Kayıtlı kadro yokken yakalamada aktif kadro varsa otomatik yerleştirilir.
+  const autoApplied = useRef(false)
+  useEffect(() => {
+    if (autoApplied.current || saved || !capture?.activeSquad || !formations.data) {
+      return
+    }
+    autoApplied.current = true
+    const loaded = mapActiveSquad(capture.activeSquad, formations.data)
+    if (loaded.formationId) {
+      origin.current = 'active-squad'
+      setFormationId(loaded.formationId)
+      setPicked(loaded.picked)
+      setLoadNote(`Kulübünün aktif kadrosu otomatik yüklendi (${Object.keys(loaded.picked).length} kart${capture.activeSquad.tactic?.tacticName ? ` · taktik: ${capture.activeSquad.tactic.tacticName}` : ''}).`)
+    }
+  }, [saved, capture, formations.data])
+
   function loadActiveSquad() {
     const squad = capture?.activeSquad
     if (!squad || !formations.data) {
@@ -147,6 +174,7 @@ export function UtSquadPage() {
       setFormationId(loaded.formationId)
     }
     setRoleOverride({})
+    origin.current = 'active-squad'
     setPicked(loaded.picked)
     setDialog(null)
     setLoadNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}${squad.tactic?.tacticName ? ` · taktik: ${squad.tactic.tacticName}` : ''}. Taktik talimatları (rol/focus) henüz çözülmediği için roller otomatik.`)
@@ -237,6 +265,24 @@ export function UtSquadPage() {
               </div>
             )}
           </section>
+
+          {(capture?.sbcSets ?? []).length > 0 && (
+            <section className={PANEL}>
+              <h2 className={PANEL_TITLE}>Kulüp SBC'leri</h2>
+              <ul className="space-y-1 text-[13px]">
+                {(capture?.sbcSets ?? [])
+                  .filter((set) => set.challengesCompleted < set.challengesCount || set.repeatable)
+                  .slice(0, 8)
+                  .map((set) => (
+                    <li key={set.setId} className="flex items-center justify-between gap-2 border-t border-line pt-1 first:border-0 first:pt-0">
+                      <span className="truncate">{set.name ?? `#${set.setId}`}</span>
+                      <span className="shrink-0 tabular-nums text-xs text-muted">{set.challengesCompleted}/{set.challengesCount}</span>
+                    </li>
+                  ))}
+              </ul>
+              <Link to="/ut/sbc" className="mt-2 inline-block text-xs text-accent underline">En ucuz çözümü gör (SBC çözücü)</Link>
+            </section>
+          )}
         </div>
 
         <div className="order-1 rounded-2xl border border-line bg-surface p-2.5 min-[820px]:order-2">

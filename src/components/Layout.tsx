@@ -89,11 +89,11 @@ export function Layout() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-700 dark:bg-slate-800/90">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 lg:gap-x-6">
-          <NavLink to="/" className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2">
+          <NavLink to="/" className="shrink-0 text-lg font-bold text-emerald-700 dark:text-emerald-400">
             FC Kariyer
           </NavLink>
-          <div role="group" aria-label="Mod" className="flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-600">
+          <div role="group" aria-label="Mod" className="flex shrink-0 rounded-lg border border-slate-200 p-0.5 dark:border-slate-600">
             {MODES.map((m) => (
               <button
                 key={m.id}
@@ -103,69 +103,80 @@ export function Layout() {
                   modeStore.set(m.id)
                   navigate(m.home)
                 }}
-                className={`rounded-md px-2.5 py-1 text-xs font-semibold ${mode === m.id ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
+                className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ${mode === m.id ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
               >
                 {m.label}
               </button>
             ))}
           </div>
-          <nav aria-label="Ana menü" className="hidden flex-1 flex-wrap gap-1 lg:flex">
-            {nav.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium ${activeGroup === item ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'}`}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-          <button
-            type="button"
-            aria-label="Menüyü aç/kapat"
-            aria-expanded={menuOpen}
-            aria-controls="mobil-menu"
-            onClick={() => setMenuOpen((v) => !v)}
-            className="ml-auto rounded-lg border border-slate-200 px-2.5 py-1 text-lg leading-none text-slate-600 hover:bg-slate-100 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            {menuOpen ? '✕' : '☰'}
-          </button>
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="ml-auto flex min-w-0 items-center gap-2">
             <button
               type="button"
               onClick={() => themeStore.cycle()}
               aria-label={`Tema: ${THEME_LABEL[theme]}. Değiştirmek için tıkla`}
-              className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              className="hidden shrink-0 rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 sm:block dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
             >
               {THEME_LABEL[theme]}
             </button>
             {authenticated && me ? (
               <>
-                {me.subscriptionType === 'PREMIUM' ? <Pill tone="emerald">PREMIUM</Pill> : <Pill tone="sky">{me.creditBalance ?? 0} kredi</Pill>}
-                <NavLink to="/profile" className="text-sm text-slate-600 hover:underline dark:text-slate-300">
-                  {me.email}
-                </NavLink>
-                <Button
-                  variant="ghost"
-                  onClick={async () => {
-                    await logout()
-                    navigate('/login')
-                  }}
-                >
-                  Çıkış
-                </Button>
+                <span className="hidden shrink-0 sm:block">
+                  {me.subscriptionType === 'PREMIUM' ? <Pill tone="emerald">PREMIUM</Pill> : <Pill tone="sky">{me.creditBalance ?? 0} kredi</Pill>}
+                </span>
+                <details className="group relative hidden min-w-0 lg:block">
+                  <summary className="flex max-w-[190px] cursor-pointer list-none items-center gap-1 truncate rounded-lg border border-slate-200 px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                    <span className="truncate">{me.email}</span>
+                    <span aria-hidden="true" className="text-xs">▾</span>
+                  </summary>
+                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-600 dark:bg-slate-800">
+                    <NavLink to="/profile" className="block rounded-lg px-3 py-1.5 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">Profil</NavLink>
+                    <button
+                      type="button"
+                      className="block w-full rounded-lg px-3 py-1.5 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                      onClick={async () => {
+                        await logout()
+                        navigate('/login')
+                      }}
+                    >
+                      Çıkış
+                    </button>
+                  </div>
+                </details>
               </>
             ) : (
-              <>
+              <div className="hidden items-center gap-2 lg:flex">
                 <NavLink to="/login" className="text-sm font-medium text-emerald-700 hover:underline">
                   Giriş
                 </NavLink>
-                <NavLink to="/register" className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
+                <NavLink to="/register" className="whitespace-nowrap rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
                   Kayıt ol
                 </NavLink>
-              </>
+              </div>
             )}
+            <button
+              type="button"
+              aria-label="Menüyü aç/kapat"
+              aria-expanded={menuOpen}
+              aria-controls="mobil-menu"
+              onClick={() => setMenuOpen((v) => !v)}
+              className="shrink-0 rounded-lg border border-slate-200 px-2.5 py-1 text-lg leading-none text-slate-600 hover:bg-slate-100 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+            >
+              {menuOpen ? '✕' : '☰'}
+            </button>
           </div>
+        </div>
+        <div className="hidden border-t border-slate-200/70 lg:block dark:border-slate-700/70">
+          <nav aria-label="Ana menü" className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 py-1.5 [scrollbar-width:thin]">
+            {nav.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={`shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium ${activeGroup === item ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
         </div>
         {menuOpen && (
           <div id="mobil-menu" className="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-700">
