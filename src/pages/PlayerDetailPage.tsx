@@ -8,6 +8,7 @@ import { useMode } from '../state/modeStore'
 import { ChemStylePanel } from '../components/ChemStylePanel'
 import { KeyAttributes } from '../components/KeyAttributes'
 import { PlayerInsights } from '../components/PlayerInsights'
+import { DeltaMark, DiffBadge, PlayerDiffPanel } from '../components/PlayerDiffPanel'
 import { FitResultCard } from '../components/FitResultCard'
 import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
@@ -26,6 +27,7 @@ export function PlayerDetailPage() {
   const activeCareer = useActiveCareerId()
   const careerId = authenticated ? activeCareer : undefined
   const detail = useQuery({ queryKey: ['player', id, careerId], queryFn: () => endpoints.player(id, careerId), enabled: Number.isFinite(id) })
+  const [onlyChanged, setOnlyChanged] = useState(false)
   const [selection, setSelection] = useState<RoleSelection>({ position: 'RW', roleId: 'winger_attack', tags: [] })
   const fit = useMutation({
     mutationFn: () => endpoints.fitRole({ playerId: id, roleId: selection.roleId, position: selection.position, tags: selection.tags }),
@@ -37,7 +39,8 @@ export function PlayerDetailPage() {
   if (detail.error || !detail.data) {
     return <ErrorBox error={detail.error ?? new Error('not found')} />
   }
-  const { summary, attrs, playstyles } = detail.data
+  const { summary, attrs, playstyles, diff } = detail.data
+  const deltaByAttr: Record<string, number> = Object.fromEntries((diff?.attributes ?? []).map((a) => [a.key, a.delta]))
   const isGoalkeeper = summary.positions.includes('GK')
 
   return (
@@ -48,7 +51,10 @@ export function PlayerDetailPage() {
       <Card>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{summary.name}</h1>
+            <h1 className="text-2xl font-bold">
+              {summary.name}
+              {diff && <span className="ml-3 align-middle"><DiffBadge diff={diff} /></span>}
+            </h1>
             <div className="mt-1"><CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? "" }} /></div>
             <p className="text-sm text-slate-500">
               {[summary.club, summary.league, summary.nationality].filter(Boolean).join(' · ')}
@@ -68,11 +74,11 @@ export function PlayerDetailPage() {
           <dl className="grid grid-cols-2 gap-6 text-center">
             <div>
               <dt className="text-xs text-slate-500">Genel</dt>
-              <dd className="text-3xl font-bold">{summary.overall}</dd>
+              <dd className="text-3xl font-bold">{summary.overall} {diff?.overall && <DeltaMark delta={diff.overall.delta} />}</dd>
             </div>
             <div>
               <dt className="text-xs text-slate-500">Potential*</dt>
-              <dd className="text-3xl font-bold">{summary.potential ?? '—'}</dd>
+              <dd className="text-3xl font-bold">{summary.potential ?? '—'} {diff?.potential && <DeltaMark delta={diff.potential.delta} />}</dd>
             </div>
           </dl>
         </div>
@@ -83,6 +89,7 @@ export function PlayerDetailPage() {
         </p>
       </Card>
 
+      {diff && <PlayerDiffPanel diff={diff} onlyChanged={onlyChanged} onToggle={setOnlyChanged} />}
       <KeyAttributes positions={summary.positions} attrs={attrs} />
       <PlayerInsights attrs={attrs} positions={summary.positions} playstyles={playstyles} />
       <PlayerRoles playerId={summary.id} listed={summary.positions} />
@@ -96,12 +103,15 @@ export function PlayerDetailPage() {
         <Card title="Attribute'lar">
           <div className="space-y-4">
             <AttributeRadar series={[{ name: summary.name, attrs }]} goalkeeper={isGoalkeeper} />
-            {ATTR_GROUPS.filter((g) => (g.title === 'Kaleci') === isGoalkeeper || g.title !== 'Kaleci').map((group) => (
+            {ATTR_GROUPS.filter((g) => (g.title === 'Kaleci') === isGoalkeeper || g.title !== 'Kaleci')
+              .map((group) => ({ ...group, attrs: group.attrs.filter((a) => !onlyChanged || deltaByAttr[a] !== undefined) }))
+              .filter((group) => group.attrs.length > 0)
+              .map((group) => (
               <div key={group.title}>
                 <h3 className="mb-1 text-xs font-semibold uppercase text-slate-500">{group.title}</h3>
                 <div className="space-y-1">
                   {group.attrs.map((a) => (
-                    <AttrBar key={a} label={ATTR_LABELS[a] ?? a} value={attrs[a] ?? 0} />
+                    <AttrBar key={a} label={ATTR_LABELS[a] ?? a} value={attrs[a] ?? 0} delta={deltaByAttr[a]} />
                   ))}
                 </div>
               </div>

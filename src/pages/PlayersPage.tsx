@@ -4,8 +4,10 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints, type PlayerFilters } from '../api/endpoints'
 import { useAuth } from '../auth/AuthContext'
 import { CompareButton } from '../components/CompareButton'
+import { PlayerAvatar } from '../components/PlayerAvatar'
 import { useActiveCareerId } from '../state/careerStore'
 import { DRAG_TYPE } from '../state/compareStore'
+import type { PlayerSummary } from '../api/types'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select, Spinner } from '../components/ui'
 import { setCardDragImage } from '../lib/dragCard'
 import { ATTR_LABELS, POSITIONS } from '../lib/format'
@@ -35,6 +37,8 @@ function readFilters(params: URLSearchParams): PlayerFilters {
     nat: num('nat'),
     ovr_min: num('ovr_min'),
     pot_min: num('pot_min'),
+    pot_max: num('pot_max'),
+    ovr_max: num('ovr_max'),
     age_min: num('age_min'),
     age_max: num('age_max'),
     foot: params.get('foot') ?? undefined,
@@ -44,6 +48,14 @@ function readFilters(params: URLSearchParams): PlayerFilters {
     size: PAGE_SIZE,
     attrMin,
   }
+}
+
+function changeTooltip(change: NonNullable<PlayerSummary['changeSummary']>): string {
+  const parts = [`${change.count} özellik değişti`]
+  if (change.ovrDelta) {
+    parts.push(`OVR ${change.ovrDelta > 0 ? '+' : ''}${change.ovrDelta}`)
+  }
+  return parts.join(' · ')
 }
 
 function SortHeader({ label, column, filters, onSort }: { label: string; column: string; filters: PlayerFilters; onSort: (column: string) => void }) {
@@ -96,7 +108,7 @@ export function PlayersPage() {
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[300px_1fr]">
+    <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)]">
       <Card title="Filtreler" className="h-fit">
         <div className="space-y-3">
           <Field label="Futbol">
@@ -182,8 +194,14 @@ export function PlayersPage() {
             <Field label="Min. genel">
               <Input type="number" min={40} max={99} value={filters.ovr_min ?? ''} onChange={(e) => update({ ovr_min: e.target.value })} />
             </Field>
+            <Field label="Maks. genel">
+              <Input type="number" min={40} max={99} value={filters.ovr_max ?? ''} onChange={(e) => update({ ovr_max: e.target.value })} />
+            </Field>
             <Field label="Min. POT*">
               <Input type="number" min={40} max={99} value={filters.pot_min ?? ''} onChange={(e) => update({ pot_min: e.target.value })} />
+            </Field>
+            <Field label="Maks. POT*">
+              <Input type="number" min={40} max={99} value={filters.pot_max ?? ''} onChange={(e) => update({ pot_max: e.target.value })} />
             </Field>
             <Field label="Min. yaş">
               <Input type="number" min={15} max={50} value={filters.age_min ?? ''} onChange={(e) => update({ age_min: e.target.value })} />
@@ -221,7 +239,7 @@ export function PlayersPage() {
         </div>
       </Card>
 
-      <div className="space-y-3">
+      <div className="min-w-0 space-y-3">
         <ErrorBox error={query.error} />
         {query.isLoading ? (
           <Spinner />
@@ -236,12 +254,12 @@ export function PlayersPage() {
                     <tr>
                       <SortHeader label="Oyuncu" column="name" filters={filters} onSort={sortBy} />
                       <SortHeader label="Yaş" column="age" filters={filters} onSort={sortBy} />
-                      <SortHeader label="Mevki" column="position" filters={filters} onSort={sortBy} />
                       <SortHeader label="GEN" column="overall" filters={filters} onSort={sortBy} />
+                      <SortHeader label="AcceleRATE" column="accelerate" filters={filters} onSort={sortBy} />
+                      <SortHeader label="Mevki" column="position" filters={filters} onSort={sortBy} />
                       <SortHeader label="POT*" column="potential" filters={filters} onSort={sortBy} />
                       <SortHeader label="Kulüp" column="club" filters={filters} onSort={sortBy} />
                       <SortHeader label="Uyruk" column="nationality" filters={filters} onSort={sortBy} />
-                      <SortHeader label="AcceleRATE" column="accelerate" filters={filters} onSort={sortBy} />
                       <th />
                     </tr>
                   </thead>
@@ -254,19 +272,27 @@ export function PlayersPage() {
                           e.dataTransfer.setData(DRAG_TYPE, JSON.stringify({ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }))
                           setCardDragImage(e, { name: p.name, overall: p.overall, position: p.positions[0] ?? '', detail: p.club ?? undefined })
                         }}
-                        className="cursor-grab border-t border-slate-100 transition hover:bg-emerald-50/60 dark:border-slate-700 dark:hover:bg-slate-700/40">
+                        title={p.changed && p.changeSummary ? changeTooltip(p.changeSummary) : undefined}
+                        className={`cursor-grab border-t border-slate-100 transition hover:bg-emerald-50/60 dark:border-slate-700 dark:hover:bg-slate-700/40 ${p.changed ? 'border-l-4 border-l-[#4da6ff] bg-[#4da6ff]/10' : ''}`}>
                         <td className="py-1.5 pr-2 font-medium">
-                          <Link to={`/players/${p.id}`} className="text-emerald-700 hover:underline dark:text-emerald-400">
-                            {p.name}
-                          </Link>
+                          <span className="flex items-center gap-2">
+                            <PlayerAvatar name={p.name} position={p.positions[0]} faceUrl={p.faceUrl} />
+                            <Link to={`/players/${p.id}`} className={p.changed ? 'text-[#1f6fc4] hover:underline dark:text-[#4da6ff]' : 'text-emerald-700 hover:underline dark:text-emerald-400'}>
+                              {p.name}
+                            </Link>
+                            {p.changed && <span className="sr-only">Bir önceki sürüme göre değişti</span>}
+                          </span>
                         </td>
                         <td className="pr-2">{p.age ?? '—'}</td>
+                        <td className="pr-2 font-semibold tabular-nums">
+                          {p.overall}
+                          {p.changeSummary?.ovrDelta ? <span className={p.changeSummary.ovrDelta > 0 ? 'ml-1 text-[11px] text-[#1f9d63] dark:text-[#2ec27e]' : 'ml-1 text-[11px] text-[#d64545] dark:text-[#ff6b6b]'}>{p.changeSummary.ovrDelta > 0 ? '▲' : '▼'}{Math.abs(p.changeSummary.ovrDelta)}</span> : null}
+                        </td>
+                        <td className="pr-2">{p.accelerate ? <Pill>{p.accelerate}</Pill> : '—'}{!!p.runStyle && <Pill>Özel #{p.runStyle}</Pill>}</td>
                         <td className="pr-2">{p.positions.slice(0, 3).join(', ')}</td>
-                        <td className="pr-2 font-semibold tabular-nums">{p.overall}</td>
                         <td className="pr-2 tabular-nums">{p.potential ?? '—'}</td>
                         <td className="pr-2">{p.club ?? '—'}</td>
                         <td className="pr-2">{p.nationality ?? '—'}</td>
-                        <td>{p.accelerate ? <Pill>{p.accelerate}</Pill> : '—'}{!!p.runStyle && <Pill>Özel #{p.runStyle}</Pill>}</td>
                         <td><CompareButton compact entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? "" }} /></td>
                       </tr>
                     ))}

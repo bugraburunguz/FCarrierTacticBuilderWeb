@@ -38,6 +38,33 @@ export interface PlayerSummary {
   potential?: number
   valueEur?: number
   valuationEstimated: boolean
+  faceUrl?: string
+  faceAssetId?: number
+  changed?: boolean
+  changeSummary?: ChangeSummary
+}
+
+export type ChangeType = 'UPGRADE' | 'DOWNGRADE' | 'MIXED' | 'NEW' | 'REMOVED' | 'TRANSFER'
+
+export interface ChangeSummary {
+  type: ChangeType
+  ovrDelta?: number
+  count: number
+  versionNo?: number
+}
+
+export interface PlayerDiff {
+  versionNo?: number
+  previousVersionNo?: number
+  importedAt?: string
+  changeType: ChangeType
+  overall?: { old: number; new: number; delta: number }
+  potential?: { old: number; new: number; delta: number }
+  positions?: { old?: string; new?: string }
+  acceleRate?: { old?: string; new?: string }
+  club?: { old?: string; new?: string }
+  attributes: { key: string; old: number; new: number; delta: number }[]
+  playStyles?: { added: string[]; removed: string[]; upgraded: { from: string; to: string }[]; downgraded: { from: string; to: string }[] }
 }
 
 export interface PlayerDetail {
@@ -50,6 +77,7 @@ export interface PlayerDetail {
   attrs: Record<string, number>
   playstyles: Record<string, number>
   positionOveralls?: Record<string, number>
+  diff?: PlayerDiff
 }
 
 export interface Club {

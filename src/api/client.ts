@@ -1,4 +1,5 @@
 import { tokens } from './tokens'
+import { careerStore } from '../state/careerStore'
 import type { Envelope, TokenResponse } from './types'
 
 export const API_ORIGIN = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '').replace(/\/$/, '')
@@ -24,6 +25,7 @@ export const ErrorCodes = {
   insufficientCredit: 'fc.exception.0004',
   premiumRequired: 'fc.exception.0005',
   unauthorized: 'fc.exception.0016',
+  careerForbidden: 'fc.exception.0009',
 } as const
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE'
@@ -112,6 +114,13 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
   if (!res.ok || !envelope.success) {
     const first = envelope.error?.[0]
+    if (first?.code === ErrorCodes.careerForbidden && options.query?.career !== undefined) {
+      // Eski/yabancı kariyer kimliği: kimliği bırak ve kariyersiz (model verisiyle) bir kez yeniden dene.
+      console.warn('[FCareer] kariyer erişimi reddedildi, careerId temizlendi:', options.query.career)
+      careerStore.set(undefined)
+      const { career: _dropped, ...rest } = options.query
+      return request<T>(path, { ...options, query: rest })
+    }
     throw new ApiError(first?.message ?? envelope.message ?? 'İstek başarısız oldu.', first?.code ?? 'client.unknown', res.status)
   }
   return envelope.data as T

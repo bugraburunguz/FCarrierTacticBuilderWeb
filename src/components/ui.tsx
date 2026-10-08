@@ -115,12 +115,17 @@ export function ScoreBar({ label, value, hint }: { label: string; value: number 
   )
 }
 
-export function AttrBar({ label, value }: { label: string; value: number }) {
+export function AttrBar({ label, value, delta }: { label: string; value: number; delta?: number }) {
   const color = value >= 80 ? 'bg-emerald-500' : value >= 65 ? 'bg-lime-500' : value >= 50 ? 'bg-amber-500' : 'bg-rose-500'
   return (
     <div className="flex items-center gap-2 text-xs">
       <span className="w-36 shrink-0 truncate">{label}</span>
       <span className="w-6 text-right font-semibold tabular-nums">{value}</span>
+      {delta !== undefined && delta !== 0 && (
+        <span className={cx('w-10 shrink-0 text-[11px] font-bold tabular-nums', delta > 0 ? 'text-[#1f9d63] dark:text-[#2ec27e]' : 'text-[#d64545] dark:text-[#ff6b6b]')} title={`şuydu ${value - delta} → şu oldu ${value}`}>
+          {delta > 0 ? '▲+' : '▼−'}{Math.abs(delta)}
+        </span>
+      )}
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
         <div className={cx('h-full', color)} style={{ width: `${value}%` }} />
       </div>

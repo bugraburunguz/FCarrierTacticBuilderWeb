@@ -1,4 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { endpoints } from '../api/endpoints'
+import { careerStore, useActiveCareerId } from '../state/careerStore'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../api/client'
 import { CompareTray } from './CompareTray'
@@ -64,6 +67,18 @@ export function Layout() {
   const { authenticated, me, logout } = useAuth()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const activeCareer = useActiveCareerId()
+  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
+  useEffect(() => {
+    // Seçili kariyer kullanıcının listesinde yoksa (silinmiş/eski/yabancı id) temizle: 403 yerine model verisi.
+    if (authenticated && careers.data && activeCareer !== undefined && !careers.data.some((c) => c.id === activeCareer)) {
+      careerStore.set(careers.data[0]?.id)
+    }
+  }, [authenticated, careers.data, activeCareer])
   useEffect(() => {
     if (pathname.startsWith('/ut/') && modeStore.get() !== 'ut') {
       modeStore.set('ut')
@@ -74,7 +89,7 @@ export function Layout() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-700 dark:bg-slate-800/90">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 lg:gap-x-6">
           <NavLink to="/" className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
             FC Kariyer
           </NavLink>
@@ -94,7 +109,7 @@ export function Layout() {
               </button>
             ))}
           </div>
-          <nav aria-label="Ana menü" className="flex flex-1 flex-wrap gap-1">
+          <nav aria-label="Ana menü" className="hidden flex-1 flex-wrap gap-1 lg:flex">
             {nav.map((item) => (
               <NavLink
                 key={item.to}
@@ -105,7 +120,17 @@ export function Layout() {
               </NavLink>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Menüyü aç/kapat"
+            aria-expanded={menuOpen}
+            aria-controls="mobil-menu"
+            onClick={() => setMenuOpen((v) => !v)}
+            className="ml-auto rounded-lg border border-slate-200 px-2.5 py-1 text-lg leading-none text-slate-600 hover:bg-slate-100 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
+          <div className="hidden items-center gap-2 lg:flex">
             <button
               type="button"
               onClick={() => themeStore.cycle()}
@@ -142,6 +167,39 @@ export function Layout() {
             )}
           </div>
         </div>
+        {menuOpen && (
+          <div id="mobil-menu" className="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-700">
+            <nav aria-label="Mobil menü" className="grid gap-1">
+              {nav.flatMap((item) => [
+                <NavLink key={item.to} to={item.to} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-700">
+                  {item.label}
+                </NavLink>,
+                ...(item.tabs ?? []).map((tab) => (
+                  <NavLink key={item.to + tab.to} to={tab.to} className="rounded-lg px-6 py-1.5 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">
+                    {tab.label}
+                  </NavLink>
+                )),
+              ])}
+            </nav>
+            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-3 dark:border-slate-700">
+              <button type="button" onClick={() => themeStore.cycle()} className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 dark:border-slate-600 dark:text-slate-300">
+                Tema: {THEME_LABEL[theme]}
+              </button>
+              {authenticated && me ? (
+                <>
+                  {me.subscriptionType === 'PREMIUM' ? <Pill tone="emerald">PREMIUM</Pill> : <Pill tone="sky">{me.creditBalance ?? 0} kredi</Pill>}
+                  <NavLink to="/profile" className="text-sm text-slate-600 hover:underline dark:text-slate-300">{me.email}</NavLink>
+                  <Button variant="ghost" onClick={async () => { await logout(); navigate('/login') }}>Çıkış</Button>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/login" className="text-sm font-medium text-emerald-700 hover:underline">Giriş</NavLink>
+                  <NavLink to="/register" className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">Kayıt ol</NavLink>
+                </>
+              )}
+            </div>
+          </div>
+        )}
         {authenticated && me?.showAds && (
           <div role="complementary" aria-label="Reklam alanı" className="border-t border-dashed border-slate-300 bg-slate-50 py-1 text-center text-xs text-slate-400 dark:border-slate-700 dark:bg-slate-800">
             Reklam alanı — PREMIUM ile kaldırılır
