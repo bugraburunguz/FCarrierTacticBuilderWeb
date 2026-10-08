@@ -4,9 +4,13 @@ import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { TacticRequest, WeaponState } from '../api/types'
 import { FormationStyleChips } from '../components/FormationStyleChips'
-import { PitchView } from '../components/PitchView'
-import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Modal, Pill, Select, Spinner } from '../components/ui'
+import { Modal } from '../components/Modal'
+import { Pitch } from '../components/squadBuilder/Pitch'
+import type { SlotView } from '../components/squadBuilder/PositionCard'
+import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
+import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
+import { roleBaseName, roleGroups } from '../lib/squadBuilder'
 import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { utCardStore } from '../state/utCardStore'
 
@@ -20,6 +24,11 @@ interface Setup {
   buildUp: (typeof BUILD_UPS)[number]
   depth: number
 }
+
+type Dialog = { kind: 'card' | 'role'; slotId: string }
+
+const PANEL = 'rounded-2xl border border-slate-700 bg-slate-900 p-3.5 text-slate-100 shadow-lg'
+const PANEL_TITLE = 'mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-emerald-300'
 
 function coins(value?: number) {
   return value === undefined ? '—' : value.toLocaleString('tr-TR')
@@ -39,8 +48,7 @@ export function UtSquadPage() {
   const [setup, setSetup] = useState<Setup>({ buildUp: 'Balanced', depth: 55 })
   const [picked, setPicked] = useState<Record<string, UtCard>>({})
   const [roleOverride, setRoleOverride] = useState<Record<string, string>>({})
-  const [selected, setSelected] = useState<string>()
-  const [picking, setPicking] = useState(false)
+  const [dialog, setDialog] = useState<Dialog | null>(null)
 
   const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
   const slots = formation?.slots ?? []
@@ -97,171 +105,151 @@ export function UtSquadPage() {
   )
   const price = priceSummary(slots.map((s) => picked[s.slotId]))
 
-  const info = Object.fromEntries(
-    slots.map((s, i) => {
-      const p = picked[s.slotId]
-      const e = evalBySlot[s.slotId]
-      return [s.slotId, { title: p?.name, subtitle: p ? `${e ? `meta ${Math.round(e.card.metaRating)}` : p.rating} · k${chem.perSlot[i]} · ${shortCoins(p.price)}` : undefined, badge: p ? (e?.badge ?? CHEM_BADGE[chem.perSlot[i]]) : undefined }]
-    }),
-  )
-  const active = slots.find((s) => s.slotId === selected)
-  const activeIndex = active ? slots.indexOf(active) : -1
-  const activeEval = active ? evalBySlot[active.slotId] : undefined
-  const activeCard = active ? picked[active.slotId] : undefined
-  const activeRoles = (roles.data ?? []).filter((r) => active && r.positions.includes(active.position)).sort((a, b) => a.name.localeCompare(b.name) || a.focus.localeCompare(b.focus))
+  const roleById = new Map((roles.data ?? []).map((r) => [r.id, r]))
+  const views: SlotView[] = slots.map((s, i) => {
+    const card = picked[s.slotId]
+    const e = evalBySlot[s.slotId]
+    const role = roleById.get(roleBySlot[s.slotId]?.roleId ?? s.defaultRole)
+    const band = e?.roleFit !== undefined ? (e.badge ?? CHEM_BADGE[chem.perSlot[i]]) : undefined
+    return {
+      slotId: s.slotId,
+      position: s.position,
+      x: s.x,
+      y: s.y,
+      player: card && { id: i, name: card.name, overall: card.rating },
+      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : (roleBySlot[s.slotId]?.roleName ?? '…'),
+      sub: card ? `${e ? `meta ${Math.round(e.card.metaRating)}` : ''} ${'◆'.repeat(chem.perSlot[i])}${'◇'.repeat(3 - chem.perSlot[i])} ${shortCoins(card.price)}`.trim() : undefined,
+      fit: card && e?.roleFit !== undefined && band ? { pct: Math.round(e.roleFit), band } : undefined,
+    }
+  })
+
+  const dialogSlot = slots.find((s) => s.slotId === dialog?.slotId)
 
   function changeFormation(id: string) {
     const next = formations.data?.find((f) => f.id === id)
     setPicked((cur) => carryOver(slots, cur, next?.slots ?? []))
     setFormationId(id)
     setRoleOverride({})
-    setSelected(undefined)
+    setDialog(null)
+  }
+
+  function removeCard(slotId: string) {
+    setPicked((cur) => {
+      const { [slotId]: _removed, ...rest } = cur
+      return rest
+    })
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(300px,480px)_1fr]">
-      <Card title="UT Taktik ve Kadro Kurucu">
-        {formations.isLoading ? (
-          <Spinner />
-        ) : formations.error ? (
-          <ErrorBox error={formations.error} />
-        ) : (
-          <>
-            <div className="mb-3 grid gap-3 sm:grid-cols-3">
-              <Field label={`Formasyon (${formations.data?.length ?? 0})`}>
-                <Select value={formation?.id} onChange={(e) => changeFormation(e.target.value)}>
-                  {(formations.data ?? []).map((f) => (
-                    <option key={f.id} value={f.id}>{f.label ?? f.id}</option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label="Build-Up">
-                <Select value={setup.buildUp} onChange={(e) => setSetup((cur) => ({ ...cur, buildUp: e.target.value as Setup['buildUp'] }))}>
-                  {BUILD_UPS.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label={`Savunma hattı: ${setup.depth}`}>
-                <Input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} />
-              </Field>
-            </div>
-            <FormationStyleChips formationId={formation?.id} />
-            <PitchView slots={slots} selected={selected} onSelect={setSelected} info={info} />
-            <p className="mt-2 text-xs text-slate-500">Slota tıkla: rol ve focus seç, kart ata. Sahada: meta skor · kimya (k) · fiyat. Formasyon değiştirince kartlar aynı mevkideki slotlara taşınır.</p>
-          </>
-        )}
-      </Card>
+    <div className="space-y-3">
+      <div className="grid items-start gap-4 min-[820px]:grid-cols-[360px_1fr]">
+        <div className="order-2 flex flex-col gap-3.5 min-[820px]:order-1">
+          <UtTacticCode
+            tactic={tactic}
+            onLoaded={(r) => {
+              setFormationId(r.formation)
+              setPicked({})
+              setRoleOverride(Object.fromEntries(r.slots.map((s) => [s.slotId, s.roleId])))
+              setSetup({ buildUp: (BUILD_UPS as readonly string[]).includes(r.buildUp) ? (r.buildUp as Setup['buildUp']) : 'Balanced', depth: r.depth })
+            }}
+          />
 
-      <div className="space-y-4">
-        <Card title="Kadro özeti">
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <Pill tone={chem.total >= 30 ? 'emerald' : chem.total >= 20 ? 'amber' : 'rose'}>kimya {chem.total} / {MAX_SQUAD_CHEM}</Pill>
-            <Pill tone="sky">meta* ort. {evaluation.data ? evaluation.data.averageMeta : '—'}</Pill>
-            <Pill tone="slate">OVR ort. {evaluation.data ? evaluation.data.averageOverall : '—'}</Pill>
-            <Pill tone="slate">{pickedSlots.length}/11 slot dolu</Pill>
-            <Button variant="ghost" onClick={() => setPicked({})}>Kartları temizle</Button>
-          </div>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-            <Pill tone="amber">ort. ücret {coins(price.average)}</Pill>
-            <Pill tone="amber">toplam {coins(price.known > 0 ? price.total : undefined)}</Pill>
-            <span className="text-xs text-slate-500">{price.known}/{price.count} kartın fiyatı biliniyor</span>
-          </div>
-          <Summary evaluation={evaluation.data?.slots ?? []} />
-          <p className="mt-2 text-xs text-slate-500">
-            Meta* platformun tahmin metriğidir; kendi kartlarında gerçek attribute'ları kullanılır. Fiyat: kulüp kartlarında pazar ortalaması (yoksa son satış), market ilanlarında satın alma fiyatı; katalog kartlarının fiyatı yoktur ve ortalamaya girmez. Fiyatlar senin oturumunda gördüğün değerlerdir.
-          </p>
-        </Card>
-
-        {active ? (
-          <Card title={`${active.slotId} · ${active.position}`}>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Rol ve focus">
-                <Select
-                  value={roleBySlot[active.slotId]?.roleId ?? ''}
-                  onChange={(e) => setRoleOverride((cur) => ({ ...cur, [active.slotId]: e.target.value }))}
-                >
-                  {activeRoles.map((r) => (
-                    <option key={r.id} value={r.id}>{r.name} · {r.focus}</option>
-                  ))}
-                </Select>
-              </Field>
-              <div className="flex items-end gap-2">
-                <Button variant="secondary" onClick={() => setPicking(true)}>{activeCard ? `Kart: ${activeCard.name} (değiştir)` : 'Kart ata'}</Button>
-                {activeCard && (
-                  <Button
-                    variant="ghost"
-                    onClick={() =>
-                      setPicked((cur) => {
-                        const { [active.slotId]: _removed, ...rest } = cur
-                        return rest
-                      })
-                    }
-                  >
-                    Kaldır
-                  </Button>
-                )}
-              </div>
-            </div>
-            {activeCard && (
-              <div className="mt-3 space-y-1.5 text-sm">
-                <p className="text-xs text-slate-500">
-                  {SOURCE_LABEL[activeCard.source]} · {activeCard.rating} OVR{activeCard.rarity ? ` · ${activeCard.rarity}` : ''}{activeCard.club ? ` · ${activeCard.club}` : ''} · fiyat {coins(activeCard.price)}
-                  {activeCard.untradeable ? ' · untradeable' : ''}
+          <section className={`dark ${PANEL}`}>
+            <h2 className={PANEL_TITLE}>Kadro Özeti</h2>
+            {formations.isLoading ? (
+              <Spinner />
+            ) : formations.error ? (
+              <ErrorBox error={formations.error} />
+            ) : (
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between gap-2 text-[13px]">
+                  <label htmlFor="ut-formation">Formasyon ({formations.data?.length ?? 0})</label>
+                  <Select id="ut-formation" value={formation?.id} onChange={(e) => changeFormation(e.target.value)} className="!w-auto !bg-slate-950 !text-slate-100">
+                    {(formations.data ?? []).map((f) => (
+                      <option key={f.id} value={f.id}>{f.label ?? f.id}</option>
+                    ))}
+                  </Select>
+                </div>
+                <FormationStyleChips formationId={formation?.id} />
+                <div className="flex items-center justify-between gap-2 text-[13px]">
+                  <span>Build-Up</span>
+                  <div role="radiogroup" aria-label="Build-Up" className="flex gap-1.5">
+                    {BUILD_UPS.map((b) => (
+                      <button
+                        key={b}
+                        type="button"
+                        role="radio"
+                        aria-checked={setup.buildUp === b}
+                        onClick={() => setSetup((cur) => ({ ...cur, buildUp: b }))}
+                        className={`rounded-md border px-2.5 py-1 text-[11.5px] ${setup.buildUp === b ? 'border-emerald-400 text-emerald-300' : 'border-slate-700 text-slate-400'}`}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <label className="block text-[13px]">
+                  <span className="mb-1 block">Savunma hattı: {setup.depth}</span>
+                  <input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} className="w-full accent-emerald-400" />
+                </label>
+                <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-800 pt-2.5 text-sm">
+                  <Pill tone={chem.total >= 30 ? 'emerald' : chem.total >= 20 ? 'amber' : 'rose'}>kimya {chem.total} / {MAX_SQUAD_CHEM}</Pill>
+                  <Pill tone="sky">meta* ort. {evaluation.data ? evaluation.data.averageMeta : '—'}</Pill>
+                  <Pill tone="slate">OVR ort. {evaluation.data ? evaluation.data.averageOverall : '—'}</Pill>
+                  <Pill tone="slate">{pickedSlots.length}/11 dolu</Pill>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 text-sm">
+                  <Pill tone="amber">ort. ücret {coins(price.average)}</Pill>
+                  <Pill tone="amber">toplam {coins(price.known > 0 ? price.total : undefined)}</Pill>
+                </div>
+                <p className="text-xs text-slate-400">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+                <Summary evaluation={evaluation.data?.slots ?? []} />
+                <Button variant="ghost" onClick={() => setPicked({})}>Kartları temizle</Button>
+                <p className="text-xs text-slate-400">
+                  Meta* platformun tahmin metriğidir; kendi kartlarında gerçek attribute'ları kullanılır. Fiyat: kulüp kartlarında pazar ortalaması (yoksa son satış), market ilanlarında satın alma fiyatı; katalog kartlarının fiyatı yoktur ve ortalamaya girmez.
                 </p>
-                {activeEval ? (
-                  <>
-                    <p>
-                      Meta rating* <b className="text-lg tabular-nums">{activeEval.card.metaRating}</b> <Pill tone={TIER_TONE[activeEval.card.tier] ?? 'slate'}>{activeEval.card.tier}</Pill>
-                      {' · '}Kimya <b>{'◆'.repeat(chem.perSlot[activeIndex])}{'◇'.repeat(3 - chem.perSlot[activeIndex])}</b>
-                    </p>
-                    {activeEval.roleFit !== undefined && (
-                      <p className="flex items-center gap-1.5">
-                        {activeEval.badge && <BadgeDot state={activeEval.badge} />} RoleFit <b>%{Math.round(activeEval.roleFit)}</b> · {activeEval.roleName}
-                        {activeEval.setupDelta !== undefined && activeEval.setupDelta !== 0 && <span className="text-xs text-slate-500">(ayar {activeEval.setupDelta > 0 ? '+' : ''}{activeEval.setupDelta})</span>}
-                      </p>
-                    )}
-                    {activeEval.reason && <p className="text-xs text-slate-500">{activeEval.reason}</p>}
-                    {activeEval.card.chemStyles && (
-                      <p className="text-xs">
-                        Chem style önerisi: <b>{activeEval.card.bestChemStyle}</b>{' '}
-                        {activeEval.card.chemStyles.filter((c) => c.style === activeEval.card.bestChemStyle).map((c) => `(meta ${c.metaRating}, +${c.delta})`)}
-                      </p>
-                    )}
-                    {!activeCard.club && activeCard.source !== 'catalog' && (
-                      <p className="text-xs text-amber-700 dark:text-amber-400">Bu kartın kulüp/lig/ülke adı çözülemedi; kimya bağları hesaba katılmıyor olabilir.</p>
-                    )}
-                  </>
-                ) : (
-                  <Spinner />
-                )}
               </div>
             )}
-          </Card>
-        ) : (
-          <Card><EmptyState>Sahada bir slota tıkla.</EmptyState></Card>
-        )}
+          </section>
+        </div>
 
-        <UtTacticCode
-          tactic={tactic}
-          onLoaded={(r) => {
-            setFormationId(r.formation)
-            setPicked({})
-            setRoleOverride(Object.fromEntries(r.slots.map((s) => [s.slotId, s.roleId])))
-            setSetup({ buildUp: (BUILD_UPS as readonly string[]).includes(r.buildUp) ? (r.buildUp as Setup['buildUp']) : 'Balanced', depth: r.depth })
-          }}
-        />
+        <div className="order-1 rounded-2xl border border-slate-700 bg-slate-900 p-2.5 min-[820px]:order-2">
+          <Pitch
+            slots={views}
+            onPickPlayer={(slotId) => setDialog({ kind: 'card', slotId })}
+            onPickRole={(slotId) => setDialog({ kind: 'role', slotId })}
+            onRemove={removeCard}
+          />
+          <p className="mt-2 px-1 text-xs text-slate-400">Karta tıkla: kart ata ve ayrıntı. Rol etiketine tıkla: rol ve focus. ✕: kartı kaldır. Kart üstünde: meta · kimya · fiyat. Formasyon değişince kartlar aynı mevkideki slotlara taşınır.</p>
+        </div>
       </div>
 
-      {picking && active && (
+      {dialog?.kind === 'card' && dialogSlot && (
         <PickModal
-          position={active.position}
+          position={dialogSlot.position}
+          slotId={dialogSlot.slotId}
+          current={picked[dialogSlot.slotId]}
+          roleName={roleBySlot[dialogSlot.slotId]?.roleName}
+          evaluation={evalBySlot[dialogSlot.slotId]}
+          chemLinks={chem.perSlot[slots.indexOf(dialogSlot)]}
           usedKeys={new Set(Object.values(picked).map((c) => c.key))}
-          onClose={() => setPicking(false)}
+          onClose={() => setDialog(null)}
           onPick={(card) => {
-            setPicked((cur) => ({ ...cur, [active.slotId]: card }))
-            setPicking(false)
+            setPicked((cur) => ({ ...cur, [dialogSlot.slotId]: card }))
+            setDialog(null)
           }}
+        />
+      )}
+      {dialog?.kind === 'role' && dialogSlot && (
+        <RoleFocusModal
+          position={dialogSlot.position}
+          groups={roleGroups(roles.data ?? [], dialogSlot.position)}
+          currentRoleId={roleBySlot[dialogSlot.slotId]?.roleId ?? dialogSlot.defaultRole}
+          onApply={(rid) => {
+            setRoleOverride((cur) => ({ ...cur, [dialogSlot.slotId]: rid }))
+            setDialog(null)
+          }}
+          onClose={() => setDialog(null)}
         />
       )}
     </div>
@@ -275,9 +263,9 @@ function Summary({ evaluation }: { evaluation: { slotId: string; badge?: WeaponS
     return null
   }
   return (
-    <ul className="mt-2 space-y-0.5 text-sm">
-      <li className="text-emerald-700 dark:text-emerald-400">+ Rolüne tam oturan: {strong.length}</li>
-      {weak.length > 0 && <li className="text-rose-600 dark:text-rose-400">− Rolüne uymayan: {weak.map((w) => `${w.slotId} (${w.roleName})`).join(', ')}</li>}
+    <ul className="space-y-0.5 text-sm">
+      <li className="text-emerald-400">+ Rolüne tam oturan: {strong.length}</li>
+      {weak.length > 0 && <li className="rounded-lg border border-red-900 bg-red-950 px-2.5 py-1.5 text-xs text-red-300">Rolüne uymayan: {weak.map((w) => `${w.slotId} (${w.roleName})`).join(', ')}</li>}
     </ul>
   )
 }
@@ -296,8 +284,13 @@ function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (
     staleTime: 300_000,
   })
   const [copied, setCopied] = useState(false)
+  const [open, setOpen] = useState(false)
   const [importError, setImportError] = useState<unknown>()
-  async function copy(code: string) {
+  const code = exportCode.data?.code
+  async function copy() {
+    if (!code) {
+      return
+    }
     try {
       await navigator.clipboard.writeText(code)
       setCopied(true)
@@ -315,27 +308,102 @@ function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (
     }
   }
   return (
-    <Card title="EA taktik kodu">
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Input readOnly value={exportCode.data?.code ?? ''} placeholder={exportCode.isFetching ? 'Üretiliyor…' : '—'} className="font-mono" onFocus={(e) => e.currentTarget.select()} aria-label="EA taktik kodu" />
-          <Button variant="secondary" disabled={!exportCode.data} onClick={() => exportCode.data && copy(exportCode.data.code)}>{copied ? 'Kopyalandı' : 'Kopyala'}</Button>
-        </div>
-        <p className="text-xs text-slate-500">Kod formasyon, rol, Build-Up ve hat değiştikçe otomatik güncellenir.</p>
-        {exportCode.data?.warnings.map((w) => <p key={w} className="text-xs text-amber-700 dark:text-amber-400">{w}</p>)}
-        <ErrorBox error={exportCode.error} />
-        <div className="flex items-center gap-2">
-          <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır" className="font-mono" maxLength={16} aria-label="EA kodunu yapıştır" />
-          <Button disabled={!input.trim()} onClick={load}>Yükle</Button>
-        </div>
-        <ErrorBox error={importError} />
-        <p className="text-xs text-slate-500">Kod mod-bağımsızdır: kariyerdeki taktik kodunun aynısı. Yüklemek formasyonu, rolleri, Build-Up'ı ve hattı değiştirir, kartları temizler.</p>
+    <section className={`dark ${PANEL}`}>
+      <h2 className={PANEL_TITLE}>EA Taktik Kodu</h2>
+      <div aria-live="polite" className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-amber-300">
+        {code ?? (exportCode.isFetching ? '…' : '—')}
       </div>
-    </Card>
+      <div className="mt-2.5 flex gap-2">
+        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950 disabled:opacity-50">
+          {copied ? 'Kopyalandı' : 'Kopyala'}
+        </button>
+        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-slate-700 py-2 text-[12.5px] font-bold text-slate-100 disabled:opacity-50">
+          Oyuna Aktar
+        </button>
+      </div>
+      <p className="mt-1.5 text-xs text-slate-400">Kod formasyon, rol, Build-Up ve hat değiştikçe otomatik güncellenir.</p>
+      {exportCode.data?.warnings.map((w) => <p key={w} className="text-xs text-amber-300">{w}</p>)}
+      <ErrorBox error={exportCode.error} />
+      <div className="mt-2.5 flex items-center gap-2">
+        <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır" className="font-mono" maxLength={16} aria-label="EA kodunu yapıştır" />
+        <Button disabled={!input.trim()} onClick={load}>Yükle</Button>
+      </div>
+      <ErrorBox error={importError} />
+      <p className="mt-1.5 text-xs text-slate-400">Kod mod-bağımsızdır: kariyerdeki taktik kodunun aynısı. Yüklemek formasyonu, rolleri, Build-Up'ı ve hattı değiştirir, kartları temizler.</p>
+      {open && code && (
+        <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
+          <div className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-amber-300">{code}</div>
+          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-slate-200">
+            <li>Kodu kopyala.</li>
+            <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
+            <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
+          </ol>
+          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950">Kopyala</button>
+        </Modal>
+      )}
+    </section>
   )
 }
 
-function PickModal({ position, usedKeys, onClose, onPick }: { position: string; usedKeys: Set<string>; onClose: () => void; onPick: (c: UtCard) => void }) {
+interface PickProps {
+  position: string
+  slotId: string
+  current?: UtCard
+  roleName?: string
+  evaluation?: {
+    card: { metaRating: number; tier: string; bestChemStyle?: string; chemStyles?: { style: string; metaRating: number; delta: number }[] }
+    roleFit?: number
+    badge?: WeaponState
+    roleName?: string
+    setupDelta?: number
+    reason?: string
+  }
+  chemLinks?: number
+  usedKeys: Set<string>
+  onClose: () => void
+  onPick: (c: UtCard) => void
+}
+
+function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation: PickProps['evaluation']; chemLinks?: number }) {
+  const links = chemLinks ?? 0
+  return (
+    <div className="mb-3 space-y-1.5 rounded-xl border border-slate-700 bg-slate-950 p-3 text-sm">
+      <p className="font-semibold">{card.name}</p>
+      <p className="text-xs text-slate-400">
+        {SOURCE_LABEL[card.source]} · {card.rating} OVR{card.rarity ? ` · ${card.rarity}` : ''}{card.club ? ` · ${card.club}` : ''} · fiyat {coins(card.price)}
+        {card.untradeable ? ' · untradeable' : ''}
+      </p>
+      {evaluation ? (
+        <>
+          <p>
+            Meta rating* <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Pill tone={TIER_TONE[evaluation.card.tier] ?? 'slate'}>{evaluation.card.tier}</Pill>
+            {' · '}Kimya <b>{'◆'.repeat(links)}{'◇'.repeat(3 - links)}</b>
+          </p>
+          {evaluation.roleFit !== undefined && (
+            <p className="flex items-center gap-1.5">
+              {evaluation.badge && <BadgeDot state={evaluation.badge} />} RoleFit <b>%{Math.round(evaluation.roleFit)}</b> · {evaluation.roleName}
+              {evaluation.setupDelta !== undefined && evaluation.setupDelta !== 0 && <span className="text-xs text-slate-400">(ayar {evaluation.setupDelta > 0 ? '+' : ''}{evaluation.setupDelta})</span>}
+            </p>
+          )}
+          {evaluation.reason && <p className="text-xs text-slate-400">{evaluation.reason}</p>}
+          {evaluation.card.chemStyles && (
+            <p className="text-xs">
+              Chem style önerisi: <b>{evaluation.card.bestChemStyle}</b>{' '}
+              {evaluation.card.chemStyles.filter((c) => c.style === evaluation.card.bestChemStyle).map((c) => `(meta ${c.metaRating}, +${c.delta})`)}
+            </p>
+          )}
+          {!card.club && card.source !== 'catalog' && (
+            <p className="text-xs text-amber-300">Bu kartın kulüp/lig/ülke adı çözülemedi; kimya bağları hesaba katılmıyor olabilir.</p>
+          )}
+        </>
+      ) : (
+        <Spinner />
+      )}
+    </div>
+  )
+}
+
+function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys, onClose, onPick }: PickProps) {
   const library = useMemo(() => utCardStore.get(), [])
   const [source, setSource] = useState<CardSource>(library && library.cards.some((c) => c.source === 'club') ? 'club' : 'catalog')
   const [q, setQ] = useState('')
@@ -360,7 +428,8 @@ function PickModal({ position, usedKeys, onClose, onPick }: { position: string; 
   }
 
   return (
-    <Modal title={`${position} için kart seç`} onClose={onClose}>
+    <Modal wide title={`${slotId} · ${position} — Kart seç`} hint="Kulüp kartların, market ilanları veya katalog" onClose={onClose}>
+      {current && <CurrentCard card={current} evaluation={evaluation} chemLinks={chemLinks} />}
       <div role="tablist" aria-label="Kart kaynağı" className="mb-3 flex gap-1">
         {(['club', 'market', 'catalog'] as CardSource[]).map((s) => (
           <button
@@ -369,40 +438,40 @@ function PickModal({ position, usedKeys, onClose, onPick }: { position: string; 
             role="tab"
             aria-selected={source === s}
             onClick={() => setSource(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300'}`}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
           >
             {SOURCE_LABEL[s]}{s !== 'catalog' ? ` (${counts[s]})` : ''}
           </button>
         ))}
       </div>
-      <Input autoFocus placeholder="İsim ara…" value={q} onChange={(e) => setQ(e.target.value)} />
+      <Input placeholder="İsim ara…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Kart ara" />
       <div className="mt-3 max-h-80 overflow-y-auto">
         {source === 'catalog' && catalog.isLoading ? (
           <Spinner />
         ) : rows.length === 0 ? (
           <EmptyState>
             {source === 'catalog' ? 'Sonuç yok.' : counts[source] === 0 ? (
-              <>Henüz {SOURCE_LABEL[source].toLowerCase()} verisi yok. <Link to="/ut/import" className="text-emerald-700 underline dark:text-emerald-400">Kulüp içe aktar</Link> sayfasından yakalama dosyanı yükle.</>
+              <>Henüz {SOURCE_LABEL[source].toLowerCase()} verisi yok. <Link to="/ut/import" className="text-emerald-400 underline">Kulüp içe aktar</Link> sayfasından yakalama dosyanı yükle.</>
             ) : 'Bu mevkide kart yok.'}
           </EmptyState>
         ) : (
-          <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-700">
+          <ul className="divide-y divide-slate-800 text-sm">
             {rows.map((c) => (
               <li key={c.key}>
-                <button type="button" disabled={usedKeys.has(c.key)} className="flex w-full items-center justify-between gap-2 py-1.5 text-left hover:bg-slate-50 disabled:opacity-40 dark:hover:bg-slate-700" onClick={() => onPick(c)}>
+                <button type="button" disabled={usedKeys.has(c.key) && c.key !== current?.key} className="flex w-full items-center justify-between gap-2 px-1 py-1.5 text-left hover:bg-slate-800 disabled:opacity-40" onClick={() => onPick(c)}>
                   <span>
-                    <b>{c.rating}</b> {c.name} <span className="text-xs text-slate-500">{c.club ?? ''}{c.rarity ? ` · ${c.rarity}` : ''}</span>
+                    <b>{c.rating}</b> {c.name} <span className="text-xs text-slate-400">{c.club ?? ''}{c.rarity ? ` · ${c.rarity}` : ''}</span>
                     {c.untradeable && <Pill tone="emerald">untradeable</Pill>}
                   </span>
-                  <span className="text-xs tabular-nums text-slate-500">{c.price !== undefined ? coins(c.price) : c.league ?? ''}</span>
+                  <span className="text-xs tabular-nums text-slate-400">{c.price !== undefined ? coins(c.price) : c.league ?? ''}</span>
                 </button>
               </li>
             ))}
           </ul>
         )}
       </div>
-      {source === 'catalog' && <p className="mt-2 text-xs text-slate-500">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
-      {library && <p className="mt-2 text-xs text-slate-500">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
+      {source === 'catalog' && <p className="mt-2 text-xs text-slate-400">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
+      {library && <p className="mt-2 text-xs text-slate-400">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
     </Modal>
   )
 }

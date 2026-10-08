@@ -11,6 +11,7 @@ export interface SlotView {
   roleLabel: string
   fit?: { pct: number; band: WeaponState }
   placeholder?: string
+  sub?: string
   selected?: boolean
 }
 
@@ -51,6 +52,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove }: Props
           </span>
         )}
         {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-slate-400">{view.placeholder ?? '+'}</div>}
+        {player && view.sub && <div className="truncate text-[9px] text-slate-300">{view.sub}</div>}
         {fit && (
           <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[fit.band]}`}>
             {BADGE_EMOJI[fit.band]} %{fit.pct}
