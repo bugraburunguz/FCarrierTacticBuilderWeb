@@ -10,6 +10,8 @@ export interface SlotView {
   player?: { id: number; name: string; overall: number }
   roleLabel: string
   fit?: { pct: number; band: WeaponState }
+  placeholder?: string
+  selected?: boolean
 }
 
 const FIT_STYLE: Record<WeaponState, string> = {
@@ -39,7 +41,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole }: Props) {
             onPickPlayer()
           }
         }}
-        className="relative cursor-pointer rounded-[10px] border border-slate-600 bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none"
+        className={`relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none ${view.selected ? 'border-amber-300 ring-2 ring-amber-300/60' : 'border-slate-600'}`}
       >
         <span className="absolute left-1.5 top-1 text-[9px] font-extrabold text-emerald-300">{view.position}</span>
         {player && (
@@ -47,7 +49,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole }: Props) {
             {player.overall}
           </span>
         )}
-        {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-slate-400">+</div>}
+        {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-slate-400">{view.placeholder ?? '+'}</div>}
         {fit && (
           <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[fit.band]}`}>
             {BADGE_EMOJI[fit.band]} %{fit.pct}

@@ -10,7 +10,10 @@ import { FormationStyleChips } from '../components/FormationStyleChips'
 import { ProtectLeadCard } from '../components/ProtectLeadCard'
 import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
-import { PitchView } from '../components/PitchView'
+import { Pitch } from '../components/squadBuilder/Pitch'
+import type { SlotView } from '../components/squadBuilder/PositionCard'
+import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
+import { roleBaseName, roleGroups } from '../lib/squadBuilder'
 import { SlotSuggestions } from '../components/SlotSuggestions'
 import { SetupChips } from '../components/SetupChips'
 import { EaTacticCode } from '../components/EaTacticCode'
@@ -39,6 +42,7 @@ export function TacticBuilderPage() {
   const fit = analyse.data?.result
   const outOfCredit = analyse.error instanceof ApiError && analyse.error.code === ErrorCodes.insufficientCredit
   const [selectedSlot, setSelectedSlot] = useState<string | undefined>()
+  const [roleDialog, setRoleDialog] = useState<string | undefined>()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const presets = useQuery({ queryKey: ['presets'], queryFn: () => endpoints.presets() })
   const tags = useQuery({ queryKey: ['tags-all'], queryFn: () => endpoints.behaviorTags() })
@@ -88,17 +92,38 @@ export function TacticBuilderPage() {
     return <Spinner />
   }
 
-  const info = Object.fromEntries(
-    (resolved.data?.slots ?? []).map((s) => {
-      const match = s.roleName.match(/^(.*?)\s*\((.*)\)\s*$/)
-      const focus = match?.[2]
-      const subtitle = [focus, s.tags.length ? `${s.tags.length} davranış` : undefined].filter(Boolean).join(' · ')
-      return [s.slotId, { title: match ? match[1] : s.roleName, subtitle: subtitle || undefined }]
-    }),
-  )
+  const roleById = new Map((roles.data ?? []).map((r) => [r.id, r]))
+  const analysed = new Map((fit?.slots ?? []).map((s) => [s.slotId, s]))
+  const views: SlotView[] = (formation?.slots ?? []).map((sl) => {
+    const resolvedSlotView = resolved.data?.slots.find((r) => r.slotId === sl.slotId)
+    const role = roleById.get(resolvedSlotView?.roleId ?? sl.defaultRole)
+    const result = analysed.get(sl.slotId)
+    return {
+      slotId: sl.slotId,
+      position: sl.position,
+      x: sl.x,
+      y: sl.y,
+      player: result?.playerName ? { id: result.playerId ?? 0, name: result.playerName, overall: result.overall ?? 0 } : undefined,
+      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : (resolvedSlotView?.roleName ?? '…'),
+      fit: result?.roleFit ? { pct: Math.round(result.roleFit.score), band: result.roleFit.badge } : undefined,
+      placeholder: sl.slotId,
+      selected: sl.slotId === selectedSlot,
+    }
+  })
+  const roleDialogSlot = formation?.slots.find((sl) => sl.slotId === roleDialog)
+
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(320px,460px)_1fr]">
+      {roleDialogSlot && (
+        <RoleFocusModal
+          position={roleDialogSlot.position}
+          groups={roleGroups(roles.data ?? [], roleDialogSlot.position)}
+          currentRoleId={resolved.data?.slots.find((r) => r.slotId === roleDialogSlot.slotId)?.roleId ?? roleDialogSlot.defaultRole}
+          onApply={(rid) => { updateSlot(roleDialogSlot.slotId, { roleId: rid }); setRoleDialog(undefined) }}
+          onClose={() => setRoleDialog(undefined)}
+        />
+      )}
       {autoFit && formations.data && presets.data && (
         <div className="lg:col-span-2">
           <AutoFitPanel formations={formations.data} presets={presets.data} setup={tactic.setup} />
@@ -170,7 +195,12 @@ export function TacticBuilderPage() {
         <TeamSetup careerId={careerId} />
         <ProtectLeadCard slots={resolved.data?.slots ?? []} roles={roles.data ?? []} />
         <EaTacticCode onLoaded={() => { setAutoFit(false); setSelectedSlot(undefined) }} />
-        {formation && <PitchView slots={formation.slots} selected={selectedSlot} onSelect={setSelectedSlot} info={info} />}
+        {formation && (
+          <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
+            <Pitch slots={views} onPickPlayer={setSelectedSlot} onPickRole={setRoleDialog} />
+            <p className="mt-2 px-1 text-xs text-slate-400">Karta tıkla: davranışlar. Rol etiketine tıkla: rol ve odak. Oyuncular "Mevcut taktiği analiz et" sonrası görünür.</p>
+          </div>
+        )}
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => { tacticStore.set({ formation: tactic.formation, slots: {}, setup: tactic.setup }); setSelectedSlot(undefined) }}>
             Davranışları sıfırla

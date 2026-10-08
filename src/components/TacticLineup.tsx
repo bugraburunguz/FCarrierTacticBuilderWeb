@@ -5,7 +5,9 @@ import type { CareerPlayer, Formation } from '../api/types'
 import { mirrorTactic } from '../lib/mirror'
 import { pickBench } from '../lib/bench'
 import { tacticStore, toTacticRequest, useTactic } from '../state/tacticStore'
-import { PitchView } from './PitchView'
+import { Pitch } from './squadBuilder/Pitch'
+import type { SlotView } from './squadBuilder/PositionCard'
+import { useNavigate } from 'react-router-dom'
 import { BadgeDot, Button, Card, ErrorBox, Pill, Spinner } from './ui'
 
 interface Props {
@@ -18,6 +20,7 @@ const shortRole = (name: string) => name.replace(/\s*\(.*\)/, '')
 
 export function TacticLineup({ careerId, squad, formations }: Props) {
   const tactic = useTactic()
+  const navigate = useNavigate()
   const request = toTacticRequest(tactic)
   const formation = formations.find((f) => f.id === tactic.formation)
   const lineup = useQuery({
@@ -36,20 +39,31 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
   }
   const fit = lineup.data
   const bench = fit ? pickBench(squad, fit) : []
-  const info = Object.fromEntries(
-    (fit?.slots ?? []).map((s) => [
-      s.slotId,
-      { title: s.playerName ?? 'Boş', subtitle: s.roleFit ? `${Math.round(s.roleFit.score)}%` : undefined, badge: s.roleFit?.badge },
-    ]),
-  )
+  const views: SlotView[] = (formation?.slots ?? []).map((sl) => {
+    const result = fit?.slots.find((s) => s.slotId === sl.slotId)
+    return {
+      slotId: sl.slotId,
+      position: sl.position,
+      x: sl.x,
+      y: sl.y,
+      player: result?.playerName ? { id: result.playerId ?? 0, name: result.playerName, overall: result.overall ?? 0 } : undefined,
+      roleLabel: result ? shortRole(result.roleName) + (result.roleName.match(/((.*))/) ? ` · ${result.roleName.match(/((.*))/)![1]}` : '') : '…',
+      fit: result?.roleFit ? { pct: Math.round(result.roleFit.score), band: result.roleFit.badge } : undefined,
+    }
+  })
 
   return (
     <Card
       title={`Seçili taktikte kadro · ${tactic.formation}${tactic.presetId ? ` · ${tactic.presetId}` : ''}`}
       actions={
-        <Link to="/tactics/builder" className="text-sm text-emerald-700 underline">
-          Taktiği düzenle
-        </Link>
+        <div className="flex gap-3 text-sm">
+          <Link to="/squad/builder" className="text-emerald-700 underline">
+            Kadro kurucuda düzenle
+          </Link>
+          <Link to="/tactics/builder" className="text-emerald-700 underline">
+            Taktiği düzenle
+          </Link>
+        </div>
       }
     >
       {lineup.isLoading && <Spinner />}
@@ -67,7 +81,9 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
             </div>
           )}
           <div className="grid gap-4 lg:grid-cols-[minmax(300px,440px)_1fr]">
-            <PitchView slots={formation.slots} info={info} />
+            <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
+              <Pitch slots={views} onPickPlayer={() => navigate('/squad/builder')} onPickRole={() => navigate('/squad/builder')} />
+            </div>
             <div className="space-y-3">
               <div>
                 <h4 className="mb-1 text-xs font-semibold uppercase text-slate-500">İlk 11 ve yedekleri</h4>
