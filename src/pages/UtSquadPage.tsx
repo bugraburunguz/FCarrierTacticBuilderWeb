@@ -12,6 +12,8 @@ import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } 
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
 import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
+import { mapActiveSquad } from '../lib/activeSquad'
+import { useUtCapture } from '../state/utCaptureStore'
 import { utCardStore } from '../state/utCardStore'
 
 const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
@@ -49,6 +51,8 @@ export function UtSquadPage() {
   const [picked, setPicked] = useState<Record<string, UtCard>>({})
   const [roleOverride, setRoleOverride] = useState<Record<string, string>>({})
   const [dialog, setDialog] = useState<Dialog | null>(null)
+  const capture = useUtCapture()
+  const [loadNote, setLoadNote] = useState<string>()
 
   const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
   const slots = formation?.slots ?? []
@@ -133,6 +137,21 @@ export function UtSquadPage() {
     setDialog(null)
   }
 
+  function loadActiveSquad() {
+    const squad = capture?.activeSquad
+    if (!squad || !formations.data) {
+      return
+    }
+    const loaded = mapActiveSquad(squad, formations.data, formation)
+    if (loaded.formationId) {
+      setFormationId(loaded.formationId)
+    }
+    setRoleOverride({})
+    setPicked(loaded.picked)
+    setDialog(null)
+    setLoadNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}. Taktik (rol/focus) yakalanmadığı için roller otomatik.`)
+  }
+
   function removeCard(slotId: string) {
     setPicked((cur) => {
       const { [slotId]: _removed, ...rest } = cur
@@ -204,7 +223,14 @@ export function UtSquadPage() {
                 </div>
                 <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
                 <Summary evaluation={evaluation.data?.slots ?? []} />
-                <Button variant="ghost" onClick={() => setPicked({})}>Kartları temizle</Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="ghost" onClick={() => setPicked({})}>Kartları temizle</Button>
+                  {capture?.activeSquad && (
+                    <Button variant="secondary" onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button>
+                  )}
+                </div>
+                {loadNote && <p role="status" className="text-xs text-accent">{loadNote}</p>}
+                {!capture?.activeSquad && <p className="text-xs text-muted">Aktif kadroyu yüklemek için Web App'te Kadro ekranını açıp yeniden yakalama dosyası içe aktar.</p>}
                 <p className="text-xs text-muted">
                   Meta* platformun tahmin metriğidir; kendi kartlarında gerçek attribute'ları kullanılır. Fiyat: kulüp kartlarında pazar ortalaması (yoksa son satış), market ilanlarında satın alma fiyatı; katalog kartlarının fiyatı yoktur ve ortalamaya girmez.
                 </p>

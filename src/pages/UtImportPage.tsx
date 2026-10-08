@@ -10,6 +10,7 @@ import { objectiveStore } from '../state/objectiveStore'
 import { fromCapture, cardPrice, type UtCard } from '../lib/utCard'
 import { sbcPoolStore } from '../state/sbcPoolStore'
 import { utCardStore } from '../state/utCardStore'
+import { utCaptureStore } from '../state/utCaptureStore'
 
 const TOP_CARDS = 25
 const TOP_PRICES = 15
@@ -45,6 +46,7 @@ export function UtImportPage() {
     mutationFn: async (file: File) => endpoints.utCapture(parseCaptures(await file.text())),
     onSuccess: (data) => {
       const saved = utCardStore.set(toLibrary(data))
+      utCaptureStore.set(data)
       setNotice(saved ? 'Kulüp kartların ve gördüğün market ilanları kadro kurucuda kullanılabilir.' : 'Kartlar tarayıcıda saklanamadı (alan dolu).')
     },
     onError: (e) => setFileError(e instanceof SyntaxError ? 'Dosya geçerli bir JSON değil.' : undefined),
@@ -61,7 +63,7 @@ export function UtImportPage() {
     <div className="space-y-4">
       <Card title="Kulüp ve piyasa verisi içe aktar">
         <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
-          Extension'ın dışa aktardığı <span className="font-mono">fcareer-captures.json</span> dosyasını yükle. Sunucu yalnızca kulüp, kadro, piyasa, objective, SBC, Evo ve kaynak (config) yanıtlarını işler; oturum ve hesap uçlarını yoksayar. Sonuç kaydedilmez, bu oturumda gösterilir.
+          Extension'ın dışa aktardığı <span className="font-mono">fcareer-captures.json</span> dosyasını yükle. Sunucu yalnızca kulüp, kadro, piyasa, objective, SBC, Evo ve kaynak (config) yanıtlarını işler; oturum ve hesap uçlarını yoksayar. Kartlar, SBC setleri, Evo slotları ve aktif kadro tarayıcında saklanır; sunucuya kaydedilmez.
         </p>
         <input
           type="file"
@@ -104,6 +106,7 @@ export function UtImportPage() {
             }}
           />
           <Others result={result} />
+          <UnknownPaths paths={result.unknownPaths ?? []} />
         </>
       )}
     </div>
@@ -164,10 +167,30 @@ function Club({ result, onPool }: { result: CaptureResult; onPool: () => void })
   )
 }
 
+function UnknownPaths({ paths }: { paths: string[] }) {
+  if (paths.length === 0) {
+    return null
+  }
+  return (
+    <Card title={`Henüz işlenmeyen uç noktalar (${paths.length})`}>
+      <p className="mb-2 text-xs text-muted">Extension bu çağrıları gördü ama içeriği tanımıyoruz (aktif kadro/taktik, SBC challenge ayrıntıları gibi eksikler genelde burada görünür). Yalnızca yol adlarıdır, içerik yoktur.</p>
+      <ul className="max-h-48 overflow-auto font-mono text-xs">
+        {paths.map((p) => (
+          <li key={p}>{p}</li>
+        ))}
+      </ul>
+    </Card>
+  )
+}
+
 function Squad({ result }: { result: CaptureResult }) {
   const squad = result.activeSquad
   if (!squad) {
-    return null
+    return (
+      <Card title="Aktif kadro">
+        <EmptyState>Aktif kadro yakalanmadı. Extension açıkken EA Web App'te Kadro (Squad) ekranını aç, sayfayı yenile ve yeniden dışa aktar.</EmptyState>
+      </Card>
+    )
   }
   return (
     <Card title={`Aktif kadro ${squad.formationLabel ? `· ${squad.formationLabel}` : ''}`}>

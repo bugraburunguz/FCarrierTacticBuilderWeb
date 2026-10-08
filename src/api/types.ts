@@ -775,6 +775,7 @@ export interface CaptureResult {
   coins?: number
   currencies: { name: string; funds: number }[]
   config: { formations: { id: number; name: string; label: string; positionNames: string[] }[] }
+  unknownPaths?: string[]
 }
 
 export type Feasibility = 'REALISTIC' | 'AMBITIOUS' | 'UNREALISTIC'

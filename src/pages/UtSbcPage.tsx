@@ -5,6 +5,7 @@ import type { SbcPoolEntry, SbcRarity } from '../api/types'
 import { sbcPoolStore } from '../state/sbcPoolStore'
 import { TraditionalSbc } from '../components/TraditionalSbc'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
+import { useUtCapture } from '../state/utCaptureStore'
 
 const RARITIES: { id: SbcRarity; label: string }[] = [
   { id: 'REGULAR', label: 'Normal' },
@@ -22,6 +23,57 @@ interface Row {
 }
 
 const emptyRow = (): Row => ({ rating: '80', rarity: 'REGULAR', count: '1', untradeable: true, price: '' })
+
+function daysLeft(endTime?: number): number | undefined {
+  // EA kalan süreyi saniye olarak verir; çok büyük değerler "süresiz" demektir.
+  if (endTime === undefined) {
+    return undefined
+  }
+  const days = Math.floor(endTime / 86400)
+  return days <= 120 ? days : undefined
+}
+
+function ClubSbcSets() {
+  const capture = useUtCapture()
+  const sets = capture?.sbcSets ?? []
+  if (sets.length === 0) {
+    return (
+      <Card title="Kulübündeki SBC'ler">
+        <p className="text-sm text-muted">Henüz SBC yakalanmadı. Extension açıkken EA Web App'te SBC sekmesine gir, ardından <a className="underline" href="/ut/import">Kulüp içe aktar</a> sayfasından dosyayı yükle.</p>
+      </Card>
+    )
+  }
+  const byCategory = new Map<string, typeof sets>()
+  sets.forEach((s) => byCategory.set(s.category ?? 'Diğer', [...(byCategory.get(s.category ?? 'Diğer') ?? []), s]))
+  return (
+    <Card title={`Kulübündeki SBC'ler (${sets.length})`}>
+      <div className="space-y-3">
+        {[...byCategory.entries()].map(([category, items]) => (
+          <div key={category}>
+            <h3 className="mb-1 text-xs font-semibold uppercase text-muted">{category}</h3>
+            <ul className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+              {items.map((s) => {
+                const left = daysLeft(s.endTime)
+                const done = s.challengesCount > 0 && s.challengesCompleted >= s.challengesCount
+                return (
+                  <li key={s.setId} className="flex items-center justify-between gap-2 border-t border-line py-1">
+                    <span className={done ? 'text-muted line-through' : ''}>{s.name ?? `#${s.setId}`}</span>
+                    <span className="flex items-center gap-1.5 text-xs">
+                      <span className="tabular-nums">{s.challengesCompleted}/{s.challengesCount}</span>
+                      {s.repeatable && <Pill tone="sky">tekrarlanabilir</Pill>}
+                      {left !== undefined && <Pill tone="amber">{left} gün</Pill>}
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-xs text-muted">Şartlar (min. rating, kimya, lig/ülke) challenge'ın içine girince gelir: SBC setini aç ve her challenge'a tıkla, sonra yeniden dışa aktar. Şart verisi yakalanınca çözücüye aktarılır.</p>
+    </Card>
+  )
+}
 
 export function UtSbcPage() {
   const [target, setTarget] = useState('1000')
@@ -57,6 +109,7 @@ export function UtSbcPage() {
 
   return (
     <div className="space-y-4">
+      <ClubSbcSets />
       <Card title="SBC çözücü (hedef skor tipi)">
         <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
           Yeni tip Player/Upgrade SBC'lerde squad kurmazsın, hedef SBC skoruna ulaşırsın. Elindeki kartları rating'e göre gir; çözücü hedefi en az coin harcayarak (önce untradeable) ve en az fazla puanla tutturan seti bulur.
