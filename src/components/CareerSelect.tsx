@@ -1,38 +1,50 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import { careerStore, useActiveCareerId } from '../state/careerStore'
 import { formatEur } from '../lib/format'
-import { EmptyState, Field, Select, Spinner } from './ui'
+import { Modal } from './Modal'
+import { NewCareerForm } from './NewCareerForm'
+import { Button, Field, Select, Spinner } from './ui'
 
-/** Aktif kariyeri seçtirir; yoksa kadro sayfasına yönlendirir. */
+/** Aktif kariyeri seçtirir; yeni kariyer buradan veri aktarmadan oluşturulabilir. */
 export function CareerSelect() {
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const activeId = useActiveCareerId()
+  const [creating, setCreating] = useState(false)
 
   if (careers.isLoading) {
     return <Spinner />
   }
-  if (!careers.data || careers.data.length === 0) {
-    return (
-      <EmptyState>
-        Henüz kariyerin yok. <Link to="/squad" className="text-emerald-700 underline">Kadro sayfasından</Link> bir kulüp seçerek başla.
-      </EmptyState>
-    )
-  }
-  const selected = careers.data.find((c) => c.id === activeId) ?? careers.data[0]
-  if (selected.id !== activeId) {
+  const list = careers.data ?? []
+  const selected = list.find((c) => c.id === activeId) ?? list[0]
+  if (selected && selected.id !== activeId) {
     queueMicrotask(() => careerStore.set(selected.id))
   }
+
   return (
-    <Field label="Kariyer">
-      <Select value={selected.id} onChange={(e) => careerStore.set(Number(e.target.value))}>
-        {careers.data.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.clubName ?? `Kulüp ${c.clubId}`} · bütçe {formatEur(c.budgetEur)} · {c.squadSize} oyuncu
-          </option>
-        ))}
-      </Select>
-    </Field>
+    <div className="flex flex-wrap items-end gap-2">
+      {selected ? (
+        <Field label="Kariyer">
+          <Select value={selected.id} onChange={(e) => careerStore.set(Number(e.target.value))}>
+            {list.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name ? `${c.name} · ` : ''}{c.clubName ?? `Kulüp ${c.clubId}`} · bütçe {formatEur(c.budgetEur)} · {c.squadSize} oyuncu
+              </option>
+            ))}
+          </Select>
+        </Field>
+      ) : (
+        <p className="text-sm text-muted">Henüz kariyerin yok. Bir kulüp seçerek veri aktarmadan yeni kariyer başlatabilirsin.</p>
+      )}
+      <Button variant={selected ? 'secondary' : 'primary'} onClick={() => setCreating(true)}>
+        + Yeni kariyer
+      </Button>
+      {creating && (
+        <Modal wide title="Yeni kariyer" hint="Kulüp seç, bütçeni gir; veri aktarmak şart değil" onClose={() => setCreating(false)}>
+          <NewCareerForm onCreated={() => setCreating(false)} />
+        </Modal>
+      )}
+    </div>
   )
 }
