@@ -160,7 +160,7 @@ export function SquadBuilderPage() {
             <TeamSetup careerId={careerId} />
           </div>
           <div className="order-1 rounded-2xl border border-slate-700 bg-slate-900 p-2.5 min-[820px]:order-2">
-            <Pitch slots={views} onPickPlayer={(slotId) => setDialog({ kind: 'player', slotId })} onPickRole={(slotId) => setDialog({ kind: 'role', slotId })} />
+            <Pitch slots={views} onPickPlayer={(slotId) => setDialog({ kind: 'player', slotId })} onPickRole={(slotId) => setDialog({ kind: 'role', slotId })} onRemove={(slotId) => pickPlayer(slotId, null)} />
           </div>
         </div>
       )}

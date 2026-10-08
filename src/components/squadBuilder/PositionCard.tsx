@@ -24,9 +24,10 @@ interface Props {
   view: SlotView
   onPickPlayer: () => void
   onPickRole: () => void
+  onRemove?: () => void
 }
 
-export function PositionCard({ view, onPickPlayer, onPickRole }: Props) {
+export function PositionCard({ view, onPickPlayer, onPickRole, onRemove }: Props) {
   const { player, fit } = view
   return (
     <div className="group absolute w-[74px] -translate-x-1/2 -translate-y-1/2 text-center min-[520px]:w-[92px]" style={{ left: `${view.x}%`, top: `${view.y}%` }}>
@@ -56,6 +57,20 @@ export function PositionCard({ view, onPickPlayer, onPickRole }: Props) {
           </span>
         )}
       </div>
+      {player && onRemove && (
+        <button
+          type="button"
+          aria-label={`${player.name} oyuncusunu slottan kaldır`}
+          title="Kaldır"
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove()
+          }}
+          className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-slate-500 bg-slate-900 text-[11px] font-bold leading-none text-slate-200 hover:border-rose-400 hover:bg-rose-600 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
+        >
+          ✕
+        </button>
+      )}
       <button
         type="button"
         onClick={(e) => {
