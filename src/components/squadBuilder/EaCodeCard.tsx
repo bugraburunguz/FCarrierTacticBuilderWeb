@@ -1,12 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../../api/endpoints'
-import { toTacticRequest, useTactic } from '../../state/tacticStore'
+import { tacticStore, toTacticRequest, useTactic } from '../../state/tacticStore'
 import { Modal } from '../Modal'
-import { ErrorBox } from '../ui'
+import { ErrorBox, Input } from '../ui'
 
 /** Kod her taktik değişiminde otomatik yeniden üretilir; elle üretme tuşu yok. */
-export function EaCodeCard() {
+export function EaCodeCard({ onImported }: { onImported?: () => void }) {
   const tactic = useTactic()
   const request = toTacticRequest(tactic)
   const exported = useQuery({
@@ -16,6 +16,19 @@ export function EaCodeCard() {
     staleTime: 300_000,
   })
   const [notice, setNotice] = useState<string | undefined>()
+  const [input, setInput] = useState('')
+  const importCode = useMutation({
+    mutationFn: () => endpoints.importTacticCode(input.trim()),
+    onSuccess: (result) => {
+      const slots: Record<string, { tags: string[]; roleId?: string }> = {}
+      result.slots.forEach((s) => {
+        slots[s.slotId] = { tags: [], roleId: s.roleId }
+      })
+      tacticStore.set({ formation: result.formation, slots, setup: { buildUp: result.buildUp as 'Short' | 'Balanced' | 'Counter', depth: result.depth } })
+      onImported?.()
+      setNotice(`Taktik yüklendi: ${result.formation} · ${result.buildUp} · Hat ${result.depth}.`)
+    },
+  })
   const [open, setOpen] = useState(false)
   const code = exported.data?.code
 
@@ -51,6 +64,20 @@ export function EaCodeCard() {
         </p>
       )}
       <ErrorBox error={exported.error} />
+      <div className="mt-2.5 flex items-center gap-2">
+        <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır (12 karakter)" aria-label="EA taktik kodunu yapıştır" className="font-mono" maxLength={16} />
+        <button type="button" disabled={input.trim().length === 0 || importCode.isPending} onClick={() => { setNotice(undefined); importCode.mutate() }} className="rounded-lg bg-slate-700 px-3 py-2 text-[12.5px] font-bold text-slate-100 disabled:opacity-50">
+          {importCode.isPending ? 'Okunuyor…' : 'Yükle'}
+        </button>
+      </div>
+      <ErrorBox error={importCode.error} />
+      {importCode.data && importCode.data.warnings.length > 0 && (
+        <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-amber-300">
+          {importCode.data.warnings.map((w) => (
+            <li key={w}>{w}</li>
+          ))}
+        </ul>
+      )}
       {exported.data && exported.data.warnings.length > 0 && (
         <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs text-amber-300">
           {exported.data.warnings.map((w) => (

@@ -60,9 +60,6 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
           <Link to="/squad/builder" className="text-emerald-700 underline">
             Kadro kurucuda düzenle
           </Link>
-          <Link to="/tactics/builder" className="text-emerald-700 underline">
-            Taktiği düzenle
-          </Link>
         </div>
       }
     >

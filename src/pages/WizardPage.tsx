@@ -132,7 +132,7 @@ export function WizardPage() {
           )}
         </Card>
         <p className="text-xs text-slate-500">
-          Kadronu da hesaba katan öneri için <Link to="/tactics/builder" className="underline">Taktik & Uyum</Link> sayfasındaki Auto-Fit'i kullan.
+          Kadronu da hesaba katan öneri için <Link to="/tactics/builder" className="underline">Kadro kurucu</Link> sayfasındaki Auto-Fit'i kullan.
         </p>
       </div>
     </div>

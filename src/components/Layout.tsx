@@ -33,7 +33,6 @@ const NAV: NavGroup[] = [
     match: ['/tactics', '/squad', '/recommend', '/scouting'],
     tabs: [
       { to: '/squad/builder', label: 'Kadro kurucu' },
-      { to: '/tactics/builder', label: 'Taktik & Uyum' },
       { to: '/tactics/wizard', label: 'Taktik sihirbazı' },
       { to: '/squad', label: 'Kadro' },
       { to: '/recommend', label: 'Transfer önerisi' },

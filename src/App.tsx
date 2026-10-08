@@ -15,7 +15,6 @@ import { RecommendPage } from './pages/RecommendPage'
 import { SquadBuilderPage } from './pages/SquadBuilderPage'
 import { ScoutingPage } from './pages/ScoutingPage'
 import { SquadPage } from './pages/SquadPage'
-import { TacticBuilderPage } from './pages/TacticBuilderPage'
 import { TeamsPage } from './pages/TeamsPage'
 import { UtMetaPage } from './pages/UtMetaPage'
 import { UtImportPage } from './pages/UtImportPage'
@@ -47,10 +46,10 @@ export function App() {
         <Route path="players/:id" element={<PlayerDetailPage />} />
         <Route path="compare" element={<ComparePage />} />
         <Route path="wonderkids" element={<WonderkidsPage />} />
-        <Route path="tactics/builder" element={<TacticBuilderPage />} />
+        <Route path="tactics/builder" element={<Navigate to="/squad/builder" replace />} />
         <Route path="tactics/wizard" element={<WizardPage />} />
         <Route path="squad" element={<RequireAuth><SquadPage /></RequireAuth>} />
-        <Route path="squad/builder" element={<RequireAuth><SquadBuilderPage /></RequireAuth>} />
+        <Route path="squad/builder" element={<SquadBuilderPage />} />
         <Route path="scouting" element={<RequireAuth><ScoutingPage /></RequireAuth>} />
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<RequireAuth><RecommendPage /></RequireAuth>} />

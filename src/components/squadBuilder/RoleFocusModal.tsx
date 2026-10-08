@@ -11,7 +11,15 @@ interface Props {
 }
 
 /** Taslak yerel tutulur; yalnızca Uygula'da dışarı yazılır. */
-export function RoleFocusModal({ position, groups, currentRoleId, onApply, onClose }: Props) {
+export function RoleFocusModal(props: Props) {
+  return (
+    <Modal title={`${props.position} — Rol & Özelleştirme`} hint="Rol ve odak seç" onClose={props.onClose}>
+      <RoleFocusPanel {...props} />
+    </Modal>
+  )
+}
+
+export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Props) {
   const initial = groups.find((g) => g.options.some((o) => o.roleId === currentRoleId)) ?? groups[0]
   const [base, setBase] = useState(initial?.base)
   const [roleId, setRoleId] = useState(initial?.options.find((o) => o.roleId === currentRoleId)?.roleId ?? (initial ? firstFocus(initial).roleId : ''))
@@ -23,7 +31,7 @@ export function RoleFocusModal({ position, groups, currentRoleId, onApply, onClo
   }
 
   return (
-    <Modal title={`${position} — Rol & Özelleştirme`} hint="Rol ve odak seç" onClose={onClose}>
+    <>
       <div role="radiogroup" aria-label="Rol" className="space-y-1.5">
         {groups.map((g) => (
           <label
@@ -58,6 +66,6 @@ export function RoleFocusModal({ position, groups, currentRoleId, onApply, onClo
           Vazgeç
         </button>
       </div>
-    </Modal>
+    </>
   )
 }

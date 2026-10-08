@@ -16,11 +16,19 @@ interface Props {
   candidates: CareerPlayer[]
   currentPlayerId?: number
   onPick: (playerId: number | null) => void
-  onClose: () => void
+  onClose?: () => void
 }
 
 /** Slota mevki-uyumlu oyuncular; en yüksek OVR'lı adaylar için rol uyumu hesaplanır ve liste uyuma göre sıralanır. */
-export function PlayerSelectModal({ position, roleId, tags, candidates, currentPlayerId, onPick, onClose }: Props) {
+export function PlayerSelectModal(props: Props) {
+  return (
+    <Modal title={`${props.position} — Oyuncu seç`} hint="Bu slota uygun oyuncular (rol uyumuna göre sıralı)" onClose={props.onClose ?? (() => undefined)}>
+      <PlayerSelectPanel {...props} />
+    </Modal>
+  )
+}
+
+export function PlayerSelectPanel({ position, roleId, tags, candidates, currentPlayerId, onPick }: Props) {
   const [term, setTerm] = useState('')
   const [query, setQuery] = useState('')
   useEffect(() => {
@@ -51,7 +59,7 @@ export function PlayerSelectModal({ position, roleId, tags, candidates, currentP
   const sorted = [...filtered].sort((a, b) => (fitById.get(b.player.id)?.pct ?? -1) - (fitById.get(a.player.id)?.pct ?? -1) || b.player.overall - a.player.overall)
 
   return (
-    <Modal title={`${position} — Oyuncu seç`} hint="Bu slota uygun oyuncular (rol uyumuna göre sıralı)" onClose={onClose}>
+    <>
       <input
         value={term}
         onChange={(e) => setTerm(e.target.value)}
@@ -91,6 +99,6 @@ export function PlayerSelectModal({ position, roleId, tags, candidates, currentP
         })}
       </ul>
       {sorted.length === 0 && <p className="p-2 text-xs text-slate-400">Uygun oyuncu yok</p>}
-    </Modal>
+    </>
   )
 }
