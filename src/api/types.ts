@@ -747,6 +747,36 @@ export interface CaptureObjectiveGroup {
   objectives: CaptureObjective[]
 }
 
+export interface SbcRef {
+  kind: 'CLUB' | 'LEAGUE' | 'NATION' | string
+  id: number
+  name?: string
+}
+
+export interface SbcRequirement {
+  kind: string
+  op: 'MIN' | 'MAX' | 'EXACT' | string
+  value?: number
+  level?: number
+  refs?: SbcRef[]
+}
+
+export interface SbcChallenge {
+  setId: number
+  setName?: string
+  challengeId: number
+  name: string
+  status?: string
+  type?: string
+  formation?: string
+  formationLabel?: string
+  repeatable: boolean
+  timesCompleted: number
+  endTime?: number
+  awards: CaptureReward[]
+  requirements: SbcRequirement[]
+}
+
 export interface CaptureResult {
   stats: {
     received: number
@@ -777,6 +807,7 @@ export interface CaptureResult {
   currencies: { name: string; funds: number }[]
   config: { formations: { id: number; name: string; label: string; positionNames: string[] }[] }
   unknownPaths?: string[]
+  sbcChallenges?: SbcChallenge[]
 }
 
 export type Feasibility = 'REALISTIC' | 'AMBITIOUS' | 'UNREALISTIC'

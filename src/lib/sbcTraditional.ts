@@ -5,7 +5,7 @@ export interface SbcCandidate extends ChemCard {
   overall: number
   /** Maliyet: kulüp kartında fırsat maliyeti (≈0), market kartında coin (yakalanmış ya da tahmini). */
   price?: number
-  source?: 'club' | 'market'
+  source?: 'storage' | 'club' | 'market'
 }
 
 export interface SbcSlot {
@@ -21,6 +21,85 @@ export interface SbcConstraints {
   minSameClub?: number
   minOverallEach?: number
   required?: { league?: Record<string, number>; nationality?: Record<string, number>; club?: Record<string, number> }
+  /** "En çok" şartları: aynı kulüp/lig/ülkeden en fazla N oyuncu; farklı kulüp/lig/ülke sayısı üst sınırı. */
+  max?: { sameClub?: number; sameLeague?: number; sameNation?: number; clubs?: number; leagues?: number; nations?: number }
+  /** Farklı kulüp/lig/ülke sayısı alt sınırı. */
+  minDistinct?: { clubs?: number; leagues?: number; nations?: number }
+  /** Tüm oyuncular en az bu kalitede: 1 bronz, 2 gümüş, 3 altın (rating'den türetilir: <65, 65-74, 75+). */
+  minQuality?: 1 | 2 | 3
+  /** En az N oyuncu bu seviyede ya da üstünde. */
+  levelCounts?: { level: 1 | 2 | 3; min: number }[]
+  /** Verilen kulüp/lig/ülkelerden herhangi birinden en az N oyuncu (ör. "Liverpool veya Manchester City'den en az 2"). */
+  fromAny?: { kind: 'club' | 'league' | 'nationality'; names: string[]; min: number }[]
+}
+
+export const QUALITY_LABELS = { 1: 'Bronz', 2: 'Gümüş', 3: 'Altın' } as const
+
+export function qualityOf(rating: number): 1 | 2 | 3 {
+  return rating >= 75 ? 3 : rating >= 65 ? 2 : 1
+}
+
+interface ExtraIssue {
+  text: string
+  missing: number
+}
+
+function distinct(cards: SbcCandidate[], key: 'club' | 'league' | 'nationality'): number {
+  return new Set(cards.map((c) => c[key]).filter(Boolean)).size
+}
+
+/** Gelişmiş şartların ihlalleri (metin + eksik birim sayısı; ceza hesabında birim kullanılır). */
+export function extraIssues(cards: SbcCandidate[], constraints: SbcConstraints): ExtraIssue[] {
+  const issues: ExtraIssue[] = []
+  const max = constraints.max ?? {}
+  const sameLimits: ['club' | 'league' | 'nationality', number | undefined, string][] = [
+    ['club', max.sameClub, 'kulüpten'],
+    ['league', max.sameLeague, 'ligden'],
+    ['nationality', max.sameNation, 'ülkeden'],
+  ]
+  sameLimits.forEach(([key, limit, label]) => {
+    const largest = largestGroup(cards, key)
+    if (limit !== undefined && largest > limit) {
+      issues.push({ text: `Aynı ${label} en fazla ${limit} oyuncu olabilir (şu an ${largest})`, missing: largest - limit })
+    }
+  })
+  const distinctLimits: ['club' | 'league' | 'nationality', number | undefined, number | undefined, string][] = [
+    ['club', max.clubs, constraints.minDistinct?.clubs, 'kulüp'],
+    ['league', max.leagues, constraints.minDistinct?.leagues, 'lig'],
+    ['nationality', max.nations, constraints.minDistinct?.nations, 'ülke'],
+  ]
+  distinctLimits.forEach(([key, top, bottom, label]) => {
+    const count = distinct(cards, key)
+    if (top !== undefined && count > top) {
+      issues.push({ text: `En fazla ${top} farklı ${label} olabilir (şu an ${count})`, missing: count - top })
+    }
+    if (bottom !== undefined && count < bottom) {
+      issues.push({ text: `En az ${bottom} farklı ${label} gerekli (şu an ${count})`, missing: bottom - count })
+    }
+  })
+  if (constraints.minQuality) {
+    const below = cards.filter((c) => qualityOf(c.overall) < constraints.minQuality!).length
+    if (below > 0) {
+      issues.push({ text: `Tüm oyuncular en az ${QUALITY_LABELS[constraints.minQuality]} olmalı`, missing: below })
+    }
+  }
+  constraints.levelCounts?.forEach((r) => {
+    const have = cards.filter((c) => qualityOf(c.overall) >= r.level).length
+    if (have < r.min) {
+      issues.push({ text: `En az ${r.min} ${QUALITY_LABELS[r.level]} (ya da üstü) oyuncu gerekli`, missing: r.min - have })
+    }
+  })
+  constraints.fromAny?.forEach((r) => {
+    const names = new Set(r.names)
+    const have = cards.filter((c) => {
+      const value = c[r.kind]
+      return Boolean(value) && names.has(value!)
+    }).length
+    if (have < r.min) {
+      issues.push({ text: `${r.names.join(' / ')} içinden en az ${r.min} oyuncu gerekli (şu an ${have})`, missing: r.min - have })
+    }
+  })
+  return issues
 }
 
 export interface SbcSolution {
@@ -89,6 +168,7 @@ export function checkConstraints(slots: SbcSlot[], picks: (SbcCandidate | undefi
     }
   })
   requiredViolations(cards, constraints).forEach((v) => violations.push(v))
+  extraIssues(cards, constraints).forEach((issue) => violations.push(issue.text))
   if (constraints.minOverallEach && cards.some((c) => c.overall < constraints.minOverallEach!)) {
     violations.push(`Her oyuncu en az ${constraints.minOverallEach} olmalı`)
   }
@@ -168,5 +248,6 @@ function penalty(picks: SbcCandidate[], slots: SbcSlot[], constraints: SbcConstr
   const projectedChem = (chem * MIN_PLAYERS) / picks.length
   const average = picks.reduce((sum, c) => sum + c.overall, 0) / picks.length
   const missing = requiredEntries(constraints).reduce((sum, r) => sum + Math.max(0, r.count - countOf(picks, r.key, r.name)), 0)
-  return Math.max(0, constraints.chemMin - projectedChem) * CHEM_WEIGHT + Math.max(0, constraints.teamRatingMin - average) * RATING_WEIGHT + missing * REQUIRED_WEIGHT
+  const extra = extraIssues(picks, constraints).reduce((sum, issue) => sum + issue.missing, 0)
+  return Math.max(0, constraints.chemMin - projectedChem) * CHEM_WEIGHT + Math.max(0, constraints.teamRatingMin - average) * RATING_WEIGHT + (missing + extra) * REQUIRED_WEIGHT
 }

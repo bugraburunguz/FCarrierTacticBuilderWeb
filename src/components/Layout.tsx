@@ -49,6 +49,7 @@ const NAV: NavGroup[] = [
 const UT_NAV: NavGroup[] = [
   { to: '/players', label: 'Kart veritabanı', match: ['/players', '/compare'] },
   { to: '/ut/squad', label: 'Kadro kurucu', match: ['/ut/squad'] },
+  { to: '/ut/club', label: 'Kadrom', match: ['/ut/club'] },
   { to: '/ut/meta', label: 'Meta', match: ['/ut/meta'] },
   { to: '/ut/sbc', label: 'SBC çözücü', match: ['/ut/sbc'] },
   { to: '/ut/objectives', label: 'Objective planı', match: ['/ut/objectives'] },

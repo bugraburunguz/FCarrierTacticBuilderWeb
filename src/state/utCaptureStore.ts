@@ -12,6 +12,7 @@ export interface UtCaptureSummary {
   squads: CaptureResult['squads']
   coins?: number
   unknownPaths: string[]
+  sbcChallenges: NonNullable<CaptureResult['sbcChallenges']>
 }
 
 let current: UtCaptureSummary | undefined = load()
@@ -37,6 +38,7 @@ export const utCaptureStore = {
       squads: result.squads,
       coins: result.coins,
       unknownPaths: result.unknownPaths ?? [],
+      sbcChallenges: result.sbcChallenges ?? [],
     }
     listeners.forEach((l) => l())
     try {

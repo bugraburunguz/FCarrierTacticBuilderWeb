@@ -18,6 +18,10 @@ export interface UtCard {
   cardType?: 'ICON' | 'HERO' | 'HOF'
   playerId?: number
   attrs?: Record<string, number>
+  /** Kulüp kartında yığın: 'club' | 'storage' (SBC storage) | 'purchased'. Eski kayıtlarda yok. */
+  pile?: string
+  duplicate?: boolean
+  instanceId?: number
 }
 
 /** Kulüp kartı için fiyat sinyali: pazar ortalaması, yoksa son satış, yoksa pazar alt sınırı. */
@@ -42,6 +46,9 @@ export function fromCapture(card: CaptureCard, source: Exclude<CardSource, 'cata
     cardType: card.cardType,
     playerId: card.playerId,
     attrs: card.attrs,
+    pile: card.pile,
+    duplicate: card.duplicate,
+    instanceId: card.instanceId,
   }
 }
 
