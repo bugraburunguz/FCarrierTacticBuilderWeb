@@ -62,3 +62,21 @@ describe('sbc traditional', () => {
     expect(result.violations.join(' ')).toContain('Yok')
   })
 })
+
+describe('coin bazlı maliyet', () => {
+  it('ucuz ama rating şartını sağlamayan çözüm yerine şartı sağlayan çözümü seçer', () => {
+    const cards: SbcCandidate[] = []
+    let id = 1
+    SLOTS.forEach((slot) => {
+      for (let i = 0; i < 4; i++) {
+        cards.push({ ...card(id++, slot.position, 77, 'A', 'L1', 'N1'), price: 250, source: 'market' })
+      }
+      for (let i = 0; i < 2; i++) {
+        cards.push({ ...card(id++, slot.position, 86, 'B', 'L2', 'N2'), price: 18000, source: 'market' })
+      }
+    })
+    const result = solveTraditional(SLOTS, cards, { teamRatingMin: 83, chemMin: 0 })
+    expect(result.feasible).toBe(true)
+    expect(result.teamRating).toBeGreaterThanOrEqual(83)
+  })
+})

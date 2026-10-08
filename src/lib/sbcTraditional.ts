@@ -3,7 +3,9 @@ import { squadChemistry, type ChemCard } from './chemistry'
 export interface SbcCandidate extends ChemCard {
   name: string
   overall: number
+  /** Maliyet: kulüp kartında fırsat maliyeti (≈0), market kartında coin (yakalanmış ya da tahmini). */
   price?: number
+  source?: 'club' | 'market'
 }
 
 export interface SbcSlot {
@@ -35,6 +37,7 @@ const CHEM_WEIGHT = 3
 const RATING_WEIGHT = 40
 const MIN_PLAYERS = 11
 const REQUIRED_WEIGHT = 60
+const PENALTY_COST_REFERENCE = 20
 
 /** Takım rating'i: (toplam + ortalamanın üstündeki fazlaların toplamı) / 11, yuvarlanmış. */
 export function teamRating(ratings: number[]): number {
@@ -120,6 +123,8 @@ interface State {
 export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constraints: SbcConstraints, beam = DEFAULT_BEAM): SbcSolution {
   const eligible = pool.filter((c) => !constraints.minOverallEach || c.overall >= constraints.minOverallEach)
   const order = slots.map((s, index) => ({ slot: s, index })).sort((a, b) => eligibleCount(a.slot, eligible) - eligibleCount(b.slot, eligible))
+  // Ceza ağırlıkları maliyet ölçeğine göre büyür: rating bazlı maliyette ~1, coin bazlı maliyette şartlar ucuz-ama-sağlamayan çözümlere yenilmez.
+  const costScale = Math.max(1, Math.max(0, ...eligible.map(cardCost)) / PENALTY_COST_REFERENCE)
   let states: State[] = [{ picks: [], used: new Set(), cost: 0, score: 0 }]
   order.forEach(({ slot }, step) => {
     const next: State[] = []
@@ -130,7 +135,7 @@ export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constra
         }
         const picks = [...state.picks, card]
         const cost = state.cost + cardCost(card)
-        next.push({ picks, used: new Set(state.used).add(card.id), cost, score: cost + penalty(picks, order.slice(0, step + 1).map((o) => o.slot), constraints) })
+        next.push({ picks, used: new Set(state.used).add(card.id), cost, score: cost + penalty(picks, order.slice(0, step + 1).map((o) => o.slot), constraints) * costScale })
       }
     }
     states = next.sort((a, b) => a.score - b.score).slice(0, beam)

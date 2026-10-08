@@ -5,6 +5,7 @@ import type { SbcPoolEntry, SbcRarity } from '../api/types'
 import { sbcPoolStore } from '../state/sbcPoolStore'
 import { TraditionalSbc } from '../components/TraditionalSbc'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
+import { isBeforeDailyRefresh } from '../lib/coinPrice'
 import { useUtCapture } from '../state/utCaptureStore'
 
 const RARITIES: { id: SbcRarity; label: string }[] = [
@@ -47,6 +48,12 @@ function ClubSbcSets() {
   sets.forEach((s) => byCategory.set(s.category ?? 'Diğer', [...(byCategory.get(s.category ?? 'Diğer') ?? []), s]))
   return (
     <Card title={`Kulübündeki SBC'ler (${sets.length})`}>
+      {capture && (
+        <p className={`mb-2 text-xs ${isBeforeDailyRefresh(capture.importedAt) ? 'text-code' : 'text-muted'}`}>
+          Son yakalama: {new Date(capture.importedAt).toLocaleString('tr-TR')}.
+          {isBeforeDailyRefresh(capture.importedAt) && ' Yeni SBC\'ler her gün 20:00\'de (TRT) yenilenir; bu liste eski olabilir. Web App\'i açıp yeniden dışa aktar.'}
+        </p>
+      )}
       <div className="space-y-3">
         {[...byCategory.entries()].map(([category, items]) => (
           <div key={category}>

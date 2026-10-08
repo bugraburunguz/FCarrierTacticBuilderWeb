@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import { solveTraditional, type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
 import { squadChemistry } from '../lib/chemistry'
@@ -9,10 +9,20 @@ import { Pitch } from './squadBuilder/Pitch'
 import type { SlotView } from './squadBuilder/PositionCard'
 import { swapSlots } from '../lib/squadBuilder'
 import { teamRating } from '../lib/sbcTraditional'
+import { clubCardCost, estimateCoinPrice } from '../lib/coinPrice'
+import { utCardStore } from '../state/utCardStore'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from './ui'
 
 const POOL_SPREAD_DOWN = 8
 const POOL_SPREAD_UP = 6
+const CLUB_ID_BASE = 1_000_000_000
+
+type PoolMode = 'market' | 'club' | 'mixed'
+const MODE_LABEL: Record<PoolMode, string> = { market: 'Market (en ucuz)', club: 'Kulüp kartlarım (parasız)', mixed: 'Karışık (kulüp + market)' }
+
+function shortCoins(value: number): string {
+  return value >= 1_000_000 ? `${(value / 1_000_000).toFixed(1)}M` : value >= 1000 ? `${Math.round(value / 1000)}K` : String(value)
+}
 
 function resolveNames(wanted: Record<string, number>, list: LookupItem[]): { id: number; name: string; count: number }[] {
   return Object.entries(wanted).flatMap(([name, count]) => {
@@ -32,6 +42,8 @@ export function TraditionalSbc() {
   const [xiText, setXiText] = useState('')
   const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
   const [picks, setPicks] = useState<(SbcCandidate | undefined)[]>([])
+  const [mode, setMode] = useState<PoolMode>('market')
+  const clubCards = useMemo(() => (utCardStore.get()?.cards ?? []).filter((c) => c.source === 'club'), [])
 
   const solve = useMutation({
     onSuccess: (r) => setPicks(r.picks),
@@ -39,21 +51,29 @@ export function TraditionalSbc() {
       const slots = formation!.slots.map((s) => ({ slotId: s.slotId, position: s.position }))
       const min = Number(rating)
       const positions = [...new Set(slots.map((s) => s.position))]
-      const pages = await Promise.all(
-        positions.map((pos) => endpoints.players({ pos: [pos], ovr_min: min - POOL_SPREAD_DOWN, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 100, gender: 0 })),
-      )
+      const useMarket = mode !== 'club'
+      const pages = useMarket
+        ? await Promise.all(
+            positions.map((pos) => endpoints.players({ pos: [pos], ovr_min: min - POOL_SPREAD_DOWN, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 100, gender: 0 })),
+          )
+        : []
       const xi = parseXiText(xiText)
       const [leagueList, nationList] = await Promise.all([endpoints.leagues(0), endpoints.nationalities()])
       const leagueRequired = resolveNames(xi.league, leagueList)
       const nationRequired = resolveNames(xi.nationality, nationList)
-      const extraPages = await Promise.all([
+      const extraPages = useMarket ? await Promise.all([
         ...leagueRequired.flatMap((r) => positions.map((pos) => endpoints.players({ pos: [pos], league: r.id, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 40, gender: 0 }))),
         ...nationRequired.flatMap((r) => positions.map((pos) => endpoints.players({ pos: [pos], nat: r.id, ovr_max: min + POOL_SPREAD_UP, sort: 'overall', order: 'desc', size: 40, gender: 0 }))),
-      ])
+      ]) : []
       const byId = new Map<number, SbcCandidate>()
       pages.concat(extraPages).flatMap((p) => p.items).forEach((p) =>
-        byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions }),
+        byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions, price: estimateCoinPrice(p.overall), source: 'market' }),
       )
+      if (mode !== 'market') {
+        clubCards.forEach((c, i) =>
+          byId.set(CLUB_ID_BASE + i, { id: CLUB_ID_BASE + i, name: c.name, overall: c.rating, club: c.club, league: c.league, nationality: c.nationality, gender: c.gender, positions: c.positions, cardType: c.cardType, price: clubCardCost(c.price), source: 'club' }),
+        )
+      }
       const required = {
         league: Object.fromEntries(leagueRequired.map((r) => [r.name, r.count])),
         nationality: Object.fromEntries(nationRequired.map((r) => [r.name, r.count])),
@@ -84,7 +104,7 @@ export function TraditionalSbc() {
       y: s.y,
       player: p && { id: p.id, name: p.name, overall: p.overall },
       roleLabel: '',
-      sub: p ? `kimya ${chemResult!.perSlot[i]}` : undefined,
+      sub: p ? `kimya ${chemResult!.perSlot[i]} · ${p.source === 'club' ? 'Kulüp' : `~${shortCoins(p.price ?? 0)}`}` : undefined,
     }
   })
   function swap(from: string, to: string) {
@@ -118,6 +138,21 @@ export function TraditionalSbc() {
           <Input value={xiText} onChange={(e) => setXiText(e.target.value)} placeholder="lig:Premier League=1; ülke:Brazil=2" className="font-mono" />
         </Field>
       </div>
+      <div className="mt-3 flex flex-wrap items-end gap-3">
+        <Field label="Kart havuzu">
+          <Select value={mode} onChange={(e) => setMode(e.target.value as PoolMode)}>
+            {(Object.keys(MODE_LABEL) as PoolMode[]).map((m) => (
+              <option key={m} value={m} disabled={m !== 'market' && clubCards.length === 0}>
+                {MODE_LABEL[m]}{m !== 'market' && clubCards.length === 0 ? ' — önce kulüp içe aktar' : ''}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <p className="max-w-md text-xs text-muted">
+          {clubCards.length > 0 ? `Kulüpte ${clubCards.length} kart var. ` : 'Giriş yapıp Kulüp içe aktar ile kartlarını yüklersen kulüp havuzunu da kullanabilirsin. '}
+          Market maliyeti rating başına tahmini coin'dir (gerçek fiyat değil).
+        </p>
+      </div>
       <Button className="mt-3" disabled={!formation || solve.isPending} onClick={() => solve.mutate()}>{solve.isPending ? 'Aranıyor…' : 'Çöz'}</Button>
       {solve.error && <ErrorBox error={solve.error} />}
       {result && (
@@ -135,10 +170,34 @@ export function TraditionalSbc() {
             {result.violations.map((v) => (
               <p key={v} className="text-rose-600 dark:text-rose-400">{v}</p>
             ))}
+            <CostSummary picks={filled} />
             <p className="text-xs text-slate-500">Arama yaklaşıktır (beam search); şart sağlanamadıysa havuz ya da şartlar gevşetilebilir.</p>
           </div>
         </div>
       )}
     </Card>
+  )
+}
+
+function CostSummary({ picks }: { picks: SbcCandidate[] }) {
+  const club = picks.filter((p) => p.source === 'club')
+  const market = picks.filter((p) => p.source !== 'club')
+  const total = market.reduce((sum, p) => sum + (p.price ?? 0), 0)
+  return (
+    <div className="space-y-1 rounded-lg border border-line bg-surface-2 p-2 text-xs">
+      <p>
+        <b>Kulüpten:</b> {club.length} kart (parasız) · <b>Marketten:</b> {market.length} kart · tahmini toplam <b>{total.toLocaleString('tr-TR')}</b> coin
+      </p>
+      {market.length > 0 && (
+        <ul className="grid gap-x-4 sm:grid-cols-2">
+          {[...market].sort((a, b) => (b.price ?? 0) - (a.price ?? 0)).map((p) => (
+            <li key={p.id} className="flex justify-between gap-2">
+              <span className="truncate">{p.name} <span className="text-muted">{p.overall}</span></span>
+              <span className="tabular-nums text-muted">~{(p.price ?? 0).toLocaleString('tr-TR')}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
