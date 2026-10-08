@@ -17,12 +17,12 @@ export function BehaviorsPanel({ derivedRoleName, roleHint, tags, selected, onTa
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="text-slate-400">Türetilen rol:</span>
+        <span className="text-muted">Türetilen rol:</span>
         <Pill tone="emerald">{derivedRoleName ?? '…'}</Pill>
       </div>
-      {roleHint && <p className="rounded-lg bg-amber-950 p-2 text-sm text-amber-100">Aranan profil: {roleHint}</p>}
+      {roleHint && <p className="rounded-lg bg-code-soft p-2 text-sm text-code">Aranan profil: {roleHint}</p>}
       <div>
-        <p className="mb-1 text-xs font-medium text-slate-300">Davranışlar (çelişenler otomatik kilitlenir)</p>
+        <p className="mb-1 text-xs font-medium text-ink/80">Davranışlar (çelişenler otomatik kilitlenir)</p>
         <TagChips tags={tags} selected={selected} onChange={onTags} />
       </div>
       <Field label="Rolü elle seç (davranış oylamasını geçersiz kılar)">
@@ -36,7 +36,7 @@ export function BehaviorsPanel({ derivedRoleName, roleHint, tags, selected, onTa
         </Select>
       </Field>
       {selected.length > 0 && (
-        <ul className="space-y-0.5 text-sm text-slate-300">
+        <ul className="space-y-0.5 text-sm text-ink/80">
           {selected.map((id) => (
             <li key={id}>• {tags.find((t) => t.id === id)?.nlg}</li>
           ))}

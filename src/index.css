@@ -22,10 +22,64 @@
   --color-emerald-900: #0b3f38;
   --color-emerald-950: #07231f;
   --color-amber-300: #ffcc33;
+  --color-slate-400: #6b7788;
+  --color-white: #f7f9fb;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --animate-fade-up: fade-up 0.35s ease-out both;
   --animate-pop: pop 0.18s ease-out both;
   --animate-fade: fade 0.2s ease-out both;
+}
+
+/* Temaya göre değişen yüzey token'ları (açık: yumuşak gri-mavi, göz yormayan; koyu: stadyum) */
+:root {
+  --surface: #f4f6f9;
+  --surface-2: #e8edf2;
+  --line: #c9d2dd;
+  --ink: #1b2430;
+  --muted: #536071;
+  --accent: #0a7f6c;
+  --accent-bg: #0a8f79;
+  --on-accent: #ffffff;
+  --accent-soft: #d2eee8;
+  --code: #7a4f00;
+  --code-soft: #f6ead0;
+  --danger: #a42a1d;
+  --danger-soft: #fbe3df;
+  --danger-line: #eab0a7;
+}
+
+:root.dark {
+  --surface: #141a22;
+  --surface-2: #0e141b;
+  --line: #26313d;
+  --ink: #e8edf2;
+  --muted: #8a97a6;
+  --accent: #00e0b8;
+  --accent-bg: #00e0b8;
+  --on-accent: #04201b;
+  --accent-soft: #0e2a25;
+  --code: #ffcc33;
+  --code-soft: #2a2310;
+  --danger: #ff9a8a;
+  --danger-soft: #2a1417;
+  --danger-line: #5a2a2a;
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-bg: var(--accent-bg);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-code: var(--code);
+  --color-code-soft: var(--code-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
 }
 
 @keyframes fade-up {
@@ -49,8 +103,8 @@
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, #f3f8f6 0%, #eef2f9 100%) fixed;
-  color: #0f172a;
+  background: linear-gradient(180deg, #e9eef3 0%, #e3e9f0 100%) fixed;
+  color: #1b2430;
   font-family: var(--font-sans);
 }
 

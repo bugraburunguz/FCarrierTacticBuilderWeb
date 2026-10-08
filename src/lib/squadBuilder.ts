@@ -68,3 +68,22 @@ export function remapAssignments(prev: Assignments, positionsOf: (playerId: numb
     })
   return next
 }
+
+/** İki slotun içeriğini yer değiştirir; yalnızca biri doluysa onu boş slota taşır. Mevki değil oyuncu taşınır. */
+export function swapSlots<T>(record: Record<string, T>, a: string, b: string): Record<string, T> {
+  if (a === b) {
+    return record
+  }
+  const next: Record<string, T> = { ...record }
+  const first = record[a]
+  const second = record[b]
+  delete next[a]
+  delete next[b]
+  if (second !== undefined) {
+    next[a] = second
+  }
+  if (first !== undefined) {
+    next[b] = first
+  }
+  return next
+}

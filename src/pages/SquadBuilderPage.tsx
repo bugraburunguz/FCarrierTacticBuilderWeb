@@ -23,7 +23,7 @@ import { SlotModal } from '../components/squadBuilder/SlotModal'
 import { SquadSummaryCard } from '../components/squadBuilder/SquadSummaryCard'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
 import { canPlaySlot } from '../lib/positions'
-import { remapAssignments, roleBaseName, roleGroups } from '../lib/squadBuilder'
+import { remapAssignments, roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
 import { profileOf } from '../lib/wizard'
 import { useActiveCareerId } from '../state/careerStore'
 import { lineupStore, useLineup } from '../state/lineupStore'
@@ -181,6 +181,12 @@ export function SquadBuilderPage() {
     setDialog(null)
   }
 
+  function swapPlayers(from: string, to: string) {
+    if (careerId !== undefined) {
+      lineupStore.set(careerId, swapSlots(assignments, from, to))
+    }
+  }
+
   if (formations.isLoading || presets.isLoading) {
     return <Spinner />
   }
@@ -210,8 +216,8 @@ export function SquadBuilderPage() {
         <div className="order-2 flex flex-col gap-3.5 min-[820px]:order-1">
           <EaCodeCard onImported={() => { setAutoFit(false); setDialog(null) }} />
           <SquadSummaryCard formations={formations.data ?? []} formationId={tactic.formation} onFormation={changeFormation} views={views} weakReasons={weakReasons} />
-          <section className="dark rounded-2xl border border-slate-700 bg-slate-900 p-3.5 text-slate-100 shadow-lg">
-            <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-emerald-300">Taktik felsefesi</h2>
+          <section className="rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md">
+            <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent">Taktik felsefesi</h2>
             <Field label="Preset / replika">
               <Select
                 value={autoFit ? AUTO_FIT : tactic.presetId ?? ''}
@@ -249,24 +255,25 @@ export function SquadBuilderPage() {
               </Select>
             </Field>
             <FormationStyleChips formationId={tactic.formation} />
-            {preset?.signature && <p className="mt-2 text-sm text-slate-300">{preset.signature}</p>}
+            {preset?.signature && <p className="mt-2 text-sm text-ink/80">{preset.signature}</p>}
             <SetupChips settings={preset?.settings} />
-            {preset?.sourceNote && <p className="mt-1 text-xs text-slate-400">{preset.sourceNote}</p>}
+            {preset?.sourceNote && <p className="mt-1 text-xs text-muted">{preset.sourceNote}</p>}
           </section>
           <TeamSetup careerId={careerId} />
           <ProtectLeadCard slots={resolved.data?.slots ?? []} roles={roles.data ?? []} />
         </div>
 
         <div className="order-1 space-y-2 min-[820px]:order-2">
-          <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
+          <div className="rounded-2xl border border-line bg-surface p-2.5">
             <Pitch
               slots={views}
               onPickPlayer={(slotId) => setDialog({ slotId, tab: 'player' })}
               onPickRole={(slotId) => setDialog({ slotId, tab: 'role' })}
               onRemove={(slotId) => pickPlayer(slotId, null)}
+              onSwap={hasCareer ? swapPlayers : undefined}
             />
-            <p className="mt-2 px-1 text-xs text-slate-400">
-              Karta tıkla: oyuncu seç · rol etiketine tıkla: rol ve odak · popup'ta Davranışlar ve Öneriler sekmeleri de var · ✕: oyuncuyu kaldır.
+            <p className="mt-2 px-1 text-xs text-muted">
+              Oyuncuyu başka bir karta sürükle: yer değiştirirler · karta tıkla: oyuncu seç · rol etiketine tıkla: rol ve odak · popup'ta Davranışlar ve Öneriler sekmeleri de var · ✕: oyuncuyu kaldır.
               {!hasCareer && ' Oyuncu atamak için giriş yapıp bir kariyer seç; taktiği kariyersiz de kurabilirsin.'}
             </p>
           </div>
@@ -323,7 +330,7 @@ export function SquadBuilderPage() {
                   onPick={(pid) => pickPlayer(dialogSlot.slotId, pid)}
                 />
               ) : (
-                <p className="text-sm text-slate-300">Oyuncu atamak için giriş yapıp bir kariyer seç. Öneriler sekmesi kariyersiz de çalışır.</p>
+                <p className="text-sm text-ink/80">Oyuncu atamak için giriş yapıp bir kariyer seç. Öneriler sekmesi kariyersiz de çalışır.</p>
               ),
             },
             {

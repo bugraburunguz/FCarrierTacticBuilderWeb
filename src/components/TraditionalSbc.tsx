@@ -1,15 +1,16 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
-import type { WeaponState } from '../api/types'
 import { solveTraditional, type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
 import { squadChemistry } from '../lib/chemistry'
 import { parseXiText } from '../lib/objectives'
 import type { LookupItem } from '../api/types'
-import { PitchView } from './PitchView'
+import { Pitch } from './squadBuilder/Pitch'
+import type { SlotView } from './squadBuilder/PositionCard'
+import { swapSlots } from '../lib/squadBuilder'
+import { teamRating } from '../lib/sbcTraditional'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from './ui'
 
-const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
 const POOL_SPREAD_DOWN = 8
 const POOL_SPREAD_UP = 6
 
@@ -30,8 +31,10 @@ export function TraditionalSbc() {
   const [sameClub, setSameClub] = useState('')
   const [xiText, setXiText] = useState('')
   const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
+  const [picks, setPicks] = useState<(SbcCandidate | undefined)[]>([])
 
   const solve = useMutation({
+    onSuccess: (r) => setPicks(r.picks),
     mutationFn: async (): Promise<SbcSolution> => {
       const slots = formation!.slots.map((s) => ({ slotId: s.slotId, position: s.position }))
       const min = Number(rating)
@@ -69,15 +72,27 @@ export function TraditionalSbc() {
   })
   const result = solve.data
   const slots = formation?.slots ?? []
-  const chemResult = result ? squadChemistry(slots.map((s, i) => ({ position: s.position, card: result.picks[i] }))) : undefined
-  const info = result
-    ? Object.fromEntries(
-        slots.map((s, i) => {
-          const p = result.picks[i]
-          return [s.slotId, { title: p?.name, subtitle: p ? `${p.overall} · kimya ${chemResult!.perSlot[i]}` : undefined, badge: p ? CHEM_BADGE[chemResult!.perSlot[i]] : undefined }]
-        }),
-      )
-    : {}
+  const shown = result ? slots.map((_, i) => picks[i]) : []
+  const chemResult = result ? squadChemistry(slots.map((s, i) => ({ position: s.position, card: shown[i] }))) : undefined
+  const filled = shown.filter((p): p is SbcCandidate => Boolean(p))
+  const views: SlotView[] = slots.map((s, i) => {
+    const p = shown[i]
+    return {
+      slotId: s.slotId,
+      position: s.position,
+      x: s.x,
+      y: s.y,
+      player: p && { id: p.id, name: p.name, overall: p.overall },
+      roleLabel: '',
+      sub: p ? `kimya ${chemResult!.perSlot[i]}` : undefined,
+    }
+  })
+  function swap(from: string, to: string) {
+    const a = slots.findIndex((s) => s.slotId === from)
+    const b = slots.findIndex((s) => s.slotId === to)
+    const byId = swapSlots(Object.fromEntries(picks.map((p, i) => [String(i), p]).filter(([, p]) => p) as [string, SbcCandidate][]), String(a), String(b))
+    setPicks(slots.map((_, i) => byId[String(i)]))
+  }
 
   return (
     <Card title="SBC çözücü (squad kurma tipi)">
@@ -107,12 +122,15 @@ export function TraditionalSbc() {
       {solve.error && <ErrorBox error={solve.error} />}
       {result && (
         <div className="mt-4 grid gap-4 md:grid-cols-[minmax(260px,420px)_1fr]">
-          <PitchView slots={slots} info={info} />
+          <div className="rounded-2xl border border-line bg-surface p-2.5">
+            <Pitch slots={views} onPickPlayer={() => undefined} onPickRole={() => undefined} onSwap={swap} />
+            <p className="mt-2 px-1 text-xs text-muted">Oyuncuyu başka bir karta sürükle: yer değiştirirler (kimya yeniden hesaplanır).</p>
+          </div>
           <div className="space-y-2 text-sm">
             <div className="flex flex-wrap gap-2">
               <Pill tone={result.feasible ? 'emerald' : 'rose'}>{result.feasible ? 'Şartlar sağlandı' : 'Şartlar sağlanamadı'}</Pill>
-              <Pill tone="sky">rating {result.teamRating}</Pill>
-              <Pill tone="sky">kimya {result.chemistry}</Pill>
+              <Pill tone="sky">rating {filled.length === slots.length ? teamRating(filled.map((p) => p.overall)) : result.teamRating}</Pill>
+              <Pill tone="sky">kimya {chemResult ? chemResult.total : result.chemistry}</Pill>
             </div>
             {result.violations.map((v) => (
               <p key={v} className="text-rose-600 dark:text-rose-400">{v}</p>

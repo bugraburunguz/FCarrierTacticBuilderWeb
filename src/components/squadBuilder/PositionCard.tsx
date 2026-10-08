@@ -26,24 +26,29 @@ interface Props {
   onPickPlayer: () => void
   onPickRole: () => void
   onRemove?: () => void
+  onGrab?: (event: React.PointerEvent) => void
+  dragSource?: boolean
+  dropActive?: boolean
 }
 
-export function PositionCard({ view, onPickPlayer, onPickRole, onRemove }: Props) {
+export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab, dragSource, dropActive }: Props) {
   const { player, fit } = view
   return (
-    <div className="group absolute w-[74px] -translate-x-1/2 -translate-y-1/2 text-center min-[520px]:w-[92px]" style={{ left: `${view.x}%`, top: `${view.y}%` }}>
+    <div data-slot-card={view.slotId} className={`group absolute w-[74px] -translate-x-1/2 -translate-y-1/2 text-center min-[520px]:w-[92px] ${dragSource ? 'opacity-40' : ''}`} style={{ left: `${view.x}%`, top: `${view.y}%` }}>
       <div
         role="button"
         tabIndex={0}
         aria-label={`${view.position} — ${player ? `${player.name}, ${player.overall}` : 'boş'}. Oyuncu seç`}
         onClick={onPickPlayer}
+        onPointerDown={player && onGrab ? onGrab : undefined}
+        style={player && onGrab ? { touchAction: 'none', cursor: 'grab' } : undefined}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
             onPickPlayer()
           }
         }}
-        className={`relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none ${view.selected ? 'border-amber-300 ring-2 ring-amber-300/60' : 'border-slate-600'}`}
+        className={`relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none ${dropActive ? 'border-emerald-300 ring-2 ring-emerald-300/70' : view.selected ? 'border-amber-300 ring-2 ring-amber-300/60' : 'border-slate-600'}`}
       >
         <span className="absolute left-1.5 top-1 text-[9px] font-extrabold text-emerald-300">{view.position}</span>
         {player && (
@@ -73,6 +78,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove }: Props
           ✕
         </button>
       )}
+      {view.roleLabel && (
       <button
         type="button"
         onClick={(e) => {
@@ -84,6 +90,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove }: Props
       >
         {view.roleLabel}
       </button>
+      )}
     </div>
   )
 }

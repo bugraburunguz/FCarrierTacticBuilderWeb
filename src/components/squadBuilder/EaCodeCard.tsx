@@ -45,41 +45,41 @@ export function EaCodeCard({ onImported }: { onImported?: () => void }) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-700 bg-slate-900 p-3.5 text-slate-100 shadow-lg">
-      <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-emerald-300">EA Taktik Kodu</h2>
-      <div aria-live="polite" className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-amber-300">
+    <section className="rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md">
+      <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent">EA Taktik Kodu</h2>
+      <div aria-live="polite" className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-code">
         {code ?? (exported.isFetching ? '…' : '—')}
       </div>
       <div className="mt-2.5 flex gap-2">
-        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950 disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
           Kopyala
         </button>
-        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-slate-700 py-2 text-[12.5px] font-bold text-slate-100 disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
           Oyuna Aktar
         </button>
       </div>
       {notice && (
-        <p role="status" className="mt-1.5 text-xs text-emerald-300">
+        <p role="status" className="mt-1.5 text-xs text-accent">
           {notice}
         </p>
       )}
       <ErrorBox error={exported.error} />
       <div className="mt-2.5 flex items-center gap-2">
         <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır (12 karakter)" aria-label="EA taktik kodunu yapıştır" className="font-mono" maxLength={16} />
-        <button type="button" disabled={input.trim().length === 0 || importCode.isPending} onClick={() => { setNotice(undefined); importCode.mutate() }} className="rounded-lg bg-slate-700 px-3 py-2 text-[12.5px] font-bold text-slate-100 disabled:opacity-50">
+        <button type="button" disabled={input.trim().length === 0 || importCode.isPending} onClick={() => { setNotice(undefined); importCode.mutate() }} className="rounded-lg bg-surface-2 px-3 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
           {importCode.isPending ? 'Okunuyor…' : 'Yükle'}
         </button>
       </div>
       <ErrorBox error={importCode.error} />
       {importCode.data && importCode.data.warnings.length > 0 && (
-        <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-amber-300">
+        <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-code">
           {importCode.data.warnings.map((w) => (
             <li key={w}>{w}</li>
           ))}
         </ul>
       )}
       {exported.data && exported.data.warnings.length > 0 && (
-        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs text-amber-300">
+        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs text-code">
           {exported.data.warnings.map((w) => (
             <li key={w}>{w}</li>
           ))}
@@ -87,13 +87,13 @@ export function EaCodeCard({ onImported }: { onImported?: () => void }) {
       )}
       {open && code && (
         <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
-          <div className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-amber-300">{code}</div>
-          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-slate-200">
+          <div className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-code">{code}</div>
+          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-ink">
             <li>Kodu kopyala.</li>
             <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
             <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
           </ol>
-          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950">
+          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">
             Kopyala
           </button>
         </Modal>

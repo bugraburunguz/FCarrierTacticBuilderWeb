@@ -36,14 +36,14 @@ export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Prop
         {groups.map((g) => (
           <label
             key={g.base}
-            className={`flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-2 text-[13px] ${g.base === base ? 'border-emerald-400 bg-teal-950' : 'border-slate-700'}`}
+            className={`flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-2 text-[13px] ${g.base === base ? 'border-accent bg-accent-soft' : 'border-line'}`}
           >
             <input type="radio" name="role" className="accent-emerald-400" checked={g.base === base} onChange={() => pickBase(g)} />
             {g.base}
           </label>
         ))}
       </div>
-      <p className="mb-1.5 mt-3 text-[11px] uppercase tracking-wider text-slate-400">Focus</p>
+      <p className="mb-1.5 mt-3 text-[11px] uppercase tracking-wider text-muted">Focus</p>
       <div role="radiogroup" aria-label="Focus" className="flex flex-wrap gap-1.5">
         {group?.options.map((o) => (
           <button
@@ -52,17 +52,17 @@ export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Prop
             role="radio"
             aria-checked={o.roleId === roleId}
             onClick={() => setRoleId(o.roleId)}
-            className={`rounded-md border px-2.5 py-1 text-[11.5px] ${o.roleId === roleId ? 'border-emerald-400 text-emerald-300' : 'border-slate-700 text-slate-400'}`}
+            className={`rounded-md border px-2.5 py-1 text-[11.5px] ${o.roleId === roleId ? 'border-accent text-accent' : 'border-line text-muted'}`}
           >
             {o.focus}
           </button>
         ))}
       </div>
       <div className="mt-4 flex gap-2">
-        <button type="button" disabled={!roleId} onClick={() => onApply(roleId)} className="flex-1 rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950 disabled:opacity-50">
+        <button type="button" disabled={!roleId} onClick={() => onApply(roleId)} className="flex-1 rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
           Uygula
         </button>
-        <button type="button" onClick={onClose} className="flex-1 rounded-lg bg-slate-700 py-2 text-[12.5px] font-bold text-slate-100">
+        <button type="button" onClick={onClose} className="flex-1 rounded-lg bg-surface-2 py-2 text-[12.5px] font-bold text-ink">
           Vazgeç
         </button>
       </div>

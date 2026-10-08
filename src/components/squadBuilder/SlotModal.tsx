@@ -29,7 +29,7 @@ export function SlotModal({ title, hint, tabs, active, onTab, onClose }: Props) 
             role="tab"
             aria-selected={t.id === current.id}
             onClick={() => onTab(t.id)}
-            className={`rounded-full px-3 py-1 text-xs font-semibold transition ${t.id === current.id ? 'bg-emerald-400 text-emerald-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            className={`rounded-full px-3 py-1 text-xs font-semibold transition ${t.id === current.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink/80 hover:bg-surface-2'}`}
           >
             {t.label}
           </button>

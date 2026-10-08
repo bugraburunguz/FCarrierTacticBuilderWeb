@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { FormationSlot, Role } from '../api/types'
-import { firstFocus, ovrBand, remapAssignments, roleGroups } from './squadBuilder'
+import { firstFocus, ovrBand, remapAssignments, roleGroups, swapSlots } from './squadBuilder'
 
 const role = (id: string, name: string, focus: string, positions: string[]): Role => ({ id, baseRole: name, name: `${name} (${focus})`, positions, focus, weapons: [], accelerate: [], movementTags: [] })
 const slot = (slotId: string, position: string): FormationSlot => ({ slotId, position, group: position, defaultRole: '', x: 0, y: 0 })
@@ -28,5 +28,13 @@ describe('squad builder yardımcıları', () => {
     const positions: Record<number, string[]> = { 1: ['ST'], 2: ['CAM'], 3: ['GK'] }
     const next = remapAssignments({ ST: 1, CAM: 2, GK: 3 }, (id) => positions[id], [slot('ST', 'ST'), slot('CAM2', 'CAM')])
     expect(next).toEqual({ ST: 1, CAM2: 2 })
+  })
+
+  it('sürükle-bırak: iki slotun oyuncuları yer değiştirir, boş slota taşınır, aynı slotta değişmez', () => {
+    expect(swapSlots({ A: 1, B: 2 }, 'A', 'B')).toEqual({ A: 2, B: 1 })
+    expect(swapSlots({ A: 1 }, 'A', 'B')).toEqual({ B: 1 })
+    expect(swapSlots({ B: 2 }, 'A', 'B')).toEqual({ A: 2 })
+    const same = { A: 1 }
+    expect(swapSlots(same, 'A', 'A')).toBe(same)
   })
 })

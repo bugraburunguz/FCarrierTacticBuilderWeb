@@ -65,10 +65,10 @@ export function PlayerSelectPanel({ position, roleId, tags, candidates, currentP
         onChange={(e) => setTerm(e.target.value)}
         placeholder="Ara…"
         aria-label="Oyuncu ara"
-        className="mb-2.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-slate-100"
+        className="mb-2.5 w-full rounded-lg border border-line bg-surface-2 px-2 py-2 text-sm text-ink"
       />
       {currentPlayerId !== undefined && (
-        <button type="button" onClick={() => onPick(null)} className="mb-2 w-full rounded-lg border border-slate-700 py-1.5 text-xs text-slate-300 hover:border-rose-400 hover:text-rose-300">
+        <button type="button" onClick={() => onPick(null)} className="mb-2 w-full rounded-lg border border-line py-1.5 text-xs text-ink/80 hover:border-danger hover:text-rose-300">
           Slotu boşalt
         </button>
       )}
@@ -81,24 +81,24 @@ export function PlayerSelectPanel({ position, roleId, tags, candidates, currentP
                 type="button"
                 onClick={() => onPick(c.player.id)}
                 aria-current={c.player.id === currentPlayerId}
-                className={`flex w-full items-center gap-2.5 rounded-lg border px-2 py-2 text-left hover:border-slate-600 hover:bg-slate-800 ${c.player.id === currentPlayerId ? 'border-emerald-500' : 'border-transparent'}`}
+                className={`flex w-full items-center gap-2.5 rounded-lg border px-2 py-2 text-left hover:border-slate-600 hover:bg-surface-2 ${c.player.id === currentPlayerId ? 'border-emerald-500' : 'border-transparent'}`}
               >
                 <span className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] text-xs font-extrabold text-black/80" style={{ background: ovrBand(c.player.overall) }}>
                   {c.player.overall}
                 </span>
                 <span className="flex-1 text-[13px] font-semibold">{c.player.name}</span>
                 {fit && (
-                  <span className="text-[11px] tabular-nums text-slate-300">
+                  <span className="text-[11px] tabular-nums text-ink/80">
                     {BADGE_EMOJI[fit.band]} %{fit.pct}
                   </span>
                 )}
-                <span className="text-[11px] text-slate-400">{c.player.positions.slice(0, 3).join('/')}</span>
+                <span className="text-[11px] text-muted">{c.player.positions.slice(0, 3).join('/')}</span>
               </button>
             </li>
           )
         })}
       </ul>
-      {sorted.length === 0 && <p className="p-2 text-xs text-slate-400">Uygun oyuncu yok</p>}
+      {sorted.length === 0 && <p className="p-2 text-xs text-muted">Uygun oyuncu yok</p>}
     </>
   )
 }

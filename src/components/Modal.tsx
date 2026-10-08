@@ -61,13 +61,13 @@ export function Modal({ title, hint, wide, onClose, children }: Props) {
         aria-modal="true"
         aria-label={title}
         onKeyDown={onKeyDown}
-        className={`dark max-h-[86vh] ${wide ? 'w-[680px]' : 'w-[380px]'} max-w-full overflow-auto rounded-2xl border border-slate-700 bg-slate-900 p-4 text-slate-100 shadow-2xl`}
+        className={`max-h-[86vh] ${wide ? 'w-[680px]' : 'w-[380px]'} max-w-full overflow-auto rounded-2xl border border-line bg-surface p-4 text-ink shadow-2xl`}
       >
-        <button type="button" aria-label="Kapat" onClick={onClose} className="float-right text-lg leading-none text-slate-400 hover:text-white">
+        <button type="button" aria-label="Kapat" onClick={onClose} className="float-right text-lg leading-none text-muted hover:text-ink">
           ✕
         </button>
         <h3 className="text-sm font-bold">{title}</h3>
-        {hint && <p className="mb-3 text-xs text-slate-400">{hint}</p>}
+        {hint && <p className="mb-3 text-xs text-muted">{hint}</p>}
         {children}
       </div>
     </div>,

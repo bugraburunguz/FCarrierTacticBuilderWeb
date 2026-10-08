@@ -10,7 +10,7 @@ import type { SlotView } from '../components/squadBuilder/PositionCard'
 import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
 import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
-import { roleBaseName, roleGroups } from '../lib/squadBuilder'
+import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
 import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { utCardStore } from '../state/utCardStore'
 
@@ -27,8 +27,8 @@ interface Setup {
 
 type Dialog = { kind: 'card' | 'role'; slotId: string }
 
-const PANEL = 'rounded-2xl border border-slate-700 bg-slate-900 p-3.5 text-slate-100 shadow-lg'
-const PANEL_TITLE = 'mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-emerald-300'
+const PANEL = 'rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md'
+const PANEL_TITLE = 'mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent'
 
 function coins(value?: number) {
   return value === undefined ? '—' : value.toLocaleString('tr-TR')
@@ -154,7 +154,7 @@ export function UtSquadPage() {
             }}
           />
 
-          <section className={`dark ${PANEL}`}>
+          <section className={PANEL}>
             <h2 className={PANEL_TITLE}>Kadro Özeti</h2>
             {formations.isLoading ? (
               <Spinner />
@@ -164,7 +164,7 @@ export function UtSquadPage() {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 text-[13px]">
                   <label htmlFor="ut-formation">Formasyon ({formations.data?.length ?? 0})</label>
-                  <Select id="ut-formation" value={formation?.id} onChange={(e) => changeFormation(e.target.value)} className="!w-auto !bg-slate-950 !text-slate-100">
+                  <Select id="ut-formation" value={formation?.id} onChange={(e) => changeFormation(e.target.value)} className="!w-auto !bg-surface-2 !text-ink">
                     {(formations.data ?? []).map((f) => (
                       <option key={f.id} value={f.id}>{f.label ?? f.id}</option>
                     ))}
@@ -181,7 +181,7 @@ export function UtSquadPage() {
                         role="radio"
                         aria-checked={setup.buildUp === b}
                         onClick={() => setSetup((cur) => ({ ...cur, buildUp: b }))}
-                        className={`rounded-md border px-2.5 py-1 text-[11.5px] ${setup.buildUp === b ? 'border-emerald-400 text-emerald-300' : 'border-slate-700 text-slate-400'}`}
+                        className={`rounded-md border px-2.5 py-1 text-[11.5px] ${setup.buildUp === b ? 'border-accent text-accent' : 'border-line text-muted'}`}
                       >
                         {b}
                       </button>
@@ -192,7 +192,7 @@ export function UtSquadPage() {
                   <span className="mb-1 block">Savunma hattı: {setup.depth}</span>
                   <input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} className="w-full accent-emerald-400" />
                 </label>
-                <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-800 pt-2.5 text-sm">
+                <div className="flex flex-wrap items-center gap-1.5 border-t border-line pt-2.5 text-sm">
                   <Pill tone={chem.total >= 30 ? 'emerald' : chem.total >= 20 ? 'amber' : 'rose'}>kimya {chem.total} / {MAX_SQUAD_CHEM}</Pill>
                   <Pill tone="sky">meta* ort. {evaluation.data ? evaluation.data.averageMeta : '—'}</Pill>
                   <Pill tone="slate">OVR ort. {evaluation.data ? evaluation.data.averageOverall : '—'}</Pill>
@@ -202,10 +202,10 @@ export function UtSquadPage() {
                   <Pill tone="amber">ort. ücret {coins(price.average)}</Pill>
                   <Pill tone="amber">toplam {coins(price.known > 0 ? price.total : undefined)}</Pill>
                 </div>
-                <p className="text-xs text-slate-400">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+                <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
                 <Summary evaluation={evaluation.data?.slots ?? []} />
                 <Button variant="ghost" onClick={() => setPicked({})}>Kartları temizle</Button>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   Meta* platformun tahmin metriğidir; kendi kartlarında gerçek attribute'ları kullanılır. Fiyat: kulüp kartlarında pazar ortalaması (yoksa son satış), market ilanlarında satın alma fiyatı; katalog kartlarının fiyatı yoktur ve ortalamaya girmez.
                 </p>
               </div>
@@ -213,14 +213,15 @@ export function UtSquadPage() {
           </section>
         </div>
 
-        <div className="order-1 rounded-2xl border border-slate-700 bg-slate-900 p-2.5 min-[820px]:order-2">
+        <div className="order-1 rounded-2xl border border-line bg-surface p-2.5 min-[820px]:order-2">
           <Pitch
             slots={views}
             onPickPlayer={(slotId) => setDialog({ kind: 'card', slotId })}
             onPickRole={(slotId) => setDialog({ kind: 'role', slotId })}
             onRemove={removeCard}
+            onSwap={(from, to) => setPicked((cur) => swapSlots(cur, from, to))}
           />
-          <p className="mt-2 px-1 text-xs text-slate-400">Karta tıkla: kart ata ve ayrıntı. Rol etiketine tıkla: rol ve focus. ✕: kartı kaldır. Kart üstünde: meta · kimya · fiyat. Formasyon değişince kartlar aynı mevkideki slotlara taşınır.</p>
+          <p className="mt-2 px-1 text-xs text-muted">Kartı başka bir slota sürükle: yer değiştirirler. Karta tıkla: kart ata ve ayrıntı. Rol etiketine tıkla: rol ve focus. ✕: kartı kaldır. Kart üstünde: meta · kimya · fiyat. Formasyon değişince kartlar aynı mevkideki slotlara taşınır.</p>
         </div>
       </div>
 
@@ -264,8 +265,8 @@ function Summary({ evaluation }: { evaluation: { slotId: string; badge?: WeaponS
   }
   return (
     <ul className="space-y-0.5 text-sm">
-      <li className="text-emerald-400">+ Rolüne tam oturan: {strong.length}</li>
-      {weak.length > 0 && <li className="rounded-lg border border-red-900 bg-red-950 px-2.5 py-1.5 text-xs text-red-300">Rolüne uymayan: {weak.map((w) => `${w.slotId} (${w.roleName})`).join(', ')}</li>}
+      <li className="text-accent">+ Rolüne tam oturan: {strong.length}</li>
+      {weak.length > 0 && <li className="rounded-lg border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">Rolüne uymayan: {weak.map((w) => `${w.slotId} (${w.roleName})`).join(', ')}</li>}
     </ul>
   )
 }
@@ -308,37 +309,37 @@ function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (
     }
   }
   return (
-    <section className={`dark ${PANEL}`}>
+    <section className={PANEL}>
       <h2 className={PANEL_TITLE}>EA Taktik Kodu</h2>
-      <div aria-live="polite" className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-amber-300">
+      <div aria-live="polite" className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-code">
         {code ?? (exportCode.isFetching ? '…' : '—')}
       </div>
       <div className="mt-2.5 flex gap-2">
-        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950 disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
           {copied ? 'Kopyalandı' : 'Kopyala'}
         </button>
-        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-slate-700 py-2 text-[12.5px] font-bold text-slate-100 disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
           Oyuna Aktar
         </button>
       </div>
-      <p className="mt-1.5 text-xs text-slate-400">Kod formasyon, rol, Build-Up ve hat değiştikçe otomatik güncellenir.</p>
-      {exportCode.data?.warnings.map((w) => <p key={w} className="text-xs text-amber-300">{w}</p>)}
+      <p className="mt-1.5 text-xs text-muted">Kod formasyon, rol, Build-Up ve hat değiştikçe otomatik güncellenir.</p>
+      {exportCode.data?.warnings.map((w) => <p key={w} className="text-xs text-code">{w}</p>)}
       <ErrorBox error={exportCode.error} />
       <div className="mt-2.5 flex items-center gap-2">
         <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır" className="font-mono" maxLength={16} aria-label="EA kodunu yapıştır" />
         <Button disabled={!input.trim()} onClick={load}>Yükle</Button>
       </div>
       <ErrorBox error={importError} />
-      <p className="mt-1.5 text-xs text-slate-400">Kod mod-bağımsızdır: kariyerdeki taktik kodunun aynısı. Yüklemek formasyonu, rolleri, Build-Up'ı ve hattı değiştirir, kartları temizler.</p>
+      <p className="mt-1.5 text-xs text-muted">Kod mod-bağımsızdır: kariyerdeki taktik kodunun aynısı. Yüklemek formasyonu, rolleri, Build-Up'ı ve hattı değiştirir, kartları temizler.</p>
       {open && code && (
         <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
-          <div className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-amber-300">{code}</div>
-          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-slate-200">
+          <div className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-code">{code}</div>
+          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-ink">
             <li>Kodu kopyala.</li>
             <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
             <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
           </ol>
-          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950">Kopyala</button>
+          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">Kopyala</button>
         </Modal>
       )}
     </section>
@@ -367,9 +368,9 @@ interface PickProps {
 function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation: PickProps['evaluation']; chemLinks?: number }) {
   const links = chemLinks ?? 0
   return (
-    <div className="mb-3 space-y-1.5 rounded-xl border border-slate-700 bg-slate-950 p-3 text-sm">
+    <div className="mb-3 space-y-1.5 rounded-xl border border-line bg-surface-2 p-3 text-sm">
       <p className="font-semibold">{card.name}</p>
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-muted">
         {SOURCE_LABEL[card.source]} · {card.rating} OVR{card.rarity ? ` · ${card.rarity}` : ''}{card.club ? ` · ${card.club}` : ''} · fiyat {coins(card.price)}
         {card.untradeable ? ' · untradeable' : ''}
       </p>
@@ -382,10 +383,10 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
           {evaluation.roleFit !== undefined && (
             <p className="flex items-center gap-1.5">
               {evaluation.badge && <BadgeDot state={evaluation.badge} />} RoleFit <b>%{Math.round(evaluation.roleFit)}</b> · {evaluation.roleName}
-              {evaluation.setupDelta !== undefined && evaluation.setupDelta !== 0 && <span className="text-xs text-slate-400">(ayar {evaluation.setupDelta > 0 ? '+' : ''}{evaluation.setupDelta})</span>}
+              {evaluation.setupDelta !== undefined && evaluation.setupDelta !== 0 && <span className="text-xs text-muted">(ayar {evaluation.setupDelta > 0 ? '+' : ''}{evaluation.setupDelta})</span>}
             </p>
           )}
-          {evaluation.reason && <p className="text-xs text-slate-400">{evaluation.reason}</p>}
+          {evaluation.reason && <p className="text-xs text-muted">{evaluation.reason}</p>}
           {evaluation.card.chemStyles && (
             <p className="text-xs">
               Chem style önerisi: <b>{evaluation.card.bestChemStyle}</b>{' '}
@@ -393,7 +394,7 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
             </p>
           )}
           {!card.club && card.source !== 'catalog' && (
-            <p className="text-xs text-amber-300">Bu kartın kulüp/lig/ülke adı çözülemedi; kimya bağları hesaba katılmıyor olabilir.</p>
+            <p className="text-xs text-code">Bu kartın kulüp/lig/ülke adı çözülemedi; kimya bağları hesaba katılmıyor olabilir.</p>
           )}
         </>
       ) : (
@@ -438,7 +439,7 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
             role="tab"
             aria-selected={source === s}
             onClick={() => setSource(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-emerald-600 text-white' : 'bg-surface-2 text-ink/80 hover:bg-surface-2'}`}
           >
             {SOURCE_LABEL[s]}{s !== 'catalog' ? ` (${counts[s]})` : ''}
           </button>
@@ -451,27 +452,27 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
         ) : rows.length === 0 ? (
           <EmptyState>
             {source === 'catalog' ? 'Sonuç yok.' : counts[source] === 0 ? (
-              <>Henüz {SOURCE_LABEL[source].toLowerCase()} verisi yok. <Link to="/ut/import" className="text-emerald-400 underline">Kulüp içe aktar</Link> sayfasından yakalama dosyanı yükle.</>
+              <>Henüz {SOURCE_LABEL[source].toLowerCase()} verisi yok. <Link to="/ut/import" className="text-accent underline">Kulüp içe aktar</Link> sayfasından yakalama dosyanı yükle.</>
             ) : 'Bu mevkide kart yok.'}
           </EmptyState>
         ) : (
-          <ul className="divide-y divide-slate-800 text-sm">
+          <ul className="divide-y divide-line text-sm">
             {rows.map((c) => (
               <li key={c.key}>
-                <button type="button" disabled={usedKeys.has(c.key) && c.key !== current?.key} className="flex w-full items-center justify-between gap-2 px-1 py-1.5 text-left hover:bg-slate-800 disabled:opacity-40" onClick={() => onPick(c)}>
+                <button type="button" disabled={usedKeys.has(c.key) && c.key !== current?.key} className="flex w-full items-center justify-between gap-2 px-1 py-1.5 text-left hover:bg-surface-2 disabled:opacity-40" onClick={() => onPick(c)}>
                   <span>
-                    <b>{c.rating}</b> {c.name} <span className="text-xs text-slate-400">{c.club ?? ''}{c.rarity ? ` · ${c.rarity}` : ''}</span>
+                    <b>{c.rating}</b> {c.name} <span className="text-xs text-muted">{c.club ?? ''}{c.rarity ? ` · ${c.rarity}` : ''}</span>
                     {c.untradeable && <Pill tone="emerald">untradeable</Pill>}
                   </span>
-                  <span className="text-xs tabular-nums text-slate-400">{c.price !== undefined ? coins(c.price) : c.league ?? ''}</span>
+                  <span className="text-xs tabular-nums text-muted">{c.price !== undefined ? coins(c.price) : c.league ?? ''}</span>
                 </button>
               </li>
             ))}
           </ul>
         )}
       </div>
-      {source === 'catalog' && <p className="mt-2 text-xs text-slate-400">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
-      {library && <p className="mt-2 text-xs text-slate-400">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
+      {source === 'catalog' && <p className="mt-2 text-xs text-muted">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
+      {library && <p className="mt-2 text-xs text-muted">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
     </Modal>
   )
 }

@@ -8,6 +8,8 @@ import { tacticStore, toTacticRequest, useTactic } from '../state/tacticStore'
 import { Pitch } from './squadBuilder/Pitch'
 import type { SlotView } from './squadBuilder/PositionCard'
 import { useNavigate } from 'react-router-dom'
+import { swapSlots } from '../lib/squadBuilder'
+import { lineupStore } from '../state/lineupStore'
 import { BadgeDot, Button, Card, ErrorBox, Pill, Spinner } from './ui'
 
 interface Props {
@@ -78,8 +80,23 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
             </div>
           )}
           <div className="grid gap-4 lg:grid-cols-[minmax(300px,440px)_1fr]">
-            <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
-              <Pitch slots={views} onPickPlayer={() => navigate('/squad/builder')} onPickRole={() => navigate('/squad/builder')} />
+            <div className="rounded-2xl border border-line bg-surface p-2.5">
+              <Pitch
+                slots={views}
+                onPickPlayer={() => navigate('/squad/builder')}
+                onPickRole={() => navigate('/squad/builder')}
+                onSwap={(from, to) => {
+                  const current: Record<string, number> = {}
+                  fit.slots.forEach((s) => {
+                    if (s.playerId !== undefined) {
+                      current[s.slotId] = s.playerId
+                    }
+                  })
+                  lineupStore.set(careerId, swapSlots(current, from, to))
+                  navigate('/squad/builder')
+                }}
+              />
+              <p className="mt-2 px-1 text-xs text-muted">Oyuncuyu başka karta sürüklersen değişiklik Kadro kurucuda kaydedilir.</p>
             </div>
             <div className="space-y-3">
               <div>
