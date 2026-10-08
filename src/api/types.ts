@@ -778,6 +778,11 @@ export interface ScoutingQuery {
   setup?: { buildUp?: string; depth?: number }
   ageMax?: number
   potentialMin?: number
+  potentialMax?: number
+  overallMin?: number
+  overallMax?: number
+  leagueId?: number
+  clubId?: number
   dream?: boolean
   sort?: 'fit' | 'opportunity' | 'potential'
   limit?: number

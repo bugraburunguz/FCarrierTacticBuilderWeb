@@ -13,7 +13,7 @@ interface Props {
   info?: Record<string, PitchSlotInfo>
 }
 
-const RING: Record<WeaponState, string> = { GREEN: '#22c55e', YELLOW: '#f59e0b', RED: '#ef4444' }
+const RING: Record<WeaponState, string> = { GREEN: '#2e9b52', YELLOW: '#d0a022', RED: '#c0392b' }
 
 export function PitchView({ slots, selected, onSelect, info = {} }: Props) {
   return (

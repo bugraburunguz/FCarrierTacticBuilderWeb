@@ -5,6 +5,9 @@ import { CompareTray } from './CompareTray'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
 import { modeStore, useMode, type AppMode } from '../state/modeStore'
+import { themeStore, useTheme } from '../state/themeStore'
+
+const THEME_LABEL = { dark: 'Koyu', light: 'Açık', system: 'Sistem' } as const
 
 interface NavGroup {
   to: string
@@ -57,6 +60,7 @@ const MODES: { id: AppMode; label: string; home: string }[] = [
 
 export function Layout() {
   const mode = useMode()
+  const theme = useTheme()
   const nav = mode === 'ut' ? UT_NAV : NAV
   const { authenticated, me, logout } = useAuth()
   const navigate = useNavigate()
@@ -103,6 +107,14 @@ export function Layout() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => themeStore.cycle()}
+              aria-label={`Tema: ${THEME_LABEL[theme]}. Değiştirmek için tıkla`}
+              className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+            >
+              {THEME_LABEL[theme]}
+            </button>
             {authenticated && me ? (
               <>
                 {me.subscriptionType === 'PREMIUM' ? <Pill tone="emerald">PREMIUM</Pill> : <Pill tone="sky">{me.creditBalance ?? 0} kredi</Pill>}

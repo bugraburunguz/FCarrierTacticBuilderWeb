@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
-import type { Acquisition, Feasibility, ScoutingCandidate, ScoutingQuery } from '../api/types'
+import type { Acquisition, Club, Feasibility, ScoutingCandidate, ScoutingQuery } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
 import { CompareButton } from '../components/CompareButton'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select, Spinner } from '../components/ui'
@@ -75,17 +75,30 @@ export function ScoutingPage() {
   const tactic = useTactic()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
-  const [position, setPosition] = useState('CAM')
+  const [chosenPosition, setPosition] = useState('')
   const [ageMax, setAgeMax] = useState('')
   const [potentialMin, setPotentialMin] = useState('')
+  const [potentialMax, setPotentialMax] = useState('')
+  const [overallMin, setOverallMin] = useState('')
+  const [overallMax, setOverallMax] = useState('')
+  const [leagueId, setLeagueId] = useState('')
+  const [clubTerm, setClubTerm] = useState('')
+  const [club, setClub] = useState<Club | undefined>()
   const [dream, setDream] = useState(false)
   const [sort, setSort] = useState<NonNullable<ScoutingQuery['sort']>>('fit')
 
+  const leagues = useQuery({ queryKey: ['leagues'], queryFn: () => endpoints.leagues(), staleTime: Infinity })
+  const clubs = useQuery({
+    queryKey: ['clubs', clubTerm, leagueId],
+    queryFn: () => endpoints.clubs(clubTerm, { league: leagueId ? Number(leagueId) : undefined, limit: 8 }),
+    enabled: clubTerm.trim().length >= 2 && !club,
+  })
   const formation = formations.data?.find((f) => f.id === tactic.formation)
+  const positions = [...new Set((formation?.slots ?? []).map((s) => s.position))].sort((a, b) => POSITION_ORDER.indexOf(a) - POSITION_ORDER.indexOf(b))
+  const position = positions.includes(chosenPosition) ? chosenPosition : (positions.find((p) => p !== 'GK') ?? positions[0] ?? '')
   const slot = formation?.slots.find((s) => s.position === position)
   const roleId = (slot && tactic.slots[slot.slotId]?.roleId) ?? slot?.defaultRole ?? (roles.data ?? []).find((r) => r.positions.includes(position))?.id
   const tags = (slot && tactic.slots[slot.slotId]?.tags) ?? []
-  const positions = [...new Set((formation?.slots ?? []).map((s) => s.position))].sort((a, b) => POSITION_ORDER.indexOf(a) - POSITION_ORDER.indexOf(b))
 
   const search = useMutation({
     mutationFn: () =>
@@ -96,6 +109,11 @@ export function ScoutingPage() {
         setup: tactic.setup,
         ageMax: ageMax ? Number(ageMax) : undefined,
         potentialMin: potentialMin ? Number(potentialMin) : undefined,
+        potentialMax: potentialMax ? Number(potentialMax) : undefined,
+        overallMin: overallMin ? Number(overallMin) : undefined,
+        overallMax: overallMax ? Number(overallMax) : undefined,
+        leagueId: !club && leagueId ? Number(leagueId) : undefined,
+        clubId: club?.id,
         dream,
         sort,
       }),
@@ -113,7 +131,7 @@ export function ScoutingPage() {
         <div className="space-y-3">
           <CareerSelect />
           {careerId === undefined && <p className="text-sm text-slate-500">Önce bir kariyer seç. Aday havuzu kulübünün ligine, bütçene ve kadro seviyene göre süzülür.</p>}
-          <div className="grid gap-3 sm:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
             <Field label="Mevki">
               <Select value={position} onChange={(e) => setPosition(e.target.value)}>
                 {positions.map((p) => (
@@ -129,6 +147,46 @@ export function ScoutingPage() {
             <Field label="Min potansiyel">
               <Input type="number" min={1} max={99} value={potentialMin} onChange={(e) => setPotentialMin(e.target.value)} placeholder="Hepsi" />
             </Field>
+            <Field label="Maks potansiyel">
+              <Input type="number" min={1} max={99} value={potentialMax} onChange={(e) => setPotentialMax(e.target.value)} placeholder="Hepsi" />
+            </Field>
+            <Field label="Min genel rating">
+              <Input type="number" min={1} max={99} value={overallMin} onChange={(e) => setOverallMin(e.target.value)} placeholder="Hepsi" />
+            </Field>
+            <Field label="Maks genel rating">
+              <Input type="number" min={1} max={99} value={overallMax} onChange={(e) => setOverallMax(e.target.value)} placeholder="Hepsi" />
+            </Field>
+            <Field label="Lig">
+              <Select value={leagueId} onChange={(e) => { setLeagueId(e.target.value); setClub(undefined); setClubTerm('') }}>
+                <option value="">Kulübüne uygun ligler</option>
+                {(leagues.data ?? []).map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <div className="relative">
+              <Field label="Kulüp">
+                <Input
+                  value={club ? club.name : clubTerm}
+                  onChange={(e) => { setClub(undefined); setClubTerm(e.target.value) }}
+                  placeholder="Kulüp ara (en az 2 harf)"
+                  aria-label="Kulüp ara"
+                />
+              </Field>
+              {!club && (clubs.data?.length ?? 0) > 0 && (
+                <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-slate-300 bg-white text-sm shadow dark:border-slate-600 dark:bg-slate-800">
+                  {clubs.data!.map((c) => (
+                    <li key={c.id}>
+                      <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-slate-100 dark:hover:bg-slate-700" onClick={() => { setClub(c); setClubTerm(c.name) }}>
+                        {c.name} <span className="text-xs text-slate-500">{c.league}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <Field label="Sıralama">
               <Select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
                 {SORTS.map((s) => (
@@ -148,6 +206,7 @@ export function ScoutingPage() {
               {search.isPending ? 'Aranıyor…' : 'Aday bul'}
             </Button>
           </div>
+          {(leagueId || club) && <p className="text-xs text-slate-500">Lig/kulüp seçilince aday havuzu o ligden gelir; kulübünün bandı dışındaysa rozet İddialı ya da Hayal olur.</p>}
           <p className="text-xs text-slate-500">
             Rol: {roleName ?? '—'} (Taktik sayfasındaki {tactic.formation} seçimine göre). Uyum yüzdesi gerçek RoleFit motorundan gelir.
           </p>
