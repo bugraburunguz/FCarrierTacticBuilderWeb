@@ -26,7 +26,7 @@ describe('aktif kadro eşleme', () => {
       slots: [
         { index: 0, starter: true, position: 'GK', card: card(1, 'GK') },
         { index: 1, starter: true, position: 'ST', card: card(2, 'ST') },
-        { index: 2, starter: true, position: 'CAM', card: card(3, 'CAM') },
+        { index: 2, starter: true, position: 'ST', card: card(3, 'ST') },
         { index: 3, starter: false, position: 'ST', card: card(4, 'ST') },
       ],
     }
@@ -41,5 +41,17 @@ describe('aktif kadro eşleme', () => {
     const squad = { formation: '3-5-2', slots: [{ index: 0, starter: true, position: 'GK', card: card(1, 'GK') }] }
     expect(mapActiveSquad(squad, formations, formations[0]).picked.GK0.name).toBe('P1')
     expect(mapActiveSquad(squad, formations).unplaced).toBe(1)
+  })
+})
+
+describe('EA mevki adları ve formasyon dizilimi', () => {
+  it('RCB/LCB/RCM/LCM/RAM/RS gibi adları genel mevkiye indirger ve dizilimle formasyonu bulur', async () => {
+    const { generalPosition } = await import('./activeSquad')
+    expect(['RCB', 'LCB', 'RDM', 'LCM', 'RAM', 'LS', 'RM', 'GK'].map(generalPosition)).toEqual(['CB', 'CB', 'CDM', 'CM', 'CAM', 'ST', 'RM', 'GK'])
+    const shaped = [formation('a', '4-4-2', ['GK', 'RB', 'CB', 'CB', 'LB', 'RM', 'CM', 'CM', 'LM', 'ST', 'ST']), formation('b', '4-4-1-1', ['GK', 'RB', 'CB', 'CB', 'LB', 'RM', 'CM', 'CM', 'LM', 'CAM', 'ST'])]
+    const positions = ['GK', 'RB', 'RCB', 'LCB', 'LB', 'RM', 'RCM', 'LCM', 'LM', 'CAM', 'ST']
+    const squad = { formation: 'f4411a', formationLabel: '4-4-1-1 (a)', slots: positions.map((p, i) => ({ index: i, starter: true, position: p, card: card(i + 1, p === 'ST' ? 'ST' : 'CM') })) }
+    expect(findFormation(squad, shaped)?.id).toBe('b')
+    expect(Object.keys(mapActiveSquad(squad, shaped).picked)).toHaveLength(11)
   })
 })

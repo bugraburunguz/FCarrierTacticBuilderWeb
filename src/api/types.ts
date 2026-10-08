@@ -766,6 +766,7 @@ export interface CaptureResult {
     chemistry?: number
     name?: string
     slots: { index: number; starter: boolean; position?: string; chemistry?: number; card?: CaptureCard }[]
+    tactic?: { tacticName?: string; formation?: string; instructions?: { index: number; value: number }[]; styles?: { index: number; value: number }[] }
   }
   squads: { id: number; name?: string; formationLabel?: string; rating?: number; chemistry?: number }[]
   prices: { source: string; assetId: number; name?: string; rating: number; buyNow?: number; currentBid?: number; startingBid?: number; lastSale?: number; card?: CaptureCard }[]

@@ -149,7 +149,7 @@ export function UtSquadPage() {
     setRoleOverride({})
     setPicked(loaded.picked)
     setDialog(null)
-    setLoadNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}. Taktik (rol/focus) yakalanmadığı için roller otomatik.`)
+    setLoadNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}${squad.tactic?.tacticName ? ` · taktik: ${squad.tactic.tacticName}` : ''}. Taktik talimatları (rol/focus) henüz çözülmediği için roller otomatik.`)
   }
 
   function removeCard(slotId: string) {

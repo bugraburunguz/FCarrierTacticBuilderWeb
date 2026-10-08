@@ -11,8 +11,27 @@ export interface LoadedSquad {
 
 const norm = (value?: string) => (value ?? '').toLowerCase().replace(/[^a-z0-9]/g, '')
 
-/** Yakalanan formasyon adını/etiketini bizim formasyon listemizle eşler (tam eşleşme, yoksa etiket içerme). */
+/** EA mevki adını bizim genel mevkimize çevirir (RCB/LCB → CB, RDM/LDM → CDM, RCM/LCM → CM, RAM/LAM → CAM, RS/LS → ST). */
+export function generalPosition(position?: string): string {
+  const map: Record<string, string> = { RCB: 'CB', LCB: 'CB', RDM: 'CDM', LDM: 'CDM', RCM: 'CM', LCM: 'CM', RAM: 'CAM', LAM: 'CAM', RS: 'ST', LS: 'ST', CF: 'ST' }
+  return map[position ?? ''] ?? position ?? ''
+}
+
+const digits = (value?: string) => (value ?? '').replace(/\D/g, '')
+
+/**
+ * Yakalanan formasyonu bizimkiyle eşler: önce ilk 11'in mevki dizilimi (genel mevkilere indirgenmiş) birebir aynı olan formasyon,
+ * birden fazlaysa etiketteki rakamlara (4-4-1-1 → 4411) en yakın olan; dizilim bulunamazsa ad/etiket eşleşmesi.
+ */
 export function findFormation(squad: ActiveSquad, formations: Formation[]): Formation | undefined {
+  const starters = squad.slots.filter((s) => s.starter).map((s) => generalPosition(s.position)).filter(Boolean).sort().join(',')
+  const sameShape = starters
+    ? formations.filter((f) => f.slots.map((slot) => slot.position).sort().join(',') === starters)
+    : []
+  if (sameShape.length > 0) {
+    const wanted = digits(squad.formationLabel ?? squad.formation)
+    return sameShape.find((f) => digits(f.id) === wanted) ?? sameShape.find((f) => digits(f.label) === wanted) ?? sameShape[0]
+  }
   const keys = [squad.formation, squad.formationLabel].map(norm).filter(Boolean)
   return (
     formations.find((f) => keys.includes(norm(f.id)) || keys.includes(norm(f.label))) ??
@@ -34,7 +53,7 @@ export function mapActiveSquad(squad: ActiveSquad, formations: Formation[], fall
   const used = new Set<number>()
   const toCard = (card: CaptureCard) => fromCapture(card, 'club', cardPrice(card))
   formation.slots.forEach((slot) => {
-    const index = starters.findIndex((s, i) => !used.has(i) && s.position === slot.position)
+    const index = starters.findIndex((s, i) => !used.has(i) && generalPosition(s.position) === slot.position)
     if (index >= 0) {
       used.add(index)
       picked[slot.slotId] = toCard(starters[index].card!)
