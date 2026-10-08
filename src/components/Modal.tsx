@@ -6,12 +6,13 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
 interface Props {
   title: string
   hint?: string
+  wide?: boolean
   onClose: () => void
   children: ReactNode
 }
 
 /** Erişilebilir popup: Esc ve arka plan tıklaması kapatır, odak içeride döner, kapanınca önceki öğeye döner. */
-export function Modal({ title, hint, onClose, children }: Props) {
+export function Modal({ title, hint, wide, onClose, children }: Props) {
   const panel = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export function Modal({ title, hint, onClose, children }: Props) {
         aria-modal="true"
         aria-label={title}
         onKeyDown={onKeyDown}
-        className="max-h-[82vh] w-[380px] max-w-full overflow-auto rounded-2xl border border-slate-700 bg-slate-900 p-4 text-slate-100 shadow-2xl"
+        className={`dark max-h-[86vh] ${wide ? 'w-[680px]' : 'w-[380px]'} max-w-full overflow-auto rounded-2xl border border-slate-700 bg-slate-900 p-4 text-slate-100 shadow-2xl`}
       >
         <button type="button" aria-label="Kapat" onClick={onClose} className="float-right text-lg leading-none text-slate-400 hover:text-white">
           ✕

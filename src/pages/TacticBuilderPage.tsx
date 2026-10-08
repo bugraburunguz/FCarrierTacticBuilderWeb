@@ -10,6 +10,7 @@ import { FormationStyleChips } from '../components/FormationStyleChips'
 import { ProtectLeadCard } from '../components/ProtectLeadCard'
 import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
+import { Modal } from '../components/Modal'
 import { Pitch } from '../components/squadBuilder/Pitch'
 import type { SlotView } from '../components/squadBuilder/PositionCard'
 import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
@@ -114,7 +115,7 @@ export function TacticBuilderPage() {
 
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(320px,460px)_1fr]">
+    <div className="grid items-start gap-4 min-[820px]:grid-cols-[minmax(320px,420px)_1fr]">
       {roleDialogSlot && (
         <RoleFocusModal
           position={roleDialogSlot.position}
@@ -123,6 +124,42 @@ export function TacticBuilderPage() {
           onApply={(rid) => { updateSlot(roleDialogSlot.slotId, { roleId: rid }); setRoleDialog(undefined) }}
           onClose={() => setRoleDialog(undefined)}
         />
+      )}
+      {slot && !roleDialogSlot && (
+        <Modal wide title={`Slot ${slot.slotId} · ${slot.position}`} hint="Davranışlar, rol ve bu slota uygun oyuncular" onClose={() => setSelectedSlot(undefined)}>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  <span className="text-slate-500">Türetilen rol:</span>
+                  <Pill tone="emerald">{resolvedSlot?.roleName ?? '…'}</Pill>
+                </div>
+                {preset?.roleHints?.[slot.slotId] && <p className="rounded-lg bg-amber-50 p-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">Aranan profil: {preset.roleHints[slot.slotId]}</p>}
+                <div>
+                  <p className="mb-1 text-xs font-medium text-slate-600">Davranışlar</p>
+                  <TagChips tags={slotTags} selected={tactic.slots[slot.slotId]?.tags ?? []} onChange={(next) => updateSlot(slot.slotId, { tags: next })} />
+                </div>
+                <Field label="Rolü elle seç (davranış oylamasını geçersiz kılar)">
+                  <Select value={tactic.slots[slot.slotId]?.roleId ?? ''} onChange={(e) => updateSlot(slot.slotId, { roleId: e.target.value || undefined })}>
+                    <option value="">Otomatik</option>
+                    {slotRoles.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+                {(tactic.slots[slot.slotId]?.tags ?? []).length > 0 && (
+                  <ul className="space-y-0.5 text-sm text-slate-600 dark:text-slate-300">
+                    {(tactic.slots[slot.slotId]?.tags ?? []).map((id) => (
+                      <li key={id}>• {slotTags.find((t) => t.id === id)?.nlg}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+  
+          <div className="mt-3">
+            <SlotSuggestions roleId={resolvedSlot?.roleId} position={slot.position} tags={tactic.slots[slot.slotId]?.tags ?? []} gender={career?.gender} setup={tactic.setup} />
+          </div>
+        </Modal>
       )}
       {autoFit && formations.data && presets.data && (
         <div className="lg:col-span-2">
@@ -195,12 +232,6 @@ export function TacticBuilderPage() {
         <TeamSetup careerId={careerId} />
         <ProtectLeadCard slots={resolved.data?.slots ?? []} roles={roles.data ?? []} />
         <EaTacticCode onLoaded={() => { setAutoFit(false); setSelectedSlot(undefined) }} />
-        {formation && (
-          <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
-            <Pitch slots={views} onPickPlayer={setSelectedSlot} onPickRole={setRoleDialog} />
-            <p className="mt-2 px-1 text-xs text-slate-400">Karta tıkla: davranışlar. Rol etiketine tıkla: rol ve odak. Oyuncular "Mevcut taktiği analiz et" sonrası görünür.</p>
-          </div>
-        )}
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => { tacticStore.set({ formation: tactic.formation, slots: {}, setup: tactic.setup }); setSelectedSlot(undefined) }}>
             Davranışları sıfırla
@@ -208,45 +239,14 @@ export function TacticBuilderPage() {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 lg:sticky lg:top-24">
         <ErrorBox error={resolved.error} />
-        {!slot ? (
-          <Card title="Slot ayarları">
-            <p className="text-sm text-slate-500">Sahadan bir slot seç; oyuncunun ne yapmasını istediğini davranışlarla belirle. Çelişen davranışlar otomatik kilitlenir.</p>
-          </Card>
-        ) : (
-          <Card title={`Slot ${slot.slotId} · ${slot.position}`}>
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2 text-sm">
-                <span className="text-slate-500">Türetilen rol:</span>
-                <Pill tone="emerald">{resolvedSlot?.roleName ?? '…'}</Pill>
-              </div>
-              {preset?.roleHints?.[slot.slotId] && <p className="rounded-lg bg-amber-50 p-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">Aranan profil: {preset.roleHints[slot.slotId]}</p>}
-              <div>
-                <p className="mb-1 text-xs font-medium text-slate-600">Davranışlar</p>
-                <TagChips tags={slotTags} selected={tactic.slots[slot.slotId]?.tags ?? []} onChange={(next) => updateSlot(slot.slotId, { tags: next })} />
-              </div>
-              <Field label="Rolü elle seç (davranış oylamasını geçersiz kılar)">
-                <Select value={tactic.slots[slot.slotId]?.roleId ?? ''} onChange={(e) => updateSlot(slot.slotId, { roleId: e.target.value || undefined })}>
-                  <option value="">Otomatik</option>
-                  {slotRoles.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              {(tactic.slots[slot.slotId]?.tags ?? []).length > 0 && (
-                <ul className="space-y-0.5 text-sm text-slate-600 dark:text-slate-300">
-                  {(tactic.slots[slot.slotId]?.tags ?? []).map((id) => (
-                    <li key={id}>• {slotTags.find((t) => t.id === id)?.nlg}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </Card>
+        {formation && (
+          <div className="rounded-2xl border border-slate-700 bg-slate-900 p-2.5">
+            <Pitch slots={views} onPickPlayer={setSelectedSlot} onPickRole={setRoleDialog} />
+            <p className="mt-2 px-1 text-xs text-slate-400">Karta tıkla: davranışlar ve uygun oyuncular. Rol etiketine tıkla: rol ve odak. Oyuncular "Mevcut taktiği analiz et" sonrası görünür.</p>
+          </div>
         )}
-        {slot && <SlotSuggestions roleId={resolvedSlot?.roleId} position={slot.position} tags={tactic.slots[slot.slotId]?.tags ?? []} gender={career?.gender} setup={tactic.setup} />}
       </div>
 
       <div className="space-y-4 lg:col-span-2">
