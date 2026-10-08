@@ -9,6 +9,7 @@ import { SquadList } from '../components/SquadList'
 import { SquadDensity } from '../components/SquadDensity'
 import { TacticLineup } from '../components/TacticLineup'
 import { analyzeDepth } from '../lib/depth'
+import { bestSquadRating, starRating } from '../lib/squadRating'
 import { useTactic } from '../state/tacticStore'
 import { TransferDialog } from '../components/TransferDialog'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
@@ -283,6 +284,19 @@ export function SquadPage() {
       {career && tab === 'squad' && (
         <div className="grid items-start gap-4 lg:grid-cols-[minmax(420px,500px)_1fr]">
           <div className="lg:sticky lg:top-24">
+            {(squad.data ?? []).length > 0 && (
+              <Card title="Kadro rating'i">
+                {(() => {
+                  const { rating, counted } = bestSquadRating((squad.data ?? []).filter((s) => !s.loanedOut).map((s) => s.player.overall))
+                  return (
+                    <p className="text-sm">
+                      <span className="text-2xl font-bold tabular-nums">{rating}</span> · {starRating(rating)} yıldız
+                      <span className="block text-xs text-slate-500">En iyi {counted} oyuncu (11 ilk + 7 yedek) ortalaması + ortalamanın üstündekilere düzeltme. Rehber formülüdür; oyun içi değer esastır.</span>
+                    </p>
+                  )
+                })()}
+              </Card>
+            )}
             <Card title="Bölgesel yoğunluk">
               {(squad.data ?? []).length === 0 ? <EmptyState>Kadro boş.</EmptyState> : <SquadDensity squad={squad.data ?? []} needs={needs} formation={formation} compact />}
             </Card>

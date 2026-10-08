@@ -12,6 +12,8 @@ import { PlayerDetailPage } from './pages/PlayerDetailPage'
 import { PlayersPage } from './pages/PlayersPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { RecommendPage } from './pages/RecommendPage'
+import { SquadBuilderPage } from './pages/SquadBuilderPage'
+import { ScoutingPage } from './pages/ScoutingPage'
 import { SquadPage } from './pages/SquadPage'
 import { TacticBuilderPage } from './pages/TacticBuilderPage'
 import { TeamsPage } from './pages/TeamsPage'
@@ -48,6 +50,8 @@ export function App() {
         <Route path="tactics/builder" element={<TacticBuilderPage />} />
         <Route path="tactics/wizard" element={<WizardPage />} />
         <Route path="squad" element={<RequireAuth><SquadPage /></RequireAuth>} />
+        <Route path="squad/builder" element={<RequireAuth><SquadBuilderPage /></RequireAuth>} />
+        <Route path="scouting" element={<RequireAuth><ScoutingPage /></RequireAuth>} />
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<RequireAuth><RecommendPage /></RequireAuth>} />
         <Route path="career/import" element={<RequireAuth><ImportPage /></RequireAuth>} />

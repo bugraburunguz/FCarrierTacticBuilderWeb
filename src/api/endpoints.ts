@@ -18,6 +18,8 @@ import type {
   Role,
   RosterEvent,
   RosterEventType,
+  ScoutingQuery,
+  ScoutingResult,
   SquadFit,
   Subscription,
   TacticRequest,
@@ -140,6 +142,7 @@ export const endpoints = {
     api.post<Recommendation>('/recommend/preview', body, false),
   transferTargets: (body: { careerId: number; perPosition?: number; setup?: SetupBody; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
     api.post<TransferTargetsResult>('/recommend/transfer-targets', body),
+  scoutingSearch: (careerId: number, body: ScoutingQuery) => api.post<ScoutingResult>(`/scouting/${careerId}/search`, body),
   setupCheck: (body: { careerId: number; buildUp: string; depth: number }) => api.post<SetupCheck[]>('/fit/setup-check', body),
   exportTacticCode: (tactic: TacticRequest) => api.post<TacticCodeExport>('/tactics/export-code', tactic, false),
   importTacticCode: (code: string) => api.post<TacticCodeImport>('/tactics/import-code', { code }, false),

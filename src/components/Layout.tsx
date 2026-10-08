@@ -27,12 +27,14 @@ const NAV: NavGroup[] = [
   {
     to: '/tactics/builder',
     label: 'Taktik & Kadro',
-    match: ['/tactics', '/squad', '/recommend'],
+    match: ['/tactics', '/squad', '/recommend', '/scouting'],
     tabs: [
       { to: '/tactics/wizard', label: 'Taktik sihirbazı' },
       { to: '/tactics/builder', label: 'Taktik & Uyum' },
+      { to: '/squad/builder', label: 'Kadro kurucu' },
       { to: '/squad', label: 'Kadro' },
       { to: '/recommend', label: 'Transfer önerisi' },
+      { to: '/scouting', label: 'Scouting' },
     ],
   },
   { to: '/teams', label: 'Takımlar', match: ['/teams'] },
@@ -147,6 +149,7 @@ export function Layout() {
               <NavLink
                 key={tab.to}
                 to={tab.to}
+                end
                 className={({ isActive }) =>
                   `-mb-px border-b-2 px-3 py-1.5 text-sm font-medium transition ${isActive ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400' : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100'}`
                 }

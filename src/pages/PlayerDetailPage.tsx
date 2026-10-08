@@ -7,6 +7,7 @@ import { useActiveCareerId } from '../state/careerStore'
 import { useMode } from '../state/modeStore'
 import { ChemStylePanel } from '../components/ChemStylePanel'
 import { KeyAttributes } from '../components/KeyAttributes'
+import { PlayerInsights } from '../components/PlayerInsights'
 import { FitResultCard } from '../components/FitResultCard'
 import { PositionOverallPitch } from '../components/PositionOverallPitch'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
@@ -83,6 +84,7 @@ export function PlayerDetailPage() {
       </Card>
 
       <KeyAttributes positions={summary.positions} attrs={attrs} />
+      <PlayerInsights attrs={attrs} positions={summary.positions} playstyles={playstyles} />
       <PlayerRoles playerId={summary.id} listed={summary.positions} />
       {mode === 'ut' ? (
         <ChemStylePanel playerId={summary.id} positions={summary.positions} />

@@ -748,3 +748,37 @@ export interface CaptureResult {
   currencies: { name: string; funds: number }[]
   config: { formations: { id: number; name: string; label: string; positionNames: string[] }[] }
 }
+
+export type Feasibility = 'REALISTIC' | 'AMBITIOUS' | 'UNREALISTIC'
+
+export interface ScoutingCandidate {
+  player: PlayerSummary
+  roleFit: RoleFit
+  combined: number
+  acquisition: Acquisition
+  feasibility: Feasibility
+  estimatedFee?: number
+  valueSource: 'IMPORT' | 'MODELED'
+  valueRatio?: number
+  opportunity: number
+  potential: boolean
+}
+
+export interface ScoutingResult {
+  squadAverage?: number
+  budgetEur?: number
+  hiddenUnrealistic: number
+  items: ScoutingCandidate[]
+}
+
+export interface ScoutingQuery {
+  position: string
+  roleId: string
+  tags?: string[]
+  setup?: { buildUp?: string; depth?: number }
+  ageMax?: number
+  potentialMin?: number
+  dream?: boolean
+  sort?: 'fit' | 'opportunity' | 'potential'
+  limit?: number
+}

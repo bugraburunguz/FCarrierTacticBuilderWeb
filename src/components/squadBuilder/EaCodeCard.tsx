@@ -1,0 +1,76 @@
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { endpoints } from '../../api/endpoints'
+import { toTacticRequest, useTactic } from '../../state/tacticStore'
+import { Modal } from '../Modal'
+import { ErrorBox } from '../ui'
+
+/** Kod her taktik değişiminde otomatik yeniden üretilir; elle üretme tuşu yok. */
+export function EaCodeCard() {
+  const tactic = useTactic()
+  const request = toTacticRequest(tactic)
+  const exported = useQuery({
+    queryKey: ['ea-code', JSON.stringify(request)],
+    queryFn: () => endpoints.exportTacticCode(request),
+    retry: false,
+    staleTime: 300_000,
+  })
+  const [notice, setNotice] = useState<string | undefined>()
+  const [open, setOpen] = useState(false)
+  const code = exported.data?.code
+
+  async function copy() {
+    if (!code) {
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(code)
+      setNotice('Kopyalandı.')
+    } catch {
+      setNotice('Kopyalanamadı; kodu elle seç.')
+    }
+  }
+
+  return (
+    <section className="rounded-2xl border border-slate-700 bg-slate-900 p-3.5 text-slate-100 shadow-lg">
+      <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-emerald-300">EA Taktik Kodu</h2>
+      <div aria-live="polite" className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-amber-300">
+        {code ?? (exported.isFetching ? '…' : '—')}
+      </div>
+      <div className="mt-2.5 flex gap-2">
+        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950 disabled:opacity-50">
+          Kopyala
+        </button>
+        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-slate-700 py-2 text-[12.5px] font-bold text-slate-100 disabled:opacity-50">
+          Oyuna Aktar
+        </button>
+      </div>
+      {notice && (
+        <p role="status" className="mt-1.5 text-xs text-emerald-300">
+          {notice}
+        </p>
+      )}
+      <ErrorBox error={exported.error} />
+      {exported.data && exported.data.warnings.length > 0 && (
+        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs text-amber-300">
+          {exported.data.warnings.map((w) => (
+            <li key={w}>{w}</li>
+          ))}
+        </ul>
+      )}
+      {open && code && (
+        <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
+          <div className="rounded-[10px] border border-slate-700 bg-slate-950 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-amber-300">{code}</div>
+          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-slate-200">
+            <li>Kodu kopyala.</li>
+            <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
+            <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
+          </ol>
+          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-emerald-400 py-2 text-[12.5px] font-bold text-emerald-950">
+            Kopyala
+          </button>
+        </Modal>
+      )}
+    </section>
+  )
+}
