@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import { solveTraditional, type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
 import { squadChemistry } from '../lib/chemistry'
@@ -47,7 +47,7 @@ function resolveNames(wanted: Record<string, number>, list: LookupItem[]): { id:
   })
 }
 
-export function TraditionalSbc({ challenge }: { challenge?: SbcChallenge }) {
+export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: SbcChallenge; autoRun?: boolean }) {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const setup = useMemo(() => (challenge && formations.data ? challengeSetup(challenge, formations.data) : undefined), [challenge, formations.data])
   const [formationId, setFormationId] = useState('4-4-2')
@@ -127,6 +127,14 @@ export function TraditionalSbc({ challenge }: { challenge?: SbcChallenge }) {
       return solveTraditional(slots, [...byId.values()], constraints)
     },
   })
+  const autoStarted = useRef<SbcChallenge | undefined>(undefined)
+  const ready = Boolean(autoRun && challenge && setup && applied === challenge && formation && (!setup.formationId || formation.id === setup.formationId))
+  useEffect(() => {
+    if (ready && autoStarted.current !== challenge) {
+      autoStarted.current = challenge
+      solve.mutate()
+    }
+  }, [ready, challenge, solve])
   const result = solve.data
   const slots = formation?.slots ?? []
   const shown = result ? slots.map((_, i) => picks[i]) : []

@@ -21,6 +21,7 @@ import { UtClubPage } from './pages/UtClubPage'
 import { UtImportPage } from './pages/UtImportPage'
 import { UtObjectivesPage } from './pages/UtObjectivesPage'
 import { UtSbcPage } from './pages/UtSbcPage'
+import { UtSbcChallengePage } from './pages/UtSbcChallengePage'
 import { UtSquadPage } from './pages/UtSquadPage'
 import type { ReactNode } from 'react'
 
@@ -59,6 +60,7 @@ export function App() {
         <Route path="ut/squad" element={<UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />
         <Route path="ut/sbc" element={<UtSbcPage />} />
+        <Route path="ut/sbc/:setId/:challengeId" element={<UtSbcChallengePage />} />
         <Route path="ut/objectives" element={<UtObjectivesPage />} />
         <Route path="ut/club" element={<UtClubPage />} />
         <Route path="ut/import" element={<UtImportPage />} />

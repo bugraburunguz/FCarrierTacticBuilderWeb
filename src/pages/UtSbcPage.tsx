@@ -1,10 +1,10 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { SbcChallenge, SbcPoolEntry, SbcRarity } from '../api/types'
-import { challengeSetup, describeRequirement } from '../lib/sbcChallenge'
+import { describeRequirement } from '../lib/sbcChallenge'
 import { sbcPoolStore } from '../state/sbcPoolStore'
-import { TraditionalSbc } from '../components/TraditionalSbc'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
 import { isBeforeDailyRefresh } from '../lib/coinPrice'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -37,7 +37,7 @@ function daysLeft(endTime?: number): number | undefined {
 
 const ONE_CLICK = new Set(['ONE_CLICK', 'BRICK'])
 
-function ChallengeList({ challenges, selected, onSolve }: { challenges: SbcChallenge[]; selected?: SbcChallenge; onSolve: (c: SbcChallenge) => void }) {
+function ChallengeList({ challenges }: { challenges: SbcChallenge[] }) {
   return (
     <ul className="mt-1 space-y-2 border-l border-line pl-3">
       {challenges.map((c) => {
@@ -46,17 +46,11 @@ function ChallengeList({ challenges, selected, onSolve }: { challenges: SbcChall
         return (
           <li key={c.challengeId} className="text-xs">
             <div className="flex flex-wrap items-center gap-2">
-              <b className={done ? 'text-muted line-through' : ''}>{c.name}</b>
+              {skip ? <b>{c.name}</b> : <Link to={`/ut/sbc/${c.setId}/${c.challengeId}`} className={`font-bold underline decoration-dotted hover:text-accent ${done ? 'text-muted line-through' : ''}`}>{c.name}</Link>}
               {c.formationLabel && <Pill tone="slate">{c.formationLabel}</Pill>}
               {c.repeatable && <Pill tone="sky">tekrarlanabilir</Pill>}
               {done && <Pill tone="emerald">tamamlandı</Pill>}
-              {skip ? (
-                <span className="text-muted">tek tık: çözücü gerekmez</span>
-              ) : (
-                <Button variant={selected?.challengeId === c.challengeId ? 'primary' : 'secondary'} onClick={() => onSolve(c)}>
-                  {selected?.challengeId === c.challengeId ? 'Seçili' : 'Çözüm bul'}
-                </Button>
-              )}
+              {skip && <span className="text-muted">tek tık: çözücü gerekmez</span>}
             </div>
             <ul className="mt-1 flex flex-wrap gap-1">
               {c.requirements.map((r, i) => (
@@ -70,7 +64,7 @@ function ChallengeList({ challenges, selected, onSolve }: { challenges: SbcChall
   )
 }
 
-function ClubSbcSets({ selected, onSolve }: { selected?: SbcChallenge; onSolve: (c: SbcChallenge) => void }) {
+function ClubSbcSets() {
   const capture = useUtCapture()
   const sets = capture?.sbcSets ?? []
   const challenges = capture?.sbcChallenges ?? []
@@ -110,7 +104,7 @@ function ClubSbcSets({ selected, onSolve }: { selected?: SbcChallenge; onSolve: 
                     </span>
                     </div>
                     {challenges.some((c) => c.setId === s.setId) && (
-                      <ChallengeList challenges={challenges.filter((c) => c.setId === s.setId)} selected={selected} onSolve={onSolve} />
+                      <ChallengeList challenges={challenges.filter((c) => c.setId === s.setId)} />
                     )}
                   </li>
                 )
@@ -119,36 +113,12 @@ function ClubSbcSets({ selected, onSolve }: { selected?: SbcChallenge; onSolve: 
           </div>
         ))}
       </div>
-      <p className="mt-3 text-xs text-muted">Şartlar, SBC setini Web App'te açıp yeniden dışa aktardığında gelir; "Çözüm bul" şartları aşağıdaki çözücüye aktarır.</p>
+      <p className="mt-3 text-xs text-muted">Şartlar, SBC setini Web App'te açıp yeniden dışa aktardığında gelir; bir challenge'ın adına tıklayınca şartlara uygun hazır kadro açılır.</p>
     </Card>
   )
 }
 
-function ChallengeSolver({ challenge }: { challenge: SbcChallenge }) {
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
-  const setup = formations.data ? challengeSetup(challenge, formations.data) : undefined
-  return (
-    <div className="space-y-2" id="challenge-solver">
-      <Card title={`${challenge.setName ?? 'SBC'} · ${challenge.name}`}>
-        <ul className="flex flex-wrap gap-1 text-xs">
-          {challenge.requirements.map((r, i) => (
-            <li key={i} className="rounded border border-line bg-surface-2 px-1.5 py-0.5">{describeRequirement(r)}</li>
-          ))}
-        </ul>
-        {setup && setup.notes.length > 0 && (
-          <div className="mt-2 text-xs text-amber-700 dark:text-amber-400">
-            <p className="font-semibold">Çözücünün zorlayamadığı şartlar (elle kontrol et):</p>
-            <ul className="list-disc pl-4">{setup.notes.map((n) => <li key={n}>{n}</li>)}</ul>
-          </div>
-        )}
-      </Card>
-      <TraditionalSbc challenge={challenge} />
-    </div>
-  )
-}
-
 export function UtSbcPage() {
-  const [selected, setSelected] = useState<SbcChallenge>()
   const [target, setTarget] = useState('1000')
   const [minRating, setMinRating] = useState('')
   const [rows, setRows] = useState<Row[]>(() => {
@@ -182,8 +152,7 @@ export function UtSbcPage() {
 
   return (
     <div className="space-y-4">
-      <ClubSbcSets selected={selected} onSolve={setSelected} />
-      {selected && <ChallengeSolver challenge={selected} />}
+      <ClubSbcSets />
       <Card title="SBC çözücü (hedef skor tipi)">
         <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
           Yeni tip Player/Upgrade SBC'lerde squad kurmazsın, hedef SBC skoruna ulaşırsın. Elindeki kartları rating'e göre gir; çözücü hedefi en az coin harcayarak (önce untradeable) ve en az fazla puanla tutturan seti bulur.
