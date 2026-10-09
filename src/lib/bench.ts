@@ -16,7 +16,7 @@ export function pickBench(squad: CareerPlayer[], fit: SquadFit, size = BENCH_SIZ
   const byId = new Map(squad.map((p) => [p.player.id, p]))
   const coverage = new Map<number, { slotId: string; score: number }[]>()
   fit.slots.forEach((slot) =>
-    slot.depth.forEach((d) => {
+    (slot.depth ?? []).forEach((d) => {
       coverage.set(d.playerId, [...(coverage.get(d.playerId) ?? []), { slotId: slot.slotId, score: d.roleFitScore }])
     }),
   )

@@ -106,7 +106,7 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
                   <td>{s.roleFit ? <><BadgeDot state={s.roleFit.badge} /> %{Math.round(s.roleFit.score)}</> : '—'}</td>
                   <td className="tabular-nums">{s.roleFit?.projectedRating ?? '—'}</td>
                   <td>{s.intentFit ? `%${s.intentFit.score}` : '—'}</td>
-                  <td className="text-xs text-muted">{s.depth.map((d) => `${d.playerName} (%${Math.round(d.roleFitScore)})`).join(', ') || '—'}</td>
+                  <td className="text-xs text-muted">{(s.depth ?? []).map((d) => `${d.playerName} (%${Math.round(d.roleFitScore)})`).join(', ') || '—'}</td>
                 </tr>
               ))}
             </tbody>

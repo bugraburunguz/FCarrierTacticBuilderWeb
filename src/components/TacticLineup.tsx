@@ -112,7 +112,7 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
                         </span>
                       </span>
                       <span className="text-xs text-muted">
-                        {s.depth.length > 0 ? `yedek: ${s.depth.map((d) => `${d.playerName} %${Math.round(d.roleFitScore)}`).join(', ')}` : 'yedek yok'}
+                        {s.depth === undefined ? '' : s.depth.length > 0 ? `yedek: ${s.depth.map((d) => `${d.playerName} %${Math.round(d.roleFitScore)}`).join(', ')}` : 'yedek yok'}
                       </span>
                     </li>
                   ))}

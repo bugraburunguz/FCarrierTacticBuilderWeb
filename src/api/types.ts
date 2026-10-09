@@ -258,7 +258,7 @@ export interface SlotAssignment {
   combined?: number
   roleFit?: RoleFit
   intentFit?: IntentFit
-  depth: DepthEntry[]
+  depth?: DepthEntry[]
 }
 
 export interface WeakLink {

@@ -36,7 +36,7 @@ export function computeVerdicts(squad: CareerPlayer[], fit: SquadFit, budgetEur?
   const starters = new Set(fit.slots.map((s) => s.playerId).filter((id): id is number => id !== undefined))
   const coverage = new Map<number, number>()
   fit.slots.forEach((slot) => {
-    slot.depth.forEach((d, index) => {
+    (slot.depth ?? []).forEach((d, index) => {
       if (index === 0 && !coverage.has(d.playerId)) {
         coverage.set(d.playerId, d.roleFitScore)
       }
