@@ -3,9 +3,9 @@ import { ATTR_LABELS } from '../lib/format'
 import { PLAYSTYLES } from '../lib/playstyles'
 import { Card } from './ui'
 
-const GREEN = 'text-[#1f9d63] dark:text-[#2ec27e]'
-const RED = 'text-[#d64545] dark:text-[#ff6b6b]'
-const BLUE = 'text-[#1f6fc4] dark:text-[#4da6ff]'
+const GREEN = 'text-[#1f9d63]'
+const RED = 'text-[#d64545]'
+const BLUE = 'text-[#1f6fc4]'
 
 const BADGE: Record<ChangeType, { label: string; icon: string; tone: string }> = {
   UPGRADE: { label: 'Güncellendi', icon: '▲', tone: GREEN },
@@ -60,13 +60,13 @@ export function PlayerDiffPanel({ diff, onlyChanged, onToggle }: Props) {
   return (
     <Card title="Değişiklikler" actions={<DiffBadge diff={diff} />}>
       <details open className="space-y-3 text-sm">
-        <summary className="cursor-pointer text-xs text-slate-500">Bir önceki sürüme göre ({versionLabel(diff) || 'son güncelleme'})</summary>
+        <summary className="cursor-pointer text-xs text-muted">Bir önceki sürüme göre ({versionLabel(diff) || 'son güncelleme'})</summary>
         <div className="mt-2 space-y-3">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
             {diff.overall && (
               <span>
                 Genel <b className="tabular-nums">{diff.overall.new}</b> <DeltaMark delta={diff.overall.delta} />{' '}
-                <span className="text-xs text-slate-500">şuydu {diff.overall.old} → şu oldu {diff.overall.new}</span>
+                <span className="text-xs text-muted">şuydu {diff.overall.old} → şu oldu {diff.overall.new}</span>
               </span>
             )}
             {diff.potential && (
@@ -76,7 +76,7 @@ export function PlayerDiffPanel({ diff, onlyChanged, onToggle }: Props) {
             )}
             {diff.positions && (
               <span>
-                Mevki: <span className="text-slate-500">{diff.positions.old}</span> → <span className={GREEN}>{diff.positions.new}</span>
+                Mevki: <span className="text-muted">{diff.positions.old}</span> → <span className={GREEN}>{diff.positions.new}</span>
               </span>
             )}
             {diff.acceleRate && (
@@ -97,7 +97,7 @@ export function PlayerDiffPanel({ diff, onlyChanged, onToggle }: Props) {
                 <li key={a.key} className="flex items-center justify-between gap-2" title={`şuydu ${a.old} → şu oldu ${a.new}`}>
                   <span>{ATTR_LABELS[a.key] ?? a.key}</span>
                   <span className="tabular-nums">
-                    <b>{a.new}</b> <DeltaMark delta={a.delta} /> <span className="text-xs text-slate-500">({a.old} → {a.new})</span>
+                    <b>{a.new}</b> <DeltaMark delta={a.delta} /> <span className="text-xs text-muted">({a.old} → {a.new})</span>
                   </span>
                 </li>
               ))}

@@ -18,7 +18,7 @@ export function SquadSummaryCard({ formations, formationId, onFormation, views, 
   const weakest = fitted.length ? fitted.reduce((a, b) => ((a.fit?.pct ?? 0) <= (b.fit?.pct ?? 0) ? a : b)) : undefined
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md">
+    <section className="rounded-md border border-line bg-surface p-3.5 text-ink">
       <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent">Kadro Özeti</h2>
       <div className="flex items-center justify-between gap-2 py-2 text-[13px]">
         <label htmlFor="sb-formation">Formasyon</label>
@@ -54,7 +54,7 @@ export function SquadSummaryCard({ formations, formationId, onFormation, views, 
         <span className="font-extrabold">{placed.length} / {views.length}</span>
       </div>
       {weakest?.fit && (
-        <div className="mt-1 rounded-lg border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">
+        <div className="mt-1 rounded-md border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">
           Zayıf halka: <b>{weakest.position}</b> (%{weakest.fit.pct}
           {weakReasons[weakest.slotId] ? ` — ${weakReasons[weakest.slotId]}` : ''})
         </div>

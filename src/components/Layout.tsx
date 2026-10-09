@@ -91,12 +91,12 @@ export function Layout() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-700 dark:bg-slate-800/90">
+      <header className="sticky top-0 z-10 border-b border-line bg-surface/90">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2">
-          <NavLink to="/" className="shrink-0 text-lg font-bold text-emerald-700 dark:text-emerald-400">
+          <NavLink to="/" className="shrink-0 text-lg font-bold text-accent">
             FC Kariyer
           </NavLink>
-          <div role="group" aria-label="Mod" className="flex shrink-0 rounded-lg border border-slate-200 p-0.5 dark:border-slate-600">
+          <div role="group" aria-label="Mod" className="flex shrink-0 rounded-md border border-line p-0.5">
             {MODES.map((m) => (
               <button
                 key={m.id}
@@ -106,7 +106,7 @@ export function Layout() {
                   modeStore.set(m.id)
                   navigate(m.home)
                 }}
-                className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ${mode === m.id ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
+                className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ${mode === m.id ? 'bg-accent-bg text-on-accent' : 'text-muted hover:bg-surface-2'}`}
               >
                 {m.label}
               </button>
@@ -117,7 +117,7 @@ export function Layout() {
               type="button"
               onClick={() => themeStore.cycle()}
               aria-label={`Tema: ${THEME_LABEL[theme]}. Değiştirmek için tıkla`}
-              className="hidden shrink-0 rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 sm:block dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              className="hidden shrink-0 rounded-md border border-line px-2 py-1 text-xs font-medium text-muted hover:bg-surface-2 sm:block"
             >
               {THEME_LABEL[theme]}
             </button>
@@ -127,15 +127,15 @@ export function Layout() {
                   {me.subscriptionType === 'PREMIUM' ? <Pill tone="emerald">PREMIUM</Pill> : <Pill tone="sky">{me.creditBalance ?? 0} kredi</Pill>}
                 </span>
                 <details className="group relative hidden min-w-0 lg:block">
-                  <summary className="flex max-w-[190px] cursor-pointer list-none items-center gap-1 truncate rounded-lg border border-slate-200 px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                  <summary className="flex max-w-[190px] cursor-pointer list-none items-center gap-1 truncate rounded-md border border-line px-2.5 py-1 text-sm text-ink hover:bg-surface-2">
                     <span className="truncate">{me.email}</span>
                     <span aria-hidden="true" className="text-xs">▾</span>
                   </summary>
-                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-600 dark:bg-slate-800">
-                    <NavLink to="/profile" className="block rounded-lg px-3 py-1.5 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">Profil</NavLink>
+                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-md border border-line bg-surface p-1">
+                    <NavLink to="/profile" className="block rounded-md px-3 py-1.5 text-sm hover:bg-surface-2">Profil</NavLink>
                     <button
                       type="button"
-                      className="block w-full rounded-lg px-3 py-1.5 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                      className="block w-full rounded-md px-3 py-1.5 text-left text-sm hover:bg-surface-2"
                       onClick={async () => {
                         await logout()
                         navigate('/login')
@@ -148,10 +148,10 @@ export function Layout() {
               </>
             ) : (
               <div className="hidden items-center gap-2 lg:flex">
-                <NavLink to="/login" className="text-sm font-medium text-emerald-700 hover:underline">
+                <NavLink to="/login" className="text-sm font-medium text-accent hover:underline">
                   Giriş
                 </NavLink>
-                <NavLink to="/register" className="whitespace-nowrap rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
+                <NavLink to="/register" className="whitespace-nowrap rounded-md bg-accent-bg px-3 py-1.5 text-sm font-medium text-on-accent hover:opacity-90">
                   Kayıt ol
                 </NavLink>
               </div>
@@ -162,19 +162,19 @@ export function Layout() {
               aria-expanded={menuOpen}
               aria-controls="mobil-menu"
               onClick={() => setMenuOpen((v) => !v)}
-              className="shrink-0 rounded-lg border border-slate-200 px-2.5 py-1 text-lg leading-none text-slate-600 hover:bg-slate-100 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              className="shrink-0 rounded-md border border-line px-2.5 py-1 text-lg leading-none text-muted hover:bg-surface-2 lg:hidden"
             >
               {menuOpen ? '✕' : '☰'}
             </button>
           </div>
         </div>
-        <div className="hidden border-t border-slate-200/70 lg:block dark:border-slate-700/70">
+        <div className="hidden border-t border-line lg:block">
           <nav aria-label="Ana menü" className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 py-1.5 [scrollbar-width:thin]">
             {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={`shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium ${activeGroup === item ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
+                className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ${activeGroup === item ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-surface-2'}`}
               >
                 {item.label}
               </NavLink>
@@ -182,59 +182,59 @@ export function Layout() {
           </nav>
         </div>
         {menuOpen && (
-          <div id="mobil-menu" className="border-t border-slate-200 px-4 py-3 lg:hidden dark:border-slate-700">
+          <div id="mobil-menu" className="border-t border-line px-4 py-3 lg:hidden">
             <nav aria-label="Mobil menü" className="grid gap-1">
               {nav.flatMap((item) => [
-                <NavLink key={item.to} to={item.to} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-700">
+                <NavLink key={item.to} to={item.to} className="rounded-md px-3 py-2 text-sm font-semibold text-ink hover:bg-surface-2">
                   {item.label}
                 </NavLink>,
                 ...(item.tabs ?? []).map((tab) => (
-                  <NavLink key={item.to + tab.to} to={tab.to} className="rounded-lg px-6 py-1.5 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">
+                  <NavLink key={item.to + tab.to} to={tab.to} className="rounded-md px-6 py-1.5 text-sm text-muted hover:bg-surface-2">
                     {tab.label}
                   </NavLink>
                 )),
               ])}
             </nav>
-            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-3 dark:border-slate-700">
-              <button type="button" onClick={() => themeStore.cycle()} className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 dark:border-slate-600 dark:text-slate-300">
+            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
+              <button type="button" onClick={() => themeStore.cycle()} className="rounded-md border border-line px-2 py-1 text-xs font-medium text-muted">
                 Tema: {THEME_LABEL[theme]}
               </button>
               {authenticated && me ? (
                 <>
                   {me.subscriptionType === 'PREMIUM' ? <Pill tone="emerald">PREMIUM</Pill> : <Pill tone="sky">{me.creditBalance ?? 0} kredi</Pill>}
-                  <NavLink to="/profile" className="text-sm text-slate-600 hover:underline dark:text-slate-300">{me.email}</NavLink>
+                  <NavLink to="/profile" className="text-sm text-muted hover:underline">{me.email}</NavLink>
                   <Button variant="ghost" onClick={async () => { await logout(); navigate('/login') }}>Çıkış</Button>
                 </>
               ) : (
                 <>
-                  <NavLink to="/login" className="text-sm font-medium text-emerald-700 hover:underline">Giriş</NavLink>
-                  <NavLink to="/register" className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">Kayıt ol</NavLink>
+                  <NavLink to="/login" className="text-sm font-medium text-accent hover:underline">Giriş</NavLink>
+                  <NavLink to="/register" className="rounded-md bg-accent-bg px-3 py-1.5 text-sm font-medium text-on-accent hover:opacity-90">Kayıt ol</NavLink>
                 </>
               )}
             </div>
           </div>
         )}
         {authenticated && me?.showAds && (
-          <div role="complementary" aria-label="Reklam alanı" className="border-t border-dashed border-slate-300 bg-slate-50 py-1 text-center text-xs text-slate-400 dark:border-slate-700 dark:bg-slate-800">
+          <div role="complementary" aria-label="Reklam alanı" className="border-t border-dashed border-line bg-surface-2 py-1 text-center text-xs text-muted">
             Reklam alanı — PREMIUM ile kaldırılır
           </div>
         )}
       </header>
       {isStaticHostWithoutApi() && (
-        <div role="alert" className="border-b border-amber-300 bg-amber-50 px-4 py-2 text-center text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
+        <div role="alert" className="border-b border-line bg-code-soft px-4 py-2 text-center text-sm text-code">
           Bu yayın yalnızca arayüzdür: API adresi (<code>VITE_API_BASE_URL</code>) tanımlı olmadığı için veri yüklenmez.
         </div>
       )}
       <main className="mx-auto max-w-7xl px-4 py-6">
         {activeGroup?.tabs && !/^\/players\/\d+/.test(pathname) && (
-          <nav aria-label={`${activeGroup.label} sekmeleri`} className="mb-4 flex gap-1 border-b border-slate-200 dark:border-slate-700">
+          <nav aria-label={`${activeGroup.label} sekmeleri`} className="mb-4 flex gap-1 border-b border-line">
             {activeGroup.tabs.map((tab) => (
               <NavLink
                 key={tab.to}
                 to={tab.to}
                 end
                 className={({ isActive }) =>
-                  `-mb-px border-b-2 px-3 py-1.5 text-sm font-medium transition ${isActive ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400' : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100'}`
+                  `-mb-px border-b-2 px-3 py-1.5 text-sm font-medium transition ${isActive ? 'border-accent text-accent' : 'border-transparent text-muted hover:text-ink'}`
                 }
               >
                 {tab.label}
@@ -242,7 +242,7 @@ export function Layout() {
             ))}
           </nav>
         )}
-        {storageError && <p role="alert" className="mb-3 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger">{storageError}</p>}
+        {storageError && <p role="alert" className="mb-3 rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger">{storageError}</p>}
         <Outlet />
         <CompareTray />
       </main>

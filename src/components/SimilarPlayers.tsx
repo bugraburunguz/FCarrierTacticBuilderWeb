@@ -37,7 +37,7 @@ export function SimilarPlayers({ playerId, potential }: { playerId: number; pote
             role="tab"
             aria-selected={mode === m.id}
             onClick={() => setMode(m.id)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${mode === m.id ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300'}`}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${mode === m.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-muted hover:bg-line'}`}
           >
             {m.label}
           </button>
@@ -50,10 +50,10 @@ export function SimilarPlayers({ playerId, potential }: { playerId: number; pote
       ) : (
         <ul className="grid gap-2 sm:grid-cols-2">
           {(query.data ?? []).map((s) => (
-            <li key={s.player.id} className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 p-2 text-sm dark:border-slate-600">
+            <li key={s.player.id} className="flex items-center justify-between gap-2 rounded-md border border-line p-2 text-sm">
               <span className="min-w-0">
                 <Link to={`/players/${s.player.id}`} className="block truncate font-medium hover:underline">{s.player.name}</Link>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-muted">
                   {s.player.age ? `${s.player.age}y · ` : ''}{s.player.positions[0]} · {s.player.overall}/{s.player.potential ?? '—'}
                   {s.player.club ? ` · ${s.player.club}` : ''}
                 </span>
@@ -64,10 +64,10 @@ export function SimilarPlayers({ playerId, potential }: { playerId: number; pote
               </span>
             </li>
           ))}
-          {(query.data ?? []).length === 0 && <li className="text-sm text-slate-500">Bu ölçütte benzer oyuncu bulunamadı.</li>}
+          {(query.data ?? []).length === 0 && <li className="text-sm text-muted">Bu ölçütte benzer oyuncu bulunamadı.</li>}
         </ul>
       )}
-      <p className="mt-2 text-xs text-slate-500">{MODES.find((m) => m.id === mode)?.hint} Halka: profil benzerliği (%).</p>
+      <p className="mt-2 text-xs text-muted">{MODES.find((m) => m.id === mode)?.hint} Halka: profil benzerliği (%).</p>
     </Card>
   )
 }

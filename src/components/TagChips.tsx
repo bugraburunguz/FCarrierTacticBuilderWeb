@@ -31,10 +31,10 @@ export function TagChips({ tags, selected, onChange }: Props) {
             onClick={() => toggle(tag.id)}
             className={`rounded-full border px-2.5 py-1 text-xs transition ${
               isSelected
-                ? 'border-emerald-600 bg-emerald-600 text-white'
+                ? 'border-accent bg-accent-bg text-on-accent'
                 : disabled
-                  ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 line-through dark:border-slate-700 dark:bg-slate-800'
-                  : 'border-slate-300 hover:border-emerald-500 dark:border-slate-600'
+                  ? 'cursor-not-allowed border-line bg-surface-2 text-muted line-through'
+                  : 'border-line hover:border-accent'
             }`}
           >
             {tag.label}

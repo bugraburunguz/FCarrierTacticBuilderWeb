@@ -42,18 +42,18 @@ export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, 
           />
         </Field>
         {!club && (clubs.data ?? []).length > 0 && (
-          <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200 text-sm dark:divide-slate-700 dark:border-slate-600">
+          <ul className="divide-y divide-line rounded-md border border-line text-sm">
             {clubs.data!.map((c) => (
               <li key={c.id}>
-                <button type="button" className="flex w-full justify-between px-3 py-1.5 text-left hover:bg-slate-50 dark:hover:bg-slate-700" onClick={() => setClub(c)}>
+                <button type="button" className="flex w-full justify-between px-3 py-1.5 text-left hover:bg-surface-2" onClick={() => setClub(c)}>
                   <span>{c.name}</span>
-                  <span className="text-slate-500">{c.league}</span>
+                  <span className="text-muted">{c.league}</span>
                 </button>
               </li>
             ))}
           </ul>
         )}
-        <p className="text-xs text-slate-500">Oyundaki gerçek bedeli ve alıcı kulübü gir; uygulama hareketi geçmişe kaydeder ve bütçeni günceller.</p>
+        <p className="text-xs text-muted">Oyundaki gerçek bedeli ve alıcı kulübü gir; uygulama hareketi geçmişe kaydeder ve bütçeni günceller.</p>
         <ErrorBox error={error} />
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>

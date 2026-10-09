@@ -45,7 +45,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
               }
               setDragged(null)
             }}
-            className={`rounded-xl border-2 border-dashed p-3 text-center text-sm transition ${hover === zone ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-700' : 'border-slate-300 text-slate-500 dark:border-slate-600'} ${dragged ? 'animate-pulse' : ''}`}
+            className={`rounded-md border-2 border-dashed p-3 text-center text-sm transition ${hover === zone ? 'border-accent bg-accent-soft' : 'border-line text-muted'} ${dragged ? 'animate-pulse' : ''}`}
           >
             {label} — oyuncu kartını buraya sürükle
           </div>
@@ -53,7 +53,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
       </div>
       <div className="flex flex-wrap gap-2" aria-label="Kadro derinliği özeti">
         {needs.map((n) => (
-          <span key={n.position} title={n.reason} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs dark:border-slate-600 dark:bg-slate-800">
+          <span key={n.position} title={n.reason} className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-xs">
             <strong>{n.position}</strong> {n.natural.length}{n.flex.length > 0 ? `+${n.flex.length}` : ''} / {n.required}
             <Pill tone={DEPTH_LABEL[n.state].tone}>{DEPTH_LABEL[n.state].text}</Pill>
           </span>
@@ -66,17 +66,17 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
             <section
               key={g.position}
               style={{ animationDelay: `${index * 40}ms` }}
-              className="animate-fade-up rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:shadow-md dark:border-slate-600 dark:bg-slate-800"
+              className="rounded-md border border-line bg-surface p-3 transition hover:"
             >
               <header className="mb-2 flex items-center justify-between">
                 <h3 className="text-sm font-semibold">
-                  {g.label} <span className="text-slate-400">· {g.players.length}</span>
+                  {g.label} <span className="text-muted">· {g.players.length}</span>
                 </h3>
                 <span title={need?.reason}>
                   {need ? <Pill tone={DEPTH_LABEL[need.state].tone}>{DEPTH_LABEL[need.state].text}</Pill> : <Pill tone="slate">Taktikte yok</Pill>}
                 </span>
               </header>
-              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+              <ul className="divide-y divide-line">
                 {g.players.map((entry) => (
                   <li
                     key={entry.player.id}
@@ -86,12 +86,12 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                       setDragged(entry)
                     }}
                     onDragEnd={() => { setDragged(null); setHover(null) }}
-                    className={`group flex cursor-grab items-center justify-between gap-2 rounded-lg px-1 py-1.5 text-sm transition active:cursor-grabbing ${dragged?.player.id === entry.player.id ? 'scale-95 border border-dashed border-emerald-400 bg-emerald-50/60 opacity-50 dark:bg-slate-700' : 'hover:bg-slate-50 dark:hover:bg-slate-700/40'}`}>
+                    className={`group flex cursor-grab items-center justify-between gap-2 rounded-md px-1 py-1.5 text-sm transition active:cursor-grabbing ${dragged?.player.id === entry.player.id ? 'scale-95 border border-dashed border-accent bg-accent-soft opacity-50' : 'hover:bg-surface-2'}`}>
                     <div className="min-w-0">
                       <Link to={`/players/${entry.player.id}`} className="block truncate font-medium hover:underline">
                         {entry.player.name}
                       </Link>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted">
                         {entry.player.age ? `${entry.player.age} yaş · ` : ''}
                         {entry.player.positions.slice(1, 3).join(', ')}
                         {(entry.onLoan || entry.loanedOut) && ' · '}
@@ -103,7 +103,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                     <div className="flex shrink-0 items-center gap-2">
                       <span className="text-right text-xs tabular-nums">
                         <strong className="text-base">{entry.player.overall}</strong>
-                        <span className="text-slate-400"> / {entry.dynamicPotential ?? '—'}</span>
+                        <span className="text-muted"> / {entry.dynamicPotential ?? '—'}</span>
                       </span>
                       <span className="flex gap-0.5 opacity-60 transition group-hover:opacity-100">
                         <Button variant="ghost" disabled={busy} onClick={() => onSell(entry)}>
@@ -122,7 +122,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
         })}
       </div>
       {suggestions.length > 0 && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm dark:border-amber-900 dark:bg-slate-800">
+        <div className="rounded-md border border-line bg-code-soft p-3 text-sm">
           <h3 className="mb-1 font-semibold">Mevki önerileri</h3>
           <ul className="space-y-0.5 text-xs">
             {suggestions.map(({ player, positions }) => (
@@ -133,7 +133,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
           </ul>
         </div>
       )}
-      <p className="text-xs text-slate-500">GEN / POT* (POT model tahminidir). Derinlik etiketleri seçili taktikten hesaplanır: ilk 11 slotları + yüksek tempolu rollerde rotasyon yedeği (asıl+alternatif / gereken).</p>
+      <p className="text-xs text-muted">GEN / POT* (POT model tahminidir). Derinlik etiketleri seçili taktikten hesaplanır: ilk 11 slotları + yüksek tempolu rollerde rotasyon yedeği (asıl+alternatif / gereken).</p>
     </div>
   )
 }
@@ -149,14 +149,14 @@ function PositionHint({ advice }: { advice?: PlayerPositionAdvice }) {
   return (
     <span className="mt-0.5 block text-xs" title={tooltip}>
       {advice.bestOverallPosition && advice.bestOverall !== undefined && (
-        <span className="mr-2 text-sky-700 dark:text-sky-400">En yüksek overall: {advice.bestOverallPosition} {advice.bestOverall}</span>
+        <span className="mr-2 text-info">En yüksek overall: {advice.bestOverallPosition} {advice.bestOverall}</span>
       )}
       {advice.ownPositionBest ? (
-        <span className="text-emerald-700 dark:text-emerald-400">
+        <span className="text-accent">
           ✓ Kendi mevkisi iyi: {advice.listedPositions[0]} {top.natural ? `(%${Math.round(top.score)})` : ''}
         </span>
       ) : (
-        <span className="text-amber-700 dark:text-amber-400">
+        <span className="text-code">
           → {top.position} ({top.roleName}) daha iyi: %{Math.round(top.score)}
         </span>
       )}

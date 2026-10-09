@@ -31,7 +31,7 @@ export function ProtectLeadCard({ slots, roles }: Props) {
 
   return (
     <Card title="Skoru koru (70. dakika sonrası)">
-      <p className="mb-2 text-sm text-slate-600 dark:text-slate-300">
+      <p className="mb-2 text-sm text-muted">
         Öndeyken ritmi bozmadan temkine geç: hattı biraz düşür, oyuncular arasını daralt, bek ve orta saha rollerini temkinli yap, yorulanları hızlı forvet ya da sağlam 6'lıkla değiştir.
       </p>
       {hasChanges ? (
@@ -42,13 +42,13 @@ export function ProtectLeadCard({ slots, roles }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="mb-3 text-sm text-slate-500">Bu taktikte değiştirilecek riskli rol yok; hat yüksekliği de zaten alt sınırda.</p>
+        <p className="mb-3 text-sm text-muted">Bu taktikte değiştirilecek riskli rol yok; hat yüksekliği de zaten alt sınırda.</p>
       )}
       <div className="flex gap-2">
         <Button variant="secondary" disabled={!hasChanges} onClick={apply}>Koruma ayarını uygula</Button>
         {previous && <Button variant="ghost" onClick={() => { tacticStore.set(previous); setPrevious(undefined) }}>Geri al</Button>}
       </div>
-      <p className="mt-2 text-xs text-slate-500">Öneri, Pro FC 27 ipuçlarındaki maç sonu yönergelerinden türetilmiştir; mevcut taktiğini ancak "uygula"ya basarsan değiştirir.</p>
+      <p className="mt-2 text-xs text-muted">Öneri, Pro FC 27 ipuçlarındaki maç sonu yönergelerinden türetilmiştir; mevcut taktiğini ancak "uygula"ya basarsan değiştirir.</p>
     </Card>
   )
 }

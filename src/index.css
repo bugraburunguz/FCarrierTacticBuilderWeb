@@ -4,69 +4,60 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-pitch: #1d7a4d;
-  --color-pitch-dark: #166a41;
-  /* Tasarım token'ları: koyu "stadyum" teması + tek canlı vurgu (teal) */
-  --color-slate-700: #26313d;
-  --color-slate-800: #141a22;
-  --color-slate-900: #0b0f14;
-  --color-slate-950: #070a0e;
-  --color-emerald-50: #e8fbf8;
-  --color-emerald-100: #c9f5ed;
-  --color-emerald-200: #93ead9;
-  --color-emerald-300: #55dcc3;
-  --color-emerald-400: #00e0b8;
-  --color-emerald-500: #00c9a4;
-  --color-emerald-600: #089079;
-  --color-emerald-700: #067765;
-  --color-emerald-800: #0a5f52;
-  --color-emerald-900: #0b3f38;
-  --color-emerald-950: #07231f;
-  --color-amber-300: #ffcc33;
-  --color-slate-400: #6b7788;
-  --color-white: #f7f9fb;
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --animate-fade-up: fade-up 0.35s ease-out both;
+  --color-pitch: #17553a;
+  --color-pitch-dark: #0f3b24;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --animate-pop: pop 0.18s ease-out both;
   --animate-fade: fade 0.2s ease-out both;
 }
 
-/* Temaya göre değişen yüzey token'ları (açık: yumuşak gri-mavi, göz yormayan; koyu: stadyum) */
+/* Matchday semantik token'ları (08 D-06): açık tema = maç programı (krem kâğıt, siyah mürekkep), koyu tema = gece maçı (mürekkep siyahı, stadyum ışığı sarısı). */
 :root {
-  --surface: #f4f6f9;
-  --surface-2: #e8edf2;
-  --line: #c9d2dd;
-  --ink: #1b2430;
-  --muted: #536071;
-  --accent: #0a7f6c;
-  --accent-bg: #0a8f79;
-  --on-accent: #ffffff;
-  --accent-soft: #d2eee8;
-  --code: #7a4f00;
-  --code-soft: #f6ead0;
-  --danger: #a42a1d;
-  --danger-soft: #fbe3df;
-  --danger-line: #eab0a7;
+  --bg: #f6f4ef;
+  --surface: #ffffff;
+  --surface-2: #ece9e1;
+  --line: #dcd7cb;
+  --ink: #12151a;
+  --muted: #5b6472;
+  --accent: #6b5200;
+  --accent-bg: #12151a;
+  --on-accent: #ffd23f;
+  --accent-soft: #f2e8bd;
+  --code: #7a5a00;
+  --code-soft: #f6ecc8;
+  --danger: #a82227;
+  --danger-soft: #fbe4e4;
+  --danger-line: #e5a3a5;
+  --good: #14733c;
+  --good-soft: #dff3e6;
+  --info: #1d5fc4;
+  --info-soft: #e1ecfb;
 }
 
 :root.dark {
-  --surface: #141a22;
-  --surface-2: #0e141b;
-  --line: #26313d;
-  --ink: #e8edf2;
-  --muted: #8a97a6;
-  --accent: #00e0b8;
-  --accent-bg: #00e0b8;
-  --on-accent: #04201b;
-  --accent-soft: #0e2a25;
-  --code: #ffcc33;
-  --code-soft: #2a2310;
-  --danger: #ff9a8a;
-  --danger-soft: #2a1417;
-  --danger-line: #5a2a2a;
+  --bg: #0b0d10;
+  --surface: #12151a;
+  --surface-2: #0b0d10;
+  --line: #252a33;
+  --ink: #f6f4ef;
+  --muted: #a9b0ba;
+  --accent: #ffd23f;
+  --accent-bg: #ffd23f;
+  --on-accent: #0b0d10;
+  --accent-soft: #2a2410;
+  --code: #ffd23f;
+  --code-soft: #2a2410;
+  --danger: #ff8d90;
+  --danger-soft: #2a1416;
+  --danger-line: #5a2a2c;
+  --good: #5fdc95;
+  --good-soft: #0f2a1b;
+  --info: #7db3ff;
+  --info-soft: #0f1d33;
 }
 
 @theme inline {
+  --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-line: var(--line);
@@ -81,11 +72,10 @@
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-danger-line: var(--danger-line);
-}
-
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
 }
 
 @keyframes pop {
@@ -102,24 +92,28 @@
   color-scheme: light;
 }
 
-body {
-  margin: 0;
-  background: linear-gradient(180deg, #e9eef3 0%, #e3e9f0 100%) fixed;
-  color: #1b2430;
-  font-family: var(--font-sans);
-}
-
 :root.dark {
   color-scheme: dark;
 }
 
-:root.dark body {
-  background: radial-gradient(1100px 650px at 85% -10%, #16202b, #0b0f14 55%) fixed;
-  color: #e8edf2;
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
 }
 
 td, th, .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

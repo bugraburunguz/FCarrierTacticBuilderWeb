@@ -56,11 +56,11 @@ function Question<T extends string | number>({ title, options, value, onChange }
         {options.map((o) => (
           <label
             key={String(o.value)}
-            className={`cursor-pointer rounded-xl border p-2.5 text-sm transition ${value === o.value ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-700' : 'border-slate-200 hover:border-emerald-300 dark:border-slate-600'}`}
+            className={`cursor-pointer rounded-md border p-2.5 text-sm transition ${value === o.value ? 'border-accent bg-accent-soft' : 'border-line hover:border-accent'}`}
           >
             <input type="radio" className="sr-only" name={title} checked={value === o.value} onChange={() => onChange(o.value)} />
             <span className="font-medium">{o.label}</span>
-            {o.hint && <span className="block text-xs text-slate-500">{o.hint}</span>}
+            {o.hint && <span className="block text-xs text-muted">{o.hint}</span>}
           </label>
         ))}
       </div>
@@ -92,7 +92,7 @@ export function WizardPage() {
           <Question title="4. Forvet tipi" options={STRIKER} value={answers.striker} onChange={(striker) => setAnswers({ ...answers, striker })} />
           <Question title="5. Formasyon tercihi" options={FORMATION} value={answers.formation} onChange={(formation) => setAnswers({ ...answers, formation })} />
         </div>
-        <p className="mt-4 text-xs text-slate-500">Cevapların hazır taktiklerle (stil, replika, kişisel) karşılaştırılır; sonuçlar anında sağda güncellenir. Taktik, kadronla uyumuna bakılmadan önerilir — kuruduktan sonra Auto-Fit ile kadronu test edebilirsin.</p>
+        <p className="mt-4 text-xs text-muted">Cevapların hazır taktiklerle (stil, replika, kişisel) karşılaştırılır; sonuçlar anında sağda güncellenir. Taktik, kadronla uyumuna bakılmadan önerilir — kuruduktan sonra Auto-Fit ile kadronu test edebilirsin.</p>
       </Card>
 
       <div className="space-y-3 lg:sticky lg:top-24">
@@ -104,11 +104,11 @@ export function WizardPage() {
           ) : (
             <ol className="space-y-3">
               {results.map((r, index) => (
-                <li key={r.preset.id} className={`rounded-xl border p-3 ${index === 0 ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-700' : 'border-slate-200 dark:border-slate-600'}`}>
+                <li key={r.preset.id} className={`rounded-md border p-3 ${index === 0 ? 'border-accent bg-accent-soft' : 'border-line'}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-semibold">{r.preset.name}</p>
-                      <p className="text-xs text-slate-500">{r.preset.formation}{r.preset.kind === 'REPLICA' ? ' · replika' : r.preset.kind === 'PERSONAL' ? ' · kişisel' : ''}</p>
+                      <p className="text-xs text-muted">{r.preset.formation}{r.preset.kind === 'REPLICA' ? ' · replika' : r.preset.kind === 'PERSONAL' ? ' · kişisel' : ''}</p>
                     </div>
                     <span className="text-xl font-bold tabular-nums" aria-label={`Uyum %${r.score}`}>%{r.score}</span>
                   </div>
@@ -121,7 +121,7 @@ export function WizardPage() {
                       ))}
                     </ul>
                   )}
-                  {r.preset.signature && <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-300">{r.preset.signature}</p>}
+                  {r.preset.signature && <p className="mt-1.5 text-xs text-muted">{r.preset.signature}</p>}
                   <SetupChips settings={r.preset.settings} />
                   <div className="mt-2">
                     <Button onClick={() => apply(r.preset)}>Bu taktiği kur</Button>
@@ -131,7 +131,7 @@ export function WizardPage() {
             </ol>
           )}
         </Card>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           Kadronu da hesaba katan öneri için <Link to="/tactics/builder" className="underline">Kadro kurucu</Link> sayfasındaki Auto-Fit'i kullan.
         </p>
       </div>

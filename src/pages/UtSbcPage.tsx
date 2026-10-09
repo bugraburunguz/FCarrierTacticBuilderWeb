@@ -157,7 +157,7 @@ export function UtSbcPage() {
     <div className="space-y-4">
       <ClubSbcSets />
       <Card title="SBC çözücü (hedef skor tipi)">
-        <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mb-3 text-sm text-muted">
           Yeni tip Player/Upgrade SBC'lerde squad kurmazsın, hedef SBC skoruna ulaşırsın. Elindeki kartları rating'e göre gir; çözücü hedefi en az coin harcayarak (önce untradeable) ve en az fazla puanla tutturan seti bulur.
         </p>
         <div className="mb-3 grid gap-3 sm:grid-cols-2">
@@ -195,7 +195,7 @@ export function UtSbcPage() {
           <Button variant="secondary" onClick={() => setRows((cur) => [...cur, emptyRow()])}>Satır ekle</Button>
           <Button disabled={solve.isPending || rows.length === 0} onClick={() => solve.mutate()}>{solve.isPending ? 'Çözülüyor…' : 'Çöz'}</Button>
         </div>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-muted">
           Fiyat girilmeyen tradeable kartlar 0 coin sayılır (coinsiz mod: yalnızca fazla puan en aza indirilir). Fiyatlar senin girdiğin değerlerdir; canlı fiyat verisi yoktur. SBC skor tablosu FC27 lansman değerleridir, tam sürümde değişebilir.
         </p>
       </Card>
@@ -216,12 +216,12 @@ export function UtSbcPage() {
                 {result.approximate && <Pill tone="amber">yaklaşık çözüm</Pill>}
               </div>
               <table className="w-full text-left text-sm">
-                <thead className="text-xs uppercase text-slate-500">
+                <thead className="text-xs uppercase text-muted">
                   <tr><th className="py-1 pr-2">Rating</th><th className="pr-2">Tür</th><th className="pr-2 text-right">Adet</th><th className="pr-2 text-right">Puan</th><th className="pr-2 text-right">Coin</th><th /></tr>
                 </thead>
                 <tbody>
                   {result.picks.map((p, i) => (
-                    <tr key={i} className="border-t border-slate-100 dark:border-slate-700">
+                    <tr key={i} className="border-t border-line">
                       <td className="py-1.5 pr-2 font-semibold">{p.rating}</td>
                       <td className="pr-2">{RARITIES.find((x) => x.id === p.rarity)?.label}</td>
                       <td className="pr-2 text-right tabular-nums">{p.count}</td>
@@ -232,7 +232,7 @@ export function UtSbcPage() {
                   ))}
                 </tbody>
               </table>
-              {result.note && <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">{result.note}</p>}
+              {result.note && <p className="mt-2 text-xs text-code">{result.note}</p>}
             </>
           )}
         </Card>

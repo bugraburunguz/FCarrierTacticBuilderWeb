@@ -21,7 +21,7 @@ const MODES: [DiversityMode, string][] = [
 function Bars({ title, items }: { title: string; items: RankedItem[] }) {
   return (
     <div>
-      <h4 className="mb-1 text-xs font-semibold uppercase text-slate-500">{title}</h4>
+      <h4 className="mb-1 text-xs font-semibold uppercase text-muted">{title}</h4>
       <ul className="space-y-1.5">
         {items.map((item) => (
           <li key={item.id} title={item.note}>
@@ -29,10 +29,10 @@ function Bars({ title, items }: { title: string; items: RankedItem[] }) {
               <span>{item.label}</span>
               <strong className="tabular-nums">%{item.pct}</strong>
             </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-              <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${item.pct}%` }} />
+            <div className="h-1.5 overflow-hidden rounded-full bg-line">
+              <div className="h-full rounded-full bg-accent-bg transition-all" style={{ width: `${item.pct}%` }} />
             </div>
-            {item.note && <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">{item.note}</p>}
+            {item.note && <p className="mt-0.5 text-xs text-code">{item.note}</p>}
           </li>
         ))}
       </ul>
@@ -83,7 +83,7 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
     return (
       <Card title="Takıma göre en iyi taktik (Auto-Fit)">
         <p className="text-sm">
-          Kadronun ihtiyacına göre en uygun formasyon ve oyun anlayışını bulmak için <Link to="/login" className="text-emerald-700 underline">giriş yap</Link> ve bir kariyer seç.
+          Kadronun ihtiyacına göre en uygun formasyon ve oyun anlayışını bulmak için <Link to="/login" className="text-accent underline">giriş yap</Link> ve bir kariyer seç.
         </p>
       </Card>
     )
@@ -92,7 +92,7 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
   return (
     <Card title="Takıma göre en iyi taktik (Auto-Fit)" actions={<Pill tone="amber">8 kredi · PREMIUM sınırsız</Pill>}>
       <div className="space-y-3">
-        <p className="text-sm text-slate-600 dark:text-slate-300">
+        <p className="text-sm text-muted">
           Transfer yapmadan, mevcut kadroya en uygun formasyonu ve oyun anlayışını bulur. Kadro bir şekli kaldırmıyorsa (ör. tek forvet varsa 4-4-2) o şeklin uyumu düşer.
         </p>
         <CareerSelect />
@@ -130,16 +130,16 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
         <label className="mb-3 flex items-center gap-2 text-sm">
           <input type="checkbox" checked={useMySetup} disabled={!setup} onChange={(e) => setUseMySetup(e.target.checked)} />
           Build-Up ve Depth ayarımı tüm adaylarda sabitle
-          <span className="text-xs text-slate-500">(kapalıyken her anlayış kendi ayarıyla değerlendirilir)</span>
+          <span className="text-xs text-muted">(kapalıyken her anlayış kendi ayarıyla değerlendirilir)</span>
         </label>
         <Button disabled={careerId === undefined || run.isPending || tooSmall} onClick={() => start(mode)}>
           {run.isPending ? 'Kombinasyonlar deneniyor…' : 'En iyi taktiği bul'}
         </Button>
-        {tooSmall && <p className="text-xs text-amber-700">Analiz için kadroda en az 11 oyuncu olmalı.</p>}
+        {tooSmall && <p className="text-xs text-code">Analiz için kadroda en az 11 oyuncu olmalı.</p>}
         <ErrorBox error={run.error} />
         {outOfCredit && (
           <p className="text-sm">
-            Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-emerald-700 underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
+            Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-accent underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
           </p>
         )}
       </div>
@@ -152,7 +152,7 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {result.bestCombos.map((combo, index) => (
-              <div key={`${combo.formation}-${combo.presetId}`} className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-3 dark:border-slate-600 dark:bg-slate-800">
+              <div key={`${combo.formation}-${combo.presetId}`} className="rounded-md border border-accent bg-accent-soft p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <Pill tone={index === 0 ? 'emerald' : 'sky'}>{index === 0 ? 'En iyi' : 'Alternatif'}</Pill>
@@ -161,10 +161,10 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold tabular-nums">%{combo.pct}</div>
-                    <div className="text-xs text-slate-500">uygulanabilirlik %{combo.feasibility}</div>
+                    <div className="text-xs text-muted">uygulanabilirlik %{combo.feasibility}</div>
                   </div>
                 </div>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-700 dark:text-slate-300">
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-ink">
                   {combo.reasons.map((r) => (
                     <li key={r}>{r}</li>
                   ))}
@@ -186,7 +186,7 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
               Otomatik
             </Button>
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted">
             {result.evaluated} kombinasyon denendi. Yüzde = ilk 11 uyumu × yedek derinliği × kadronun şekli/anlayışı kaldırabilme çarpanı. “Uygula” seçimi taktik ayarlarına yazar.
           </p>
         </div>

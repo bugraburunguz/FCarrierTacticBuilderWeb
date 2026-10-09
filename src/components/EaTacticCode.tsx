@@ -43,18 +43,18 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
     <Card title="EA taktik kodu" actions={<Pill tone="emerald">Ücretsiz</Pill>}>
       <div className="space-y-3">
         <div>
-          <p className="text-xs text-slate-500">{exportCode.isFetching ? 'Kod üretiliyor…' : 'Kod taktik değiştikçe otomatik güncellenir.'}</p>
+          <p className="text-xs text-muted">{exportCode.isFetching ? 'Kod üretiliyor…' : 'Kod taktik değiştikçe otomatik güncellenir.'}</p>
           {exported && (
             <div className="mt-2 space-y-1.5">
               <div className="flex items-center gap-2">
                 <Input readOnly value={exported.code} aria-label="EA taktik kodu" onFocus={(e) => e.currentTarget.select()} className="font-mono" />
                 <Button variant="secondary" onClick={() => copy(exported.code)}>Kopyala</Button>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted">
                 Oyunda: Takım Yönetimi → Taktikler → <b>Kod Kullan</b>. Formasyon {exported.formation}; Build-Up ve hat yüksekliği Takım ayarlarından alındı.
               </p>
               {exported.warnings.length > 0 && (
-                <ul className="list-disc space-y-0.5 pl-5 text-xs text-amber-700 dark:text-amber-400">
+                <ul className="list-disc space-y-0.5 pl-5 text-xs text-code">
                   {exported.warnings.map((w) => (
                     <li key={w}>{w}</li>
                   ))}
@@ -73,7 +73,7 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
           </div>
           <ErrorBox error={importCode.error} />
           {importCode.data && importCode.data.warnings.length > 0 && (
-            <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-amber-700 dark:text-amber-400">
+            <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-code">
               {importCode.data.warnings.map((w) => (
                 <li key={w}>{w}</li>
               ))}
@@ -81,11 +81,11 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
           )}
         </div>
         {notice && (
-          <p role="status" className="text-sm text-emerald-700">
+          <p role="status" className="text-sm text-accent">
             {notice}
           </p>
         )}
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           Kod, EA'nın oyun içi paylaşım kodudur (Build-Up, hat yüksekliği ve 11 oyuncunun rol + odağı). Büyük/küçük harf önemlidir. Davranış etiketleri koda girmez; yüklenen taktikte etiketler boş gelir.
         </p>
       </div>

@@ -26,7 +26,7 @@ export function TeamsPage() {
       <CareerSelect />
       {teams.data && teams.data.length === 0 && !term ? (
         <EmptyState>
-          Takım verisi yok. Önce <Link to="/career/import" className="text-emerald-700 underline">kariyer verisini içe aktar</Link>.
+          Takım verisi yok. Önce <Link to="/career/import" className="text-accent underline">kariyer verisini içe aktar</Link>.
         </EmptyState>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
@@ -40,10 +40,10 @@ export function TeamsPage() {
                   <button
                     type="button"
                     onClick={() => setSelected(t.teamId)}
-                    className={`flex w-full items-center justify-between rounded-lg px-2 py-1 text-left transition hover:bg-emerald-50 dark:hover:bg-slate-700 ${selected === t.teamId ? 'bg-emerald-50 dark:bg-slate-700' : ''}`}
+                    className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-left transition hover:opacity-90 ${selected === t.teamId ? 'bg-accent-soft' : ''}`}
                   >
                     <span>
-                      {t.name} <span className="text-xs text-slate-500">{t.league}</span>
+                      {t.name} <span className="text-xs text-muted">{t.league}</span>
                     </span>
                     <strong className="tabular-nums">{t.overall ?? '—'}</strong>
                   </button>
@@ -66,8 +66,8 @@ export function TeamsPage() {
                     <Stat label="Orta saha" value={profile.data.team.midfield} />
                     <Stat label="Savunma" value={profile.data.team.defence} />
                   </dl>
-                  {profile.data.averageAge && <p className="mt-2 text-xs text-slate-500">İlk 18 yaş ortalaması: {profile.data.averageAge}</p>}
-                  {profile.data.rivalTeamName && <p className="text-xs text-slate-500">Ezeli rakip: {profile.data.rivalTeamName}</p>}
+                  {profile.data.averageAge && <p className="mt-2 text-xs text-muted">İlk 18 yaş ortalaması: {profile.data.averageAge}</p>}
+                  {profile.data.rivalTeamName && <p className="text-xs text-muted">Ezeli rakip: {profile.data.rivalTeamName}</p>}
                 </Card>
                 <>
                   <Card title="Güçlü yönler (kendi takımınsa avantaj / rakipse dikkat)">
@@ -85,10 +85,10 @@ export function TeamsPage() {
                     {profile.data.topPlayers.map((p) => (
                       <li key={p.id} className="flex justify-between">
                         <Link to={`/players/${p.id}`} className="hover:underline">
-                          {p.name} <span className="text-xs text-slate-500">{p.positions[0]}{p.age ? ` · ${p.age}` : ''}</span>
+                          {p.name} <span className="text-xs text-muted">{p.positions[0]}{p.age ? ` · ${p.age}` : ''}</span>
                         </Link>
                         <span className="tabular-nums">
-                          <strong>{p.overall}</strong> <span className="text-slate-400">/ {p.potential ?? '—'}</span>
+                          <strong>{p.overall}</strong> <span className="text-muted">/ {p.potential ?? '—'}</span>
                         </span>
                       </li>
                     ))}
@@ -108,7 +108,7 @@ export function TeamsPage() {
 function Stat({ label, value }: { label: string; value?: number }) {
   return (
     <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
+      <dt className="text-xs text-muted">{label}</dt>
       <dd className="text-2xl font-bold">{value ?? '—'}</dd>
     </div>
   )
@@ -116,7 +116,7 @@ function Stat({ label, value }: { label: string; value?: number }) {
 
 function Bullets({ items, tone }: { items: string[]; tone: 'emerald' | 'rose' | 'sky' }) {
   if (items.length === 0) {
-    return <p className="text-sm text-slate-500">Belirgin bir şey yok.</p>
+    return <p className="text-sm text-muted">Belirgin bir şey yok.</p>
   }
   return (
     <ul className="space-y-1 text-sm">

@@ -79,7 +79,7 @@ export function UtClubPage() {
           ))}
         </div>
         {missingPile && (
-          <p className="mb-2 rounded-lg border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">
+          <p className="mb-2 rounded-md border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">
             Bu kayıt eski sürümden: storage ve duplicate bilgisi yok. Yakalama dosyanı Kulüp içe aktar'dan yeniden yükle.
           </p>
         )}
@@ -167,7 +167,7 @@ export function UtClubPage() {
         </div>
         )}
         {rows.length > limit && (
-          <button type="button" onClick={() => setLimit((l) => l + PAGE)} className="mt-3 w-full rounded-lg bg-surface-2 py-2 text-sm font-medium text-ink hover:bg-line">
+          <button type="button" onClick={() => setLimit((l) => l + PAGE)} className="mt-3 w-full rounded-md bg-surface-2 py-2 text-sm font-medium text-ink hover:bg-line">
             Daha fazla göster ({rows.length - limit} kart daha)
           </button>
         )}

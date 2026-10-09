@@ -36,9 +36,9 @@ export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Prop
         {groups.map((g) => (
           <label
             key={g.base}
-            className={`flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-2 text-[13px] ${g.base === base ? 'border-accent bg-accent-soft' : 'border-line'}`}
+            className={`flex cursor-pointer items-center gap-2 rounded-md border px-2.5 py-2 text-[13px] ${g.base === base ? 'border-accent bg-accent-soft' : 'border-line'}`}
           >
-            <input type="radio" name="role" className="accent-emerald-400" checked={g.base === base} onChange={() => pickBase(g)} />
+            <input type="radio" name="role" className="accent-accent" checked={g.base === base} onChange={() => pickBase(g)} />
             {g.base}
           </label>
         ))}
@@ -59,10 +59,10 @@ export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Prop
         ))}
       </div>
       <div className="mt-4 flex gap-2">
-        <button type="button" disabled={!roleId} onClick={() => onApply(roleId)} className="flex-1 rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
+        <button type="button" disabled={!roleId} onClick={() => onApply(roleId)} className="flex-1 rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
           Uygula
         </button>
-        <button type="button" onClick={onClose} className="flex-1 rounded-lg bg-surface-2 py-2 text-[12.5px] font-bold text-ink">
+        <button type="button" onClick={onClose} className="flex-1 rounded-md bg-surface-2 py-2 text-[12.5px] font-bold text-ink">
           Vazgeç
         </button>
       </div>

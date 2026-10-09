@@ -52,14 +52,14 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
             {busy ? 'Bekleyin…' : isLogin ? 'Giriş yap' : 'Kayıt ol'}
           </Button>
         </form>
-        <p className="mt-3 text-sm text-slate-500">
+        <p className="mt-3 text-sm text-muted">
           {isLogin ? (
             <>
-              Hesabın yok mu? <Link to="/register" className="text-emerald-700 hover:underline">Kayıt ol</Link>
+              Hesabın yok mu? <Link to="/register" className="text-accent hover:underline">Kayıt ol</Link>
             </>
           ) : (
             <>
-              Zaten hesabın var mı? <Link to="/login" className="text-emerald-700 hover:underline">Giriş yap</Link>
+              Zaten hesabın var mı? <Link to="/login" className="text-accent hover:underline">Giriş yap</Link>
             </>
           )}
         </p>

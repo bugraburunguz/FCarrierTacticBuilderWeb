@@ -36,14 +36,14 @@ export function SquadList({ squad, positionAdvice }: Props) {
       {groups.map((group) => (
         <section key={group.label} aria-label={group.label}>
           <h3 className="mb-1 flex items-center gap-2 text-sm font-semibold">
-            {group.label} <span className="text-slate-400">· {group.players.length}</span>
+            {group.label} <span className="text-muted">· {group.players.length}</span>
           </h3>
           {group.players.length === 0 ? (
-            <p className="text-xs text-slate-500">Bu bölgede oyuncu yok.</p>
+            <p className="text-xs text-muted">Bu bölgede oyuncu yok.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="text-xs uppercase text-slate-500">
+                <thead className="text-xs uppercase text-muted">
                   <tr>
                     <th className="py-1 pr-2">Oyuncu</th>
                     <th className="pr-2">Yaş</th>
@@ -58,19 +58,19 @@ export function SquadList({ squad, positionAdvice }: Props) {
                   {group.players.map((entry) => {
                     const advice = adviceById.get(entry.player.id)
                     return (
-                      <tr key={entry.player.id} className="border-t border-slate-100 dark:border-slate-700">
+                      <tr key={entry.player.id} className="border-t border-line">
                         <td className="py-1.5 pr-2 font-medium">
                           <Link to={`/players/${entry.player.id}`} className="hover:underline">{entry.player.name}</Link>
                         </td>
                         <td className="pr-2">{entry.player.age ?? '—'}</td>
-                        <td className="pr-2 text-slate-500">{entry.player.positions.slice(0, 4).join(', ')}</td>
+                        <td className="pr-2 text-muted">{entry.player.positions.slice(0, 4).join(', ')}</td>
                         <td className="pr-2">
                           {advice?.bestOverallPosition ? (
                             <span title="Mevki bazlı en yüksek overall">
-                              <b>{advice.bestOverallPosition}</b> <span className="text-slate-500">{advice.bestOverall}</span>
+                              <b>{advice.bestOverallPosition}</b> <span className="text-muted">{advice.bestOverall}</span>
                             </span>
                           ) : (
-                            <span className="text-slate-400">—</span>
+                            <span className="text-muted">—</span>
                           )}
                         </td>
                         <td className="pr-2 text-right font-semibold tabular-nums">{entry.player.overall}</td>

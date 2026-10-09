@@ -43,7 +43,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
         </Button>
       </div>
       {!club && (clubs.data ?? []).length > 0 && (
-        <ul className="mt-2 divide-y divide-line rounded-lg border border-line text-sm">
+        <ul className="mt-2 divide-y divide-line rounded-md border border-line text-sm">
           {clubs.data!.map((c) => (
             <li key={c.id}>
               <button type="button" className="flex w-full justify-between px-3 py-1.5 text-left hover:bg-surface-2" onClick={() => setClub(c)}>

@@ -78,7 +78,7 @@ export function UtImportPage() {
   return (
     <div className="space-y-4">
       <Card title="Kulüp ve piyasa verisi içe aktar">
-        <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mb-3 text-sm text-muted">
           Extension'ın dışa aktardığı <span className="font-mono">fcareer-captures.json</span> dosyasını yükle. Sunucu yalnızca kulüp, kadro, piyasa, objective, SBC, Evo ve kaynak (config) yanıtlarını işler; oturum ve hesap uçlarını yoksayar. Kartlar, SBC setleri, Evo slotları ve aktif kadro tarayıcında saklanır; sunucuya kaydedilmez.
         </p>
         <input
@@ -94,13 +94,13 @@ export function UtImportPage() {
             }
           }}
         />
-        {upload.isPending && <p className="mt-2 text-sm text-slate-500">İşleniyor…</p>}
-        {fileError && <p role="alert" className="mt-2 text-sm text-rose-600">{fileError}</p>}
+        {upload.isPending && <p className="mt-2 text-sm text-muted">İşleniyor…</p>}
+        {fileError && <p role="alert" className="mt-2 text-sm text-danger">{fileError}</p>}
         {!fileError && <ErrorBox error={upload.error} />}
-        <p className="mt-2 text-xs text-slate-500">Dosya hesap bilgisi ve coin bakiyen gibi hassas veri içerebilir; paylaşma, işin bitince sil.</p>
+        <p className="mt-2 text-xs text-muted">Dosya hesap bilgisi ve coin bakiyen gibi hassas veri içerebilir; paylaşma, işin bitince sil.</p>
       </Card>
 
-      {notice && <p role="status" className="text-sm text-emerald-700">{notice}</p>}
+      {notice && <p role="status" className="text-sm text-accent">{notice}</p>}
       {result && (
         <>
           <Summary result={result} />
@@ -142,11 +142,11 @@ function Summary({ result }: { result: CaptureResult }) {
         {result.coins !== undefined && <Pill tone="sky">{coins(result.coins)} coin</Pill>}
       </div>
       {s.definitionsTruncated && (
-        <p className="mt-2 text-sm text-amber-700 dark:text-amber-400">
+        <p className="mt-2 text-sm text-code">
           Oyuncu tanım dosyası (players.json) eksik geldi; yalnızca {s.definitionNames} oyuncunun adı çözülebildi. Extension'ın güncel sürümüyle yeniden dışa aktar.
         </p>
       )}
-      {s.warnings.map((w) => <p key={w} className="mt-1 text-xs text-amber-700">{w}</p>)}
+      {s.warnings.map((w) => <p key={w} className="mt-1 text-xs text-code">{w}</p>)}
     </Card>
   )
 }
@@ -160,12 +160,12 @@ function Club({ result, onPool }: { result: CaptureResult; onPool: () => void })
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase text-slate-500">
+            <thead className="text-xs uppercase text-muted">
               <tr><th className="py-1 pr-2">Kart</th><th className="pr-2 text-right">OVR</th><th className="pr-2">Mevki</th><th className="pr-2">Tür</th><th className="pr-2 text-right">Son satış</th><th className="pr-2 text-right">Piyasa ort.</th><th /></tr>
             </thead>
             <tbody>
               {top.map((c) => (
-                <tr key={c.instanceId} className="border-t border-slate-100 dark:border-slate-700">
+                <tr key={c.instanceId} className="border-t border-line">
                   <td className="py-1.5 pr-2 font-medium">{c.name ?? `#${c.assetId}`}</td>
                   <td className="pr-2 text-right tabular-nums">{c.rating}</td>
                   <td className="pr-2">{c.position}</td>
@@ -214,8 +214,8 @@ function Squad({ result }: { result: CaptureResult }) {
       <ul className="grid gap-x-6 gap-y-0.5 text-sm sm:grid-cols-2">
         {squad.slots.filter((s) => s.starter).map((s) => (
           <li key={s.index} className="flex justify-between gap-2">
-            <span><span className="inline-block w-10 text-xs font-semibold text-slate-500">{s.position ?? s.index}</span>{s.card?.name ?? (s.card ? `#${s.card.assetId}` : '—')}</span>
-            <span className="tabular-nums text-slate-500">{s.card?.rating} · k{s.chemistry ?? '—'}</span>
+            <span><span className="inline-block w-10 text-xs font-semibold text-muted">{s.position ?? s.index}</span>{s.card?.name ?? (s.card ? `#${s.card.assetId}` : '—')}</span>
+            <span className="tabular-nums text-muted">{s.card?.rating} · k{s.chemistry ?? '—'}</span>
           </li>
         ))}
       </ul>
@@ -232,13 +232,13 @@ function Prices({ result }: { result: CaptureResult }) {
     <Card title="Gördüğün piyasa fiyatları">
       <ul className="text-sm">
         {rows.map((p, i) => (
-          <li key={i} className="flex justify-between border-t border-slate-100 py-1 first:border-0 dark:border-slate-700">
-            <span>{p.name ?? `#${p.assetId}`} <span className="text-xs text-slate-500">{p.rating} · {p.source}</span></span>
+          <li key={i} className="flex justify-between border-t border-line py-1 first:border-0">
+            <span>{p.name ?? `#${p.assetId}`} <span className="text-xs text-muted">{p.rating} · {p.source}</span></span>
             <span className="tabular-nums">{coins(p.buyNow)}</span>
           </li>
         ))}
       </ul>
-      <p className="mt-2 text-xs text-slate-500">Fiyatlar senin oturumunda gördüğün ilanlardır ve platformuna özeldir.</p>
+      <p className="mt-2 text-xs text-muted">Fiyatlar senin oturumunda gördüğün ilanlardır ve platformuna özeldir.</p>
     </Card>
   )
 }
@@ -252,14 +252,14 @@ function Objectives({ result, modes, mode, onMode, onImport }: { result: Capture
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <label className="flex items-center gap-1.5">
           Mod
-          <select value={mode} onChange={(e) => onMode(e.target.value)} className="rounded-lg border border-slate-300 bg-white px-2 py-1 dark:border-slate-600 dark:bg-slate-900">
+          <select value={mode} onChange={(e) => onMode(e.target.value)} className="rounded-md border border-line bg-surface px-2 py-1">
             <option value="">Tümü</option>
             {modes.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
         </label>
         <Button variant="secondary" onClick={onImport}>Planlayıcıya aktar</Button>
       </div>
-      <p className="mt-2 text-xs text-slate-500">Yalnızca devam eden ve kilidi açık objective'ler, kalan ilerlemeyle aktarılır. Çaba ve "web app'te yapılabilir" işareti adlardan çıkarılan tahmindir; XI şartları otomatik okunmaz.</p>
+      <p className="mt-2 text-xs text-muted">Yalnızca devam eden ve kilidi açık objective'ler, kalan ilerlemeyle aktarılır. Çaba ve "web app'te yapılabilir" işareti adlardan çıkarılan tahmindir; XI şartları otomatik okunmaz.</p>
     </Card>
   )
 }
@@ -273,7 +273,7 @@ function Others({ result }: { result: CaptureResult }) {
         <li>EA formasyon tanımı: <b>{result.config.formations.length}</b></li>
         {result.squads.length > 0 && <li>Kayıtlı kadro: <b>{result.squads.length}</b></li>}
       </ul>
-      <p className="mt-2 text-xs text-slate-500">SBC gereksinim ayrıntıları için extension açıkken ilgili SBC'lere tıkla ve yeniden dışa aktar.</p>
+      <p className="mt-2 text-xs text-muted">SBC gereksinim ayrıntıları için extension açıkken ilgili SBC'lere tıkla ve yeniden dışa aktar.</p>
     </Card>
   )
 }

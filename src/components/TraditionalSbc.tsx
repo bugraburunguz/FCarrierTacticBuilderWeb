@@ -162,7 +162,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
 
   return (
     <Card title="SBC çözücü (squad kurma tipi)">
-      <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+      <p className="mb-3 text-sm text-muted">
         Takım rating'i, kimya ve oyuncu sayısı şartlarını sağlayan 11'i arar. Fiyat verisi olmadığı için "en ucuz" yerine en düşük toplam rating'li çözüm aranır; havuz katalogdaki temel kartlardır (kulüp havuzu henüz yok).
       </p>
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -220,10 +220,10 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
               <Pill tone="sky">kimya {chemResult ? chemResult.total : result.chemistry}</Pill>
             </div>
             {result.violations.map((v) => (
-              <p key={v} className="text-rose-600 dark:text-rose-400">{v}</p>
+              <p key={v} className="text-danger">{v}</p>
             ))}
             <CostSummary picks={filled} />
-            <p className="text-xs text-slate-500">Arama yaklaşıktır (beam search); şart sağlanamadıysa havuz ya da şartlar gevşetilebilir.</p>
+            <p className="text-xs text-muted">Arama yaklaşıktır (beam search); şart sağlanamadıysa havuz ya da şartlar gevşetilebilir.</p>
           </div>
         </div>
       )}
@@ -238,7 +238,7 @@ function CostSummary({ picks }: { picks: SbcCandidate[] }) {
   const total = market.reduce((sum, p) => sum + (p.price ?? 0), 0)
   const sacrificed = Math.round(club.reduce((sum, p) => sum + (p.price ?? 0), 0))
   return (
-    <div className="space-y-1 rounded-lg border border-line bg-surface-2 p-2 text-xs">
+    <div className="space-y-1 rounded-md border border-line bg-surface-2 p-2 text-xs">
       <p>
         <b>Storage:</b> {storage.length} kart (bedava) · <b>Kadro:</b> {club.length} kart (feda edilen değer ~{sacrificed.toLocaleString('tr-TR')}) · <b>Market:</b> {market.length} kart · harcanacak ~<b>{total.toLocaleString('tr-TR')}</b> coin
       </p>

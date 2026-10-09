@@ -1,9 +1,9 @@
 export type FitState = 'good' | 'ok' | 'bad'
 
 const STYLE: Record<FitState, { text: string; label: string; bg: string; fg: string }> = {
-  good: { text: 'UYGUN', label: 'Rol için uygun', bg: 'var(--color-good)', fg: '#06210f' },
-  ok: { text: 'SINIRDA', label: 'Rol için sınırda', bg: 'var(--color-ok)', fg: '#2a2000' },
-  bad: { text: 'EKSİK', label: 'Rol için eksik', bg: 'var(--color-bad)', fg: '#ffffff' },
+  good: { text: 'UYGUN', label: 'Rol için uygun', bg: '#2fbf71', fg: '#06210f' },
+  ok: { text: 'SINIRDA', label: 'Rol için sınırda', bg: '#e6b325', fg: '#2a2000' },
+  bad: { text: 'EKSİK', label: 'Rol için eksik', bg: '#e5484d', fg: '#ffffff' },
 }
 
 /** Rol uyumu rozeti: durum = renk + şekil (kesik köşe) + metin; emoji yok. `compact` yalnız yüzdeyi gösterir. */

@@ -44,7 +44,7 @@ export function ComparePage() {
               {(search.data?.items ?? []).map((p) => (
                 <li key={p.id} className="flex items-center justify-between">
                   <span>
-                    {p.name} <span className="text-slate-500">({p.overall} · {p.positions[0]})</span>
+                    {p.name} <span className="text-muted">({p.overall} · {p.positions[0]})</span>
                   </span>
                   <Button
                     variant="secondary"
@@ -56,18 +56,18 @@ export function ComparePage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-xs text-slate-500">Oyuncular ekranındaki “+” ile veya oyuncu detayından da ekleyebilirsin.</p>
+            <p className="mt-2 text-xs text-muted">Oyuncular ekranındaki “+” ile veya oyuncu detayından da ekleyebilirsin.</p>
           </div>
           <div className="flex flex-wrap content-start gap-2">
             {list.map((c) => (
-              <span key={c.id} className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm dark:bg-slate-700">
+              <span key={c.id} className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 text-sm">
                 <Link to={`/players/${c.id}`} className="hover:underline">{c.name}</Link>
                 <b>{c.overall}</b>
-                <button type="button" aria-label={`${c.name} çıkar`} className="text-slate-400 hover:text-rose-600" onClick={() => compareStore.remove(c.id)}>×</button>
+                <button type="button" aria-label={`${c.name} çıkar`} className="text-muted hover:text-danger" onClick={() => compareStore.remove(c.id)}>×</button>
               </span>
             ))}
             {list.length > 0 && (
-              <button type="button" className="text-xs text-slate-400 hover:text-rose-600" onClick={() => compareStore.clear()}>Listeyi temizle</button>
+              <button type="button" className="text-xs text-muted hover:text-danger" onClick={() => compareStore.clear()}>Listeyi temizle</button>
             )}
           </div>
         </div>
@@ -87,11 +87,11 @@ export function ComparePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-slate-500">
+                <tr className="text-left text-xs text-muted">
                   <th className="py-1 pr-3" />
                   {loaded.map((d) => (
                     <th key={d.summary.id} className="px-2 py-1 text-center">
-                      <Link to={`/players/${d.summary.id}`} className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400">{d.summary.name}</Link>
+                      <Link to={`/players/${d.summary.id}`} className="font-semibold text-accent hover:underline">{d.summary.name}</Link>
                     </th>
                   ))}
                 </tr>
@@ -107,8 +107,8 @@ export function ComparePage() {
                 {groups.map((group) => (
                   <GroupRows key={group.title} title={group.title} attrs={group.attrs} loaded={loaded} />
                 ))}
-                <tr className="border-t border-slate-200 dark:border-slate-700">
-                  <td className="py-2 pr-3 text-xs font-semibold uppercase text-slate-500">PlayStyle</td>
+                <tr className="border-t border-line">
+                  <td className="py-2 pr-3 text-xs font-semibold uppercase text-muted">PlayStyle</td>
                   {loaded.map((d) => (
                     <td key={d.summary.id} className="px-2 py-2 text-center">
                       <div className="flex flex-wrap justify-center gap-1">
@@ -165,10 +165,10 @@ function bestIndexes(values: Cell[]): Set<number> {
 function InfoRow({ label, values, highlight }: { label: string; values: Cell[]; highlight?: boolean }) {
   const best = highlight ? bestIndexes(values) : new Set<number>()
   return (
-    <tr className="border-t border-slate-100 dark:border-slate-700">
-      <td className="py-1 pr-3 text-slate-500">{label}</td>
+    <tr className="border-t border-line">
+      <td className="py-1 pr-3 text-muted">{label}</td>
       {values.map((v, i) => (
-        <td key={i} className={`px-2 py-1 text-center tabular-nums ${best.has(i) ? 'font-bold text-emerald-700 dark:text-emerald-400' : ''}`}>
+        <td key={i} className={`px-2 py-1 text-center tabular-nums ${best.has(i) ? 'font-bold text-accent' : ''}`}>
           {v ?? '—'}
         </td>
       ))}
@@ -180,7 +180,7 @@ function GroupRows({ title, attrs, loaded }: { title: string; attrs: string[]; l
   return (
     <>
       <tr>
-        <td colSpan={loaded.length + 1} className="pt-3 text-xs font-semibold uppercase text-slate-500">{title}</td>
+        <td colSpan={loaded.length + 1} className="pt-3 text-xs font-semibold uppercase text-muted">{title}</td>
       </tr>
       {attrs.map((a) => (
         <InfoRow key={a} label={ATTR_LABELS[a] ?? a} values={loaded.map((d) => d.attrs[a] ?? null)} highlight />

@@ -16,9 +16,9 @@ export interface SlotView {
 }
 
 const FIT_STYLE: Record<WeaponState, string> = {
-  GREEN: 'bg-emerald-900 text-emerald-200',
-  YELLOW: 'bg-amber-900 text-amber-200',
-  RED: 'bg-rose-900 text-rose-200',
+  GREEN: 'bg-accent-soft text-ink',
+  YELLOW: 'bg-code-soft text-code',
+  RED: 'bg-danger-soft text-danger',
 }
 
 interface Props {
@@ -48,16 +48,16 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
             onPickPlayer()
           }
         }}
-        className={`relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none ${dropActive ? 'border-emerald-300 ring-2 ring-emerald-300/70' : view.selected ? 'border-amber-300 ring-2 ring-amber-300/60' : 'border-slate-600'}`}
+        className={`relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-accent focus-visible:border-accent focus-visible:outline-none ${dropActive ? 'border-accent ring-2 ring-accent' : view.selected ? 'border-line ring-2 ring-line' : 'border-line'}`}
       >
-        <span className="absolute left-1.5 top-1 text-[9px] font-extrabold text-emerald-300">{view.position}</span>
+        <span className="absolute left-1.5 top-1 text-[9px] font-extrabold text-accent">{view.position}</span>
         {player && (
           <span className="absolute right-1.5 top-1 text-[11px] font-extrabold" style={{ color: ovrBand(player.overall) }}>
             {player.overall}
           </span>
         )}
-        {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-slate-400">{view.placeholder ?? '+'}</div>}
-        {player && view.sub && <div className="truncate text-[9px] text-slate-300">{view.sub}</div>}
+        {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-muted">{view.placeholder ?? '+'}</div>}
+        {player && view.sub && <div className="truncate text-[9px] text-muted">{view.sub}</div>}
         {fit && (
           <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[fit.band]}`}>
             {BADGE_EMOJI[fit.band]} %{fit.pct}
@@ -73,7 +73,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
             e.stopPropagation()
             onRemove()
           }}
-          className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-slate-500 bg-slate-900 text-[11px] font-bold leading-none text-slate-200 hover:border-rose-400 hover:bg-rose-600 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
+          className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-line bg-ink-900 text-[11px] font-bold leading-none text-ink hover:border-danger-line hover:bg-danger hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
         >
           ✕
         </button>
@@ -86,7 +86,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
           onPickRole()
         }}
         aria-label={`${view.position} rolü: ${view.roleLabel}. Rol ve odak seç`}
-        className="mt-2.5 inline-block max-w-full cursor-pointer truncate rounded-[5px] border border-teal-800 bg-teal-950 px-1 py-0.5 text-[9.5px] text-teal-200 hover:border-amber-300 hover:text-amber-300"
+        className="mt-2.5 inline-block max-w-full cursor-pointer truncate rounded-[5px] border border-teal-800 bg-teal-950 px-1 py-0.5 text-[9.5px] text-teal-200 hover:border-line hover:text-code"
       >
         {view.roleLabel}
       </button>

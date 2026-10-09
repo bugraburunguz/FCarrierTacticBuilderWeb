@@ -28,19 +28,19 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
         </div>
         {result.setupDelta !== undefined && (
           <p className="mt-3 text-sm" aria-label="Takım ayarı etkisi">
-            Takım ayarı etkisi: <b className={result.setupDelta < 0 ? 'text-rose-700' : 'text-emerald-700'}>{result.setupDelta > 0 ? '+' : ''}{result.setupDelta.toFixed(1)} puan</b>
-            <span className="text-xs text-slate-500"> — Build-Up ve Defensive Depth ayarının oyuncu özelliklerine uyumu SquadFit'e işlendi.</span>
+            Takım ayarı etkisi: <b className={result.setupDelta < 0 ? 'text-danger' : 'text-accent'}>{result.setupDelta > 0 ? '+' : ''}{result.setupDelta.toFixed(1)} puan</b>
+            <span className="text-xs text-muted"> — Build-Up ve Defensive Depth ayarının oyuncu özelliklerine uyumu SquadFit'e işlendi.</span>
           </p>
         )}
         <p className="mt-3 text-sm">{result.summary}</p>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{result.attackPattern}</p>
-        {chargedText && <p className="mt-2 text-xs text-slate-500">{chargedText}</p>}
-        {result.mirrored && <p className="mt-2 text-sm text-amber-700">Taktik kadronuza göre sağ-sol aynalandı (sağ/sol görevleri yer değiştirdi).</p>}
+        <p className="mt-2 text-sm text-muted">{result.attackPattern}</p>
+        {chargedText && <p className="mt-2 text-xs text-muted">{chargedText}</p>}
+        {result.mirrored && <p className="mt-2 text-sm text-code">Taktik kadronuza göre sağ-sol aynalandı (sağ/sol görevleri yer değiştirdi).</p>}
       </Card>
 
       <Card title="Zayıf halkalar">
         {result.weakLinks.length === 0 ? (
-          <p className="text-sm text-emerald-700">Zayıf halka yok — tüm slotlar rolüne uygun.</p>
+          <p className="text-sm text-accent">Zayıf halka yok — tüm slotlar rolüne uygun.</p>
         ) : (
           <ul className="space-y-2 text-sm">
             {result.weakLinks.map((w) => (
@@ -48,7 +48,7 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
                 <span>
                   <BadgeDot state={w.badge} /> {w.sentence}
                 </span>
-                <Link to={scoutLink(w.scoutQuery)} className="text-emerald-700 underline">
+                <Link to={scoutLink(w.scoutQuery)} className="text-accent underline">
                   Scout et
                 </Link>
               </li>
@@ -71,13 +71,13 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
                     <Link to={`/players/${v.playerId}`} className="font-medium hover:underline">
                       {v.name}
                     </Link>{' '}
-                    <span className="text-slate-500">— {v.reason}</span>
+                    <span className="text-muted">— {v.reason}</span>
                   </span>
                 </li>
               )),
           )}
         </ul>
-        <p className="mt-2 text-xs text-slate-500">Öneriler kurallara dayalı bir rehberdir (ilk 11/yedek durumu, yaş, potansiyel farkı, bütçe). Satış/kiralık bedelini Kadro sayfasından girersin.</p>
+        <p className="mt-2 text-xs text-muted">Öneriler kurallara dayalı bir rehberdir (ilk 11/yedek durumu, yaş, potansiyel farkı, bütçe). Satış/kiralık bedelini Kadro sayfasından girersin.</p>
       </Card>
 
       {result.rules.length > 0 && (
@@ -85,7 +85,7 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
           {result.rules.map((r) => (
             <Card key={r.ruleId} title={<span><Pill tone={RULE_TONE[r.severity]}>{RULE_LABEL[r.severity]}</Pill> {r.title}</span>}>
               <p className="text-sm">{r.message}</p>
-              {r.fix && <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Çözüm: {r.fix}</p>}
+              {r.fix && <p className="mt-1 text-sm text-muted">Çözüm: {r.fix}</p>}
             </Card>
           ))}
         </div>
@@ -94,19 +94,19 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
       <Card title="Slot detayları">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase text-slate-500">
+            <thead className="text-xs uppercase text-muted">
               <tr><th className="py-1">Slot</th><th>Rol</th><th>Oyuncu</th><th>RoleFit</th><th>Bu rolde</th><th>IntentFit</th><th>Yedekler</th></tr>
             </thead>
             <tbody>
               {result.slots.map((s) => (
-                <tr key={s.slotId} className="border-t border-slate-100 align-top dark:border-slate-800">
+                <tr key={s.slotId} className="border-t border-line align-top">
                   <td className="py-1.5 font-medium">{s.slotId}</td>
                   <td>{s.roleName}</td>
                   <td>{s.playerName ?? '—'}</td>
                   <td>{s.roleFit ? <><BadgeDot state={s.roleFit.badge} /> %{Math.round(s.roleFit.score)}</> : '—'}</td>
                   <td className="tabular-nums">{s.roleFit?.projectedRating ?? '—'}</td>
                   <td>{s.intentFit ? `%${s.intentFit.score}` : '—'}</td>
-                  <td className="text-xs text-slate-500">{s.depth.map((d) => `${d.playerName} (%${Math.round(d.roleFitScore)})`).join(', ') || '—'}</td>
+                  <td className="text-xs text-muted">{s.depth.map((d) => `${d.playerName} (%${Math.round(d.roleFitScore)})`).join(', ') || '—'}</td>
                 </tr>
               ))}
             </tbody>

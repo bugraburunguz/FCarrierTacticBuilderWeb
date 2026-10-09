@@ -32,7 +32,7 @@ export function UtSbcChallengePage() {
       {siblings.length > 1 && (
         <div className="flex flex-wrap gap-1.5">
           {siblings.map((c) => (
-            <Link key={c.challengeId} to={`/ut/sbc/${c.setId}/${c.challengeId}`} className={`rounded-lg border px-2 py-1 text-xs ${c.challengeId === challenge.challengeId ? 'border-accent bg-accent/10 font-semibold' : 'border-line'}`}>{c.name}</Link>
+            <Link key={c.challengeId} to={`/ut/sbc/${c.setId}/${c.challengeId}`} className={`rounded-md border px-2 py-1 text-xs ${c.challengeId === challenge.challengeId ? 'border-accent bg-accent/10 font-semibold' : 'border-line'}`}>{c.name}</Link>
           ))}
         </div>
       )}
@@ -43,7 +43,7 @@ export function UtSbcChallengePage() {
           ))}
         </ul>
         {setup && setup.notes.length > 0 && (
-          <div className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+          <div className="mt-2 text-xs text-code">
             <p className="font-semibold">Çözücünün zorlayamadığı şartlar (elle kontrol et):</p>
             <ul className="list-disc pl-4">{setup.notes.map((n) => <li key={n}>{n}</li>)}</ul>
           </div>

@@ -20,7 +20,7 @@ export function BehaviorsPanel({ derivedRoleName, roleHint, tags, selected, onTa
         <span className="text-muted">Türetilen rol:</span>
         <Pill tone="emerald">{derivedRoleName ?? '…'}</Pill>
       </div>
-      {roleHint && <p className="rounded-lg bg-code-soft p-2 text-sm text-code">Aranan profil: {roleHint}</p>}
+      {roleHint && <p className="rounded-md bg-code-soft p-2 text-sm text-code">Aranan profil: {roleHint}</p>}
       <div>
         <p className="mb-1 text-xs font-medium text-ink/80">Davranışlar (çelişenler otomatik kilitlenir)</p>
         <TagChips tags={tags} selected={selected} onChange={onTags} />

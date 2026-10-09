@@ -39,9 +39,9 @@ const REGIONS: { label: string; positions: string[] }[] = [
 ]
 
 const STATE_STYLE: Record<DepthState, string> = {
-  thin: 'border-rose-300 bg-rose-50 dark:border-rose-800 dark:bg-rose-950/40',
-  ok: 'border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/40',
-  dense: 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40',
+  thin: 'border-danger-line bg-danger-soft',
+  ok: 'border-accent bg-accent-soft',
+  dense: 'border-line bg-code-soft',
 }
 
 const STATE_LABEL: Record<DepthState, { text: string; tone: 'rose' | 'emerald' | 'amber' }> = {
@@ -146,14 +146,14 @@ export function SquadDensity({ squad, needs, formation, compact = false }: { squ
           const thin = regionCells.filter((c) => c.state === 'thin').map((c) => c.position)
           const dense = regionCells.filter((c) => c.state === 'dense').map((c) => c.position)
           return (
-            <div key={region.label} className={`rounded-xl border border-slate-200 text-sm dark:border-slate-600 ${compact ? 'p-2' : 'p-3'}`}>
+            <div key={region.label} className={`rounded-md border border-line text-sm ${compact ? 'p-2' : 'p-3'}`}>
               <div className="flex items-center justify-between">
                 <strong>{region.label}</strong>
-                <span className="text-slate-500">{players.length} oyuncu</span>
+                <span className="text-muted">{players.length} oyuncu</span>
               </div>
-              <div className="mt-0.5 text-xs text-slate-500">
-                Ort. overall <b className="text-slate-800 dark:text-slate-100">{avgOverall ? avgOverall.toFixed(1) : '—'}</b>
-                {avgAge ? <> · ort. yaş <b className="text-slate-800 dark:text-slate-100">{avgAge.toFixed(1)}</b></> : null}
+              <div className="mt-0.5 text-xs text-muted">
+                Ort. overall <b className="text-ink">{avgOverall ? avgOverall.toFixed(1) : '—'}</b>
+                {avgAge ? <> · ort. yaş <b className="text-ink">{avgAge.toFixed(1)}</b></> : null}
               </div>
               <div className="mt-1.5 flex flex-wrap gap-1">
                 {thin.length > 0 && <Pill tone="rose">Az: {thin.join(', ')}</Pill>}
@@ -165,14 +165,14 @@ export function SquadDensity({ squad, needs, formation, compact = false }: { squ
         })}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-emerald-50 to-white p-3 dark:border-slate-600 dark:from-slate-800 dark:to-slate-800" aria-label="Mevki yoğunluk haritası">
+      <div className="rounded-md border border-line bg-gradient-to-b from-emerald-50 to-white p-3" aria-label="Mevki yoğunluk haritası">
         {formation && (
           <div className="mb-2 flex items-center justify-between gap-2 text-xs">
             <strong>{byTactic ? `Dizilim: ${formation.label ?? formation.id}` : 'Genel mevki haritası'}</strong>
             <div role="tablist" className="flex gap-1">
               {(['tactic', 'general'] as const).map((m) => (
                 <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)}
-                  className={`rounded-full px-2.5 py-1 font-medium ${mode === m ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
+                  className={`rounded-full px-2.5 py-1 font-medium ${mode === m ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-muted'}`}>
                   {m === 'tactic' ? 'Taktiğe göre' : 'Genel'}
                 </button>
               ))}
@@ -181,7 +181,7 @@ export function SquadDensity({ squad, needs, formation, compact = false }: { squ
         )}
         {byTactic ? (
           <div className="overflow-x-auto">
-            <div className={`relative mx-auto aspect-[100/130] w-full overflow-hidden rounded-xl shadow-inner ring-1 ring-emerald-900/30 ${compact ? 'min-w-[400px] max-w-[470px]' : 'min-w-[560px] max-w-[640px]'}`}>
+            <div className={`relative mx-auto aspect-[100/130] w-full overflow-hidden rounded-md shadow-inner ring-1 ring-accent ${compact ? 'min-w-[400px] max-w-[470px]' : 'min-w-[560px] max-w-[640px]'}`}>
               <PitchBackground />
               {formation.slots.map((slot) => (
                 <div key={slot.slotId} className={`absolute z-10 w-[17%] -translate-x-1/2 -translate-y-1/2 ${compact ? 'min-w-[70px]' : 'min-w-[96px]'}`} style={{ left: `${slot.x}%`, top: `${slotTop(slot, formation.slots)}%` }}>
@@ -203,7 +203,7 @@ export function SquadDensity({ squad, needs, formation, compact = false }: { squ
             ))}
           </div>
         )}
-        <details className="mt-2 text-xs text-slate-500">
+        <details className="mt-2 text-xs text-muted">
           <summary className="cursor-pointer">Nasıl okunur?</summary>
           <p className="mt-1">
           {usingTactic
@@ -271,21 +271,21 @@ function DensityCell({ cell, compact = false }: { cell: Cell; compact?: boolean 
     ...cell.flex.map((s) => `${s.player.name} (${s.player.overall}) · ${footMark(s)} — alternatif`),
   ].join(String.fromCharCode(10))
   return (
-    <div title={title} className={`rounded-xl border text-xs shadow-md backdrop-blur-sm transition hover:shadow-lg ${compact ? 'p-1.5' : 'p-2'} ${STATE_STYLE[cell.state]}`}>
+    <div title={title} className={`rounded-md border text-xs   transition hover: ${compact ? 'p-1.5' : 'p-2'} ${STATE_STYLE[cell.state]}`}>
       <div className="flex items-center justify-between gap-1">
         <strong className="text-sm">{cell.position}</strong>
         {compact ? <span className="text-[10px] font-semibold">{label.text}</span> : <Pill tone={label.tone}>{label.text}</Pill>}
       </div>
-      {!compact && <div className="mt-0.5 truncate text-slate-500">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</div>}
+      {!compact && <div className="mt-0.5 truncate text-muted">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</div>}
       <div className="mt-1 flex items-baseline gap-1">
         <span className="text-lg font-bold tabular-nums">{cell.natural.length}</span>
-        {cell.flex.length > 0 && <span className="text-slate-500">+{cell.flex.length}</span>}
-        <span className="text-slate-400">/ {cell.required ?? `${min}–${max}`}</span>
+        {cell.flex.length > 0 && <span className="text-muted">+{cell.flex.length}</span>}
+        <span className="text-muted">/ {cell.required ?? `${min}–${max}`}</span>
       </div>
-      <div className="text-slate-500">
+      <div className="text-muted">
         {cell.best ? (
           <>
-            {compact ? '' : 'En iyi '}<b className="text-slate-800 dark:text-slate-100">{cell.best}</b>{compact ? '' : ` · ort. ${cell.avg?.toFixed(0)}`}
+            {compact ? '' : 'En iyi '}<b className="text-ink">{cell.best}</b>{compact ? '' : ` · ort. ${cell.avg?.toFixed(0)}`}
           </>
         ) : (
           'Oyuncu yok'

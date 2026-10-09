@@ -19,7 +19,7 @@ export function KeyAttributes({ positions, attrs }: { positions: string[]; attrs
           const average = Math.round(keys.reduce((sum, key) => sum + (attrs[key] ?? 0), 0) / keys.length)
           return (
             <div key={position}>
-              <h3 className="mb-1 flex items-baseline justify-between text-xs font-semibold uppercase text-slate-500">
+              <h3 className="mb-1 flex items-baseline justify-between text-xs font-semibold uppercase text-muted">
                 <span>{position}</span>
                 <span className="tabular-nums normal-case">ortalama {average}</span>
               </h3>
@@ -32,7 +32,7 @@ export function KeyAttributes({ positions, attrs }: { positions: string[]; attrs
           )
         })}
       </div>
-      <p className="mt-2 text-xs text-slate-500">Bu mevkide oyunun en çok önemsediği 5 özellik (EA verisi). OVR'dan çok bunlar mevkideki gerçek gücü belirler.</p>
+      <p className="mt-2 text-xs text-muted">Bu mevkide oyunun en çok önemsediği 5 özellik (EA verisi). OVR'dan çok bunlar mevkideki gerçek gücü belirler.</p>
     </Card>
   )
 }

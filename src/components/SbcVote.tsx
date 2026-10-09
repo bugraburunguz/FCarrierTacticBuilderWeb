@@ -25,7 +25,7 @@ export function SbcVote({ setId, votes }: { setId: number; votes?: SbcSetVotes }
       aria-pressed={mine === value}
       disabled={vote.isPending}
       onClick={() => vote.mutate(mine === value ? 0 : value)}
-      className={`rounded-full border px-2 py-0.5 text-xs font-semibold tabular-nums transition ${mine === value ? (value === 1 ? 'border-emerald-500 bg-emerald-500/20' : 'border-rose-500 bg-rose-500/20') : 'border-line bg-surface-2 hover:bg-line'}`}
+      className={`rounded-full border px-2 py-0.5 text-xs font-semibold tabular-nums transition ${mine === value ? (value === 1 ? 'border-accent bg-accent-bg/20' : 'border-danger-line bg-danger/20') : 'border-line bg-surface-2 hover:bg-line'}`}
     >
       {label} {count}
     </button>

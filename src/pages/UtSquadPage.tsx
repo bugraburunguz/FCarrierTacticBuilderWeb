@@ -248,7 +248,7 @@ export function UtSquadPage() {
                 </div>
                 <label className="block text-[13px]">
                   <span className="mb-1 block">Savunma hattı: {setup.depth}</span>
-                  <input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} className="w-full accent-emerald-400" />
+                  <input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} className="w-full accent-accent" />
                 </label>
                 <div className="flex flex-wrap items-center gap-1.5 border-t border-line pt-2.5 text-sm">
                   <Pill tone={chem.total >= 30 ? 'emerald' : chem.total >= 20 ? 'amber' : 'rose'}>kimya {chem.total} / {MAX_SQUAD_CHEM}</Pill>
@@ -349,7 +349,7 @@ function Summary({ evaluation }: { evaluation: { slotId: string; badge?: WeaponS
   return (
     <ul className="space-y-0.5 text-sm">
       <li className="text-accent">+ Rolüne tam oturan: {strong.length}</li>
-      {weak.length > 0 && <li className="rounded-lg border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">Rolüne uymayan: {weak.map((w) => `${w.slotId} (${w.roleName})`).join(', ')}</li>}
+      {weak.length > 0 && <li className="rounded-md border border-danger-line bg-danger-soft px-2.5 py-1.5 text-xs text-danger">Rolüne uymayan: {weak.map((w) => `${w.slotId} (${w.roleName})`).join(', ')}</li>}
     </ul>
   )
 }
@@ -398,10 +398,10 @@ function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (
         {code ?? (exportCode.isFetching ? '…' : '—')}
       </div>
       <div className="mt-2.5 flex gap-2">
-        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
           {copied ? 'Kopyalandı' : 'Kopyala'}
         </button>
-        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-md bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
           Oyuna Aktar
         </button>
       </div>
@@ -422,7 +422,7 @@ function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (
             <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
             <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
           </ol>
-          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">Kopyala</button>
+          <button type="button" onClick={copy} className="mt-4 w-full rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">Kopyala</button>
         </Modal>
       )}
     </section>
@@ -451,7 +451,7 @@ interface PickProps {
 function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation: PickProps['evaluation']; chemLinks?: number }) {
   const links = chemLinks ?? 0
   return (
-    <div className="mb-3 space-y-1.5 rounded-xl border border-line bg-surface-2 p-3 text-sm">
+    <div className="mb-3 space-y-1.5 rounded-md border border-line bg-surface-2 p-3 text-sm">
       <p className="font-semibold">{card.name}</p>
       <p className="text-xs text-muted">
         {SOURCE_LABEL[card.source]} · {card.rating} OVR{card.rarity ? ` · ${card.rarity}` : ''}{card.club ? ` · ${card.club}` : ''} · fiyat {coins(card.price)}
@@ -522,7 +522,7 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
             role="tab"
             aria-selected={source === s}
             onClick={() => setSource(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-emerald-600 text-white' : 'bg-surface-2 text-ink/80 hover:bg-surface-2'}`}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink/80 hover:bg-surface-2'}`}
           >
             {SOURCE_LABEL[s]}{s !== 'catalog' ? ` (${counts[s]})` : ''}
           </button>

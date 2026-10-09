@@ -25,7 +25,7 @@ export function PositionOverallPitch({ overalls, listed }: Props) {
   const best = Math.max(...Object.values(overalls))
   return (
     <div>
-      <svg viewBox="0 0 100 106" role="img" aria-label="Mevkiye göre overall" className="w-full rounded-xl bg-pitch shadow-inner">
+      <svg viewBox="0 0 100 106" role="img" aria-label="Mevkiye göre overall" className="w-full rounded-md bg-pitch shadow-inner">
         <g stroke="#ffffff55" strokeWidth="0.4" fill="none">
           <rect x="3" y="3" width="94" height="100" />
           <line x1="3" y1="53" x2="97" y2="53" />
@@ -52,7 +52,7 @@ export function PositionOverallPitch({ overalls, listed }: Props) {
           )
         })}
       </svg>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-muted">
         Her mevkideki tahmini overall (oyunun mevki formülüyle). ★ en yüksek, sarı halka oyuncunun listelenen mevkileri; yeşil en iyiye yakın, kırmızı belirgin düşüş.
       </p>
     </div>

@@ -16,19 +16,19 @@ export function ProfilePage() {
     <div className="mx-auto max-w-xl space-y-4">
       <Card title="Profil">
         <dl className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
-          <dt className="text-slate-500">E-posta</dt>
+          <dt className="text-muted">E-posta</dt>
           <dd>{me.email}</dd>
-          <dt className="text-slate-500">Plan</dt>
+          <dt className="text-muted">Plan</dt>
           <dd>{premium ? <Pill tone="emerald">PREMIUM</Pill> : <Pill>FREE</Pill>}</dd>
-          <dt className="text-slate-500">Günlük kredi</dt>
+          <dt className="text-muted">Günlük kredi</dt>
           <dd>{premium ? 'Sınırsız' : `${me.creditBalance ?? 0} / ${me.dailyCreditLimit}`}</dd>
-          <dt className="text-slate-500">Reklam</dt>
+          <dt className="text-muted">Reklam</dt>
           <dd>{me.showAds ? 'Gösterilir' : 'Kapalı'}</dd>
         </dl>
       </Card>
       <Card title="Abonelik">
         {premium ? (
-          <p className="text-sm text-emerald-700">PREMIUM aktif: sınırsız analiz, reklamsız deneyim.</p>
+          <p className="text-sm text-accent">PREMIUM aktif: sınırsız analiz, reklamsız deneyim.</p>
         ) : (
           <>
             <ul className="list-disc space-y-1 pl-5 text-sm">
@@ -38,7 +38,7 @@ export function ProfilePage() {
             </ul>
             {import.meta.env.DEV ? (
               <>
-                <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+                <p className="mt-3 rounded-md bg-code-soft p-2 text-xs text-code">
                   Geliştirme modu: bu buton aboneliği ödeme almadan etkinleştirir (yalnız sunucuda sahte ödeme açıksa çalışır).
                 </p>
                 <Button className="mt-3" disabled={subscribe.isPending} onClick={() => subscribe.mutate()}>

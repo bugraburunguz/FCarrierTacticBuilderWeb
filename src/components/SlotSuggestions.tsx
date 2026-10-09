@@ -57,7 +57,7 @@ export function SlotSuggestions({ roleId, position, tags, gender, setup }: Props
             role="tab"
             aria-selected={active === t.id}
             onClick={() => setTab(t.id)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${active === t.id ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300'}`}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${active === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-muted hover:bg-line'}`}
           >
             {t.label}
           </button>
@@ -74,7 +74,7 @@ export function SlotSuggestions({ roleId, position, tags, gender, setup }: Props
         </Select>
       )}
       {active === 'LEAGUE' && leagueId === undefined ? (
-        <p className="text-sm text-slate-500">Önce bir lig seç.</p>
+        <p className="text-sm text-muted">Önce bir lig seç.</p>
       ) : suggestions.isLoading ? (
         <Spinner />
       ) : suggestions.error ? (
@@ -89,7 +89,7 @@ export function SlotSuggestions({ roleId, position, tags, gender, setup }: Props
                   <Link to={`/players/${item.player.id}`} className="font-medium hover:underline">
                     {item.player.name}
                   </Link>{' '}
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-muted">
                     {item.player.positions[0]} · {item.player.overall}
                     {item.player.club ? ` · ${item.player.club}` : ''}
                     {active === 'MARKET' && item.player.valueEur ? ` · €${Math.round(item.player.valueEur / 1000)}K` : ''}
@@ -102,10 +102,10 @@ export function SlotSuggestions({ roleId, position, tags, gender, setup }: Props
               </li>
             ) : null,
           )}
-          {(suggestions.data?.items ?? []).length === 0 && <li className="text-slate-500">Bu kapsamda uygun oyuncu bulunamadı.</li>}
+          {(suggestions.data?.items ?? []).length === 0 && <li className="text-muted">Bu kapsamda uygun oyuncu bulunamadı.</li>}
         </ul>
       )}
-      <p className="mt-2 text-xs text-slate-500">{TABS.find((t) => t.id === active)?.hint}</p>
+      <p className="mt-2 text-xs text-muted">{TABS.find((t) => t.id === active)?.hint}</p>
     </Card>
   )
 }

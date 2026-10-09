@@ -135,7 +135,7 @@ export function WonderkidsPage() {
           <input type="checkbox" checked={useCareer} disabled={careerId === undefined} onChange={(e) => setUseCareer(e.target.checked)} />
           Kariyer verisiyle (güncel OVR / POT)
         </label>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-muted">
           POT* model tahminidir; kariyer verisi seçilirse içe aktarılan gerçek değerler kullanılır. Rol seçilirse oyuncunun o roldeki uyumu ve potansiyeline ulaşınca tahmini uyumu gösterilir. Değer verisi yoksa ucuz cevher sıralaması boş kalır.
         </p>
       </Card>
@@ -150,7 +150,7 @@ export function WonderkidsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="text-xs uppercase text-slate-500">
+              <thead className="text-xs uppercase text-muted">
                 <tr>
                   <th className="py-1 pr-2">#</th>
                   <th className="pr-2">Oyuncu</th>
@@ -166,30 +166,30 @@ export function WonderkidsPage() {
               </thead>
               <tbody>
                 {rows.map((p, index) => (
-                  <tr key={p.id} className="border-t border-slate-100 dark:border-slate-700">
-                    <td className="py-1.5 pr-2 text-slate-400">{index + 1}</td>
+                  <tr key={p.id} className="border-t border-line">
+                    <td className="py-1.5 pr-2 text-muted">{index + 1}</td>
                     <td className="pr-2 font-medium">
-                      <Link to={`/players/${p.id}`} className="text-emerald-700 hover:underline dark:text-emerald-400">{p.name}</Link>
+                      <Link to={`/players/${p.id}`} className="text-accent hover:underline">{p.name}</Link>
                     </td>
                     <td className="pr-2">{p.age ?? '—'}</td>
                     <td className="pr-2">{p.positions.slice(0, 2).join(', ')}</td>
                     <td className="pr-2 text-right tabular-nums">
                       <b>{p.overall}</b> → {p.potential}
                     </td>
-                    <td className="pr-2 text-right tabular-nums text-emerald-700 dark:text-emerald-400">+{p.gap}</td>
+                    <td className="pr-2 text-right tabular-nums text-accent">+{p.gap}</td>
                     {hasRole && (
                       <td className="pr-2">
                         {p.roleScore === undefined ? '—' : (
                           <span className="inline-flex items-center gap-1.5">
                             {p.roleBadge && <BadgeDot state={p.roleBadge} />}%{Math.round(p.roleScore)}
-                            {p.projectedBadge && <><span className="text-slate-400">→</span><BadgeDot state={p.projectedBadge} /></>}
-                            <span className="text-xs text-slate-500">{p.rolePosition}</span>
+                            {p.projectedBadge && <><span className="text-muted">→</span><BadgeDot state={p.projectedBadge} /></>}
+                            <span className="text-xs text-muted">{p.rolePosition}</span>
                           </span>
                         )}
                       </td>
                     )}
                     <td className="pr-2">{p.club ?? '—'}</td>
-                    <td className="pr-2 text-slate-500">{p.league ?? '—'}</td>
+                    <td className="pr-2 text-muted">{p.league ?? '—'}</td>
                     <td>
                       <CompareButton compact entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} />
                     </td>

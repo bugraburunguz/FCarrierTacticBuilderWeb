@@ -23,17 +23,17 @@ export function UtMetaPage() {
           <>
             <ul className="grid gap-2 sm:grid-cols-2">
               {formations.data?.formations.map((f) => (
-                <li key={f.id} className="rounded-xl border border-slate-200 p-2.5 text-sm dark:border-slate-600">
+                <li key={f.id} className="rounded-md border border-line p-2.5 text-sm">
                   <div className="flex items-center justify-between">
                     <b>{f.id}</b>
                     {f.share && <Pill tone="emerald">~%{f.share}</Pill>}
                   </div>
-                  <p className="text-slate-600 dark:text-slate-300">{f.note}</p>
-                  <p className="mt-1 text-xs text-slate-500">Build-Up {f.buildUp} · hat yüksekliği ~{f.lineHeight}{f.keyRoles.length > 0 && ` · ${f.keyRoles.join(', ')}`}</p>
+                  <p className="text-muted">{f.note}</p>
+                  <p className="mt-1 text-xs text-muted">Build-Up {f.buildUp} · hat yüksekliği ~{f.lineHeight}{f.keyRoles.length > 0 && ` · ${f.keyRoles.join(', ')}`}</p>
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-xs text-slate-500">{formations.data?.snapshotNote}</p>
+            <p className="mt-2 text-xs text-muted">{formations.data?.snapshotNote}</p>
           </>
         )}
       </Card>
@@ -55,14 +55,14 @@ export function UtMetaPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="text-xs uppercase text-slate-500">
+              <thead className="text-xs uppercase text-muted">
                 <tr><th className="py-1 pr-2">#</th><th className="pr-2">Kart</th><th className="pr-2 text-right">OVR</th><th className="pr-2 text-right">Meta*</th><th className="pr-2">Tier</th><th>En iyi chem style</th></tr>
               </thead>
               <tbody>
                 {(tier.data ?? []).map((c, i) => (
-                  <tr key={c.id} className="border-t border-slate-100 dark:border-slate-700">
-                    <td className="py-1.5 pr-2 text-slate-400">{i + 1}</td>
-                    <td className="pr-2 font-medium"><Link to={`/players/${c.id}`} className="text-emerald-700 hover:underline dark:text-emerald-400">{c.name}</Link></td>
+                  <tr key={c.id} className="border-t border-line">
+                    <td className="py-1.5 pr-2 text-muted">{i + 1}</td>
+                    <td className="pr-2 font-medium"><Link to={`/players/${c.id}`} className="text-accent hover:underline">{c.name}</Link></td>
                     <td className="pr-2 text-right tabular-nums">{c.overall}</td>
                     <td className="pr-2 text-right font-semibold tabular-nums">{c.metaRating}</td>
                     <td className="pr-2"><Pill tone={TIER_TONE[c.tier] ?? 'slate'}>{c.tier}</Pill></td>
@@ -73,7 +73,7 @@ export function UtMetaPage() {
             </table>
           </div>
         )}
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-muted">
           Meta* platformun kendi tahmin metriğidir (EA rating'i değil): pace, PlayStyle+ ve mevkiye uygun statlar ağırlıklandırılır; chem style etkisi varsayımsal bir artışla simüle edilir. Şu an listedeki kartlar EA temel kartlarıdır; özel/promo kartlar ve fiyat verisi yoktur.
         </p>
       </Card>

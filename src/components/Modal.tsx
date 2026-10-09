@@ -61,7 +61,7 @@ export function Modal({ title, hint, wide, onClose, children }: Props) {
         aria-modal="true"
         aria-label={title}
         onKeyDown={onKeyDown}
-        className={`max-h-[86vh] ${wide ? 'w-[680px]' : 'w-[380px]'} max-w-full overflow-auto rounded-2xl border border-line bg-surface p-4 text-ink shadow-2xl`}
+        className={`max-h-[86vh] ${wide ? 'w-[680px]' : 'w-[380px]'} max-w-full overflow-auto rounded-md border border-line bg-surface p-4 text-ink `}
       >
         <button type="button" aria-label="Kapat" onClick={onClose} className="float-right text-lg leading-none text-muted hover:text-ink">
           ✕

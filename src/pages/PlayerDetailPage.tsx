@@ -45,7 +45,7 @@ export function PlayerDetailPage() {
 
   return (
     <div className="space-y-4">
-      <Link to="/players" className="text-sm text-emerald-700 hover:underline">
+      <Link to="/players" className="text-sm text-accent hover:underline">
         ← Oyunculara dön
       </Link>
       <Card>
@@ -56,7 +56,7 @@ export function PlayerDetailPage() {
               {diff && <span className="ml-3 align-middle"><DiffBadge diff={diff} /></span>}
             </h1>
             <div className="mt-1"><CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? "" }} /></div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted">
               {[summary.club, summary.league, summary.nationality].filter(Boolean).join(' · ')}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -73,17 +73,17 @@ export function PlayerDetailPage() {
           </div>
           <dl className="grid grid-cols-2 gap-6 text-center">
             <div>
-              <dt className="text-xs text-slate-500">Genel</dt>
+              <dt className="text-xs text-muted">Genel</dt>
               <dd className="text-3xl font-bold">{summary.overall} {diff?.overall && <DeltaMark delta={diff.overall.delta} />}</dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-500">Potential*</dt>
+              <dt className="text-xs text-muted">Potential*</dt>
               <dd className="text-3xl font-bold">{summary.potential ?? '—'} {diff?.potential && <DeltaMark delta={diff.potential.delta} />}</dd>
             </div>
           </dl>
         </div>
-        <p className="mt-2 text-xs text-slate-500">* Model tahmini — EA’nın gerçek potential verisi değildir.</p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-muted">* Model tahmini — EA’nın gerçek potential verisi değildir.</p>
+        <p className="mt-1 text-xs text-muted">
           {summary.age ? `${summary.age} yaş` : ''} {detail.data.heightCm ? `· ${detail.data.heightCm} cm` : ''} {detail.data.weightKg ? `· ${detail.data.weightKg} kg` : ''}
           {detail.data.weakFoot ? ` · Zayıf ayak ${detail.data.weakFoot}★` : ''} {detail.data.skillMoves ? ` · Hareket ${detail.data.skillMoves}★` : ''}
         </p>
@@ -108,7 +108,7 @@ export function PlayerDetailPage() {
               .filter((group) => group.attrs.length > 0)
               .map((group) => (
               <div key={group.title}>
-                <h3 className="mb-1 text-xs font-semibold uppercase text-slate-500">{group.title}</h3>
+                <h3 className="mb-1 text-xs font-semibold uppercase text-muted">{group.title}</h3>
                 <div className="space-y-1">
                   {group.attrs.map((a) => (
                     <AttrBar key={a} label={ATTR_LABELS[a] ?? a} value={attrs[a] ?? 0} delta={deltaByAttr[a]} />
@@ -118,7 +118,7 @@ export function PlayerDetailPage() {
             ))}
             {Object.keys(playstyles).length > 0 && (
               <div>
-                <h3 className="mb-1 text-xs font-semibold uppercase text-slate-500">PlayStyle</h3>
+                <h3 className="mb-1 text-xs font-semibold uppercase text-muted">PlayStyle</h3>
                 <div className="flex flex-wrap gap-1.5">
                   {Object.entries(playstyles).map(([ps, level]) => (
                     <Pill key={ps} tone={level >= 2 ? 'amber' : 'slate'}>

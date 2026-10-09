@@ -73,7 +73,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   const dragged = drag ? slots.find((s) => s.slotId === drag.slotId) : undefined
 
   return (
-    <div className="relative aspect-[3/3.6] overflow-hidden rounded-2xl border border-emerald-800 bg-gradient-to-b from-[#123420] to-[#0e2a1a]">
+    <div className="relative aspect-[3/3.6] overflow-hidden rounded-md border border-accent bg-gradient-to-b from-[#123420] to-[#0e2a1a]">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 300 360" preserveAspectRatio="none" aria-hidden="true">
         <g fill="none" stroke="#2f5b3e" strokeWidth="1.2">
           <rect x="6" y="6" width="288" height="348" rx="10" />
@@ -112,7 +112,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
       {drag && dragged?.player && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed z-50 w-[92px] -translate-x-1/2 -translate-y-1/2 rounded-[10px] border border-emerald-300 bg-slate-800 px-1 py-2 text-center text-white shadow-2xl"
+          className="pointer-events-none fixed z-50 w-[92px] -translate-x-1/2 -translate-y-1/2 rounded-[10px] border border-accent bg-ink-900 px-1 py-2 text-center text-white"
           style={{ left: drag.x, top: drag.y }}
         >
           <div className="text-[11px] font-extrabold" style={{ color: ovrBand(dragged.player.overall) }}>

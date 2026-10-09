@@ -58,7 +58,7 @@ export function UtObjectivesPage() {
   return (
     <div className="space-y-4">
       <Card title="Objective ekle">
-        <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mb-3 text-sm text-muted">
           Objective'ler için resmi bir veri akışı yok; kendi objective'lerini gir (ileride extension doldurabilir). Planlayıcı hepsini birlikte değerlendirir.
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -81,14 +81,14 @@ export function UtObjectivesPage() {
             onChange={(e) => setRequirements(e.target.value)}
             rows={3}
             placeholder={'XI_LEAGUE:Premier League:1\nGOALS:3'}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-sm dark:border-slate-600 dark:bg-slate-900"
+            className="w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-sm"
           />
         </Field>
-        <p className="mt-1 text-xs text-slate-500">Türler: XI_LEAGUE, XI_NATION, XI_CLUB, GOALS, ASSISTS, PLAY_MATCHES, SBC, EVO, SQUAD_ACTION, OTHER.</p>
+        <p className="mt-1 text-xs text-muted">Türler: XI_LEAGUE, XI_NATION, XI_CLUB, GOALS, ASSISTS, PLAY_MATCHES, SBC, EVO, SQUAD_ACTION, OTHER.</p>
         <label className="mt-2 flex items-center gap-2 text-sm">
           <input type="checkbox" checked={web} onChange={(e) => setWeb(e.target.checked)} /> Web App / Companion'da yapılabilir (maç gerekmez)
         </label>
-        {error && <p role="alert" className="mt-2 text-sm text-rose-600">{error}</p>}
+        {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}
         <Button className="mt-3" onClick={add}>Ekle</Button>
       </Card>
 
@@ -98,7 +98,7 @@ export function UtObjectivesPage() {
         ) : (
           <div className="space-y-3 text-sm">
             {parents.map((p) => (
-              <section key={p.id} className="rounded-xl border border-line p-3">
+              <section key={p.id} className="rounded-md border border-line p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <b>{p.name}</b>
                   <Pill tone="slate">{p.group}</Pill>
@@ -120,11 +120,11 @@ export function UtObjectivesPage() {
               </section>
             ))}
             {singles.length > 0 && (
-              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+              <ul className="divide-y divide-line">
                 {singles.map((o) => (
                   <li key={o.id} className="flex items-center justify-between gap-2 py-1.5">
                     <span>
-                      <b>{o.name}</b> <span className="text-xs text-slate-500">{o.group}{o.expiresAt ? ` · ${o.expiresAt}` : ''} · ödül {rewardOf(o)} · ~{estimateEffort(o)} maç{o.webAppDoable ? ' · web' : ''}</span>
+                      <b>{o.name}</b> <span className="text-xs text-muted">{o.group}{o.expiresAt ? ` · ${o.expiresAt}` : ''} · ödül {rewardOf(o)} · ~{estimateEffort(o)} maç{o.webAppDoable ? ' · web' : ''}</span>
                     </span>
                     <Button variant="ghost" onClick={() => objectiveStore.remove(o.id)}>Sil</Button>
                   </li>
@@ -143,11 +143,11 @@ export function UtObjectivesPage() {
 function PlanView({ groups, web, total }: { groups: PlanGroup[]; web: Objective[]; total: number }) {
   return (
     <Card title="Önerilen plan">
-      <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">Toplam ödül tahmini: <b>{total}</b>. Gruplar süresi dolana göre, sonra ödül/çaba oranına göre sıralıdır.</p>
+      <p className="mb-3 text-sm text-muted">Toplam ödül tahmini: <b>{total}</b>. Gruplar süresi dolana göre, sonra ödül/çaba oranına göre sıralıdır.</p>
       <ol className="space-y-3">
         {web.length > 0 && (
-          <li className="rounded-xl border border-slate-200 p-3 text-sm dark:border-slate-600">
-            <div className="mb-1 flex items-center gap-2"><Pill tone="sky">Web App / Companion</Pill><span className="text-xs text-slate-500">maç gerekmez, önce bunları yap</span></div>
+          <li className="rounded-md border border-line p-3 text-sm">
+            <div className="mb-1 flex items-center gap-2"><Pill tone="sky">Web App / Companion</Pill><span className="text-xs text-muted">maç gerekmez, önce bunları yap</span></div>
             <ul className="list-disc pl-5">
               {web.map((o) => (
                 <li key={o.id}>{objectiveLabel(o)}{o.expiresAt ? ` (${o.expiresAt})` : ''}</li>
@@ -156,7 +156,7 @@ function PlanView({ groups, web, total }: { groups: PlanGroup[]; web: Objective[
           </li>
         )}
         {groups.map((g, i) => (
-          <li key={i} className="rounded-xl border border-slate-200 p-3 text-sm dark:border-slate-600">
+          <li key={i} className="rounded-md border border-line p-3 text-sm">
             <div className="mb-1 flex flex-wrap items-center gap-2">
               <Pill tone="emerald">Grup {i + 1}</Pill>
               <Pill tone="slate">~{g.effortMatches} maç</Pill>
@@ -169,14 +169,14 @@ function PlanView({ groups, web, total }: { groups: PlanGroup[]; web: Objective[
               ))}
             </ul>
             {g.xi.length > 0 && (
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+              <p className="mt-1 text-xs text-muted">
                 Ortak XI şartı ({g.xiSlots} slot): <span className="font-mono">{xiToText(g.xi)}</span> — SBC çözücüdeki "XI şartları" alanına yapıştırarak bu şartı sağlayan 11'i bulabilirsin.
               </p>
             )}
           </li>
         ))}
       </ol>
-      <p className="mt-3 text-xs text-slate-500">Grup çabası, üyelerin en büyüğü olarak alınır (hedeflerin aynı maçlarda birikeceği varsayımı). Ödül değerleri senin girdiğin tahminlerdir; SP için sabit bir katsayı kullanılır.</p>
+      <p className="mt-3 text-xs text-muted">Grup çabası, üyelerin en büyüğü olarak alınır (hedeflerin aynı maçlarda birikeceği varsayımı). Ödül değerleri senin girdiğin tahminlerdir; SP için sabit bir katsayı kullanılır.</p>
     </Card>
   )
 }

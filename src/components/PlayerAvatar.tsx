@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 const POSITION_HUE: Record<string, string> = {
-  GK: 'bg-amber-600', CB: 'bg-sky-700', LB: 'bg-sky-600', RB: 'bg-sky-600', CDM: 'bg-emerald-700', CM: 'bg-emerald-600', CAM: 'bg-emerald-500',
-  LM: 'bg-teal-600', RM: 'bg-teal-600', LW: 'bg-rose-600', RW: 'bg-rose-600', ST: 'bg-rose-700',
+  GK: 'bg-code-soft', CB: 'bg-info-soft', LB: 'bg-info-soft', RB: 'bg-info-soft', CDM: 'bg-accent-bg', CM: 'bg-accent-bg', CAM: 'bg-accent-bg',
+  LM: 'bg-teal-600', RM: 'bg-teal-600', LW: 'bg-danger', RW: 'bg-danger', ST: 'bg-danger',
 }
 
 function initials(name: string): string {

@@ -65,10 +65,10 @@ export function PlayerSelectPanel({ position, roleId, tags, candidates, currentP
         onChange={(e) => setTerm(e.target.value)}
         placeholder="Ara…"
         aria-label="Oyuncu ara"
-        className="mb-2.5 w-full rounded-lg border border-line bg-surface-2 px-2 py-2 text-sm text-ink"
+        className="mb-2.5 w-full rounded-md border border-line bg-surface-2 px-2 py-2 text-sm text-ink"
       />
       {currentPlayerId !== undefined && (
-        <button type="button" onClick={() => onPick(null)} className="mb-2 w-full rounded-lg border border-line py-1.5 text-xs text-ink/80 hover:border-danger hover:text-rose-300">
+        <button type="button" onClick={() => onPick(null)} className="mb-2 w-full rounded-md border border-line py-1.5 text-xs text-ink/80 hover:border-danger hover:text-danger">
           Slotu boşalt
         </button>
       )}
@@ -81,7 +81,7 @@ export function PlayerSelectPanel({ position, roleId, tags, candidates, currentP
                 type="button"
                 onClick={() => onPick(c.player.id)}
                 aria-current={c.player.id === currentPlayerId}
-                className={`flex w-full items-center gap-2.5 rounded-lg border px-2 py-2 text-left hover:border-slate-600 hover:bg-surface-2 ${c.player.id === currentPlayerId ? 'border-emerald-500' : 'border-transparent'}`}
+                className={`flex w-full items-center gap-2.5 rounded-md border px-2 py-2 text-left hover:border-line hover:bg-surface-2 ${c.player.id === currentPlayerId ? 'border-accent' : 'border-transparent'}`}
               >
                 <span className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] text-xs font-extrabold text-black/80" style={{ background: ovrBand(c.player.overall) }}>
                   {c.player.overall}

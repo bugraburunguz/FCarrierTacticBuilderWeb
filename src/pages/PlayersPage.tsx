@@ -63,7 +63,7 @@ function SortHeader({ label, column, filters, onSort }: { label: string; column:
   const arrow = !active ? '↕' : filters.order === 'asc' ? '↑' : '↓'
   return (
     <th scope="col" aria-sort={active ? (filters.order === 'asc' ? 'ascending' : 'descending') : 'none'} className="pr-2">
-      <button type="button" onClick={() => onSort(column)} className={`flex items-center gap-1 uppercase transition hover:text-emerald-700 ${active ? 'text-emerald-700 dark:text-emerald-400' : ''}`}>
+      <button type="button" onClick={() => onSort(column)} className={`flex items-center gap-1 uppercase transition hover:text-accent ${active ? 'text-accent' : ''}`}>
         {label} <span aria-hidden className={active ? '' : 'opacity-40'}>{arrow}</span>
       </button>
     </th>
@@ -121,7 +121,7 @@ export function PlayersPage() {
             </Select>
           </Field>
           {authenticated && activeCareer !== undefined && (
-            <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50/50 p-2 dark:border-slate-600 dark:bg-slate-800">
+            <div className="space-y-2 rounded-md border border-accent bg-accent-soft p-2">
               <label className="flex items-center gap-2 text-sm font-medium">
                 <input
                   type="checkbox"
@@ -145,7 +145,7 @@ export function PlayersPage() {
                       ))}
                     </Select>
                   </Field>
-                  <p className="text-xs text-slate-500">Veri yoksa önce <Link to="/career/import" className="underline">içe aktar</Link>.</p>
+                  <p className="text-xs text-muted">Veri yoksa önce <Link to="/career/import" className="underline">içe aktar</Link>.</p>
                 </>
               )}
             </div>
@@ -211,7 +211,7 @@ export function PlayersPage() {
             </Field>
           </div>
           <div>
-            <p className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-300">Attribute alt sınırı</p>
+            <p className="mb-1 text-xs font-medium text-muted">Attribute alt sınırı</p>
             <div className="flex gap-1">
               <Select aria-label="Attribute" value={draftAttr.attr} onChange={(e) => setDraftAttr({ ...draftAttr, attr: e.target.value })}>
                 {FILTER_ATTRS.map((a) => (
@@ -227,7 +227,7 @@ export function PlayersPage() {
             </div>
             <div className="mt-2 flex flex-wrap gap-1">
               {Object.entries(filters.attrMin ?? {}).map(([attr, value]) => (
-                <button key={attr} type="button" onClick={() => update({ [`${attr}_min`]: undefined })} className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800 transition hover:bg-emerald-200">
+                <button key={attr} type="button" onClick={() => update({ [`${attr}_min`]: undefined })} className="rounded-full bg-accent-soft px-2 py-0.5 text-xs text-accent transition hover:opacity-90">
                   {ATTR_LABELS[Object.keys(ATTR_LABELS).find((a) => a.toLowerCase() === attr) ?? ''] ?? attr} ≥ {value} ×
                 </button>
               ))}
@@ -250,7 +250,7 @@ export function PlayersPage() {
             <Card title={`${total.toLocaleString('tr-TR')} oyuncu`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="text-xs text-slate-500">
+                  <thead className="text-xs text-muted">
                     <tr>
                       <SortHeader label="Oyuncu" column="name" filters={filters} onSort={sortBy} />
                       <SortHeader label="Yaş" column="age" filters={filters} onSort={sortBy} />
@@ -273,11 +273,11 @@ export function PlayersPage() {
                           setCardDragImage(e, { name: p.name, overall: p.overall, position: p.positions[0] ?? '', detail: p.club ?? undefined })
                         }}
                         title={p.changed && p.changeSummary ? changeTooltip(p.changeSummary) : undefined}
-                        className={`cursor-grab border-t border-slate-100 transition hover:bg-emerald-50/60 dark:border-slate-700 dark:hover:bg-slate-700/40 ${p.changed ? 'border-l-4 border-l-[#4da6ff] bg-[#4da6ff]/10' : ''}`}>
+                        className={`cursor-grab border-t border-line transition hover:opacity-90/60 ${p.changed ? 'border-l-4 border-l-[#4da6ff] bg-[#4da6ff]/10' : ''}`}>
                         <td className="py-1.5 pr-2 font-medium">
                           <span className="flex items-center gap-2">
                             <PlayerAvatar name={p.name} position={p.positions[0]} faceUrl={p.faceUrl} />
-                            <Link to={`/players/${p.id}`} className={p.changed ? 'text-[#1f6fc4] hover:underline dark:text-[#4da6ff]' : 'text-emerald-700 hover:underline dark:text-emerald-400'}>
+                            <Link to={`/players/${p.id}`} className={p.changed ? 'text-[#1f6fc4] hover:underline' : 'text-accent hover:underline'}>
                               {p.name}
                             </Link>
                             {p.changed && <span className="sr-only">Bir önceki sürüme göre değişti</span>}
@@ -286,7 +286,7 @@ export function PlayersPage() {
                         <td className="pr-2">{p.age ?? '—'}</td>
                         <td className="pr-2 font-semibold tabular-nums">
                           {p.overall}
-                          {p.changeSummary?.ovrDelta ? <span className={p.changeSummary.ovrDelta > 0 ? 'ml-1 text-[11px] text-[#1f9d63] dark:text-[#2ec27e]' : 'ml-1 text-[11px] text-[#d64545] dark:text-[#ff6b6b]'}>{p.changeSummary.ovrDelta > 0 ? '▲' : '▼'}{Math.abs(p.changeSummary.ovrDelta)}</span> : null}
+                          {p.changeSummary?.ovrDelta ? <span className={p.changeSummary.ovrDelta > 0 ? 'ml-1 text-[11px] text-[#1f9d63]' : 'ml-1 text-[11px] text-[#d64545]'}>{p.changeSummary.ovrDelta > 0 ? '▲' : '▼'}{Math.abs(p.changeSummary.ovrDelta)}</span> : null}
                         </td>
                         <td className="pr-2">{p.accelerate ? <Pill>{p.accelerate}</Pill> : '—'}{!!p.runStyle && <Pill>Özel #{p.runStyle}</Pill>}</td>
                         <td className="pr-2">{p.positions.slice(0, 3).join(', ')}</td>
@@ -299,12 +299,12 @@ export function PlayersPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-2 text-xs text-slate-500">* Potential modelimizin tahminidir; EA’nın gerçek değeri değildir. Başlıklara tıklayarak sıralayabilirsin.</p>
+              <p className="mt-2 text-xs text-muted">* Potential modelimizin tahminidir; EA’nın gerçek değeri değildir. Başlıklara tıklayarak sıralayabilirsin.</p>
               <div className="mt-3 flex items-center justify-between">
                 <Button variant="secondary" disabled={page <= 0} onClick={() => update({ page: String(page - 1) }, false)}>
                   ← Önceki
                 </Button>
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-muted">
                   Sayfa {page + 1} / {pages}
                 </span>
                 <Button variant="secondary" disabled={page + 1 >= pages} onClick={() => update({ page: String(page + 1) }, false)}>

@@ -45,16 +45,16 @@ export function EaCodeCard({ onImported }: { onImported?: () => void }) {
   }
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md">
+    <section className="rounded-md border border-line bg-surface p-3.5 text-ink">
       <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent">EA Taktik Kodu</h2>
       <div aria-live="polite" className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-code">
         {code ?? (exported.isFetching ? '…' : '—')}
       </div>
       <div className="mt-2.5 flex gap-2">
-        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
           Kopyala
         </button>
-        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-lg bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
+        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-md bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
           Oyuna Aktar
         </button>
       </div>
@@ -66,7 +66,7 @@ export function EaCodeCard({ onImported }: { onImported?: () => void }) {
       <ErrorBox error={exported.error} />
       <div className="mt-2.5 flex items-center gap-2">
         <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır (12 karakter)" aria-label="EA taktik kodunu yapıştır" className="font-mono" maxLength={16} />
-        <button type="button" disabled={input.trim().length === 0 || importCode.isPending} onClick={() => { setNotice(undefined); importCode.mutate() }} className="rounded-lg bg-surface-2 px-3 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
+        <button type="button" disabled={input.trim().length === 0 || importCode.isPending} onClick={() => { setNotice(undefined); importCode.mutate() }} className="rounded-md bg-surface-2 px-3 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
           {importCode.isPending ? 'Okunuyor…' : 'Yükle'}
         </button>
       </div>
@@ -93,7 +93,7 @@ export function EaCodeCard({ onImported }: { onImported?: () => void }) {
             <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
             <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
           </ol>
-          <button type="button" onClick={copy} className="mt-4 w-full rounded-lg bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">
+          <button type="button" onClick={copy} className="mt-4 w-full rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">
             Kopyala
           </button>
         </Modal>

@@ -32,14 +32,14 @@ export function PlayerRoles({ playerId, listed }: { playerId: number; listed: st
           {positions.map((position, index) => {
             const roles = [...(byPosition.get(position) ?? [])].sort((a, b) => b.score - a.score)
             return (
-              <section key={position} aria-label={`${position} rolleri`} className="rounded-xl border border-slate-200 p-3 dark:border-slate-600">
+              <section key={position} aria-label={`${position} rolleri`} className="rounded-md border border-line p-3">
                 <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
                   {position}
                   {index === 0 && <Pill tone="sky">Ana mevki</Pill>}
                 </h3>
                 <ul className="space-y-2">
                   {roles.map((r, i) => (
-                    <li key={r.roleId} className={`flex items-center gap-2 rounded-lg p-1.5 ${i === 0 ? 'bg-emerald-50 dark:bg-slate-700' : ''}`}>
+                    <li key={r.roleId} className={`flex items-center gap-2 rounded-md p-1.5 ${i === 0 ? 'bg-accent-soft' : ''}`}>
                       <FitMeter score={r.score} badge={r.badge} size={38} />
                       <span className="min-w-0 flex-1 text-sm">
                         <span className="flex flex-wrap items-center gap-1.5">
@@ -47,7 +47,7 @@ export function PlayerRoles({ playerId, listed }: { playerId: number; listed: st
                           <Pill tone={BADGE_TONE[r.badge]}>{r.badgeText}</Pill>
                           {i === 0 && <Pill tone="emerald">En uygun</Pill>}
                         </span>
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs text-muted">
                           Tahmini {r.projectedRating}{r.reasons[0] ? ` · ${r.reasons[0]}` : ''}
                         </span>
                       </span>
@@ -57,10 +57,10 @@ export function PlayerRoles({ playerId, listed }: { playerId: number; listed: st
               </section>
             )
           })}
-          {positions.length === 0 && <p className="text-sm text-slate-500">Bu oyuncu için rol bulunamadı.</p>}
+          {positions.length === 0 && <p className="text-sm text-muted">Bu oyuncu için rol bulunamadı.</p>}
         </div>
       )}
-      <p className="mt-2 text-xs text-slate-500">Oyuncunun listelenen mevkilerindeki tüm roller; halka rol uyumunu (%) gösterir. Sıra: uyuma göre.</p>
+      <p className="mt-2 text-xs text-muted">Oyuncunun listelenen mevkilerindeki tüm roller; halka rol uyumunu (%) gösterir. Sıra: uyuma göre.</p>
     </Card>
   )
 }

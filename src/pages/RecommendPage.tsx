@@ -76,8 +76,8 @@ export function RecommendPage() {
           <Button disabled={!slot || careerId === undefined || run.isPending} onClick={() => run.mutate()}>
             {run.isPending ? 'Aranıyor…' : 'Öner'}
           </Button>
-          <span className="text-xs text-slate-500">
-            Taktik: {tactic.formation} — <Link to="/tactics/builder" className="text-emerald-700 underline">düzenle</Link>. Bu işlem kredi harcar.
+          <span className="text-xs text-muted">
+            Taktik: {tactic.formation} — <Link to="/tactics/builder" className="text-accent underline">düzenle</Link>. Bu işlem kredi harcar.
           </span>
         </div>
         <div className="mt-2"><ErrorBox error={run.error} /><ErrorBox error={resolved.error} /></div>
@@ -86,44 +86,44 @@ export function RecommendPage() {
       {!result ? (
         <EmptyState>Bir slot seç; rolün silahlarını taşıyan, bütçene uygun oyuncuları sebepleriyle listeleyelim.</EmptyState>
       ) : (
-        <Card title={`Öneriler — ${slot?.roleName ?? result.roleId}`} actions={<Link to={scoutLink(result.scoutQuery)} className="text-sm text-emerald-700 underline">Scout filtresi</Link>}>
+        <Card title={`Öneriler — ${slot?.roleName ?? result.roleId}`} actions={<Link to={scoutLink(result.scoutQuery)} className="text-sm text-accent underline">Scout filtresi</Link>}>
           {result.current && (
-            <p className="mb-3 rounded-lg bg-slate-100 p-2 text-sm dark:bg-slate-800">
+            <p className="mb-3 rounded-md bg-surface-2 p-2 text-sm">
               Mevcut: <strong>{result.current.roleFit.playerName}</strong> <BadgeDot state={result.current.roleFit.badge} /> uyum %{Math.round(result.current.combined)}
             </p>
           )}
           {result.items.length === 0 ? (
-            <p className="text-sm text-slate-500">Bu bütçe ve rol eşikleriyle uygun oyuncu bulunamadı. Bütçeyi artırmayı dene.</p>
+            <p className="text-sm text-muted">Bu bütçe ve rol eşikleriyle uygun oyuncu bulunamadı. Bütçeyi artırmayı dene.</p>
           ) : (
-            <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+            <ul className="divide-y divide-line">
               {result.items.map((item) => (
                 <li key={item.roleFit.playerId} className="py-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <Link to={`/players/${item.roleFit.playerId}`} className="font-medium text-emerald-700 hover:underline dark:text-emerald-400">
+                      <Link to={`/players/${item.roleFit.playerId}`} className="font-medium text-accent hover:underline">
                         {item.player?.name ?? item.roleFit.playerName}
                       </Link>{' '}
                       <BadgeDot state={item.roleFit.badge} />
-                      <span className="ml-2 text-xs text-slate-500">
+                      <span className="ml-2 text-xs text-muted">
                         {item.player ? `${item.player.overall} GEN · POT* ${item.player.potential ?? '—'} · ${item.player.club ?? '—'}` : ''}
                       </span>
                     </div>
                     <div className="text-right text-sm">
                       <strong>%{Math.round(item.combined)}</strong> uyum · bu rolde ≈{item.roleFit.projectedRating}
                       {item.deltaVsCurrent !== undefined && (
-                        <span className={item.deltaVsCurrent >= 0 ? 'ml-2 text-emerald-600' : 'ml-2 text-rose-600'}>
+                        <span className={item.deltaVsCurrent >= 0 ? 'ml-2 text-accent' : 'ml-2 text-danger'}>
                           {item.deltaVsCurrent >= 0 ? '+' : ''}
                           {item.deltaVsCurrent} vs mevcut
                         </span>
                       )}
                     </div>
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">{item.roleFit.badgeText}</p>
+                  <p className="text-xs text-muted">{item.roleFit.badgeText}</p>
                 </li>
               ))}
             </ul>
           )}
-          {run.data && run.data.charged > 0 && <p className="mt-2 text-xs text-slate-500">{run.data.charged} kredi harcandı{run.data.balance !== undefined ? ` · kalan ${run.data.balance}` : ''}.</p>}
+          {run.data && run.data.charged > 0 && <p className="mt-2 text-xs text-muted">{run.data.charged} kredi harcandı{run.data.balance !== undefined ? ` · kalan ${run.data.balance}` : ''}.</p>}
         </Card>
       )}
     </div>

@@ -40,36 +40,36 @@ export function ChemStylePanel({ playerId, positions }: { playerId: number; posi
           </p>
           <ul className="grid gap-2 sm:grid-cols-3">
             {styles.map((s) => (
-              <li key={s.style} className={`rounded-xl border p-2.5 text-sm ${s.style === card.bestChemStyle ? 'border-emerald-500' : 'border-slate-200 dark:border-slate-600'}`}>
+              <li key={s.style} className={`rounded-md border p-2.5 text-sm ${s.style === card.bestChemStyle ? 'border-accent' : 'border-line'}`}>
                 <div className="flex items-center justify-between">
                   <b>{s.style}</b>
                   <Pill tone={TIER_TONE[s.tier] ?? 'slate'}>{s.tier}</Pill>
                 </div>
-                <p className="tabular-nums">{s.metaRating} <span className="text-emerald-700 dark:text-emerald-400">(+{s.delta})</span></p>
+                <p className="tabular-nums">{s.metaRating} <span className="text-accent">(+{s.delta})</span></p>
               </li>
             ))}
           </ul>
           <div className="mt-4">
-            <h4 className="mb-1 text-xs font-semibold uppercase text-slate-500">Upgrade önerileri (aynı mevki)</h4>
+            <h4 className="mb-1 text-xs font-semibold uppercase text-muted">Upgrade önerileri (aynı mevki)</h4>
             {upgrades.isLoading ? (
               <Spinner />
             ) : (upgrades.data?.options ?? []).length === 0 ? (
-              <p className="text-sm text-slate-500">Bu kartın meta rating'ini aşan aday bulunamadı.</p>
+              <p className="text-sm text-muted">Bu kartın meta rating'ini aşan aday bulunamadı.</p>
             ) : (
-              <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-700">
+              <ul className="divide-y divide-line text-sm">
                 {upgrades.data?.options.map((o) => (
                   <li key={o.card.id} className="flex items-center justify-between gap-2 py-1">
-                    <Link to={`/players/${o.card.id}`} className="text-emerald-700 hover:underline dark:text-emerald-400">{o.card.name}</Link>
-                    <span className="tabular-nums text-slate-600 dark:text-slate-300">
-                      OVR {o.card.overall} ({o.deltaOverall >= 0 ? '+' : ''}{o.deltaOverall}) · meta {o.card.metaRating} <b className="text-emerald-700 dark:text-emerald-400">+{o.deltaMeta}</b>
+                    <Link to={`/players/${o.card.id}`} className="text-accent hover:underline">{o.card.name}</Link>
+                    <span className="tabular-nums text-muted">
+                      OVR {o.card.overall} ({o.deltaOverall >= 0 ? '+' : ''}{o.deltaOverall}) · meta {o.card.metaRating} <b className="text-accent">+{o.deltaMeta}</b>
                     </span>
                   </li>
                 ))}
               </ul>
             )}
-            <p className="mt-1 text-xs text-slate-500">{upgrades.data?.note}</p>
+            <p className="mt-1 text-xs text-muted">{upgrades.data?.note}</p>
           </div>
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-3 text-xs text-muted">
             *Platformun kendi tahmin metriğidir (EA rating'i değil). Chem style etkisi varsayımsal bir stat artışıyla simüle edilir; gerçek oyun değerleriyle ayarlanmamıştır.
           </p>
         </>

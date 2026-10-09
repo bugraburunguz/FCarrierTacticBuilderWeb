@@ -31,10 +31,10 @@ export function TeamSetup({ careerId }: { careerId?: number }) {
   return (
     <Card title="Takım ayarları" actions={<Pill tone="emerald">Ücretsiz</Pill>}>
       <fieldset>
-        <legend className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-300">Build-Up (oyun kurulumu)</legend>
+        <legend className="mb-1 text-xs font-medium text-muted">Build-Up (oyun kurulumu)</legend>
         <div className="grid grid-cols-3 gap-2">
           {BUILD_UP.map((o) => (
-            <label key={o.value} title={o.hint} className={`cursor-pointer rounded-lg border px-2 py-1.5 text-center text-sm transition ${setup.buildUp === o.value ? 'border-emerald-500 bg-emerald-50 font-medium dark:bg-slate-700' : 'border-slate-200 dark:border-slate-600'}`}>
+            <label key={o.value} title={o.hint} className={`cursor-pointer rounded-md border px-2 py-1.5 text-center text-sm transition ${setup.buildUp === o.value ? 'border-accent bg-accent-soft font-medium' : 'border-line'}`}>
               <input type="radio" name="buildup" className="sr-only" checked={setup.buildUp === o.value} onChange={() => update({ buildUp: o.value })} />
               {o.label}
             </label>
@@ -42,14 +42,14 @@ export function TeamSetup({ careerId }: { careerId?: number }) {
         </div>
       </fieldset>
       <div className="mt-3">
-        <label htmlFor="depth" className="mb-1 flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-300">
+        <label htmlFor="depth" className="mb-1 flex items-center justify-between text-xs font-medium text-muted">
           <span>Defensive Depth (savunma hattı)</span>
           <span className="text-sm">
             <b>{setup.depth}</b> · {depthBand(setup.depth)}
           </span>
         </label>
-        <input id="depth" type="range" min={0} max={100} step={1} value={setup.depth} onChange={(e) => update({ depth: Number(e.target.value) })} className="w-full accent-emerald-600" />
-        <div className="flex justify-between text-[11px] text-slate-500">
+        <input id="depth" type="range" min={0} max={100} step={1} value={setup.depth} onChange={(e) => update({ depth: Number(e.target.value) })} className="w-full accent-accent" />
+        <div className="flex justify-between text-[11px] text-muted">
           <span>Deep</span>
           <span>Balanced</span>
           <span>High</span>
@@ -59,7 +59,7 @@ export function TeamSetup({ careerId }: { careerId?: number }) {
 
       <div className="mt-3 space-y-2">
         {!authenticated || careerId === undefined ? (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted">
             Giriş yapıp bir kariyer seçersen bu ayarı kadronla kontrol edebilirsin. <Link to="/login" className="underline">Giriş yap</Link>
           </p>
         ) : (
@@ -69,18 +69,18 @@ export function TeamSetup({ careerId }: { careerId?: number }) {
         )}
         <ErrorBox error={check.error} />
         {(check.data ?? []).map((c) => (
-          <details key={c.title} className="rounded-xl border border-slate-200 p-2 text-sm dark:border-slate-600" open={c.status !== 'GREEN'}>
+          <details key={c.title} className="rounded-md border border-line p-2 text-sm" open={c.status !== 'GREEN'}>
             <summary className="cursor-pointer">
-              <BadgeDot state={c.status} /> <b>{c.title}</b> <span className="text-xs text-slate-500">· {STATUS_TEXT[c.status]}</span>
+              <BadgeDot state={c.status} /> <b>{c.title}</b> <span className="text-xs text-muted">· {STATUS_TEXT[c.status]}</span>
             </summary>
-            <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">{c.detail}</p>
+            <p className="mt-1 text-xs text-muted">{c.detail}</p>
             <ul className="mt-1 flex flex-wrap gap-1.5">
               {c.players.map((p) => (
-                <li key={p.id} className={`rounded-full px-2 py-0.5 text-xs ${p.ok ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100' : 'bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-100'}`}>
+                <li key={p.id} className={`rounded-full px-2 py-0.5 text-xs ${p.ok ? 'bg-accent-soft text-accent' : 'bg-danger-soft text-danger'}`}>
                   {p.name} ({p.position}) {p.value}{p.ok ? ' ✓' : ' ✗'}
                 </li>
               ))}
-              {c.players.length === 0 && <li className="text-xs text-slate-500">Kadronda bu mevkide oyuncu yok.</li>}
+              {c.players.length === 0 && <li className="text-xs text-muted">Kadronda bu mevkide oyuncu yok.</li>}
             </ul>
           </details>
         ))}

@@ -17,7 +17,7 @@ const RING: Record<WeaponState, string> = { GREEN: '#2e9b52', YELLOW: '#d0a022',
 
 export function PitchView({ slots, selected, onSelect, info = {} }: Props) {
   return (
-    <svg viewBox="0 0 100 110" role="group" aria-label="Taktik sahası" className="w-full rounded-xl bg-pitch shadow-inner">
+    <svg viewBox="0 0 100 110" role="group" aria-label="Taktik sahası" className="w-full rounded-md bg-pitch shadow-inner">
       <g stroke="#ffffff55" strokeWidth="0.4" fill="none">
         <rect x="3" y="3" width="94" height="104" />
         <line x1="3" y1="55" x2="97" y2="55" />

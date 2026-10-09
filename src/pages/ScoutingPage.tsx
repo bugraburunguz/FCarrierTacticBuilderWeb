@@ -28,13 +28,13 @@ const SORTS: { value: NonNullable<ScoutingQuery['sort']>; label: string }[] = [
 function Row({ candidate }: { candidate: ScoutingCandidate }) {
   const { player, roleFit, feasibility } = candidate
   return (
-    <li className={`rounded-xl border border-slate-200 p-3 dark:border-slate-700 ${feasibility === 'UNREALISTIC' ? 'opacity-60' : ''}`}>
+    <li className={`rounded-md border border-line p-3 ${feasibility === 'UNREALISTIC' ? 'opacity-60' : ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
           <Link to={`/players/${player.id}`} className="font-semibold hover:underline">
             {player.name}
           </Link>{' '}
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-muted">
             {player.positions.slice(0, 3).join('/')} · {player.overall} OVR{player.age ? ` · ${player.age} yaş` : ''}
             {player.club ? ` · ${player.club}` : ''}
           </span>
@@ -47,7 +47,7 @@ function Row({ candidate }: { candidate: ScoutingCandidate }) {
           {candidate.potential && <Pill tone="amber">POTANSİYEL</Pill>}
         </div>
       </div>
-      <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
         <span>
           {candidate.acquisition === 'FREE' ? 'Bonservis bedeli yok' : candidate.estimatedFee !== undefined ? `Tahmini bedel ${formatEur(candidate.estimatedFee)}` : 'Bedel bilinmiyor'}
           {candidate.estimatedFee !== undefined && candidate.acquisition !== 'FREE' ? (candidate.valueSource === 'MODELED' ? ' (modellenmiş)' : ' (içe aktarılan)') : ''}
@@ -57,7 +57,7 @@ function Row({ candidate }: { candidate: ScoutingCandidate }) {
         <CompareButton entry={{ id: player.id, name: player.name, overall: player.overall, position: player.positions[0] ?? '' }} />
       </div>
       {roleFit.reasons.length > 0 && (
-        <details className="mt-1.5 text-xs text-slate-600 dark:text-slate-300">
+        <details className="mt-1.5 text-xs text-muted">
           <summary className="cursor-pointer">Neden bu skor?</summary>
           <ul className="mt-1 list-disc space-y-0.5 pl-5">
             {roleFit.reasons.map((r) => (
@@ -130,7 +130,7 @@ export function ScoutingPage() {
       <Card title="Scouting & transfer">
         <div className="space-y-3">
           <CareerSelect />
-          {careerId === undefined && <p className="text-sm text-slate-500">Önce bir kariyer seç. Aday havuzu kulübünün ligine, bütçene ve kadro seviyene göre süzülür.</p>}
+          {careerId === undefined && <p className="text-sm text-muted">Önce bir kariyer seç. Aday havuzu kulübünün ligine, bütçene ve kadro seviyene göre süzülür.</p>}
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
             <Field label="Mevki">
               <Select value={position} onChange={(e) => setPosition(e.target.value)}>
@@ -176,11 +176,11 @@ export function ScoutingPage() {
                 />
               </Field>
               {!club && (clubs.data?.length ?? 0) > 0 && (
-                <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-slate-300 bg-white text-sm shadow dark:border-slate-600 dark:bg-slate-800">
+                <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-md border border-line bg-surface text-sm shadow">
                   {clubs.data!.map((c) => (
                     <li key={c.id}>
-                      <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-slate-100 dark:hover:bg-slate-700" onClick={() => { setClub(c); setClubTerm(c.name) }}>
-                        {c.name} <span className="text-xs text-slate-500">{c.league}</span>
+                      <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-surface-2" onClick={() => { setClub(c); setClubTerm(c.name) }}>
+                        {c.name} <span className="text-xs text-muted">{c.league}</span>
                       </button>
                     </li>
                   ))}
@@ -206,8 +206,8 @@ export function ScoutingPage() {
               {search.isPending ? 'Aranıyor…' : 'Aday bul'}
             </Button>
           </div>
-          {(leagueId || club) && <p className="text-xs text-slate-500">Lig/kulüp seçilince aday havuzu o ligden gelir; kulübünün bandı dışındaysa rozet İddialı ya da Hayal olur.</p>}
-          <p className="text-xs text-slate-500">
+          {(leagueId || club) && <p className="text-xs text-muted">Lig/kulüp seçilince aday havuzu o ligden gelir; kulübünün bandı dışındaysa rozet İddialı ya da Hayal olur.</p>}
+          <p className="text-xs text-muted">
             Rol: {roleName ?? '—'} (Taktik sayfasındaki {tactic.formation} seçimine göre). Uyum yüzdesi gerçek RoleFit motorundan gelir.
           </p>
         </div>
@@ -224,8 +224,8 @@ export function ScoutingPage() {
               ))}
             </ul>
           )}
-          {!dream && result.hiddenUnrealistic > 0 && <p className="mt-2 text-xs text-slate-500">{result.hiddenUnrealistic} gerçekçi olmayan aday gizlendi.</p>}
-          <p className="mt-2 text-xs text-slate-500">
+          {!dream && result.hiddenUnrealistic > 0 && <p className="mt-2 text-xs text-muted">{result.hiddenUnrealistic} gerçekçi olmayan aday gizlendi.</p>}
+          <p className="mt-2 text-xs text-muted">
             Gerçekçilik; lig seviyesi, değer/bütçe oranı ve oyuncunun kadro ortalamasına farkından bileşik bir skorla hesaplanır (ilk kalibrasyon). Ücret verisi olmadığı için ücret bayrağı yok.
           </p>
         </Card>

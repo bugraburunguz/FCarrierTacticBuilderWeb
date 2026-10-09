@@ -130,7 +130,7 @@ function TransferPanel({ career, squadIds }: { career: Career; squadIds: Set<num
             <li key={p.id} className="flex flex-wrap items-center justify-between gap-2">
               <span>
                 <Link to={`/players/${p.id}`} className="hover:underline">{p.name}</Link>{' '}
-                <span className="text-slate-500">({p.overall} · {p.positions[0]} · {p.club ?? '—'})</span>
+                <span className="text-muted">({p.overall} · {p.positions[0]} · {p.club ?? '—'})</span>
               </span>
               {owned ? (
                 <Pill tone="emerald">Kadroda</Pill>
@@ -159,7 +159,7 @@ function History({ careerId, events }: { careerId: number; events: RosterEvent[]
   return (
     <Card title="Satış / alış / kiralık geçmişi">
       {events.length === 0 ? (
-        <p className="text-sm text-slate-500">Henüz hareket yok.</p>
+        <p className="text-sm text-muted">Henüz hareket yok.</p>
       ) : (
         <ul className="space-y-1.5 text-sm">
           {events.map((e, index) => (
@@ -168,7 +168,7 @@ function History({ careerId, events }: { careerId: number; events: RosterEvent[]
                 <Pill tone={e.type === 'SELL' || e.type === 'LOAN_OUT' ? 'rose' : 'emerald'}>{EVENT_LABELS[e.type]}</Pill>{' '}
                 <strong>{e.playerName ?? `#${e.playerId}`}</strong>
                 {(e.fromClubName || e.toClubName) && (
-                  <span className="text-slate-500"> · {e.fromClubName ?? '—'} → {e.toClubName ?? '—'}</span>
+                  <span className="text-muted"> · {e.fromClubName ?? '—'} → {e.toClubName ?? '—'}</span>
                 )}
                 {e.feeEur ? <span> · {formatEur(e.feeEur)}</span> : null}
               </span>
@@ -246,7 +246,7 @@ export function SquadPage() {
                   return (
                     <p className="text-sm">
                       <span className="text-2xl font-bold tabular-nums">{rating}</span> · {starRating(rating)} yıldız
-                      <span className="block text-xs text-slate-500">En iyi {counted} oyuncu (11 ilk + 7 yedek) ortalaması + ortalamanın üstündekilere düzeltme. Rehber formülüdür; oyun içi değer esastır.</span>
+                      <span className="block text-xs text-muted">En iyi {counted} oyuncu (11 ilk + 7 yedek) ortalaması + ortalamanın üstündekilere düzeltme. Rehber formülüdür; oyun içi değer esastır.</span>
                     </p>
                   )
                 })()}
@@ -262,7 +262,7 @@ export function SquadPage() {
               <div role="tablist" className="flex gap-1">
                 {(['list', 'cards'] as const).map((v) => (
                   <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${view === v ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${view === v ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-muted'}`}>
                     {v === 'list' ? 'Tam liste' : 'Kartlar (sat/kirala)'}
                   </button>
                 ))}
@@ -315,7 +315,7 @@ type SquadTab = 'squad' | 'lineup' | 'moves' | 'career'
 
 function Tabs({ value, onChange, items }: { value: SquadTab; onChange: (tab: SquadTab) => void; items: { id: SquadTab; label: string }[] }) {
   return (
-    <div role="tablist" className="flex flex-wrap gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-700">
+    <div role="tablist" className="flex flex-wrap gap-1 rounded-md bg-surface-2 p-1">
       {items.map((item) => (
         <button
           key={item.id}
@@ -323,7 +323,7 @@ function Tabs({ value, onChange, items }: { value: SquadTab; onChange: (tab: Squ
           role="tab"
           aria-selected={value === item.id}
           onClick={() => onChange(item.id)}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${value === item.id ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-800 dark:text-emerald-400' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'}`}
+          className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${value === item.id ? 'bg-surface text-accent ' : 'text-muted hover:text-ink'}`}
         >
           {item.label}
         </button>

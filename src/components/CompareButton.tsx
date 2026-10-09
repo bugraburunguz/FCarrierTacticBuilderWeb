@@ -10,8 +10,8 @@ export function CompareButton({ entry, compact }: { entry: CompareEntry; compact
       disabled={full}
       title={full ? `En fazla ${MAX_COMPARE} oyuncu` : active ? 'Karşılaştırmadan çıkar' : 'Karşılaştırmaya ekle'}
       onClick={() => compareStore.toggle(entry)}
-      className={`rounded-lg border px-2 py-1 text-xs font-medium transition disabled:opacity-40 ${
-        active ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-700 dark:border-slate-600 dark:text-slate-300'
+      className={`rounded-md border px-2 py-1 text-xs font-medium transition disabled:opacity-40 ${
+        active ? 'border-accent bg-accent-bg text-on-accent' : 'border-line text-muted hover:border-accent hover:text-accent'
       }`}
     >
       {compact ? (active ? '✓' : '+') : active ? '✓ Karşılaştırmada' : '+ Karşılaştır'}

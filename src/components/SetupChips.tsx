@@ -15,7 +15,7 @@ export function SetupChips({ settings }: { settings?: Record<string, unknown> })
   }
   return (
     <div className="mt-2" aria-label="FC27 kurulum">
-      <p className="mb-1 text-xs font-semibold uppercase text-slate-500">FC27 kurulum</p>
+      <p className="mb-1 text-xs font-semibold uppercase text-muted">FC27 kurulum</p>
       <div className="flex flex-wrap gap-1.5">
         {buildUp && <Pill tone="sky">Build-Up: {BUILD_UP[buildUp] ?? buildUp}</Pill>}
         {depth !== undefined && <Pill tone="emerald">Defensive Depth: {depth} · {depthBand(depth)}</Pill>}

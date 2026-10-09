@@ -58,7 +58,7 @@ export function RolePicker({ value, onChange }: Props) {
         </Field>
       </div>
       <div>
-        <p className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-300">Davranışlar (isteğe bağlı)</p>
+        <p className="mb-1 text-xs font-medium text-muted">Davranışlar (isteğe bağlı)</p>
         <TagChips tags={tags.data ?? []} selected={value.tags} onChange={(next) => onChange({ ...value, tags: next })} />
         {tags.data?.length === 0 && <Pill>Bu mevki için davranış yok</Pill>}
       </div>

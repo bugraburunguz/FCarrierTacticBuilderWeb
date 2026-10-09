@@ -216,7 +216,7 @@ export function SquadBuilderPage() {
         <div className="order-2 flex flex-col gap-3.5 min-[820px]:order-1">
           <EaCodeCard onImported={() => { setAutoFit(false); setDialog(null) }} />
           <SquadSummaryCard formations={formations.data ?? []} formationId={tactic.formation} onFormation={changeFormation} views={views} weakReasons={weakReasons} />
-          <section className="rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md">
+          <section className="rounded-md border border-line bg-surface p-3.5 text-ink">
             <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent">Taktik felsefesi</h2>
             <Field label="Preset / replika">
               <Select
@@ -264,7 +264,7 @@ export function SquadBuilderPage() {
         </div>
 
         <div className="order-1 space-y-2 min-[820px]:order-2">
-          <div className="rounded-2xl border border-line bg-surface p-2.5">
+          <div className="rounded-md border border-line bg-surface p-2.5">
             <Pitch
               slots={views}
               onPickPlayer={(slotId) => setDialog({ slotId, tab: 'player' })}
@@ -283,7 +283,7 @@ export function SquadBuilderPage() {
       <Card title="Kadro analizi" actions={<Pill tone="amber">Kredi harcar</Pill>}>
         {!authenticated ? (
           <p className="text-sm">
-            Kendi kadronla uyumu, zayıf halkaları ve kimin kalıp kimin gitmesi gerektiğini görmek için <Link to="/login" className="text-emerald-700 underline">giriş yap</Link>.
+            Kendi kadronla uyumu, zayıf halkaları ve kimin kalıp kimin gitmesi gerektiğini görmek için <Link to="/login" className="text-accent underline">giriş yap</Link>.
           </p>
         ) : (
           <div className="space-y-2">
@@ -293,10 +293,10 @@ export function SquadBuilderPage() {
             <ErrorBox error={analyse.error} />
             {outOfCredit && (
               <p className="text-sm">
-                Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-emerald-700 underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
+                Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-accent underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
               </p>
             )}
-            <p className="text-xs text-slate-500">Teknik hatada kredi iade edilir.</p>
+            <p className="text-xs text-muted">Teknik hatada kredi iade edilir.</p>
           </div>
         )}
       </Card>

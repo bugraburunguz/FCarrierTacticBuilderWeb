@@ -77,7 +77,7 @@ export function ImportPage() {
         </p>
         {!premium && (
           <p className="mt-2 text-sm">
-            Bu özellik PREMIUM’dur. <Link to="/profile" className="text-emerald-700 underline">PREMIUM’a geç</Link>.
+            Bu özellik PREMIUM’dur. <Link to="/profile" className="text-accent underline">PREMIUM’a geç</Link>.
           </p>
         )}
       </Card>
@@ -89,10 +89,10 @@ export function ImportPage() {
           ))}
         </ol>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <a href={import.meta.env.BASE_URL + 'fc27_career_export.lua'} download className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700">
+          <a href={import.meta.env.BASE_URL + 'fc27_career_export.lua'} download className="rounded-md bg-accent-bg px-3 py-1.5 text-sm font-semibold text-on-accent hover:opacity-90">
             Script’i indir (fc27_career_export.lua)
           </a>
-          <span className="text-xs text-slate-500">Script yalnızca okur; oyun verini değiştirmez.</span>
+          <span className="text-xs text-muted">Script yalnızca okur; oyun verini değiştirmez.</span>
         </div>
       </Card>
 
@@ -105,14 +105,14 @@ export function ImportPage() {
               e.preventDefault()
               setLogFile(e.dataTransfer.files[0])
             }}
-            className="rounded-xl border-2 border-dashed border-emerald-400 p-3 text-xs"
+            className="rounded-md border-2 border-dashed border-accent p-3 text-xs"
           >
             <input type="file" accept=".log,.txt" aria-label="Live Editor log dosyası" className="w-full text-xs" onChange={(e) => setLogFile(e.target.files?.[0])} />
-            {logFile && <div className="mt-1 text-emerald-700">✓ {logFile.name} ({Math.round(logFile.size / 1024 / 1024)} MB)</div>}
+            {logFile && <div className="mt-1 text-accent">✓ {logFile.name} ({Math.round(logFile.size / 1024 / 1024)} MB)</div>}
           </div>
         </Field>
         <details className="mt-3 text-sm">
-          <summary className="cursor-pointer text-slate-500">Gelişmiş: log yerine ayrı CSV dosyaları yükle</summary>
+          <summary className="cursor-pointer text-muted">Gelişmiş: log yerine ayrı CSV dosyaları yükle</summary>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {FILES.map((f) => (
             <Field key={f.key} label={`${f.label}${f.required ? ' *' : ' (isteğe bağlı)'}`}>
@@ -125,7 +125,7 @@ export function ImportPage() {
                     setFiles((prev) => ({ ...prev, [f.key]: dropped }))
                   }
                 }}
-                className="rounded-xl border-2 border-dashed border-slate-300 p-2 text-xs dark:border-slate-600"
+                className="rounded-md border-2 border-dashed border-line p-2 text-xs"
               >
                 <input
                   type="file"
@@ -134,13 +134,13 @@ export function ImportPage() {
                   className="w-full text-xs"
                   onChange={(e) => setFiles((prev) => ({ ...prev, [f.key]: e.target.files?.[0] }))}
                 />
-                {files[f.key] && <div className="mt-1 text-emerald-700">✓ {files[f.key]!.name}</div>}
+                {files[f.key] && <div className="mt-1 text-accent">✓ {files[f.key]!.name}</div>}
               </div>
             </Field>
           ))}
         </div>
         </details>
-        <p className="mt-2 text-xs text-slate-500">Log dosyası milli takımları ayıklamak için gereken lig bilgilerini de içerir.</p>
+        <p className="mt-2 text-xs text-muted">Log dosyası milli takımları ayıklamak için gereken lig bilgilerini de içerir.</p>
         <Button className="mt-3" disabled={!premium || !ready || careerId === undefined || upload.isPending} onClick={() => upload.mutate()}>
           {upload.isPending ? 'Yükleniyor…' : 'Yükle'}
         </Button>
@@ -154,7 +154,7 @@ export function ImportPage() {
             {result.unmatchedPlayers > 0 && ` (${result.unmatchedPlayers} oyuncu kataloğumuzda yok, atlandı.)`}
           </p>
           {result.squadSynced !== undefined && (
-            <p className="mt-1 text-sm text-emerald-700">
+            <p className="mt-1 text-sm text-accent">
               Kadron {result.guessedTeamName} takımından otomatik kuruldu: <strong>{result.squadSynced} oyuncu</strong> (kiralık gelenler ve kiralık gidenler dahil). <Link to="/squad" className="underline">Kadroya git</Link>
             </p>
           )}
@@ -167,7 +167,7 @@ export function ImportPage() {
                 <li key={t.teamId}>
                   <label className="flex cursor-pointer items-center gap-2">
                     <input type="radio" name="team" checked={teamId === t.teamId} onChange={() => setTeamId(t.teamId)} />
-                    {t.name} <span className="text-xs text-slate-500">{t.league} · {t.overall ?? '—'} · {t.playerCount} oyuncu</span>
+                    {t.name} <span className="text-xs text-muted">{t.league} · {t.overall ?? '—'} · {t.playerCount} oyuncu</span>
                   </label>
                 </li>
               ))}
@@ -175,10 +175,10 @@ export function ImportPage() {
             <Button disabled={teamId === undefined || sync.isPending} onClick={() => sync.mutate()}>
               {sync.isPending ? 'Kuruluyor…' : 'Kadroyu bu takımdan kur'}
             </Button>
-            <p className="text-xs text-slate-500">Mevcut kadron bu takımın gerçek kadrosuyla değiştirilir (işlem geçmişin korunur).</p>
+            <p className="text-xs text-muted">Mevcut kadron bu takımın gerçek kadrosuyla değiştirilir (işlem geçmişin korunur).</p>
             <ErrorBox error={sync.error} />
             {sync.data && (
-              <p className="text-sm text-emerald-700">
+              <p className="text-sm text-accent">
                 {sync.data.players} oyuncuyla kadro kuruldu. <Link to="/squad" className="underline">Kadroya git</Link> ·{' '}
                 <Link to="/teams" className="underline">Takım profillerine bak</Link>
               </p>

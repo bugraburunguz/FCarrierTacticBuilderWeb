@@ -23,8 +23,8 @@ export function PlayerInsights({ attrs, positions, playstyles }: { attrs: Record
                     {info.name}
                     {level >= 2 ? '+' : ''}
                   </span>
-                  <span className="text-slate-600 dark:text-slate-300"> · {level >= 2 ? info.plus : info.effect}</span>
-                  <span className="block text-xs text-slate-500">En çok işe yarar: {info.best}</span>
+                  <span className="text-muted"> · {level >= 2 ? info.plus : info.effect}</span>
+                  <span className="block text-xs text-muted">En çok işe yarar: {info.best}</span>
                 </li>
               )
             })}
@@ -33,7 +33,7 @@ export function PlayerInsights({ attrs, positions, playstyles }: { attrs: Record
         {hints.map((hint) => {
           const info = PLAYSTYLES[hint.playstyle]
           return (
-            <p key={hint.playstyle} className="text-slate-600 dark:text-slate-300">
+            <p key={hint.playstyle} className="text-muted">
               <Pill tone={hint.state === 'met' ? 'emerald' : 'amber'}>{info.name}+</Pill>{' '}
               {hint.state === 'met'
                 ? 'için istatistik eşikleri sağlanıyor (oyunda bu PlayStyle+ olarak gelmiyorsa kart verisi eski olabilir).'
@@ -44,13 +44,13 @@ export function PlayerInsights({ attrs, positions, playstyles }: { attrs: Record
         {notes.length > 0 && (
           <ul className="space-y-1">
             {notes.map((note) => (
-              <li key={note.id} className={note.tone === 'good' ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'}>
+              <li key={note.id} className={note.tone === 'good' ? 'text-accent' : 'text-code'}>
                 {note.tone === 'good' ? '✓' : '!'} {note.text}
               </li>
             ))}
           </ul>
         )}
-        <p className="text-xs text-slate-500">PlayStyle açıklamaları EA rehberinden özetlendi. Eşikler topluluk kaynaklıdır, oyun açıklamaz ("tune"); rol uyum puanını değiştirmez.</p>
+        <p className="text-xs text-muted">PlayStyle açıklamaları EA rehberinden özetlendi. Eşikler topluluk kaynaklıdır, oyun açıklamaz ("tune"); rol uyum puanını değiştirmez.</p>
       </div>
     </Card>
   )
