@@ -36,6 +36,7 @@ export interface PlayerSummary {
   accelerate?: string
   runStyle?: number
   potential?: number
+  potentialRange?: string
   valueEur?: number
   valuationEstimated: boolean
   faceUrl?: string
@@ -344,6 +345,81 @@ export interface Career {
   budgetEur?: number
   squadSize: number
   createdAt?: string
+  spoilerMode?: 'SHOW' | 'SCOUT_RANGE'
+  wageBudgetEur?: number
+  windowEndsOn?: string
+  challengeId?: string
+}
+
+export interface CareerSnapshot {
+  id: number
+  takenAt: string
+  season?: number
+  transferWindow?: string
+  source: 'IMPORT' | 'MANUAL' | 'OCR'
+  playerCount: number
+  note?: string
+}
+
+export interface SnapshotDiffRow {
+  playerId: number
+  name: string
+  kind: 'CHANGED' | 'TRANSFER' | 'NEW' | 'REMOVED'
+  overallFrom?: number
+  overallTo?: number
+  potentialFrom?: number
+  potentialTo?: number
+  teamFrom?: number
+  teamTo?: number
+}
+
+export interface SnapshotDiff {
+  fromSnapshot?: number
+  toSnapshot?: number
+  changed: number
+  transfers: number
+  added: number
+  removed: number
+  rows: SnapshotDiffRow[]
+}
+
+export interface HistoryPoint {
+  snapshotId: number
+  takenAt: string
+  season?: number
+  overall: number
+  potential: number
+  teamId?: number
+}
+
+export type PlayerTagKind = 'LOCKED' | 'ROTATION' | 'DEVELOPING' | 'FOR_SALE' | 'LOAN_OK'
+
+export interface ShortlistItem {
+  playerId: number
+  note?: string
+  maxFeeEur?: number
+  createdAt?: string
+}
+
+export interface SeasonRecord {
+  season: number
+  leaguePosition?: number
+  trophies: string[]
+  topScorerId?: number
+  note?: string
+}
+
+export interface CareerBackup {
+  version: number
+  name?: string
+  season?: number
+  budgetEur?: number
+  spoilerMode?: string
+  wageBudgetEur?: number
+  challengeId?: string
+  tags: { playerId: number; tag: PlayerTagKind }[]
+  shortlist: ShortlistItem[]
+  seasons: SeasonRecord[]
 }
 
 export interface CareerPlayer {

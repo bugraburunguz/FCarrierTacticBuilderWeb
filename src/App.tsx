@@ -2,6 +2,10 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
+import { CareerDeskPage } from './pages/CareerDeskPage'
+import { CareerGrowthPage } from './pages/CareerGrowthPage'
+import { CareerNewPage } from './pages/CareerNewPage'
+import { CareerTransferPage } from './pages/CareerTransferPage'
 import { ComparePage } from './pages/ComparePage'
 import { WizardPage } from './pages/WizardPage'
 import { WonderkidsPage } from './pages/WonderkidsPage'
@@ -58,6 +62,10 @@ export function App() {
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<RequireAuth><RecommendPage /></RequireAuth>} />
         <Route path="career/import" element={<RequireAuth><ImportPage /></RequireAuth>} />
+        <Route path="career/desk" element={<RequireAuth><CareerDeskPage /></RequireAuth>} />
+        <Route path="career/new" element={<RequireAuth><CareerNewPage /></RequireAuth>} />
+        <Route path="career/transfer" element={<RequireAuth><CareerTransferPage /></RequireAuth>} />
+        <Route path="career/growth" element={<RequireAuth><CareerGrowthPage /></RequireAuth>} />
         <Route path="teams" element={<RequireAuth><TeamsPage /></RequireAuth>} />
         <Route path="ut/squad" element={<UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />

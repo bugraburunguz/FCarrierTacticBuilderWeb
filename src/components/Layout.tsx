@@ -23,6 +23,17 @@ interface NavGroup {
 
 const NAV: NavGroup[] = [
   {
+    to: '/career/desk',
+    label: 'Menajer masası',
+    match: ['/career/desk', '/career/transfer', '/career/growth', '/career/new'],
+    tabs: [
+      { to: '/career/desk', label: 'Masa' },
+      { to: '/career/transfer', label: 'Transfer' },
+      { to: '/career/growth', label: 'Gelişim' },
+      { to: '/career/new', label: 'Yeni kariyer' },
+    ],
+  },
+  {
     to: '/players',
     label: 'Oyuncular',
     match: ['/players', '/compare', '/wonderkids'],
@@ -45,7 +56,7 @@ const NAV: NavGroup[] = [
     ],
   },
   { to: '/teams', label: 'Takımlar', match: ['/teams'] },
-  { to: '/career/import', label: 'İçe aktar', match: ['/career'] },
+  { to: '/career/import', label: 'İçe aktar', match: ['/career/import'] },
 ]
 
 const UT_NAV: NavGroup[] = [

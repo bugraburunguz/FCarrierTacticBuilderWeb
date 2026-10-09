@@ -46,3 +46,10 @@ Kural (00 §4.6): biten görev `DONE`, kısmi olan `PARTIAL`, başlanmayan `TODO
 
 ## Sonraki fazlar
 Faz B'nin geri kalanı (DS-03/07/08/09/10, UX-01/03..06), Faz C (veri platformu), Faz D (UT v2 + Kariyer "Menajer Masası" CAR-20..33), Faz E (backlog), Faz F (maç simülasyonu): `TODO` — Buğra'nın D-07 ekran onayından sonra.
+
+## Faz D′ — Kariyer Menajer Masası (güncel)
+- `DONE` CAR-20/21 Masa (`/career/desk`): 3 iş önerisi, uyarılar, yaş/derinlik, ayarlar + JSON yedek (spoiler modu, maaş bütçesi, dönem sonu).
+- `DONE` CAR-23 Transfer Merkezi (`/career/transfer`): ihtiyaçlar → adaylar → kısa liste (pazarlık tavanı), satış planı, bütçe simülatörü.
+- `DONE` CAR-24 Gelişim (`/career/growth`): kayıt farkı, OVR/POT geçmiş grafiği, plato uyarısı, hızlı OVR/POT güncelleme.
+- `DONE` CAR-29 Yeni kariyer (`/career/new`).
+- `TODO` CAR-22 kadro sekmeleri/etiket çipleri, CAR-25..28, CAR-30/31, CAR-33 PWA.
