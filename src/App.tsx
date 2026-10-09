@@ -61,6 +61,7 @@ export function App() {
         <Route path="ut/meta" element={<UtMetaPage />} />
         <Route path="ut/sbc" element={<UtSbcPage />} />
         <Route path="ut/sbc/:setId/:challengeId" element={<UtSbcChallengePage />} />
+        <Route path="ut/sbc/:setId" element={<UtSbcChallengePage />} />
         <Route path="ut/objectives" element={<UtObjectivesPage />} />
         <Route path="ut/club" element={<UtClubPage />} />
         <Route path="ut/import" element={<UtImportPage />} />

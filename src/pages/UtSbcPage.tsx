@@ -96,7 +96,7 @@ function ClubSbcSets() {
                 return (
                   <li key={s.setId} className="border-t border-line py-1 sm:col-span-2">
                     <div className="flex items-center justify-between gap-2">
-                    <span className={done ? 'text-muted line-through' : ''}>{s.name ?? `#${s.setId}`}</span>
+                    <Link to={`/ut/sbc/${s.setId}`} className={`underline decoration-dotted hover:text-accent ${done ? 'text-muted line-through' : ''}`}>{s.name ?? `#${s.setId}`}</Link>
                     <span className="flex items-center gap-1.5 text-xs">
                       <span className="tabular-nums">{s.challengesCompleted}/{s.challengesCount}</span>
                       {s.repeatable && <Pill tone="sky">tekrarlanabilir</Pill>}
