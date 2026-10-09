@@ -99,7 +99,7 @@ export function SquadBuilderPage() {
       position: slot.position,
       x: slot.x,
       y: slot.y,
-      player: player && { id: player.id, name: player.name, overall: player.overall },
+      player: player && { id: player.id, name: player.name, overall: player.overall, faceUrl: player.faceUrl, club: player.club, league: player.league, nationality: player.nationality },
       roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : '…',
       fit: fit && { pct: Math.round(fit.score), band: fit.badge },
       selected: dialog?.slotId === slot.slotId,

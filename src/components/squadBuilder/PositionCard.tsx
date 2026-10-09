@@ -8,7 +8,7 @@ export interface SlotView {
   position: string
   x: number
   y: number
-  player?: { id: number; name: string; overall: number }
+  player?: { id: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string }
   roleLabel: string
   fit?: { pct: number; band: WeaponState }
   placeholder?: string

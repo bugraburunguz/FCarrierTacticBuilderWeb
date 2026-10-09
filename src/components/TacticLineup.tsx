@@ -18,7 +18,12 @@ interface Props {
   formations: Formation[]
 }
 
-const shortRole = (name: string) => name.replace(/\s*\(.*\)/, '')
+function cardInfo(squad: CareerPlayer[], playerId?: number) {
+  const p = squad.find((c) => c.player.id === playerId)?.player
+  return { faceUrl: p?.faceUrl, club: p?.club, league: p?.league, nationality: p?.nationality }
+}
+
+const shortRole =(name: string) => name.replace(/\s*\(.*\)/, '')
 
 export function TacticLineup({ careerId, squad, formations }: Props) {
   const tactic = useTactic()
@@ -48,7 +53,7 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
       position: sl.position,
       x: sl.x,
       y: sl.y,
-      player: result?.playerName ? { id: result.playerId ?? 0, name: result.playerName, overall: result.overall ?? 0 } : undefined,
+      player: result?.playerName ? { id: result.playerId ?? 0, name: result.playerName, overall: result.overall ?? 0, ...cardInfo(squad, result.playerId) } : undefined,
       roleLabel: result ? shortRole(result.roleName) + (result.roleName.match(/((.*))/) ? ` · ${result.roleName.match(/((.*))/)![1]}` : '') : '…',
       fit: result?.roleFit ? { pct: Math.round(result.roleFit.score), band: result.roleFit.badge } : undefined,
     }
