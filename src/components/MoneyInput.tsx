@@ -3,7 +3,7 @@ import { formatEur } from '../lib/format'
 import { Input, Select } from './ui'
 
 const UNITS = [
-  { id: 'EUR', label: '€ (tam tutar)', factor: 1 },
+  { id: 'EUR', label: '€ tam', factor: 1 },
   { id: 'K', label: 'Bin €', factor: 1_000 },
   { id: 'M', label: 'Milyon €', factor: 1_000_000 },
 ] as const
@@ -41,8 +41,8 @@ export function MoneyInput({ value, onChange, onCommit, className = '', ariaLabe
   return (
     <div className={className}>
       <div className="flex gap-1.5">
-        <Input type="text" inputMode="decimal" aria-label={ariaLabel ?? 'Tutar'} value={state.text} placeholder="0" onChange={(e) => update({ ...state, text: e.target.value })} onBlur={() => onCommit?.(amount)} />
-        <Select aria-label="Birim" value={state.unit} className="w-auto shrink-0" onChange={(e) => { const unit = e.target.value as UnitId; update({ ...state, unit }); onCommit?.(toAmount(state.text, UNITS.find((u) => u.id === unit)!.factor)) }}>
+        <Input className="min-w-0 flex-1" type="text" inputMode="decimal" aria-label={ariaLabel ?? 'Tutar'} value={state.text} placeholder="0" onChange={(e) => update({ ...state, text: e.target.value })} onBlur={() => onCommit?.(amount)} />
+        <Select aria-label="Birim" value={state.unit} className="!w-28 shrink-0" onChange={(e) => { const unit = e.target.value as UnitId; update({ ...state, unit }); onCommit?.(toAmount(state.text, UNITS.find((u) => u.id === unit)!.factor)) }}>
           {UNITS.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
         </Select>
       </div>

@@ -29,7 +29,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
 
   return (
     <div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_320px_auto] lg:items-end">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_300px_auto] lg:items-start">
         <Field label="Kulüp ara">
           <Input value={club ? club.name : term} onChange={(e) => { setClub(undefined); setTerm(e.target.value) }} placeholder="Kulüp adı…" aria-label="Kulüp ara" />
         </Field>
@@ -39,7 +39,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
         <Field label="Transfer bütçesi (€)">
           <MoneyInput key={name + String(club?.id)} value={budget} onChange={setBudget} />
         </Field>
-        <Button disabled={!club || create.isPending} onClick={() => create.mutate()}>
+        <Button className="lg:mt-[22px]" disabled={!club || create.isPending} onClick={() => create.mutate()}>
           {create.isPending ? 'Oluşturuluyor…' : 'Başlat'}
         </Button>
       </div>

@@ -9,6 +9,7 @@ export function DeleteCareerButton({ career, onDeleted }: { career: Career; onDe
   const remove = useMutation({
     mutationFn: () => endpoints.deleteCareer(career.id),
     onSuccess: async () => {
+      client.setQueryData<Career[]>(['careers'], (old) => (old ?? []).filter((c) => c.id !== career.id))
       careerStore.set(undefined)
       await Promise.all(['careers', 'squad', 'events', 'snapshots', 'shortlist', 'tags'].map((k) => client.invalidateQueries({ queryKey: [k] })))
       onDeleted?.()

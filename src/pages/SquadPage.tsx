@@ -68,7 +68,7 @@ function CareerSettings({ career }: { career: Career }) {
 
   return (
     <Card title="Kariyer ayarları" actions={career.gender !== undefined ? <Pill tone="sky">{GENDER_LABEL[career.gender]} futbolu</Pill> : undefined}>
-      <div className="grid gap-3 sm:grid-cols-[1fr_320px_100px_auto_auto] sm:items-end">
+      <div className="grid gap-3 sm:grid-cols-[1fr_300px_100px_auto_auto] sm:items-start">
         <Field label="Ad">
           <Input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} />
         </Field>
@@ -78,11 +78,12 @@ function CareerSettings({ career }: { career: Career }) {
         <Field label="Sezon">
           <Input type="number" min={1} value={season} onChange={(e) => setSeason(e.target.value)} />
         </Field>
-        <Button disabled={save.isPending} onClick={() => save.mutate()}>
+        <Button className="sm:mt-[22px]" disabled={save.isPending} onClick={() => save.mutate()}>
           Kaydet
         </Button>
         <Button
           variant="danger"
+          className="sm:mt-[22px]"
           disabled={remove.isPending}
           onClick={() => {
             if (window.confirm(`“${career.name || career.clubName}” kariyeri ve tüm hareketleri silinsin mi? Bu geri alınamaz.`)) {
