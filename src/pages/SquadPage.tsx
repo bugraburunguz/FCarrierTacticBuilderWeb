@@ -6,6 +6,7 @@ import type { Career, CareerPlayer, RosterEvent, RosterEventType } from '../api/
 import { CareerSelect } from '../components/CareerSelect'
 import { NewCareerForm } from '../components/NewCareerForm'
 import { SquadCards } from '../components/SquadCards'
+import { SquadTagsView } from '../components/SquadTagsView'
 import { SquadList } from '../components/SquadList'
 import { SquadDensity } from '../components/SquadDensity'
 import { TacticLineup } from '../components/TacticLineup'
@@ -196,7 +197,7 @@ export function SquadPage() {
   const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: careerId !== undefined })
   const events = useQuery({ queryKey: ['events', careerId], queryFn: () => endpoints.events(careerId!), enabled: careerId !== undefined })
   const [tab, setTab] = useState<SquadTab>('squad')
-  const [view, setView] = useState<'list' | 'cards'>('list')
+  const [view, setView] = useState<'list' | 'cards' | 'tags'>('list')
   const [dialog, setDialog] = useState<{ mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer } | null>(null)
   const move = useMutation({
     mutationFn: (v: { type: RosterEventType; playerId: number; feeEur: number; toClubId?: number }) => endpoints.applyEvent(careerId!, v),
@@ -260,10 +261,10 @@ export function SquadPage() {
             title={`Oyuncular · ${squad.data?.length ?? 0}`}
             actions={
               <div role="tablist" className="flex gap-1">
-                {(['list', 'cards'] as const).map((v) => (
+                {(['list', 'cards', 'tags'] as const).map((v) => (
                   <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)}
                     className={`rounded-full px-3 py-1 text-xs font-medium ${view === v ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-muted'}`}>
-                    {v === 'list' ? 'Tam liste' : 'Kartlar (sat/kirala)'}
+                    {v === 'list' ? 'Tam liste' : v === 'cards' ? 'Kartlar (sat/kirala)' : 'Etiket & yaş'}
                   </button>
                 ))}
               </div>
@@ -273,6 +274,8 @@ export function SquadPage() {
               <Spinner />
             ) : (squad.data ?? []).length === 0 ? (
               <EmptyState>Kadro boş. “Transferler & Geçmiş” sekmesinden oyuncu al.</EmptyState>
+            ) : view === 'tags' ? (
+              <SquadTagsView careerId={career.id} squad={squad.data!} />
             ) : view === 'list' ? (
               <SquadList squad={squad.data!} positionAdvice={positionAdvice.data ?? []} />
             ) : (
