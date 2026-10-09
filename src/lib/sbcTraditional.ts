@@ -1,4 +1,5 @@
 import { squadChemistry, type ChemCard } from './chemistry'
+import { squadRating } from './squadRating'
 
 export interface SbcCandidate extends ChemCard {
   name: string
@@ -8,7 +9,11 @@ export interface SbcCandidate extends ChemCard {
   source?: 'storage' | 'club' | 'market'
   faceUrl?: string
   rarity?: string
+  /** Gerçek oyuncu kimliği (katalog id ya da kart varlık id): aynı oyuncu bir kadroda iki kez seçilemez (BUG-02). Yoksa `id` kullanılır. */
+  playerKey?: string
 }
+
+export const playerKeyOf = (card: SbcCandidate): string => card.playerKey ?? String(card.id)
 
 export interface SbcSlot {
   slotId: string
@@ -120,15 +125,8 @@ const MIN_PLAYERS = 11
 const REQUIRED_WEIGHT = 60
 const PENALTY_COST_REFERENCE = 20
 
-/** Takım rating'i: (toplam + ortalamanın üstündeki fazlaların toplamı) / 11, yuvarlanmış. */
-export function teamRating(ratings: number[]): number {
-  if (ratings.length === 0) {
-    return 0
-  }
-  const average = ratings.reduce((a, b) => a + b, 0) / ratings.length
-  const excess = ratings.reduce((sum, r) => sum + Math.max(0, r - average), 0)
-  return Math.round((ratings.reduce((a, b) => a + b, 0) + excess) / ratings.length)
-}
+/** Takım rating'i: tek kaynak lib/squadRating.ts (BUG-01); EA formülü yuvarlamayı bölmeden önce yapıp sonucu aşağı alır. */
+export const teamRating = squadRating
 
 function cardCost(card: SbcCandidate): number {
   return card.price ?? card.overall
@@ -196,28 +194,82 @@ function requiredViolations(cards: SbcCandidate[], constraints: SbcConstraints):
 
 interface State {
   picks: SbcCandidate[]
-  used: Set<number>
+  used: string[]
   cost: number
   score: number
 }
 
-/** Beam search: slotları sırayla doldurur; maliyet (fiyat ya da yoksa rating toplamı) en düşük, kısıtları sağlayan seti arar. Yaklaşıktır. */
+const POOL_PER_POSITION = 90
+const PER_RATING = 3
+const FORCED_PER_NAME = 6
+
+function constraintNames(constraints: SbcConstraints): { league: Set<string>; nationality: Set<string>; club: Set<string> } {
+  const names = { league: new Set<string>(), nationality: new Set<string>(), club: new Set<string>() }
+  requiredEntries(constraints).forEach((r) => names[r.key].add(r.name))
+  constraints.fromAny?.forEach((r) => r.names.forEach((n) => names[r.kind].add(n)))
+  return names
+}
+
+/**
+ * Havuzu budar (BUG-03): aynı oyuncudan en ucuz kopya, her mevki için rating başına en ucuz birkaç kart ve maliyet sırasıyla ilk N;
+ * şartta adı geçen kulüp/lig/ülke kartları ayrıca korunur. Beam search binlerce kartla donmasın diye.
+ */
+export function prunePool(slots: SbcSlot[], pool: SbcCandidate[], constraints: SbcConstraints, perPosition = POOL_PER_POSITION): SbcCandidate[] {
+  const cheapest = new Map<string, SbcCandidate>()
+  pool.forEach((card) => {
+    if (constraints.minOverallEach && card.overall < constraints.minOverallEach) {
+      return
+    }
+    const key = playerKeyOf(card)
+    const current = cheapest.get(key)
+    if (!current || cardCost(card) < cardCost(current)) {
+      cheapest.set(key, card)
+    }
+  })
+  const unique = [...cheapest.values()]
+  const names = constraintNames(constraints)
+  const kept = new Map<number, SbcCandidate>()
+  new Set(slots.map((s) => s.position)).forEach((position) => {
+    const candidates = unique.filter((c) => c.positions.includes(position)).sort((x, y) => cardCost(x) - cardCost(y) || y.overall - x.overall)
+    const perRating = new Map<number, number>()
+    const selected: SbcCandidate[] = []
+    for (const card of candidates) {
+      const used = perRating.get(card.overall) ?? 0
+      if (used < PER_RATING) {
+        perRating.set(card.overall, used + 1)
+        selected.push(card)
+      }
+    }
+    selected.slice(0, perPosition).forEach((c) => kept.set(c.id, c))
+    ;(['league', 'nationality', 'club'] as const).forEach((key) => {
+      names[key].forEach((name) => candidates.filter((c) => c[key] === name).slice(0, FORCED_PER_NAME).forEach((c) => kept.set(c.id, c)))
+    })
+  })
+  return [...kept.values()]
+}
+
+/** Beam search: slotları sırayla doldurur; maliyet (fiyat ya da yoksa rating toplamı) en düşük, kısıtları sağlayan seti arar. Yaklaşıktır; havuz önce budanır. */
 export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constraints: SbcConstraints, beam = DEFAULT_BEAM): SbcSolution {
-  const eligible = pool.filter((c) => !constraints.minOverallEach || c.overall >= constraints.minOverallEach)
-  const order = slots.map((s, index) => ({ slot: s, index })).sort((a, b) => eligibleCount(a.slot, eligible) - eligibleCount(b.slot, eligible))
+  const eligible = prunePool(slots, pool, constraints)
+  const byPosition = new Map<string, SbcCandidate[]>()
+  new Set(slots.map((s) => s.position)).forEach((position) => byPosition.set(position, eligible.filter((c) => c.positions.includes(position))))
+  const order = slots.map((s, index) => ({ slot: s, index })).sort((a, b) => (byPosition.get(a.slot.position)?.length ?? 0) - (byPosition.get(b.slot.position)?.length ?? 0))
   // Ceza ağırlıkları maliyet ölçeğine göre büyür: rating bazlı maliyette ~1, coin bazlı maliyette şartlar ucuz-ama-sağlamayan çözümlere yenilmez.
   const costScale = Math.max(1, Math.max(0, ...eligible.map(cardCost)) / PENALTY_COST_REFERENCE)
-  let states: State[] = [{ picks: [], used: new Set(), cost: 0, score: 0 }]
+  let states: State[] = [{ picks: [], used: [], cost: 0, score: 0 }]
   order.forEach(({ slot }, step) => {
     const next: State[] = []
+    const candidates = byPosition.get(slot.position) ?? []
+    const stepSlots = order.slice(0, step + 1).map((o) => o.slot)
     for (const state of states) {
-      for (const card of eligible) {
-        if (state.used.has(card.id) || !card.positions.includes(slot.position)) {
+      for (const card of candidates) {
+        const key = playerKeyOf(card)
+        if (state.used.includes(key)) {
           continue
         }
         const picks = [...state.picks, card]
         const cost = state.cost + cardCost(card)
-        next.push({ picks, used: new Set(state.used).add(card.id), cost, score: cost + penalty(picks, order.slice(0, step + 1).map((o) => o.slot), constraints) * costScale })
+        next.push({ picks, used: [...state.used, key], cost, score: cost + penalty(picks, stepSlots, constraints) * costScale })
       }
     }
     states = next.sort((a, b) => a.score - b.score).slice(0, beam)
@@ -239,10 +291,6 @@ export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constra
     return { feasible: false, picks: slots.map(() => undefined), teamRating: 0, chemistry: 0, cost: 0, violations: ['Uygun aday bulunamadı'] }
   }
   return { feasible: Boolean(feasible), picks: best.picks, teamRating: best.teamRating, chemistry: best.chemistry, cost: best.state.cost, violations: best.violations }
-}
-
-function eligibleCount(slot: SbcSlot, pool: SbcCandidate[]): number {
-  return pool.filter((c) => c.positions.includes(slot.position)).length
 }
 
 function penalty(picks: SbcCandidate[], slots: SbcSlot[], constraints: SbcConstraints): number {

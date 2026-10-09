@@ -52,28 +52,42 @@ function buildUrl(path: string, query?: RequestOptions['query']): string {
   return API_ORIGIN ? url.toString() : url.pathname + url.search
 }
 
-let refreshing: Promise<boolean> | null = null
+/** ok: yeni token alındı · invalid: refresh token reddedildi (oturum bitti) · network: bağlantı hatası (oturum korunur, BUG-13). */
+type RefreshOutcome = 'ok' | 'invalid' | 'network'
 
-async function refreshTokens(): Promise<boolean> {
+let refreshing: Promise<RefreshOutcome> | null = null
+
+async function callRefresh(refreshToken: string): Promise<RefreshOutcome> {
+  try {
+    const res = await fetch(BASE + '/auth/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    })
+    if (res.status >= 500) {
+      return 'network'
+    }
+    const envelope = (await res.json()) as Envelope<TokenResponse>
+    if (res.ok && envelope.success && envelope.data) {
+      tokens.set(envelope.data.accessToken, envelope.data.refreshToken)
+      return 'ok'
+    }
+    return 'invalid'
+  } catch {
+    return 'network'
+  }
+}
+
+/** Sekmeler arasında tek yenileyici: Web Locks varsa kilit alınır; kilidi bekleyen sekme başkasının yenilediği token'ı görürse tekrar çağırmaz. */
+async function refreshTokens(): Promise<RefreshOutcome> {
   const refreshToken = tokens.refresh
   if (!refreshToken) {
-    return false
+    return 'invalid'
   }
   refreshing ??= (async () => {
     try {
-      const res = await fetch(BASE + '/auth/refresh', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
-      })
-      const envelope = (await res.json()) as Envelope<TokenResponse>
-      if (res.ok && envelope.success && envelope.data) {
-        tokens.set(envelope.data.accessToken, envelope.data.refreshToken)
-        return true
-      }
-      return false
-    } catch {
-      return false
+      const run = async (): Promise<RefreshOutcome> => (tokens.refresh && tokens.refresh !== refreshToken ? 'ok' : callRefresh(refreshToken))
+      return typeof navigator !== 'undefined' && navigator.locks ? await navigator.locks.request('fc-token-refresh', run) : await run()
     } finally {
       refreshing = null
     }
@@ -95,14 +109,23 @@ async function send(path: string, options: RequestOptions, allowRetry: boolean):
     headers,
     body: options.body === undefined ? undefined : isForm ? (options.body as FormData) : JSON.stringify(options.body),
   })
-  if (res.status === 401 && allowRetry && tokens.refresh && (await refreshTokens())) {
-    return send(path, options, false)
+  if (res.status === 401 && allowRetry && tokens.refresh) {
+    const outcome = await refreshTokens()
+    if (outcome === 'ok') {
+      return send(path, options, false)
+    }
+    if (outcome === 'network') {
+      throw new ApiError('Bağlantı kurulamadı; oturumun korunuyor, biraz sonra tekrar dene.', 'client.network', 0)
+    }
   }
   return res
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const res = await send(path, options, true)
+  if (res.status === 204) {
+    return undefined as T
+  }
   let envelope: Envelope<T> | undefined
   try {
     envelope = (await res.json()) as Envelope<T>

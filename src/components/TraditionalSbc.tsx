@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { endpoints } from '../api/endpoints'
-import { solveTraditional, type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
+import { solveTraditionalAsync } from '../lib/solveAsync'
+import { type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
 import { squadChemistry } from '../lib/chemistry'
 import { parseXiText } from '../lib/objectives'
 import type { LookupItem, PageResponse, PlayerSummary, SbcChallenge } from '../api/types'
@@ -100,11 +101,11 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
       const fromPages = useMarket ? (await Promise.all((extra.fromAny ?? []).map((r) => fromAnyPages(r, leagueList, nationList, positions, ovrMin, min)))).flat() : []
       const byId = new Map<number, SbcCandidate>()
       pages.concat(extraPages, fromPages).flatMap((p) => p.items).forEach((p) =>
-        byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions, price: estimateCoinPrice(p.overall), source: 'market', faceUrl: p.faceUrl }),
+        byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions, price: estimateCoinPrice(p.overall), source: 'market', faceUrl: p.faceUrl, playerKey: 'p:' + p.id }),
       )
       if (mode !== 'market') {
         clubCards.forEach((c, i) =>
-          byId.set(CLUB_ID_BASE + i, { id: CLUB_ID_BASE + i, name: c.name, overall: c.rating, club: c.club, league: c.league, nationality: c.nationality, gender: c.gender, positions: c.positions, cardType: c.cardType, price: ownedCost(c), source: ownedSource(c), faceUrl: c.faceUrl, rarity: c.rarity }),
+          byId.set(CLUB_ID_BASE + i, { id: CLUB_ID_BASE + i, name: c.name, overall: c.rating, club: c.club, league: c.league, nationality: c.nationality, gender: c.gender, positions: c.positions, cardType: c.cardType, price: ownedCost(c), source: ownedSource(c), faceUrl: c.faceUrl, rarity: c.rarity, playerKey: c.playerId !== undefined ? 'p:' + c.playerId : 'n:' + c.name + '|' + c.rating }),
         )
       }
       const required = {
@@ -124,7 +125,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
         ...(sameNation ? { minSameNation: Number(sameNation) } : {}),
         ...(sameClub ? { minSameClub: Number(sameClub) } : {}),
       }
-      return solveTraditional(slots, [...byId.values()], constraints)
+      return solveTraditionalAsync(slots, [...byId.values()], constraints)
     },
   })
   const autoStarted = useRef<SbcChallenge | undefined>(undefined)

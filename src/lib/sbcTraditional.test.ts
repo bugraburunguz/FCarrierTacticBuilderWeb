@@ -21,9 +21,10 @@ function pool(): SbcCandidate[] {
 }
 
 describe('sbc traditional', () => {
-  it('takım rating formülü eşit ratinglerde ortalamayı verir ve yüksek kartları ödüllendirir', () => {
+  it('takım rating formülü (BUG-01): bölmeden önce yuvarlar, sonucu aşağı alır', () => {
     expect(teamRating(Array(11).fill(80))).toBe(80)
-    expect(teamRating([90, ...Array(10).fill(80)])).toBeGreaterThan(81)
+    expect(teamRating([90, ...Array(10).fill(80)])).toBe(81)
+    expect(teamRating([...Array(8).fill(84), ...Array(3).fill(83)])).toBe(83)
   })
 
   it('kısıtları sağlayan en ucuz kadroyu bulur', () => {
@@ -78,5 +79,35 @@ describe('coin bazlı maliyet', () => {
     const result = solveTraditional(SLOTS, cards, { teamRatingMin: 83, chemMin: 0 })
     expect(result.feasible).toBe(true)
     expect(result.teamRating).toBeGreaterThanOrEqual(83)
+  })
+
+  it('aynı gerçek oyuncu kadroda iki kez seçilmez (BUG-02)', () => {
+    const cards: SbcCandidate[] = []
+    let id = 1
+    ;['GK', 'LB', 'CB', 'RB', 'CM', 'LM', 'RM', 'ST'].forEach((position) => {
+      // her mevkide yalnız tek gerçek oyuncu var ama hem kulüp hem katalog kopyası olarak iki kez listelenmiş
+      cards.push({ ...card(id++, position, 84, 'Club', 'League', 'Nation'), playerKey: 'p:' + position, source: 'club' })
+      cards.push({ ...card(id++, position, 84, 'Club', 'League', 'Nation'), playerKey: 'p:' + position, source: 'market', price: 5000 })
+    })
+    // CB ve ST iki slot ister: ikinci slot için tek oyuncu yetmez
+    const result = solveTraditional(SLOTS, cards, { teamRatingMin: 80, chemMin: 0 })
+    const keys = result.picks.flatMap((p) => (p ? [p.playerKey] : []))
+    expect(new Set(keys).size).toBe(keys.length)
+    expect(result.feasible).toBe(false)
+  })
+
+  it('3000 kartlık havuzda 1.5 sn içinde çözer (BUG-03)', () => {
+    const cards: SbcCandidate[] = []
+    let id = 1
+    ;['GK', 'LB', 'CB', 'RB', 'CM', 'LM', 'RM', 'ST'].forEach((position) => {
+      for (let n = 0; n < 375; n++) {
+        const overall = 70 + (n % 20)
+        cards.push({ ...card(id++, position, overall, 'Club' + (n % 40), 'League' + (n % 8), 'Nation' + (n % 25)), price: 200 * (overall - 65) + (n % 7) * 50, source: 'market' })
+      }
+    })
+    const started = performance.now()
+    const result = solveTraditional(SLOTS, cards, { teamRatingMin: 82, chemMin: 18 })
+    expect(performance.now() - started).toBeLessThan(1500)
+    expect(result.picks.filter(Boolean)).toHaveLength(11)
   })
 })

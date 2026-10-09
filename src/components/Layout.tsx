@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { endpoints } from '../api/endpoints'
 import { careerStore, useActiveCareerId } from '../state/careerStore'
+import { useStorageError } from '../state/bigStore'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../api/client'
 import { CompareTray } from './CompareTray'
@@ -62,6 +63,7 @@ const MODES: { id: AppMode; label: string; home: string }[] = [
 ]
 
 export function Layout() {
+  const storageError = useStorageError()
   const mode = useMode()
   const theme = useTheme()
   const nav = mode === 'ut' ? UT_NAV : NAV
@@ -240,6 +242,7 @@ export function Layout() {
             ))}
           </nav>
         )}
+        {storageError && <p role="alert" className="mb-3 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger">{storageError}</p>}
         <Outlet />
         <CompareTray />
       </main>

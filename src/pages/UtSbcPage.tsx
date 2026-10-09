@@ -73,7 +73,7 @@ function ClubSbcSets() {
   if (sets.length === 0) {
     return (
       <Card title="Kulübündeki SBC'ler">
-        <p className="text-sm text-muted">Henüz SBC yakalanmadı. Extension açıkken EA Web App'te SBC sekmesine gir, ardından <a className="underline" href="/ut/import">Kulüp içe aktar</a> sayfasından dosyayı yükle.</p>
+        <p className="text-sm text-muted">Henüz SBC yakalanmadı. Extension açıkken EA Web App'te SBC sekmesine gir, ardından <Link className="underline" to="/ut/import">Kulüp içe aktar</Link> sayfasından dosyayı yükle.</p>
       </Card>
     )
   }
@@ -84,7 +84,7 @@ function ClubSbcSets() {
       {capture && (
         <p className={`mb-2 text-xs ${isBeforeDailyRefresh(capture.importedAt) ? 'text-code' : 'text-muted'}`}>
           Son yakalama: {new Date(capture.importedAt).toLocaleString('tr-TR')}.
-          {isBeforeDailyRefresh(capture.importedAt) && ' Yeni SBC\'ler her gün 20:00\'de (TRT) yenilenir; bu liste eski olabilir. Web App\'i açıp yeniden dışa aktar.'}
+          {isBeforeDailyRefresh(capture.importedAt) && ' Yeni SBC\'ler her gün Londra saatiyle 18:00\'de (TRT 20:00, kışın 21:00) yenilenir; bu liste eski olabilir. Web App\'i açıp yeniden dışa aktar.'}
         </p>
       )}
       <div className="space-y-3">

@@ -29,10 +29,10 @@ let memoryRefresh: string | null = null
 
 export const tokens = {
   get access(): string | null {
-    return memoryAccess ?? read(ACCESS_KEY)
+    return read(ACCESS_KEY) ?? memoryAccess
   },
   get refresh(): string | null {
-    return memoryRefresh ?? read(REFRESH_KEY)
+    return read(REFRESH_KEY) ?? memoryRefresh
   },
   set(access: string, refresh: string) {
     memoryAccess = access

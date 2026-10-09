@@ -1,3 +1,5 @@
+import rules from './utRules.fc27.json'
+
 export type ChemCardType = 'ICON' | 'HERO' | 'HOF'
 
 export interface ChemCard {
@@ -23,9 +25,10 @@ export interface ChemManager {
 export const MAX_PLAYER_CHEM = 3
 export const MAX_SQUAD_CHEM = 33
 
-const CLUB_THRESHOLDS = [2, 4, 7]
-const LEAGUE_THRESHOLDS = [3, 5, 8]
-const NATION_THRESHOLDS = [2, 5, 8]
+// Eşikler utRules.fc27.json'dan gelir (kaynak: fifauteam.com/fc-27-chemistry, 08 D-21); koda gömülmez.
+const CLUB_THRESHOLDS = rules.chemistry.club
+const LEAGUE_THRESHOLDS = rules.chemistry.league
+const NATION_THRESHOLDS = rules.chemistry.nation
 const MANAGER_BONUS = 1
 
 export function thresholdPoints(count: number, thresholds: number[]): number {

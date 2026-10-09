@@ -1,3 +1,4 @@
+import rules from './utRules.fc27.json'
 /**
  * Piyasa fiyatı verisi olmadığında SBC maliyeti için rating başına kaba coin tahmini (yakın dönem SBC dolgu kartı seviyeleri).
  * Gerçek fiyat DEĞİLDİR; yalnızca "en ucuz yol" sıralaması için bir yaklaşıktır. Kendi piyasa ilanların yakalandıysa o fiyatlar kullanılmalı.
@@ -28,12 +29,34 @@ export function clubCardCost(price?: number): number {
   return (price ?? 0) * CLUB_OPPORTUNITY_WEIGHT
 }
 
-/** Bugünkü (ya da son geçmiş) 20:00 (Türkiye saati) sınırı: SBC'ler günlük bu saatte yenilenir. */
+const REFRESH = rules.dailyRefresh
+
+/** Verilen anda belirtilen saat diliminin UTC'ye göre farkı (ms); yaz/kış saatini Intl ile hesaplar. */
+function zoneOffsetMs(instant: number, timeZone: string): number {
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(instant))
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value)
+  return Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second')) - Math.floor(instant / 1000) * 1000
+}
+
+/** Belirtilen saat diliminde yerel tarih+saatin UTC karşılığı. */
+function zonedInstant(year: number, month: number, day: number, hour: number, timeZone: string): number {
+  const guess = Date.UTC(year, month, day, hour)
+  const first = guess - zoneOffsetMs(guess, timeZone)
+  return guess - zoneOffsetMs(first, timeZone)
+}
+
+/**
+ * Son günlük SBC/içerik yenilemesi: ayarlardaki saat dilimi ve saat (varsayılan Europe/London 18:00 → yazın TRT 20:00, kışın TRT 21:00).
+ * Saat EA içerik takviminden alınmıştır, oyun içinde doğrulanmadı (utRules.fc27.json: dailyRefresh.verified=false).
+ */
 export function lastDailyRefresh(now: Date = new Date()): Date {
-  const istanbul = new Date(now.getTime() + 3 * 3600_000)
-  const boundary = Date.UTC(istanbul.getUTCFullYear(), istanbul.getUTCMonth(), istanbul.getUTCDate(), 20, 0, 0)
-  const todayBoundary = boundary - 3 * 3600_000
-  return new Date(todayBoundary <= now.getTime() ? todayBoundary : todayBoundary - 24 * 3600_000)
+  const local = new Date(now.getTime() + zoneOffsetMs(now.getTime(), REFRESH.timezone))
+  const today = zonedInstant(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate(), REFRESH.hour, REFRESH.timezone)
+  if (today <= now.getTime()) {
+    return new Date(today)
+  }
+  const previous = new Date(local.getTime() - 24 * 3600_000)
+  return new Date(zonedInstant(previous.getUTCFullYear(), previous.getUTCMonth(), previous.getUTCDate(), REFRESH.hour, REFRESH.timezone))
 }
 
 export function isBeforeDailyRefresh(importedAt: string | Date, now: Date = new Date()): boolean {

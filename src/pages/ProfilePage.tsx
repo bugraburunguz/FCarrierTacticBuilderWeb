@@ -36,13 +36,19 @@ export function ProfilePage() {
               <li>Reklamsız kullanım</li>
               <li>Kariyer dosyası içe aktarma (hazır olduğunda)</li>
             </ul>
-            <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-              Ödeme sağlayıcısı henüz bağlı değil: bu buton deneme amaçlı aboneliği ödeme almadan etkinleştirir.
-            </p>
-            <Button className="mt-3" disabled={subscribe.isPending} onClick={() => subscribe.mutate()}>
-              PREMIUM’u etkinleştir (test)
-            </Button>
-            <div className="mt-2"><ErrorBox error={subscribe.error} /></div>
+            {import.meta.env.DEV ? (
+              <>
+                <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+                  Geliştirme modu: bu buton aboneliği ödeme almadan etkinleştirir (yalnız sunucuda sahte ödeme açıksa çalışır).
+                </p>
+                <Button className="mt-3" disabled={subscribe.isPending} onClick={() => subscribe.mutate()}>
+                  PREMIUM’u etkinleştir (test)
+                </Button>
+                <div className="mt-2"><ErrorBox error={subscribe.error} /></div>
+              </>
+            ) : (
+              <p className="mt-3 text-xs text-muted">PREMIUM aboneliği yakında: ödeme altyapısı hazırlanıyor.</p>
+            )}
           </>
         )}
       </Card>

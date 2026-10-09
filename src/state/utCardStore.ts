@@ -1,7 +1,7 @@
 import type { UtCard } from '../lib/utCard'
+import { bigStore } from './bigStore'
 
-const KEY = 'fc.utCards'
-const MAX_CARDS = 3000
+const NAME = 'utCards'
 
 export interface UtCardLibrary {
   cards: UtCard[]
@@ -9,28 +9,13 @@ export interface UtCardLibrary {
 }
 
 export const utCardStore = {
-  get(): UtCardLibrary | undefined {
-    try {
-      const raw = localStorage.getItem(KEY)
-      return raw ? (JSON.parse(raw) as UtCardLibrary) : undefined
-    } catch {
-      return undefined
-    }
-  },
-  /** Kulüp ve gördüğün market kartlarını saklar; kota dolarsa kaydedilemeyebilir, bu durumda false döner. */
+  get: (): UtCardLibrary | undefined => bigStore.get<UtCardLibrary>(NAME),
+  /** Kulüp ve gördüğün market kartlarını saklar (IndexedDB; kart sayısı sınırlanmaz). Yazım hatası depolama uyarısı olarak görünür. */
   set(cards: UtCard[]): boolean {
-    try {
-      localStorage.setItem(KEY, JSON.stringify({ cards: cards.slice(0, MAX_CARDS), importedAt: new Date().toISOString() } satisfies UtCardLibrary))
-      return true
-    } catch {
-      return false
-    }
+    bigStore.set(NAME, { cards, importedAt: new Date().toISOString() } satisfies UtCardLibrary)
+    return true
   },
   clear() {
-    try {
-      localStorage.removeItem(KEY)
-    } catch {
-      /* ignore */
-    }
+    bigStore.clear(NAME)
   },
 }

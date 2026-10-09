@@ -89,7 +89,7 @@ export function ImportPage() {
           ))}
         </ol>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <a href="/fc27_career_export.lua" download className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700">
+          <a href={import.meta.env.BASE_URL + 'fc27_career_export.lua'} download className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700">
             Script’i indir (fc27_career_export.lua)
           </a>
           <span className="text-xs text-slate-500">Script yalnızca okur; oyun verini değiştirmez.</span>
