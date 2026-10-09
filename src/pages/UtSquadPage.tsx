@@ -5,11 +5,13 @@ import { endpoints } from '../api/endpoints'
 import type { TacticRequest, WeaponState } from '../api/types'
 import { FormationStyleChips } from '../components/FormationStyleChips'
 import { Modal } from '../components/Modal'
-import { Pitch } from '../components/squadBuilder/Pitch'
-import type { SlotView } from '../components/squadBuilder/PositionCard'
+import { Pitch, type PitchSlot } from '../components/pitch/Pitch'
+import { cardPlayerOf } from '../lib/cardPlayer'
+import type { FitState } from '../components/card/FitBadge'
 import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
 import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
+import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
 import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
@@ -18,6 +20,7 @@ import { utCardStore } from '../state/utCardStore'
 import { DEFAULT_UT_FORMATION, DEFAULT_UT_SETUP, utSquadStore } from '../state/utSquadStore'
 
 const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
+const FIT_STATE: Record<WeaponState, FitState> = { GREEN: 'good', YELLOW: 'ok', RED: 'bad' }
 const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
 const TIER_TONE: Record<string, 'emerald' | 'sky' | 'amber' | 'slate'> = { 'A+': 'emerald', A: 'sky', B: 'amber', C: 'slate' }
 const SOURCE_LABEL: Record<CardSource, string> = { club: 'Kulübüm', market: 'Market', catalog: 'Katalog' }
@@ -30,8 +33,8 @@ interface Setup {
 
 type Dialog = { kind: 'card' | 'role'; slotId: string }
 
-const PANEL = 'rounded-2xl border border-line bg-surface p-3.5 text-ink shadow-md'
-const PANEL_TITLE = 'mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent'
+const PANEL = 'rounded-md border border-line bg-surface p-3.5 text-ink'
+const PANEL_TITLE = 'mb-2.5 border-b border-line pb-1.5 font-display text-lg font-bold uppercase tracking-wide'
 
 function coins(value?: number) {
   return value === undefined ? '—' : value.toLocaleString('tr-TR')
@@ -113,7 +116,7 @@ export function UtSquadPage() {
   const price = priceSummary(slots.map((s) => picked[s.slotId]))
 
   const roleById = new Map((roles.data ?? []).map((r) => [r.id, r]))
-  const views: SlotView[] = slots.map((s, i) => {
+  const views: PitchSlot[] = slots.map((s, i) => {
     const card = picked[s.slotId]
     const e = evalBySlot[s.slotId]
     const role = roleById.get(roleBySlot[s.slotId]?.roleId ?? s.defaultRole)
@@ -123,11 +126,11 @@ export function UtSquadPage() {
       position: s.position,
       x: s.x,
       y: s.y,
-      player: card && { id: i, name: card.name, overall: card.rating },
-      fut: card && { faceUrl: card.faceUrl, cardType: card.cardType, rarity: card.rarity, nationality: card.nationality, club: card.club, league: card.league },
-      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : (roleBySlot[s.slotId]?.roleName ?? '…'),
-      sub: card ? `${e ? `meta ${Math.round(e.card.metaRating)}` : ''} ${'◆'.repeat(chem.perSlot[i])}${'◇'.repeat(3 - chem.perSlot[i])} ${shortCoins(card.price)}`.trim() : undefined,
-      fit: card && e?.roleFit !== undefined && band ? { pct: Math.round(e.roleFit), band } : undefined,
+      player: card && cardPlayerOf(card, s.position),
+      chem: card ? (chem.perSlot[i] as 0 | 1 | 2 | 3) : undefined,
+      price: card?.price !== undefined ? shortCoins(card.price) : undefined,
+      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : roleBySlot[s.slotId]?.roleName,
+      fit: card && e?.roleFit !== undefined && band ? { pct: Math.round(e.roleFit), state: FIT_STATE[band] } : undefined,
     }
   })
 
@@ -189,7 +192,14 @@ export function UtSquadPage() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="matchday space-y-3">
+      <div className="flex flex-wrap items-stretch gap-px overflow-hidden rounded-md border border-line bg-line">
+        <Kpi label="Rating" value={pickedSlots.length === 11 ? String(teamRating(Object.values(picked).map((c) => c.rating))) : '—'} />
+        <Kpi label="Kimya" value={`${chem.total}`} suffix={`/ ${MAX_SQUAD_CHEM}`} />
+        <Kpi label="Meta ort." value={evaluation.data ? String(evaluation.data.averageMeta) : '—'} />
+        <Kpi label="Toplam değer" value={shortCoins(price.known > 0 ? price.total : undefined)} suffix={price.count > price.known ? `${price.known}/${price.count} fiyat` : undefined} />
+        <Kpi label="Dolu" value={`${pickedSlots.length}`} suffix="/ 11" />
+      </div>
       <div className="grid items-start gap-4 min-[820px]:grid-cols-[360px_1fr]">
         <div className="order-2 flex flex-col gap-3.5 min-[820px]:order-1">
           <UtTacticCode
@@ -286,7 +296,7 @@ export function UtSquadPage() {
           )}
         </div>
 
-        <div className="order-1 rounded-2xl border border-line bg-surface p-2.5 min-[820px]:order-2">
+        <div className="order-1 rounded-md border border-line bg-surface p-2.5 min-[820px]:order-2">
           <Pitch
             slots={views}
             onPickPlayer={(slotId) => setDialog({ kind: 'card', slotId })}
@@ -294,7 +304,7 @@ export function UtSquadPage() {
             onRemove={removeCard}
             onSwap={(from, to) => setPicked((cur) => swapSlots(cur, from, to))}
           />
-          <p className="mt-2 px-1 text-xs text-muted">Kartı başka bir slota sürükle: yer değiştirirler. Karta tıkla: kart ata ve ayrıntı. Rol etiketine tıkla: rol ve focus. ✕: kartı kaldır. Kart üstünde: meta · kimya · fiyat. Formasyon değişince kartlar aynı mevkideki slotlara taşınır.</p>
+          <p className="mt-2 px-1 text-xs text-muted">Sürükle ya da <kbd className="rounded-sm border border-line px-1">M</kbd> ile taşı · Enter seç · kartın üstüne gelince aynı kulüp/lig/ülkedekiler vurgulanır.</p>
         </div>
       </div>
 
@@ -547,5 +557,17 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
       {source === 'catalog' && <p className="mt-2 text-xs text-muted">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
       {library && <p className="mt-2 text-xs text-muted">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
     </Modal>
+  )
+}
+
+function Kpi({ label, value, suffix }: { label: string; value: string; suffix?: string }) {
+  return (
+    <div className="flex min-w-[96px] flex-1 flex-col bg-surface px-3 py-2">
+      <span className="font-display text-xs font-semibold uppercase tracking-wider text-muted">{label}</span>
+      <span className="flex items-baseline gap-1">
+        <span className="num text-2xl font-medium leading-tight">{value}</span>
+        {suffix && <span className="text-xs text-muted">{suffix}</span>}
+      </span>
+    </div>
   )
 }

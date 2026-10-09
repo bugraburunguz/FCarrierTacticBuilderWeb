@@ -23,6 +23,10 @@ export interface UtCard {
   duplicate?: boolean
   instanceId?: number
   faceUrl?: string
+  faceStats?: number[]
+  faceLabels?: string[]
+  weakFoot?: number
+  skillMoves?: number
 }
 
 /** Kulüp kartı için fiyat sinyali: pazar ortalaması, yoksa son satış, yoksa pazar alt sınırı. */
@@ -51,6 +55,10 @@ export function fromCapture(card: CaptureCard, source: Exclude<CardSource, 'cata
     duplicate: card.duplicate,
     instanceId: card.instanceId,
     faceUrl: card.faceUrl,
+    faceStats: card.faceStats,
+    faceLabels: card.faceLabels,
+    weakFoot: card.weakFoot,
+    skillMoves: card.skillMoves,
   }
 }
 

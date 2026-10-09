@@ -7,8 +7,8 @@ import { squadChemistry } from '../lib/chemistry'
 import { parseXiText } from '../lib/objectives'
 import type { LookupItem, PageResponse, PlayerSummary, SbcChallenge } from '../api/types'
 import { challengeSetup } from '../lib/sbcChallenge'
-import { Pitch } from './squadBuilder/Pitch'
-import type { SlotView } from './squadBuilder/PositionCard'
+import { Pitch, type PitchSlot } from './pitch/Pitch'
+import { cardPlayerOf } from '../lib/cardPlayer'
 import { swapSlots } from '../lib/squadBuilder'
 import { teamRating } from '../lib/sbcTraditional'
 import { estimateCoinPrice } from '../lib/coinPrice'
@@ -141,17 +141,16 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
   const shown = result ? slots.map((_, i) => picks[i]) : []
   const chemResult = result ? squadChemistry(slots.map((s, i) => ({ position: s.position, card: shown[i] }))) : undefined
   const filled = shown.filter((p): p is SbcCandidate => Boolean(p))
-  const views: SlotView[] = slots.map((s, i) => {
+  const views: PitchSlot[] = slots.map((s, i) => {
     const p = shown[i]
     return {
       slotId: s.slotId,
       position: s.position,
       x: s.x,
       y: s.y,
-      player: p && { id: p.id, name: p.name, overall: p.overall },
-      fut: p && { faceUrl: p.faceUrl, cardType: p.cardType, rarity: p.rarity, nationality: p.nationality, club: p.club, league: p.league },
-      roleLabel: '',
-      sub: p ? `kimya ${chemResult!.perSlot[i]} · ${p.source === 'storage' ? 'Storage' : p.source === 'club' ? 'Kulüp' : `~${shortCoins(p.price ?? 0)}`}` : undefined,
+      player: p && cardPlayerOf(p, s.position),
+      chem: p ? (chemResult!.perSlot[i] as 0 | 1 | 2 | 3) : undefined,
+      price: p ? (p.source === 'storage' ? 'Storage' : p.source === 'club' ? 'Kulüp' : `~${shortCoins(p.price ?? 0)}`) : undefined,
     }
   })
   function swap(from: string, to: string) {
@@ -210,7 +209,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
       {solve.error && <ErrorBox error={solve.error} />}
       {result && (
         <div className="mt-4 grid gap-4 md:grid-cols-[minmax(260px,420px)_1fr]">
-          <div className="rounded-2xl border border-line bg-surface p-2.5">
+          <div className="matchday rounded-md border border-line bg-surface p-2.5">
             <Pitch slots={views} onPickPlayer={() => undefined} onPickRole={() => undefined} onSwap={swap} />
             <p className="mt-2 px-1 text-xs text-muted">Oyuncuyu başka bir karta sürükle: yer değiştirirler (kimya yeniden hesaplanır).</p>
           </div>

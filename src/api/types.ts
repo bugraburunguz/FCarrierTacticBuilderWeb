@@ -718,6 +718,8 @@ export interface CaptureCard {
   duplicate: boolean
   pile: string
   faceUrl?: string
+  skillMoves?: number
+  weakFoot?: number
 }
 
 export interface CaptureReward {

@@ -30,20 +30,8 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   const [drag, setDrag] = useState<Drag | null>(null)
   const start = useRef<{ slotId: string; x: number; y: number } | null>(null)
   const moved = useRef(false)
-  const boxRef = useRef<HTMLDivElement>(null)
-  const [futWidth, setFutWidth] = useState(78)
   const swapRef = useRef(onSwap)
   swapRef.current = onSwap
-
-  useEffect(() => {
-    const box = boxRef.current
-    if (!box || typeof ResizeObserver === 'undefined') {
-      return undefined
-    }
-    const observer = new ResizeObserver(([entry]) => setFutWidth(Math.round(Math.min(88, Math.max(46, entry.contentRect.width * 0.155)))))
-    observer.observe(box)
-    return () => observer.disconnect()
-  }, [])
 
   useEffect(() => {
     function onMove(e: PointerEvent) {
@@ -85,7 +73,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   const dragged = drag ? slots.find((s) => s.slotId === drag.slotId) : undefined
 
   return (
-    <div ref={boxRef} className="relative aspect-[3/3.6] overflow-hidden rounded-2xl border border-emerald-800 bg-gradient-to-b from-[#123420] to-[#0e2a1a]">
+    <div className="relative aspect-[3/3.6] overflow-hidden rounded-2xl border border-emerald-800 bg-gradient-to-b from-[#123420] to-[#0e2a1a]">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 300 360" preserveAspectRatio="none" aria-hidden="true">
         <g fill="none" stroke="#2f5b3e" strokeWidth="1.2">
           <rect x="6" y="6" width="288" height="348" rx="10" />
@@ -99,7 +87,6 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
         <PositionCard
           key={view.slotId}
           view={view}
-          futWidth={futWidth}
           onPickPlayer={() => {
             if (!moved.current) {
               onPickPlayer(view.slotId)

@@ -1,0 +1,99 @@
+/*
+ * "Matchday" görsel dili (08 D-06): kâğıt/mürekkep nötrleri, saha yeşili ve tek vurgu olan stadyum ışığı sarısı.
+ * Yeni semantik isimler Tailwind ölçeklerini ezmez. `.matchday` kapsamı mevcut semantik token'ları (surface, line, ink, accent…)
+ * yeniden eşler; tüm uygulama geçirildiğinde bu bloklar :root'a taşınır (DS-01).
+ */
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/barlow-condensed/800.css";
+@import "@fontsource/barlow-condensed/latin-ext-700.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-sans/latin-ext-400.css";
+@import "@fontsource/ibm-plex-sans/latin-ext-600.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+@theme {
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-ink-950: #0b0d10;
+  --color-ink-900: #12151a;
+  --color-ink-800: #1a1e25;
+  --color-ink-700: #252a33;
+  --color-ink-500: #5b6472;
+  --color-ink-300: #a9b0ba;
+  --color-paper-50: #f6f4ef;
+  --color-paper-100: #ece9e1;
+  --color-paper-200: #dcd7cb;
+  --color-grass-900: #0f3b24;
+  --color-grass-700: #17553a;
+  --color-grass-500: #22764f;
+  --color-chalk: #edebe3;
+  --color-flood-400: #ffd23f;
+  --color-flood-500: #f2c200;
+  --color-flood-700: #8a6d00;
+  --color-good: #2fbf71;
+  --color-ok: #e6b325;
+  --color-bad: #e5484d;
+  --color-info: #3e8ef7;
+  --color-r-elite: #1f9d55;
+  --color-r-high: #7ac74f;
+  --color-r-mid: #e8c547;
+  --color-r-low: #e58a3a;
+  --color-r-poor: #d64545;
+}
+
+.matchday {
+  --surface: #ffffff;
+  --surface-2: #ece9e1;
+  --line: #dcd7cb;
+  --ink: #12151a;
+  --muted: #5b6472;
+  --accent: #12151a;
+  --accent-bg: #12151a;
+  --on-accent: #ffd23f;
+  --accent-soft: #f2e8bd;
+  --danger: #a82227;
+  --danger-soft: #fbe4e4;
+  --danger-line: #e5a3a5;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+:root.dark .matchday {
+  --surface: #12151a;
+  --surface-2: #0b0d10;
+  --line: #252a33;
+  --ink: #f6f4ef;
+  --muted: #a9b0ba;
+  --accent: #ffd23f;
+  --accent-bg: #ffd23f;
+  --on-accent: #0b0d10;
+  --accent-soft: #2a2410;
+  --danger: #ff8d90;
+  --danger-soft: #2a1416;
+  --danger-line: #5a2a2c;
+}
+
+.matchday .font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.matchday .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card-foil::after {
+    transition: transform 0.7s ease, opacity 0.3s ease;
+  }
+  .card-foil:hover::after {
+    transform: translateX(120%);
+    opacity: 1;
+  }
+}

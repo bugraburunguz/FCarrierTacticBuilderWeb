@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FutCard } from '../components/FutCard'
+import { PlayerCard } from '../components/card/PlayerCard'
+import { cardPlayerOf } from '../lib/cardPlayer'
 import { PlayerAvatar } from '../components/PlayerAvatar'
 import { Card, EmptyState, Field, Input, Pill, Select } from '../components/ui'
 import { POSITIONS } from '../lib/format'
@@ -58,7 +59,7 @@ export function UtClubPage() {
   const missingPile = owned.every((c) => c.pile === undefined)
 
   return (
-    <div className="space-y-4">
+    <div className="matchday space-y-4">
       <Card title={`Kadrom · ${owned.length} kart`}>
         <div role="tablist" aria-label="Görünüm" className="mb-3 flex flex-wrap gap-1.5">
           {VIEWS.map((v) => (
@@ -110,10 +111,10 @@ export function UtClubPage() {
 
       <Card>
         {layout === 'cards' && (
-          <ul className="grid grid-cols-[repeat(auto-fill,minmax(112px,1fr))] justify-items-center gap-3">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(132px,1fr))] justify-items-center gap-x-3 gap-y-5">
             {rows.slice(0, limit).map((c) => (
               <li key={c.key} className="relative">
-                <FutCard name={c.name} rating={c.rating} position={c.positions[0]} faceUrl={c.faceUrl} cardType={c.cardType} rarity={c.rarity} nationality={c.nationality} club={c.club} league={c.league} width={104} />
+                <PlayerCard player={cardPlayerOf(c, c.positions[0])} size="md" price={c.price !== undefined ? c.price.toLocaleString('tr-TR') : undefined} />
                 <span className="absolute left-0 top-0 flex flex-col gap-0.5">
                   {c.pile === 'storage' && <Pill tone="sky">storage</Pill>}
                   {c.duplicate && <Pill tone="amber">dup</Pill>}
