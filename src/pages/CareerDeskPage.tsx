@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { Career, CareerBackup } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
+import { DeleteCareerButton } from '../components/DeleteCareerButton'
+import { MoneyInput } from '../components/MoneyInput'
 import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Input, Pill, Select, Skeleton, Stat } from '../components/ui'
 import { ageProfile, alerts, depthRows, GROUP_LABEL, suggestActions, weakSlots } from '../lib/deskRules'
 import { formatEur } from '../lib/format'
@@ -173,12 +175,12 @@ function Timeline({ events, snapshots }: { events: { id: number; type: string; p
 function DeskSettings({ career }: { career: Career }) {
   const client = useQueryClient()
   const [spoiler, setSpoiler] = useState(career.spoilerMode ?? 'SHOW')
-  const [wage, setWage] = useState(String(career.wageBudgetEur ?? ''))
+  const [wage, setWage] = useState<number | undefined>(career.wageBudgetEur ?? undefined)
   const [windowEnds, setWindowEnds] = useState(career.windowEndsOn ?? '')
   const [challenge, setChallenge] = useState(career.challengeId ?? '')
   const [notice, setNotice] = useState<string>()
   const save = useMutation({
-    mutationFn: () => endpoints.updateCareer(career.id, { spoilerMode: spoiler, wageBudgetEur: wage === '' ? undefined : Number(wage), windowEndsOn: windowEnds || undefined, challengeId: challenge }),
+    mutationFn: () => endpoints.updateCareer(career.id, { spoilerMode: spoiler, wageBudgetEur: wage, windowEndsOn: windowEnds || undefined, challengeId: challenge }),
     onSuccess: () => {
       setNotice('Kaydedildi.')
       ;['careers', 'squad', 'lineup'].forEach((k) => client.invalidateQueries({ queryKey: [k] }))
@@ -212,12 +214,13 @@ function DeskSettings({ career }: { career: Career }) {
             <option value="SCOUT_RANGE">Scout aralığı (ör. 80–84)</option>
           </Select>
         </Field>
-        <Field label="Maaş bütçesi (€/hf)"><Input type="number" min={0} value={wage} onChange={(e) => setWage(e.target.value)} /></Field>
+        <Field label="Maaş bütçesi (haftalık)"><MoneyInput value={wage} onChange={setWage} /></Field>
         <Field label="Transfer dönemi bitişi"><Input type="date" value={windowEnds} onChange={(e) => setWindowEnds(e.target.value)} /></Field>
         <Field label="Challenge (isteğe bağlı)"><Input value={challenge} onChange={(e) => setChallenge(e.target.value)} placeholder="Road to Glory" maxLength={40} /></Field>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Button onClick={() => save.mutate()} disabled={save.isPending}>Kaydet</Button>
+        <DeleteCareerButton career={career} />
         <Button variant="secondary" onClick={() => backup.mutate()} disabled={backup.isPending}>JSON yedeği indir</Button>
         <label className="cursor-pointer rounded-md border border-line px-3 py-1.5 text-sm font-semibold hover:bg-surface-2">
           Yedekten yükle

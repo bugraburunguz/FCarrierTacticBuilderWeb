@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { Career, CareerPlayer, RosterEvent, RosterEventType } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
+import { MoneyInput } from '../components/MoneyInput'
 import { NewCareerForm } from '../components/NewCareerForm'
 import { SquadCards } from '../components/SquadCards'
 import { SquadTagsView } from '../components/SquadTagsView'
@@ -44,17 +45,17 @@ function NewCareer() {
 function CareerSettings({ career }: { career: Career }) {
   const refresh = useInvalidateCareer()
   const [name, setName] = useState(career.name ?? '')
-  const [budget, setBudget] = useState(String(career.budgetEur ?? 0))
+  const [budget, setBudget] = useState<number | undefined>(career.budgetEur ?? 0)
   const [season, setSeason] = useState(String(career.season ?? 1))
 
   useEffect(() => {
     setName(career.name ?? '')
-    setBudget(String(career.budgetEur ?? 0))
+    setBudget(career.budgetEur ?? 0)
     setSeason(String(career.season ?? 1))
   }, [career.id, career.name, career.budgetEur, career.season])
 
   const save = useMutation({
-    mutationFn: () => endpoints.updateCareer(career.id, { name, budgetEur: Number(budget) || 0, season: Number(season) || 1 }),
+    mutationFn: () => endpoints.updateCareer(career.id, { name, budgetEur: budget ?? 0, season: Number(season) || 1 }),
     onSuccess: refresh,
   })
   const remove = useMutation({
@@ -67,12 +68,12 @@ function CareerSettings({ career }: { career: Career }) {
 
   return (
     <Card title="Kariyer ayarları" actions={career.gender !== undefined ? <Pill tone="sky">{GENDER_LABEL[career.gender]} futbolu</Pill> : undefined}>
-      <div className="grid gap-3 sm:grid-cols-[1fr_180px_100px_auto_auto] sm:items-end">
+      <div className="grid gap-3 sm:grid-cols-[1fr_320px_100px_auto_auto] sm:items-end">
         <Field label="Ad">
           <Input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} />
         </Field>
         <Field label="Transfer bütçesi (€)">
-          <Input type="number" min={0} value={budget} onChange={(e) => setBudget(e.target.value)} />
+          <MoneyInput key={career.id} value={budget} onChange={setBudget} />
         </Field>
         <Field label="Sezon">
           <Input type="number" min={1} value={season} onChange={(e) => setSeason(e.target.value)} />

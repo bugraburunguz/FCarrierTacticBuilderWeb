@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { Club } from '../api/types'
 import { careerStore } from '../state/careerStore'
+import { MoneyInput } from './MoneyInput'
 import { Button, ErrorBox, Field, Input, Pill } from './ui'
 
 /** Veri aktarmadan yeni kariyer: kulüp ara, bütçe ve isim ver; kadro kulübün kataloğundaki oyunculardan kurulur. */
@@ -10,17 +11,17 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
   const queryClient = useQueryClient()
   const [term, setTerm] = useState('')
   const [club, setClub] = useState<Club | undefined>()
-  const [budget, setBudget] = useState('')
+  const [budget, setBudget] = useState<number | undefined>(undefined)
   const [name, setName] = useState('')
   const clubs = useQuery({ queryKey: ['clubs', term], queryFn: () => endpoints.clubs(term), enabled: term.trim().length >= 1 && !club })
   const create = useMutation({
-    mutationFn: () => endpoints.createCareer({ clubId: club!.id, budgetEur: budget ? Number(budget) : 0, name: name || undefined }),
+    mutationFn: () => endpoints.createCareer({ clubId: club!.id, budgetEur: budget ?? 0, name: name || undefined }),
     onSuccess: async (career) => {
       await Promise.all(['careers', 'squad', 'events'].map((k) => queryClient.invalidateQueries({ queryKey: [k] })))
       careerStore.set(career.id)
       setClub(undefined)
       setTerm('')
-      setBudget('')
+      setBudget(undefined)
       setName('')
       onCreated?.()
     },
@@ -28,7 +29,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
 
   return (
     <div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_180px_auto] lg:items-end">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_320px_auto] lg:items-end">
         <Field label="Kulüp ara">
           <Input value={club ? club.name : term} onChange={(e) => { setClub(undefined); setTerm(e.target.value) }} placeholder="Kulüp adı…" aria-label="Kulüp ara" />
         </Field>
@@ -36,7 +37,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
           <Input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Örn. Port Vale 2026" />
         </Field>
         <Field label="Transfer bütçesi (€)">
-          <Input type="number" min={0} value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="0" />
+          <MoneyInput key={name + String(club?.id)} value={budget} onChange={setBudget} />
         </Field>
         <Button disabled={!club || create.isPending} onClick={() => create.mutate()}>
           {create.isPending ? 'Oluşturuluyor…' : 'Başlat'}

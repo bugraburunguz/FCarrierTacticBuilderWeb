@@ -5,7 +5,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { Acquisition, TransferTarget } from '../api/types'
 import { CompareButton } from '../components/CompareButton'
-import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Input, Pill, Skeleton, Stat } from '../components/ui'
+import { MoneyInput } from '../components/MoneyInput'
+import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Pill, Skeleton, Stat } from '../components/ui'
 import { depthRows, GROUP_LABEL, weakSlots, type PositionGroup } from '../lib/deskRules'
 import { formatEur } from '../lib/format'
 import { toTacticRequest, useTactic } from '../state/tacticStore'
@@ -69,7 +70,7 @@ export function CareerTransferPage() {
 
   const add = useMutation({ mutationFn: (t: TransferTarget) => endpoints.shortlistAdd(id!, t.player.id, { note: need?.label }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
   const remove = useMutation({ mutationFn: (playerId: number) => endpoints.shortlistRemove(id!, playerId), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
-  const setFee = useMutation({ mutationFn: ({ playerId, fee }: { playerId: number; fee?: number }) => endpoints.shortlistAdd(id!, playerId, { maxFeeEur: fee }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
+  const setFee = useMutation({ mutationFn: ({ playerId, fee, note }: { playerId: number; fee?: number; note?: string }) => endpoints.shortlistAdd(id!, playerId, { maxFeeEur: fee, note }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
 
   const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
   const starters = useMemo(() => new Set((lineup.data?.slots ?? []).flatMap((s) => (s.playerId ? [s.playerId] : []))), [lineup.data])
@@ -155,7 +156,7 @@ export function CareerTransferPage() {
                 <li key={s.playerId} className="flex flex-wrap items-end justify-between gap-2 text-sm">
                   <Link to={`/players/${s.playerId}`} className="underline decoration-dotted">Oyuncu #{s.playerId}{s.note ? ` · ${s.note}` : ''}</Link>
                   <div className="flex items-end gap-2">
-                    <Field label="Tavan (€)"><Input type="number" min={0} defaultValue={s.maxFeeEur ?? ''} className="w-32" onBlur={(e) => setFee.mutate({ playerId: s.playerId, fee: e.target.value === '' ? undefined : Number(e.target.value) })} /></Field>
+                    <Field label="Tavan"><MoneyInput key={s.playerId} className="w-60" value={s.maxFeeEur ?? undefined} onChange={() => undefined} onCommit={(fee) => setFee.mutate({ playerId: s.playerId, fee, note: s.note })} /></Field>
                     <Button variant="ghost" onClick={() => remove.mutate(s.playerId)}>Çıkar</Button>
                   </div>
                 </li>
