@@ -6,6 +6,7 @@ import type { TacticRequest, WeaponState } from '../api/types'
 import { FormationStyleChips } from '../components/FormationStyleChips'
 import { Modal } from '../components/Modal'
 import { Pitch, type PitchSlot } from '../components/pitch/Pitch'
+import { ExportWarnings } from '../components/ExportWarnings'
 import { cardPlayerOf } from '../lib/cardPlayer'
 import { ChemDiamonds } from '../components/card/ChemDiamonds'
 import type { FitState } from '../components/card/FitBadge'
@@ -14,6 +15,7 @@ import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } 
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
+import { useEaRoleSet } from '../lib/eaRoles'
 import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -51,6 +53,7 @@ function shortCoins(value?: number) {
 export function UtSquadPage() {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
+  const eaRoles = useEaRoleSet()
   const saved = useMemo(() => utSquadStore.get(), [])
   const [formationId, setFormationId] = useState(saved?.formationId ?? DEFAULT_UT_FORMATION)
   const [setup, setSetup] = useState<Setup>(saved?.setup ?? DEFAULT_UT_SETUP)
@@ -328,7 +331,7 @@ export function UtSquadPage() {
       {dialog?.kind === 'role' && dialogSlot && (
         <RoleFocusModal
           position={dialogSlot.position}
-          groups={roleGroups(roles.data ?? [], dialogSlot.position)}
+          groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles)}
           currentRoleId={roleBySlot[dialogSlot.slotId]?.roleId ?? dialogSlot.defaultRole}
           onApply={(rid) => {
             setRoleOverride((cur) => ({ ...cur, [dialogSlot.slotId]: rid }))
@@ -407,7 +410,7 @@ function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (
         </button>
       </div>
       <p className="mt-1.5 text-xs text-muted">Kod formasyon, rol, Build-Up ve hat değiştikçe otomatik güncellenir.</p>
-      {exportCode.data?.warnings.map((w) => <p key={w} className="text-xs text-code">{w}</p>)}
+      <ExportWarnings warnings={exportCode.data?.warnings} />
       <ErrorBox error={exportCode.error} />
       <div className="mt-2.5 flex items-center gap-2">
         <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır" className="font-mono" maxLength={16} aria-label="EA kodunu yapıştır" />

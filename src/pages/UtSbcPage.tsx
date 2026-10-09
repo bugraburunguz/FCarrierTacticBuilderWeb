@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { SbcChallenge, SbcPoolEntry, SbcRarity } from '../api/types'
+import { KbSbcList } from '../components/KbSbcList'
 import { SbcVote, useSbcVotes } from '../components/SbcVote'
 import { describeRequirement } from '../lib/sbcChallenge'
 import { sbcPoolStore } from '../state/sbcPoolStore'
@@ -155,6 +156,7 @@ export function UtSbcPage() {
 
   return (
     <div className="space-y-4">
+      <KbSbcList />
       <ClubSbcSets />
       <Card title="SBC çözücü (hedef skor tipi)">
         <p className="mb-3 text-sm text-muted">

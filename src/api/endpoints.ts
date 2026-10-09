@@ -44,6 +44,13 @@ import type {
   UpgradeResult,
   UtSquadEvaluation,
   CaptureResult,
+  EaRoleOption,
+  KbEvolution,
+  KbItem,
+  KbObjectiveGroup,
+  KbPricePoint,
+  KbPromo,
+  KbSbcSet,
   SbcSetVotes,
 } from './types'
 
@@ -117,6 +124,16 @@ export const endpoints = {
     setup?: SetupBody
   }) =>
     api.post<UtSquadEvaluation>('/ut/squad/evaluate', body, false),
+  kbSbc: (params: { category?: string; active?: boolean; challenges?: boolean } = {}) => api.get<KbSbcSet[]>('/ut/kb/sbc', params),
+  kbSbcSet: (id: number) => api.get<KbSbcSet>(`/ut/kb/sbc/${id}`),
+  kbObjectives: () => api.get<KbObjectiveGroup[]>('/ut/kb/objectives'),
+  kbEvolutions: () => api.get<KbEvolution[]>('/ut/kb/evolutions'),
+  kbPromos: () => api.get<KbPromo[]>('/ut/kb/promos'),
+  kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; limit?: number; offset?: number }) => api.get<KbItem[]>('/ut/kb/items', params),
+  kbItem: (id: number) => api.get<{ item: KbItem; versions: KbItem[] }>(`/ut/kb/items/${id}`),
+  kbPrices: (id: number, platform: string, range: string) => api.get<KbPricePoint[]>(`/ut/kb/items/${id}/prices`, { platform, range }),
+  eaRoles: () => api.get<EaRoleOption[]>('/tactics/ea-roles'),
+  captureLink: (mode: 'PERSONAL' | 'CONTRIB') => request<{ token: string; mode: string; expiresInSeconds: number }>('/ut/capture/link', { method: 'POST', body: {}, query: { mode } }),
   sbcVotes: () => api.get<{ sets: SbcSetVotes[] }>('/ut/sbc/votes'),
   sbcVote: (setId: number, vote: number) => request<SbcSetVotes>(`/ut/sbc/votes/${setId}`, { method: 'PUT', body: { vote } }),
   utCapture: (captures: unknown[]) => api.post<CaptureResult>('/ut/capture', { captures }),

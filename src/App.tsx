@@ -18,6 +18,8 @@ import { SquadPage } from './pages/SquadPage'
 import { TeamsPage } from './pages/TeamsPage'
 import { UtMetaPage } from './pages/UtMetaPage'
 import { UtClubPage } from './pages/UtClubPage'
+import { AdminUtPage } from './pages/AdminUtPage'
+import { UtEvolutionsPage } from './pages/UtEvolutionsPage'
 import { UtImportPage } from './pages/UtImportPage'
 import { UtObjectivesPage } from './pages/UtObjectivesPage'
 import { UtSbcPage } from './pages/UtSbcPage'
@@ -65,6 +67,8 @@ export function App() {
         <Route path="ut/objectives" element={<UtObjectivesPage />} />
         <Route path="ut/club" element={<UtClubPage />} />
         <Route path="ut/import" element={<UtImportPage />} />
+        <Route path="ut/evo" element={<UtEvolutionsPage />} />
+        <Route path="admin/ut" element={<AdminUtPage />} />
         <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />

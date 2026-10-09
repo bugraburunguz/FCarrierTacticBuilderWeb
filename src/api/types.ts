@@ -758,6 +758,96 @@ export interface SbcSetVotes {
   mine: number
 }
 
+export interface KbSbcChallenge {
+  id: number
+  setId: number
+  name: string
+  formation?: string
+  kind: 'SQUAD' | 'ITEM_SCORE' | string
+  requirements: SbcRequirement[]
+  itemScoreTarget?: number
+  reward?: CaptureReward[] | null
+}
+
+export interface KbSbcSet {
+  id: number
+  name: string
+  description?: string
+  category: string
+  repeatable?: number
+  startsAt?: string
+  endsAt?: string
+  reward: unknown
+  status: 'PENDING' | 'CONFIRMED' | 'RETIRED'
+  challengeCount: number
+  challenges?: KbSbcChallenge[]
+}
+
+export interface KbObjectiveGroup {
+  id: number
+  name: string
+  gameMode?: string
+  startsAt?: string
+  endsAt?: string
+  reward?: CaptureReward[] | null
+  objectives: { id: number; name?: string; description?: string; total: number; lockedBy: number[]; rewards: CaptureReward[] }[]
+  status: string
+}
+
+export interface KbEvolution {
+  id: number
+  name: string
+  cost?: unknown
+  requirements?: Record<string, unknown>
+  levels?: unknown
+  startsAt?: string
+  endsAt?: string
+  status: string
+}
+
+export interface KbPromo {
+  id: number
+  code: string
+  name: string
+  startsAt?: string
+  endsAt?: string
+}
+
+export interface KbItem {
+  id: number
+  eaAssetId: number
+  eaResourceId: number
+  name: string
+  rating: number
+  position: string
+  altPositions: string[]
+  clubId?: number
+  leagueId?: number
+  nationId?: number
+  cardType: string
+  rare: boolean
+  promo?: string
+  weakFoot?: number
+  skillMoves?: number
+  accelerate?: string
+  untradeableOnly: boolean
+  status: string
+}
+
+export interface KbPricePoint {
+  bucket: string
+  p10?: number
+  p50?: number
+  minBin?: number
+  samples: number
+}
+
+export interface EaRoleOption {
+  position: string
+  baseRole: string
+  focus: string
+}
+
 export interface SbcRef {
   kind: 'CLUB' | 'LEAGUE' | 'NATION' | string
   id: number

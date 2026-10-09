@@ -1,3 +1,4 @@
+import { ExportWarnings } from './ExportWarnings'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
@@ -53,13 +54,7 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
               <p className="text-xs text-muted">
                 Oyunda: Takım Yönetimi → Taktikler → <b>Kod Kullan</b>. Formasyon {exported.formation}; Build-Up ve hat yüksekliği Takım ayarlarından alındı.
               </p>
-              {exported.warnings.length > 0 && (
-                <ul className="list-disc space-y-0.5 pl-5 text-xs text-code">
-                  {exported.warnings.map((w) => (
-                    <li key={w}>{w}</li>
-                  ))}
-                </ul>
-              )}
+              <ExportWarnings warnings={exported.warnings} />
             </div>
           )}
           <ErrorBox error={exportCode.error} />
@@ -72,13 +67,7 @@ export function EaTacticCode({ onLoaded }: { onLoaded: () => void }) {
             </Button>
           </div>
           <ErrorBox error={importCode.error} />
-          {importCode.data && importCode.data.warnings.length > 0 && (
-            <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-code">
-              {importCode.data.warnings.map((w) => (
-                <li key={w}>{w}</li>
-              ))}
-            </ul>
-          )}
+          <ExportWarnings warnings={importCode.data?.warnings} title="Kod sitede tam karşılanmadı" />
         </div>
         {notice && (
           <p role="status" className="text-sm text-accent">

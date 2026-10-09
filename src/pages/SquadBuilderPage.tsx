@@ -1,3 +1,4 @@
+import { useEaRoleSet } from '../lib/eaRoles'
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -46,6 +47,7 @@ export function SquadBuilderPage() {
   const presets = useQuery({ queryKey: ['presets'], queryFn: () => endpoints.presets() })
   const tags = useQuery({ queryKey: ['tags-all'], queryFn: () => endpoints.behaviorTags() })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
+  const eaRoles = useEaRoleSet()
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
   const career = careers.data?.find((c) => c.id === careerId)
   const hasCareer = authenticated && careerId !== undefined
@@ -339,7 +341,7 @@ export function SquadBuilderPage() {
               node: (
                 <RoleFocusPanel
                   position={dialogSlot.position}
-                  groups={roleGroups(roles.data ?? [], dialogSlot.position)}
+                  groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles)}
                   currentRoleId={dialogRoleId}
                   onApply={(rid) => {
                     updateSlot(dialogSlot.slotId, { roleId: rid })

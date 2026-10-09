@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { CaptureResult } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
+import { ExtensionSync } from '../components/ExtensionSync'
 import { Button, Card, EmptyState, ErrorBox, Pill } from '../components/ui'
 import { toPlannerObjectives, toSbcPool } from '../lib/capture'
 import { objectiveStore } from '../state/objectiveStore'
@@ -46,7 +47,7 @@ export function UtImportPage() {
   const [fileError, setFileError] = useState<string>()
   const [notice, setNotice] = useState<string>()
   const upload = useMutation({
-    mutationFn: async (file: File) => endpoints.utCapture(parseCaptures(await file.text())),
+    mutationFn: async (source: File | unknown[]) => endpoints.utCapture(Array.isArray(source) ? source : parseCaptures(await source.text())),
     onSuccess: async (data) => {
       const saved = utCardStore.set(toLibrary(data))
       utCaptureStore.set(data)
@@ -77,7 +78,8 @@ export function UtImportPage() {
 
   return (
     <div className="space-y-4">
-      <Card title="Kulüp ve piyasa verisi içe aktar">
+      <ExtensionSync busy={upload.isPending} onCaptures={(captures) => { setFileError(undefined); setNotice(undefined); upload.mutate(captures) }} />
+      <Card title="Dosyadan içe aktar (yedek yol)">
         <p className="mb-3 text-sm text-muted">
           Extension'ın dışa aktardığı <span className="font-mono">fcareer-captures.json</span> dosyasını yükle. Sunucu yalnızca kulüp, kadro, piyasa, objective, SBC, Evo ve kaynak (config) yanıtlarını işler; oturum ve hesap uçlarını yoksayar. Kartlar, SBC setleri, Evo slotları ve aktif kadro tarayıcında saklanır; sunucuya kaydedilmez.
         </p>

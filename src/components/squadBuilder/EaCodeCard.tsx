@@ -1,3 +1,4 @@
+import { ExportWarnings } from '../ExportWarnings'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../../api/endpoints'
@@ -71,20 +72,8 @@ export function EaCodeCard({ onImported }: { onImported?: () => void }) {
         </button>
       </div>
       <ErrorBox error={importCode.error} />
-      {importCode.data && importCode.data.warnings.length > 0 && (
-        <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-code">
-          {importCode.data.warnings.map((w) => (
-            <li key={w}>{w}</li>
-          ))}
-        </ul>
-      )}
-      {exported.data && exported.data.warnings.length > 0 && (
-        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs text-code">
-          {exported.data.warnings.map((w) => (
-            <li key={w}>{w}</li>
-          ))}
-        </ul>
-      )}
+      <ExportWarnings warnings={importCode.data?.warnings} title="Kod sitede tam karşılanmadı" />
+      <ExportWarnings warnings={exported.data?.warnings} />
       {open && code && (
         <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
           <div className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-code">{code}</div>

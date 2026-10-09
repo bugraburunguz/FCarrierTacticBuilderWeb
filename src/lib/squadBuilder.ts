@@ -22,11 +22,13 @@ export interface RoleGroup {
   options: FocusOption[]
 }
 
+import { eaRoleKey } from './eaRoles'
+
 /** Mevkide gerçekten var olan roller, ailesine göre gruplu. Backend ne veriyorsa o; frontend rol uydurmaz. */
-export function roleGroups(roles: Role[], position: string): RoleGroup[] {
+export function roleGroups(roles: Role[], position: string, allowed?: Set<string>): RoleGroup[] {
   const groups = new Map<string, FocusOption[]>()
   roles
-    .filter((r) => r.positions.includes(position))
+    .filter((r) => r.positions.includes(position) && (!allowed || allowed.has(eaRoleKey(position, roleBaseName(r), r.focus))))
     .forEach((r) => {
       const base = roleBaseName(r)
       groups.set(base, [...(groups.get(base) ?? []), { focus: r.focus, roleId: r.id }])

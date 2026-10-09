@@ -1,4 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { endpoints } from '../api/endpoints'
+import { toPlannerObjectives } from '../lib/capture'
+import { kbToCaptureGroups } from '../lib/kbObjectives'
 import { Button, Card, EmptyState, Field, Input, Pill, Select } from '../components/ui'
 import { estimateEffort, objectiveLabel, parseRequirement, planObjectives, rewardOf, xiToText, type Objective, type ObjectiveGroup, type PlanGroup, type Requirement } from '../lib/objectives'
 import { objectiveStore, useObjectives } from '../state/objectiveStore'
@@ -55,8 +59,28 @@ export function UtObjectivesPage() {
     setRequirements('')
   }
 
+  const kb = useQuery({ queryKey: ['kb-objectives'], queryFn: endpoints.kbObjectives, staleTime: 60_000, retry: false })
+  const groups = kb.data ?? []
   return (
     <div className="space-y-4">
+      {groups.length > 0 && (
+        <Card title={`Güncel objective grupları (${groups.length})`} actions={<Button variant="secondary" onClick={() => objectiveStore.replaceImported(toPlannerObjectives(kbToCaptureGroups(groups)))}>Planlayıcıya aktar</Button>}>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {groups.map((g) => (
+              <li key={g.id} className="rounded-md border border-line p-3 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <b className="font-display text-base uppercase tracking-wide">{g.name}</b>
+                  <Pill tone="slate">{g.objectives.length} alt görev</Pill>
+                </div>
+                <ol className="mt-2 list-decimal space-y-0.5 pl-5 text-xs text-muted">
+                  {g.objectives.slice(0, 6).map((o) => <li key={o.id}>{o.name ?? o.description}</li>)}
+                </ol>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-muted">Herkese açık tanımlardır; kişisel ilerleme için Kulübümü senkronla. Aktarım yalnız kilidi açık ilk adımları ekler.</p>
+        </Card>
+      )}
       <Card title="Objective ekle">
         <p className="mb-3 text-sm text-muted">
           Objective'ler için resmi bir veri akışı yok; kendi objective'lerini gir (ileride extension doldurabilir). Planlayıcı hepsini birlikte değerlendirir.

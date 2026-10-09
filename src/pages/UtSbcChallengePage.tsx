@@ -3,23 +3,33 @@ import { Link, useParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import { TraditionalSbc } from '../components/TraditionalSbc'
 import { SbcVote, useSbcVotes } from '../components/SbcVote'
-import { Card } from '../components/ui'
+import { Card, Skeleton } from '../components/ui'
 import { challengeSetup, describeRequirement } from '../lib/sbcChallenge'
+import { kbChallenges } from '../lib/kbSbc'
 import { useUtCapture } from '../state/utCaptureStore'
 
 export function UtSbcChallengePage() {
   const { setId, challengeId } = useParams()
   const capture = useUtCapture()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
-  const siblings = (capture?.sbcChallenges ?? []).filter((c) => String(c.setId) === setId)
+  const captured = (capture?.sbcChallenges ?? []).filter((c) => String(c.setId) === setId)
+  const kb = useQuery({ queryKey: ['kb-sbc-set', setId], queryFn: () => endpoints.kbSbcSet(Number(setId)), enabled: Boolean(setId) && captured.length === 0, retry: false, staleTime: 60_000 })
+  const siblings = captured.length > 0 ? captured : kbChallenges(kb.data)
   const challenge = challengeId ? siblings.find((c) => String(c.challengeId) === challengeId) : siblings.find((c) => c.status !== 'COMPLETED') ?? siblings[0]
   const votes = useSbcVotes()
-  const setName = capture?.sbcSets.find((s) => String(s.setId) === setId)?.name
+  const setName = capture?.sbcSets.find((s) => String(s.setId) === setId)?.name ?? kb.data?.name
   const setup = challenge && formations.data ? challengeSetup(challenge, formations.data) : undefined
+  if (!challenge && kb.isLoading) {
+    return (
+      <Card title="SBC yükleniyor">
+        <Skeleton className="h-24" />
+      </Card>
+    )
+  }
   if (!challenge) {
     return (
       <Card title={setName ?? 'SBC bulunamadı'}>
-        <p className="text-sm text-muted">Bu SBC'nin şartları yakalanan veride yok. Extension açıkken EA Web App'te bu SBC setini aç (challenge'lar yüklensin), sonra dosyayı Kulüp içe aktar'dan yeniden yükle. <Link className="underline" to="/ut/sbc">SBC listesine dön</Link></p>
+        <p className="text-sm text-muted">Bu SBC'nin şartları henüz bilgi tabanında ve yakaladığın veride yok. Web App'te bu SBC setini aç ve Kulüp içe aktar'dan senkronla; ya da bir katkıcının girmesini bekle. <Link className="underline" to="/ut/sbc">SBC listesine dön</Link></p>
       </Card>
     )
   }

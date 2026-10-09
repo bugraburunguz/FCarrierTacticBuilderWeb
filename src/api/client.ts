@@ -35,6 +35,8 @@ export interface RequestOptions {
   body?: unknown
   query?: Record<string, string | number | boolean | undefined | string[]>
   auth?: boolean
+  /** Ek istek başlıkları (ör. yönetici anahtarı). */
+  headers?: Record<string, string>
 }
 
 function buildUrl(path: string, query?: RequestOptions['query']): string {
@@ -96,7 +98,7 @@ async function refreshTokens(): Promise<RefreshOutcome> {
 }
 
 async function send(path: string, options: RequestOptions, allowRetry: boolean): Promise<Response> {
-  const headers: Record<string, string> = { Accept: 'application/json' }
+  const headers: Record<string, string> = { Accept: 'application/json', ...options.headers }
   const isForm = options.body instanceof FormData
   if (options.body !== undefined && !isForm) {
     headers['Content-Type'] = 'application/json'
