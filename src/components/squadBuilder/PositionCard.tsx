@@ -1,6 +1,8 @@
 import type { WeaponState } from '../../api/types'
 import { BADGE_EMOJI } from '../../lib/format'
 import { ovrBand } from '../../lib/squadBuilder'
+import type { FutInfo } from '../../lib/futCard'
+import { FutCard } from '../FutCard'
 
 export interface SlotView {
   slotId: string
@@ -8,6 +10,8 @@ export interface SlotView {
   x: number
   y: number
   player?: { id: number; name: string; overall: number }
+  /** Verilirse slot koyu kutu yerine FC kartı olarak çizilir. */
+  fut?: FutInfo
   roleLabel: string
   fit?: { pct: number; band: WeaponState }
   placeholder?: string
@@ -29,10 +33,12 @@ interface Props {
   onGrab?: (event: React.PointerEvent) => void
   dragSource?: boolean
   dropActive?: boolean
+  futWidth?: number
 }
 
-export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab, dragSource, dropActive }: Props) {
+export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab, dragSource, dropActive, futWidth = 78 }: Props) {
   const { player, fit } = view
+  const fut = player && view.fut
   return (
     <div data-slot-card={view.slotId} className={`group absolute w-[74px] -translate-x-1/2 -translate-y-1/2 text-center min-[520px]:w-[92px] ${dragSource ? 'opacity-40' : ''}`} style={{ left: `${view.x}%`, top: `${view.y}%` }}>
       <div
@@ -48,8 +54,12 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
             onPickPlayer()
           }
         }}
-        className={`relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none ${dropActive ? 'border-emerald-300 ring-2 ring-emerald-300/70' : view.selected ? 'border-amber-300 ring-2 ring-amber-300/60' : 'border-slate-600'}`}
+        className={fut ? `relative flex cursor-pointer justify-center transition hover:-translate-y-0.5 focus-visible:outline-none ${dropActive ? 'rounded-xl ring-2 ring-emerald-300/80' : view.selected ? 'rounded-xl ring-2 ring-amber-300/70' : ''}` : `relative cursor-pointer rounded-[10px] border bg-gradient-to-br from-slate-700 to-slate-900 px-1 pb-1.5 pt-1.5 text-white transition hover:-translate-y-0.5 hover:border-emerald-400 focus-visible:border-emerald-400 focus-visible:outline-none ${dropActive ? 'border-emerald-300 ring-2 ring-emerald-300/70' : view.selected ? 'border-amber-300 ring-2 ring-amber-300/60' : 'border-slate-600'}`}
       >
+        {fut && player ? (
+          <FutCard name={player.name} rating={player.overall} position={view.position} width={futWidth} footer={view.sub} {...view.fut} />
+        ) : (
+          <>
         <span className="absolute left-1.5 top-1 text-[9px] font-extrabold text-emerald-300">{view.position}</span>
         {player && (
           <span className="absolute right-1.5 top-1 text-[11px] font-extrabold" style={{ color: ovrBand(player.overall) }}>
@@ -58,6 +68,8 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
         )}
         {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-slate-400">{view.placeholder ?? '+'}</div>}
         {player && view.sub && <div className="truncate text-[9px] text-slate-300">{view.sub}</div>}
+          </>
+        )}
         {fit && (
           <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[fit.band]}`}>
             {BADGE_EMOJI[fit.band]} %{fit.pct}

@@ -22,6 +22,7 @@ export interface UtCard {
   pile?: string
   duplicate?: boolean
   instanceId?: number
+  faceUrl?: string
 }
 
 /** Kulüp kartı için fiyat sinyali: pazar ortalaması, yoksa son satış, yoksa pazar alt sınırı. */
@@ -49,6 +50,7 @@ export function fromCapture(card: CaptureCard, source: Exclude<CardSource, 'cata
     pile: card.pile,
     duplicate: card.duplicate,
     instanceId: card.instanceId,
+    faceUrl: card.faceUrl,
   }
 }
 
@@ -64,6 +66,7 @@ export function fromSummary(player: PlayerSummary): UtCard {
     nationality: player.nationality,
     gender: player.gender,
     playerId: player.id,
+    faceUrl: player.faceUrl,
   }
 }
 

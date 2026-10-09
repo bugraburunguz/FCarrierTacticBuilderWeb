@@ -28,6 +28,8 @@ function commit(next: Objective[]) {
 export const objectiveStore = {
   get: () => current,
   add: (objective: Objective) => commit([...current, objective]),
+  /** Yakalamadan gelenleri (ana göreve bağlı) yenisiyle değiştirir; elle girilenler kalır. */
+  replaceImported: (imported: Objective[]) => commit([...current.filter((o) => !o.parentId), ...imported]),
   remove: (id: string) => commit(current.filter((o) => o.id !== id)),
   clear: () => commit([]),
   subscribe(listener: () => void) {

@@ -124,6 +124,7 @@ export function UtSquadPage() {
       x: s.x,
       y: s.y,
       player: card && { id: i, name: card.name, overall: card.rating },
+      fut: card && { faceUrl: card.faceUrl, cardType: card.cardType, rarity: card.rarity, nationality: card.nationality, club: card.club, league: card.league },
       roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : (roleBySlot[s.slotId]?.roleName ?? '…'),
       sub: card ? `${e ? `meta ${Math.round(e.card.metaRating)}` : ''} ${'◆'.repeat(chem.perSlot[i])}${'◇'.repeat(3 - chem.perSlot[i])} ${shortCoins(card.price)}`.trim() : undefined,
       fit: card && e?.roleFit !== undefined && band ? { pct: Math.round(e.roleFit), band } : undefined,

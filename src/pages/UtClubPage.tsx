@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { FutCard } from '../components/FutCard'
 import { PlayerAvatar } from '../components/PlayerAvatar'
 import { Card, EmptyState, Field, Input, Pill, Select } from '../components/ui'
 import { POSITIONS } from '../lib/format'
@@ -31,9 +32,10 @@ export function UtClubPage() {
   const [position, setPosition] = useState('')
   const [minRating, setMinRating] = useState('')
   const [limit, setLimit] = useState(PAGE)
+  const [layout, setLayout] = useState<'cards' | 'table'>('cards')
 
   const owned = useMemo(() => (library?.cards ?? []).filter((c) => c.source === 'club'), [library])
-  const starters = useMemo(() => new Set((capture?.activeSquad?.slots ?? []).filter((s) => s.starter && s.card).map((s) => s.card!.instanceId)), [capture])
+  const starters = useMemo(() => new Set((capture?.activeSquad?.slots ?? []).filter((s) => s.card).map((s) => s.card!.instanceId)), [capture])
   const counts = useMemo(() => Object.fromEntries(VIEWS.map((v) => [v.id, owned.filter((c) => inView(c, v.id)).length])) as Record<View, number>, [owned])
   const rows = useMemo(() => {
     const needle = q.trim().toLowerCase()
@@ -95,13 +97,33 @@ export function UtClubPage() {
           <Field label="Min. rating">
             <Input type="number" min={40} max={99} value={minRating} onChange={(e) => setMinRating(e.target.value)} />
           </Field>
-          <div className="flex items-end text-xs text-muted">
-            {rows.length} kart · piyasa değeri toplamı {total.toLocaleString('tr-TR')} coin
+          <div className="flex items-end justify-between gap-2 text-xs text-muted">
+            <span>{rows.length} kart · değer {total.toLocaleString('tr-TR')} coin</span>
+            <span className="flex gap-1">
+              {(['cards', 'table'] as const).map((l) => (
+                <button key={l} type="button" onClick={() => setLayout(l)} className={`rounded-full px-2.5 py-1 font-semibold ${layout === l ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink'}`}>{l === 'cards' ? 'Kart' : 'Tablo'}</button>
+              ))}
+            </span>
           </div>
         </div>
       </Card>
 
       <Card>
+        {layout === 'cards' && (
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(112px,1fr))] justify-items-center gap-3">
+            {rows.slice(0, limit).map((c) => (
+              <li key={c.key} className="relative">
+                <FutCard name={c.name} rating={c.rating} position={c.positions[0]} faceUrl={c.faceUrl} cardType={c.cardType} rarity={c.rarity} nationality={c.nationality} club={c.club} league={c.league} width={104} />
+                <span className="absolute left-0 top-0 flex flex-col gap-0.5">
+                  {c.pile === 'storage' && <Pill tone="sky">storage</Pill>}
+                  {c.duplicate && <Pill tone="amber">dup</Pill>}
+                  {c.instanceId !== undefined && starters.has(c.instanceId) && <Pill tone="slate">kadro</Pill>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {layout === 'table' && (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-xs uppercase text-muted">
@@ -135,13 +157,14 @@ export function UtClubPage() {
                     {c.pile === 'storage' && <Pill tone="sky">storage</Pill>}
                     {c.duplicate && <Pill tone="amber">duplicate</Pill>}
                     {c.untradeable && <Pill tone="emerald">untradeable</Pill>}
-                    {c.instanceId !== undefined && starters.has(c.instanceId) && <Pill tone="slate">ilk 11</Pill>}
+                    {c.instanceId !== undefined && starters.has(c.instanceId) && <Pill tone="slate">aktif kadro</Pill>}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        )}
         {rows.length > limit && (
           <button type="button" onClick={() => setLimit((l) => l + PAGE)} className="mt-3 w-full rounded-lg bg-surface-2 py-2 text-sm font-medium text-ink hover:bg-line">
             Daha fazla göster ({rows.length - limit} kart daha)

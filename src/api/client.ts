@@ -28,7 +28,7 @@ export const ErrorCodes = {
   careerForbidden: 'fc.exception.0009',
 } as const
 
-type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE'
+type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
 
 export interface RequestOptions {
   method?: Method

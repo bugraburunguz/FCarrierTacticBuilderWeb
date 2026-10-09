@@ -44,6 +44,7 @@ import type {
   UpgradeResult,
   UtSquadEvaluation,
   CaptureResult,
+  SbcSetVotes,
 } from './types'
 
 export interface SetupBody {
@@ -116,6 +117,8 @@ export const endpoints = {
     setup?: SetupBody
   }) =>
     api.post<UtSquadEvaluation>('/ut/squad/evaluate', body, false),
+  sbcVotes: () => api.get<{ sets: SbcSetVotes[] }>('/ut/sbc/votes'),
+  sbcVote: (setId: number, vote: number) => request<SbcSetVotes>(`/ut/sbc/votes/${setId}`, { method: 'PUT', body: { vote } }),
   utCapture: (captures: unknown[]) => api.post<CaptureResult>('/ut/capture', { captures }),
   keyAttributes: () => api.get<{ source: string; positions: Record<string, string[]> }>('/config/key-attributes'),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>

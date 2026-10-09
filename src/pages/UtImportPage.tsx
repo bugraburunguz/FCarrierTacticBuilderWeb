@@ -117,7 +117,7 @@ export function UtImportPage() {
             onMode={setMode}
             onImport={() => {
               const objectives = toPlannerObjectives(result.objectives, { gameModes: mode ? [mode] : undefined })
-              objectives.forEach((o) => objectiveStore.add(o))
+              objectiveStore.replaceImported(objectives)
               setNotice(`${objectives.length} objective planlayıcıya eklendi.`)
             }}
           />

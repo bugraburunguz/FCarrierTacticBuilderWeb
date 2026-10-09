@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import { TraditionalSbc } from '../components/TraditionalSbc'
+import { SbcVote, useSbcVotes } from '../components/SbcVote'
 import { Card } from '../components/ui'
 import { challengeSetup, describeRequirement } from '../lib/sbcChallenge'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -12,6 +13,7 @@ export function UtSbcChallengePage() {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const siblings = (capture?.sbcChallenges ?? []).filter((c) => String(c.setId) === setId)
   const challenge = challengeId ? siblings.find((c) => String(c.challengeId) === challengeId) : siblings.find((c) => c.status !== 'COMPLETED') ?? siblings[0]
+  const votes = useSbcVotes()
   const setName = capture?.sbcSets.find((s) => String(s.setId) === setId)?.name
   const setup = challenge && formations.data ? challengeSetup(challenge, formations.data) : undefined
   if (!challenge) {
@@ -23,7 +25,10 @@ export function UtSbcChallengePage() {
   }
   return (
     <div className="space-y-3">
-      <Link className="text-sm underline" to="/ut/sbc">← SBC listesi</Link>
+      <div className="flex items-center justify-between gap-2">
+        <Link className="text-sm underline" to="/ut/sbc">← SBC listesi</Link>
+        <SbcVote setId={challenge.setId} votes={votes.get(challenge.setId)} />
+      </div>
       {siblings.length > 1 && (
         <div className="flex flex-wrap gap-1.5">
           {siblings.map((c) => (

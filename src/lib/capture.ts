@@ -62,7 +62,10 @@ export function toPlannerObjectives(groups: CaptureObjectiveGroup[], options: Ob
   groups
     .filter((g) => !options.gameModes || options.gameModes.length === 0 || (g.gameMode && options.gameModes.includes(g.gameMode)))
     .forEach((group) => {
-      group.objectives.forEach((o) => {
+      const subDone = group.objectives.filter((o) => o.status === 'COMPLETED' || o.status === 'CLAIMED').length
+      const open = group.objectives.filter((o) => o.status === 'IN_PROGRESS' && o.total - o.progress > 0 && o.lockedBy.every((id) => done.has(id)))
+      const last = open[open.length - 1]
+      group.objectives.forEach((o, index) => {
         const remaining = o.total - o.progress
         const unlocked = o.lockedBy.every((id) => done.has(id))
         if (o.status !== 'IN_PROGRESS' || remaining <= 0 || !unlocked) {
@@ -71,10 +74,16 @@ export function toPlannerObjectives(groups: CaptureObjectiveGroup[], options: Ob
         const text = `${o.name ?? ''} ${o.description ?? ''}`
         result.push({
           id: `${group.groupId}-${o.id}`,
-          name: `${group.name ?? 'Grup'}: ${o.name ?? o.id}`,
+          name: o.name ?? String(o.id),
+          parentId: String(group.groupId),
+          parentName: group.name ?? 'Grup',
+          parentReward: coinValue(group.rewards),
+          subIndex: index + 1,
+          subTotal: group.objectives.length,
+          subDone,
           group: groupOf(group.name),
           requirements: [requirementOf(text, remaining)],
-          rewardValue: coinValue(o.rewards),
+          rewardValue: coinValue(o.rewards) + (o === last ? coinValue(group.rewards) : 0),
           sp: 0,
           webAppDoable: looksWebDoable(text),
           expiresAt: isoDate(group.endTime),

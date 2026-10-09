@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Button, Card, EmptyState, Field, Input, Pill, Select } from '../components/ui'
-import { estimateEffort, parseRequirement, planObjectives, rewardOf, xiToText, type Objective, type ObjectiveGroup, type PlanGroup, type Requirement } from '../lib/objectives'
+import { estimateEffort, objectiveLabel, parseRequirement, planObjectives, rewardOf, xiToText, type Objective, type ObjectiveGroup, type PlanGroup, type Requirement } from '../lib/objectives'
 import { objectiveStore, useObjectives } from '../state/objectiveStore'
 
 const GROUPS: ObjectiveGroup[] = ['Foundations', 'Milestones', 'Weekly', 'Seasonal', 'Diğer']
@@ -8,6 +8,16 @@ const GROUPS: ObjectiveGroup[] = ['Foundations', 'Milestones', 'Weekly', 'Season
 export function UtObjectivesPage() {
   const objectives = useObjectives()
   const plan = useMemo(() => planObjectives(objectives), [objectives])
+  const { parents, singles } = useMemo(() => {
+    const map = new Map<string, { id: string; name: string; group: string; total: number; done: number; reward: number; expiresAt?: string; items: Objective[] }>()
+    objectives.filter((o) => o.parentId).forEach((o) => {
+      const entry = map.get(o.parentId!) ?? { id: o.parentId!, name: o.parentName ?? 'Grup', group: o.group, total: o.subTotal ?? 0, done: o.subDone ?? 0, reward: o.parentReward ?? 0, expiresAt: o.expiresAt, items: [] }
+      entry.items.push(o)
+      map.set(o.parentId!, entry)
+    })
+    map.forEach((e) => e.items.sort((a, b) => (a.subIndex ?? 0) - (b.subIndex ?? 0)))
+    return { parents: [...map.values()], singles: objectives.filter((o) => !o.parentId) }
+  }, [objectives])
   const [name, setName] = useState('')
   const [group, setGroup] = useState<ObjectiveGroup>('Weekly')
   const [requirements, setRequirements] = useState('')
@@ -86,16 +96,42 @@ export function UtObjectivesPage() {
         {objectives.length === 0 ? (
           <EmptyState>Henüz objective yok.</EmptyState>
         ) : (
-          <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-700">
-            {objectives.map((o) => (
-              <li key={o.id} className="flex items-center justify-between gap-2 py-1.5">
-                <span>
-                  <b>{o.name}</b> <span className="text-xs text-slate-500">{o.group}{o.expiresAt ? ` · ${o.expiresAt}` : ''} · ödül {rewardOf(o)} · ~{estimateEffort(o)} maç{o.webAppDoable ? ' · web' : ''}</span>
-                </span>
-                <Button variant="ghost" onClick={() => objectiveStore.remove(o.id)}>Sil</Button>
-              </li>
+          <div className="space-y-3 text-sm">
+            {parents.map((p) => (
+              <section key={p.id} className="rounded-xl border border-line p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <b>{p.name}</b>
+                  <Pill tone="slate">{p.group}</Pill>
+                  <Pill tone="sky">alt görev {p.done}/{p.total}</Pill>
+                  {p.reward > 0 && <Pill tone="amber">ana ödül {p.reward.toLocaleString('tr-TR')}</Pill>}
+                  {p.expiresAt && <Pill tone="rose">{p.expiresAt}</Pill>}
+                </div>
+                <ol className="mt-2 space-y-1 border-l border-line pl-3">
+                  {p.items.map((o) => (
+                    <li key={o.id} className="flex items-center justify-between gap-2">
+                      <span>
+                        <span className="text-xs text-muted">{o.subIndex}/{o.subTotal}</span> {o.name}{' '}
+                        <span className="text-xs text-muted">· ödül {rewardOf(o)} · ~{estimateEffort(o)} maç{o.webAppDoable ? ' · web' : ''}</span>
+                      </span>
+                      <Button variant="ghost" onClick={() => objectiveStore.remove(o.id)}>Sil</Button>
+                    </li>
+                  ))}
+                </ol>
+              </section>
             ))}
-          </ul>
+            {singles.length > 0 && (
+              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+                {singles.map((o) => (
+                  <li key={o.id} className="flex items-center justify-between gap-2 py-1.5">
+                    <span>
+                      <b>{o.name}</b> <span className="text-xs text-slate-500">{o.group}{o.expiresAt ? ` · ${o.expiresAt}` : ''} · ödül {rewardOf(o)} · ~{estimateEffort(o)} maç{o.webAppDoable ? ' · web' : ''}</span>
+                    </span>
+                    <Button variant="ghost" onClick={() => objectiveStore.remove(o.id)}>Sil</Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
       </Card>
 
@@ -114,7 +150,7 @@ function PlanView({ groups, web, total }: { groups: PlanGroup[]; web: Objective[
             <div className="mb-1 flex items-center gap-2"><Pill tone="sky">Web App / Companion</Pill><span className="text-xs text-slate-500">maç gerekmez, önce bunları yap</span></div>
             <ul className="list-disc pl-5">
               {web.map((o) => (
-                <li key={o.id}>{o.name}{o.expiresAt ? ` (${o.expiresAt})` : ''}</li>
+                <li key={o.id}>{objectiveLabel(o)}{o.expiresAt ? ` (${o.expiresAt})` : ''}</li>
               ))}
             </ul>
           </li>
@@ -129,7 +165,7 @@ function PlanView({ groups, web, total }: { groups: PlanGroup[]; web: Objective[
             </div>
             <ul className="list-disc pl-5">
               {g.objectives.map((o) => (
-                <li key={o.id}>{o.name}</li>
+                <li key={o.id}>{objectiveLabel(o)}</li>
               ))}
             </ul>
             {g.xi.length > 0 && (

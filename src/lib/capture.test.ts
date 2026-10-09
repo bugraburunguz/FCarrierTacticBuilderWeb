@@ -54,3 +54,23 @@ describe('capture mapping', () => {
     expect(pool.some((p) => p.rating === 30)).toBe(false)
   })
 })
+
+describe('toPlannerObjectives ana görev / alt görev', () => {
+  it('alt görevleri ana göreve bağlar, ana ödülü son alt göreve ekler', () => {
+    const group = {
+      groupId: 7,
+      name: 'Weekly',
+      rewards: [{ type: 'coin', value: 1000, count: 1 }],
+      objectives: [
+        { id: 1, name: 'A', progress: 1, total: 1, status: 'COMPLETED', lockedBy: [], rewards: [] },
+        { id: 2, name: 'B', progress: 0, total: 2, status: 'IN_PROGRESS', lockedBy: [1], rewards: [{ type: 'coin', value: 200, count: 1 }] },
+        { id: 3, name: 'C', progress: 0, total: 3, status: 'IN_PROGRESS', lockedBy: [], rewards: [{ type: 'coin', value: 300, count: 1 }] },
+      ],
+    } as unknown as Parameters<typeof toPlannerObjectives>[0][number]
+    const result = toPlannerObjectives([group])
+    expect(result.map((o) => o.name)).toEqual(['B', 'C'])
+    expect(result[0]).toMatchObject({ parentId: '7', parentName: 'Weekly', subIndex: 2, subTotal: 3, subDone: 1 })
+    expect(result[0].rewardValue).toBe(200)
+    expect(result[1].rewardValue).toBe(1300)
+  })
+})

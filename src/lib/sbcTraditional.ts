@@ -6,6 +6,8 @@ export interface SbcCandidate extends ChemCard {
   /** Maliyet: kulüp kartında fırsat maliyeti (≈0), market kartında coin (yakalanmış ya da tahmini). */
   price?: number
   source?: 'storage' | 'club' | 'market'
+  faceUrl?: string
+  rarity?: string
 }
 
 export interface SbcSlot {

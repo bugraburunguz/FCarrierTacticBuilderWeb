@@ -70,7 +70,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
   const capture = useUtCapture()
   const [skipStarters, setSkipStarters] = useState(true)
   const allOwned = useMemo(() => (utCardStore.get()?.cards ?? []).filter((c) => c.source === 'club'), [])
-  const starterIds = useMemo(() => new Set((capture?.activeSquad?.slots ?? []).filter((s) => s.starter && s.card).map((s) => s.card!.instanceId)), [capture])
+  const starterIds = useMemo(() => new Set((capture?.activeSquad?.slots ?? []).filter((s) => s.card).map((s) => s.card!.instanceId)), [capture])
   const clubCards = useMemo(() => allOwned.filter((c) => !(skipStarters && c.instanceId !== undefined && starterIds.has(c.instanceId))), [allOwned, skipStarters, starterIds])
   const [mode, setMode] = useState<PoolMode>(allOwned.length > 0 ? 'auto' : 'market')
 
@@ -100,11 +100,11 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
       const fromPages = useMarket ? (await Promise.all((extra.fromAny ?? []).map((r) => fromAnyPages(r, leagueList, nationList, positions, ovrMin, min)))).flat() : []
       const byId = new Map<number, SbcCandidate>()
       pages.concat(extraPages, fromPages).flatMap((p) => p.items).forEach((p) =>
-        byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions, price: estimateCoinPrice(p.overall), source: 'market' }),
+        byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions, price: estimateCoinPrice(p.overall), source: 'market', faceUrl: p.faceUrl }),
       )
       if (mode !== 'market') {
         clubCards.forEach((c, i) =>
-          byId.set(CLUB_ID_BASE + i, { id: CLUB_ID_BASE + i, name: c.name, overall: c.rating, club: c.club, league: c.league, nationality: c.nationality, gender: c.gender, positions: c.positions, cardType: c.cardType, price: ownedCost(c), source: ownedSource(c) }),
+          byId.set(CLUB_ID_BASE + i, { id: CLUB_ID_BASE + i, name: c.name, overall: c.rating, club: c.club, league: c.league, nationality: c.nationality, gender: c.gender, positions: c.positions, cardType: c.cardType, price: ownedCost(c), source: ownedSource(c), faceUrl: c.faceUrl, rarity: c.rarity }),
         )
       }
       const required = {
@@ -148,6 +148,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
       x: s.x,
       y: s.y,
       player: p && { id: p.id, name: p.name, overall: p.overall },
+      fut: p && { faceUrl: p.faceUrl, cardType: p.cardType, rarity: p.rarity, nationality: p.nationality, club: p.club, league: p.league },
       roleLabel: '',
       sub: p ? `kimya ${chemResult!.perSlot[i]} · ${p.source === 'storage' ? 'Storage' : p.source === 'club' ? 'Kulüp' : `~${shortCoins(p.price ?? 0)}`}` : undefined,
     }
@@ -201,7 +202,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
       {starterIds.size > 0 && (
         <label className="mt-2 flex items-center gap-2 text-xs">
           <input type="checkbox" checked={skipStarters} onChange={(e) => setSkipStarters(e.target.checked)} />
-          Aktif kadrodaki ilk 11'i kullanma
+          Aktif kadrodaki oyuncuları (ilk 11 + yedekler) kullanma
         </label>
       )}
       <Button className="mt-3" disabled={!formation || solve.isPending} onClick={() => solve.mutate()}>{solve.isPending ? 'Aranıyor…' : 'Çöz'}</Button>

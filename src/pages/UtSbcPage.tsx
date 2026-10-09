@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { SbcChallenge, SbcPoolEntry, SbcRarity } from '../api/types'
+import { SbcVote, useSbcVotes } from '../components/SbcVote'
 import { describeRequirement } from '../lib/sbcChallenge'
 import { sbcPoolStore } from '../state/sbcPoolStore'
 import { Button, Card, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
@@ -68,6 +69,7 @@ function ClubSbcSets() {
   const capture = useUtCapture()
   const sets = capture?.sbcSets ?? []
   const challenges = capture?.sbcChallenges ?? []
+  const votes = useSbcVotes()
   if (sets.length === 0) {
     return (
       <Card title="Kulübündeki SBC'ler">
@@ -98,6 +100,7 @@ function ClubSbcSets() {
                     <div className="flex items-center justify-between gap-2">
                     <Link to={`/ut/sbc/${s.setId}`} className={`underline decoration-dotted hover:text-accent ${done ? 'text-muted line-through' : ''}`}>{s.name ?? `#${s.setId}`}</Link>
                     <span className="flex items-center gap-1.5 text-xs">
+                      <SbcVote setId={s.setId} votes={votes.get(s.setId)} />
                       <span className="tabular-nums">{s.challengesCompleted}/{s.challengesCount}</span>
                       {s.repeatable && <Pill tone="sky">tekrarlanabilir</Pill>}
                       {left !== undefined && <Pill tone="amber">{left} gün</Pill>}

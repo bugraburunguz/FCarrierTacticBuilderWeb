@@ -717,6 +717,7 @@ export interface CaptureCard {
   marketAverage?: number
   duplicate: boolean
   pile: string
+  faceUrl?: string
 }
 
 export interface CaptureReward {
@@ -745,6 +746,14 @@ export interface CaptureObjectiveGroup {
   endTime?: number
   rewards: CaptureReward[]
   objectives: CaptureObjective[]
+}
+
+export interface SbcSetVotes {
+  setId: number
+  up: number
+  down: number
+  /** 1 beğendi, -1 beğenmedi, 0 oy yok. */
+  mine: number
 }
 
 export interface SbcRef {

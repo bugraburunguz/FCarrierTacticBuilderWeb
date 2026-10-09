@@ -18,6 +18,18 @@ export interface Objective {
   effortMatches?: number
   webAppDoable: boolean
   expiresAt?: string
+  /** Yakalanan objective'lerde ana görev (grup): alt görevler bu gruba bağlıdır. */
+  parentId?: string
+  parentName?: string
+  /** Ana görevin tüm alt görevler bitince verdiği ödül (coin); planda son alt göreve eklenir. */
+  parentReward?: number
+  subIndex?: number
+  subTotal?: number
+  subDone?: number
+}
+
+export function objectiveLabel(o: Objective): string {
+  return o.parentName ? `${o.parentName} › ${o.name}` : o.name
 }
 
 export interface XiRequirement {
