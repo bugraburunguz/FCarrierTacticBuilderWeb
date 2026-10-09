@@ -8,8 +8,8 @@ const RED = 'text-[#d64545]'
 const BLUE = 'text-[#1f6fc4]'
 
 const BADGE: Record<ChangeType, { label: string; icon: string; tone: string }> = {
-  UPGRADE: { label: 'Güncellendi', icon: '▲', tone: GREEN },
-  DOWNGRADE: { label: 'Düşürüldü', icon: '▼', tone: RED },
+  UPGRADE: { label: 'Güncellendi', icon: '↑', tone: GREEN },
+  DOWNGRADE: { label: 'Düşürüldü', icon: '↓', tone: RED },
   MIXED: { label: 'Değişti', icon: '↕', tone: BLUE },
   TRANSFER: { label: 'Transfer', icon: '⇄', tone: BLUE },
   NEW: { label: 'Yeni oyuncu', icon: '＋', tone: GREEN },
@@ -36,7 +36,7 @@ export function DeltaMark({ delta }: { delta: number }) {
   }
   return (
     <span className={`text-sm font-bold tabular-nums ${delta > 0 ? GREEN : RED}`}>
-      {delta > 0 ? '▲+' : '▼−'}
+      {delta > 0 ? '↑ +' : '↓ −'}
       {Math.abs(delta)}
     </span>
   )

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { endpoints } from '../api/endpoints'
 import { careerStore, useActiveCareerId } from '../state/careerStore'
+import { ChevronDown, Menu, X } from 'lucide-react'
 import { useStorageError } from '../state/bigStore'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../api/client'
@@ -129,7 +130,7 @@ export function Layout() {
                 <details className="group relative hidden min-w-0 lg:block">
                   <summary className="flex max-w-[190px] cursor-pointer list-none items-center gap-1 truncate rounded-md border border-line px-2.5 py-1 text-sm text-ink hover:bg-surface-2">
                     <span className="truncate">{me.email}</span>
-                    <span aria-hidden="true" className="text-xs">▾</span>
+                    <ChevronDown size={14} aria-hidden="true" />
                   </summary>
                   <div className="absolute right-0 z-20 mt-1 w-44 rounded-md border border-line bg-surface p-1">
                     <NavLink to="/profile" className="block rounded-md px-3 py-1.5 text-sm hover:bg-surface-2">Profil</NavLink>
@@ -164,7 +165,7 @@ export function Layout() {
               onClick={() => setMenuOpen((v) => !v)}
               className="shrink-0 rounded-md border border-line px-2.5 py-1 text-lg leading-none text-muted hover:bg-surface-2 lg:hidden"
             >
-              {menuOpen ? '✕' : '☰'}
+              {menuOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
             </button>
           </div>
         </div>

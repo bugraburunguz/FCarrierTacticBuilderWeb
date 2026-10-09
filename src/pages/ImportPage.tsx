@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -108,7 +109,7 @@ export function ImportPage() {
             className="rounded-md border-2 border-dashed border-accent p-3 text-xs"
           >
             <input type="file" accept=".log,.txt" aria-label="Live Editor log dosyası" className="w-full text-xs" onChange={(e) => setLogFile(e.target.files?.[0])} />
-            {logFile && <div className="mt-1 text-accent">✓ {logFile.name} ({Math.round(logFile.size / 1024 / 1024)} MB)</div>}
+            {logFile && <div className="mt-1 text-accent"><Check size={12} className="inline" aria-hidden="true" /> {logFile.name} ({Math.round(logFile.size / 1024 / 1024)} MB)</div>}
           </div>
         </Field>
         <details className="mt-3 text-sm">
@@ -134,7 +135,7 @@ export function ImportPage() {
                   className="w-full text-xs"
                   onChange={(e) => setFiles((prev) => ({ ...prev, [f.key]: e.target.files?.[0] }))}
                 />
-                {files[f.key] && <div className="mt-1 text-accent">✓ {files[f.key]!.name}</div>}
+                {files[f.key] && <div className="mt-1 text-accent"><Check size={12} className="inline" aria-hidden="true" /> {files[f.key]!.name}</div>}
               </div>
             </Field>
           ))}

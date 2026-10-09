@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
@@ -153,7 +154,7 @@ function PositionHint({ advice }: { advice?: PlayerPositionAdvice }) {
       )}
       {advice.ownPositionBest ? (
         <span className="text-accent">
-          ✓ Kendi mevkisi iyi: {advice.listedPositions[0]} {top.natural ? `(%${Math.round(top.score)})` : ''}
+          <Check size={12} className="inline" aria-hidden="true" /> Kendi mevkisi iyi: {advice.listedPositions[0]} {top.natural ? `(%${Math.round(top.score)})` : ''}
         </span>
       ) : (
         <span className="text-code">

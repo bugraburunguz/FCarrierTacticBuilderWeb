@@ -1,6 +1,7 @@
 import { PLAYSTYLES, triggerResults } from '../lib/playstyles'
 import { thresholdNotes } from '../lib/thresholds'
 import { ATTR_LABELS } from '../lib/format'
+import { AlertTriangle, Check } from 'lucide-react'
 import { Card, Pill } from './ui'
 
 export function PlayerInsights({ attrs, positions, playstyles }: { attrs: Record<string, number>; positions: string[]; playstyles: Record<string, number> }) {
@@ -45,7 +46,7 @@ export function PlayerInsights({ attrs, positions, playstyles }: { attrs: Record
           <ul className="space-y-1">
             {notes.map((note) => (
               <li key={note.id} className={note.tone === 'good' ? 'text-accent' : 'text-code'}>
-                {note.tone === 'good' ? '✓' : '!'} {note.text}
+                {note.tone === 'good' ? <Check size={12} className="inline" aria-hidden="true" /> : <AlertTriangle size={12} className="inline" aria-hidden="true" />} {note.text}
               </li>
             ))}
           </ul>

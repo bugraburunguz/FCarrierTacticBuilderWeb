@@ -46,14 +46,14 @@ export function PositionOverallPitch({ overalls, listed }: Props) {
               </text>
               <text textAnchor="middle" y="10" fontSize="2.8" fill="#fff" stroke="#00000077" strokeWidth="0.5" paintOrder="stroke">
                 {position}
-                {value === best ? ' ★' : ''}
+                {value === best ? ' ▲' : ''}
               </text>
             </g>
           )
         })}
       </svg>
       <p className="mt-1 text-xs text-muted">
-        Her mevkideki tahmini overall (oyunun mevki formülüyle). ★ en yüksek, sarı halka oyuncunun listelenen mevkileri; yeşil en iyiye yakın, kırmızı belirgin düşüş.
+        Her mevkideki tahmini overall (oyunun mevki formülüyle). ▲ en yüksek, sarı halka oyuncunun listelenen mevkileri; yeşil en iyiye yakın, kırmızı belirgin düşüş.
       </p>
     </div>
   )

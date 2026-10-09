@@ -1,3 +1,4 @@
+import { X } from 'lucide-react'
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -64,7 +65,7 @@ export function Modal({ title, hint, wide, onClose, children }: Props) {
         className={`max-h-[86vh] ${wide ? 'w-[680px]' : 'w-[380px]'} max-w-full overflow-auto rounded-md border border-line bg-surface p-4 text-ink `}
       >
         <button type="button" aria-label="Kapat" onClick={onClose} className="float-right text-lg leading-none text-muted hover:text-ink">
-          ✕
+          <X size={18} aria-hidden="true" />
         </button>
         <h3 className="text-sm font-bold">{title}</h3>
         {hint && <p className="mb-3 text-xs text-muted">{hint}</p>}

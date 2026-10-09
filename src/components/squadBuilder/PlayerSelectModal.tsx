@@ -2,7 +2,7 @@ import { useQueries } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer, WeaponState } from '../../api/types'
-import { BADGE_EMOJI } from '../../lib/format'
+import { BadgeDot } from '../ui'
 import { ovrBand } from '../../lib/squadBuilder'
 import { Modal } from '../Modal'
 
@@ -89,7 +89,7 @@ export function PlayerSelectPanel({ position, roleId, tags, candidates, currentP
                 <span className="flex-1 text-[13px] font-semibold">{c.player.name}</span>
                 {fit && (
                   <span className="text-[11px] tabular-nums text-ink/80">
-                    {BADGE_EMOJI[fit.band]} %{fit.pct}
+                    <BadgeDot state={fit.band} /> %{fit.pct}
                   </span>
                 )}
                 <span className="text-[11px] text-muted">{c.player.positions.slice(0, 3).join('/')}</span>

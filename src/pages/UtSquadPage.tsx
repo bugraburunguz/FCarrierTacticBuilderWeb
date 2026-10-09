@@ -7,6 +7,7 @@ import { FormationStyleChips } from '../components/FormationStyleChips'
 import { Modal } from '../components/Modal'
 import { Pitch, type PitchSlot } from '../components/pitch/Pitch'
 import { cardPlayerOf } from '../lib/cardPlayer'
+import { ChemDiamonds } from '../components/card/ChemDiamonds'
 import type { FitState } from '../components/card/FitBadge'
 import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
 import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
@@ -461,7 +462,7 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
         <>
           <p>
             Meta rating* <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Pill tone={TIER_TONE[evaluation.card.tier] ?? 'slate'}>{evaluation.card.tier}</Pill>
-            {' · '}Kimya <b>{'◆'.repeat(links)}{'◇'.repeat(3 - links)}</b>
+            {' · '}Kimya <ChemDiamonds value={links} size={12} />
           </p>
           {evaluation.roleFit !== undefined && (
             <p className="flex items-center gap-1.5">

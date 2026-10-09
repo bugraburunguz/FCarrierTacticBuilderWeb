@@ -1,5 +1,6 @@
+import { X } from 'lucide-react'
 import type { WeaponState } from '../../api/types'
-import { BADGE_EMOJI } from '../../lib/format'
+import { BadgeDot } from '../ui'
 import { ovrBand } from '../../lib/squadBuilder'
 
 export interface SlotView {
@@ -60,7 +61,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
         {player && view.sub && <div className="truncate text-[9px] text-muted">{view.sub}</div>}
         {fit && (
           <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[fit.band]}`}>
-            {BADGE_EMOJI[fit.band]} %{fit.pct}
+            <BadgeDot state={fit.band} /> %{fit.pct}
           </span>
         )}
       </div>
@@ -75,7 +76,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
           }}
           className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-line bg-ink-900 text-[11px] font-bold leading-none text-ink hover:border-danger-line hover:bg-danger hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
         >
-          ✕
+          <X size={12} aria-hidden="true" />
         </button>
       )}
       {view.roleLabel && (

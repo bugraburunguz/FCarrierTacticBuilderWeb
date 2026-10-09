@@ -85,7 +85,7 @@ export function PlayerDetailPage() {
         <p className="mt-2 text-xs text-muted">* Model tahmini — EA’nın gerçek potential verisi değildir.</p>
         <p className="mt-1 text-xs text-muted">
           {summary.age ? `${summary.age} yaş` : ''} {detail.data.heightCm ? `· ${detail.data.heightCm} cm` : ''} {detail.data.weightKg ? `· ${detail.data.weightKg} kg` : ''}
-          {detail.data.weakFoot ? ` · Zayıf ayak ${detail.data.weakFoot}★` : ''} {detail.data.skillMoves ? ` · Hareket ${detail.data.skillMoves}★` : ''}
+          {detail.data.weakFoot ? ` · Zayıf ayak ${detail.data.weakFoot}/5` : ''} {detail.data.skillMoves ? ` · Hareket ${detail.data.skillMoves}/5` : ''}
         </p>
       </Card>
 

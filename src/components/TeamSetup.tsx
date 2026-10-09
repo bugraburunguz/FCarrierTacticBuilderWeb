@@ -1,3 +1,4 @@
+import { Check, X } from 'lucide-react'
 import { useMutation } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
@@ -77,7 +78,7 @@ export function TeamSetup({ careerId }: { careerId?: number }) {
             <ul className="mt-1 flex flex-wrap gap-1.5">
               {c.players.map((p) => (
                 <li key={p.id} className={`rounded-full px-2 py-0.5 text-xs ${p.ok ? 'bg-accent-soft text-accent' : 'bg-danger-soft text-danger'}`}>
-                  {p.name} ({p.position}) {p.value}{p.ok ? ' ✓' : ' ✗'}
+                  {p.name} ({p.position}) {p.value} {p.ok ? <Check size={12} className="inline" aria-label="sağlıyor" /> : <X size={12} className="inline" aria-label="sağlamıyor" />}
                 </li>
               ))}
               {c.players.length === 0 && <li className="text-xs text-muted">Kadronda bu mevkide oyuncu yok.</li>}

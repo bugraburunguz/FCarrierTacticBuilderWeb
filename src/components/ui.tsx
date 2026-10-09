@@ -153,7 +153,7 @@ export function AttrBar({ label, value, delta }: { label: string; value: number;
       <span className="num w-6 text-right font-semibold">{value}</span>
       {delta !== undefined && delta !== 0 && (
         <span className={cx('num w-10 shrink-0 text-[11px] font-bold', delta > 0 ? 'text-good' : 'text-danger')} title={`şuydu ${value - delta} → şu oldu ${value}`}>
-          {delta > 0 ? '▲+' : '▼−'}{Math.abs(delta)}
+          {delta > 0 ? '+' : '−'}{Math.abs(delta)}
         </span>
       )}
       <div className="h-1.5 flex-1 overflow-hidden rounded-sm bg-surface-2">

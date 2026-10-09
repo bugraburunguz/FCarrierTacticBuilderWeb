@@ -63,4 +63,3 @@ export const ATTR_GROUPS: { title: string; attrs: string[] }[] = [
 
 export const POSITIONS = ['GK', 'RB', 'CB', 'LB', 'CDM', 'CM', 'CAM', 'RM', 'LM', 'RW', 'LW', 'ST']
 
-export const BADGE_EMOJI = { GREEN: '🟢', YELLOW: '🟡', RED: '🔴' } as const

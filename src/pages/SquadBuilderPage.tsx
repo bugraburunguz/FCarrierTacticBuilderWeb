@@ -236,9 +236,9 @@ export function SquadBuilderPage() {
                 <option value="">Seçiniz…</option>
                 <optgroup label="Benim / otomatik">
                   {presets.data?.filter((p) => p.kind === 'PERSONAL').map((p) => (
-                    <option key={p.id} value={p.id}>★ Benim oyun anlayışım — {p.name}</option>
+                    <option key={p.id} value={p.id}>Benim oyun anlayışım — {p.name}</option>
                   ))}
-                  <option value={AUTO_FIT}>★ Takıma göre en iyi taktik (Auto-Fit)</option>
+                  <option value={AUTO_FIT}>Takıma göre en iyi taktik (Auto-Fit)</option>
                 </optgroup>
                 <optgroup label="Oyun felsefeleri">
                   {presets.data?.filter((p) => p.kind === 'STYLE').map((p) => (
