@@ -256,6 +256,8 @@ export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constra
   const order = slots.map((s, index) => ({ slot: s, index })).sort((a, b) => (byPosition.get(a.slot.position)?.length ?? 0) - (byPosition.get(b.slot.position)?.length ?? 0))
   // Ceza ağırlıkları maliyet ölçeğine göre büyür: rating bazlı maliyette ~1, coin bazlı maliyette şartlar ucuz-ama-sağlamayan çözümlere yenilmez.
   const costScale = Math.max(1, Math.max(0, ...eligible.map(cardCost)) / PENALTY_COST_REFERENCE)
+  // Büyük havuzda daha dar ışın: yanıt süresi sınırlı kalır, budama zaten çeşitliliği korur.
+  const width = eligible.length > 400 ? Math.min(beam, 160) : beam
   let states: State[] = [{ picks: [], used: [], cost: 0, score: 0 }]
   order.forEach(({ slot }, step) => {
     const next: State[] = []
@@ -272,7 +274,7 @@ export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constra
         next.push({ picks, used: [...state.used, key], cost, score: cost + penalty(picks, stepSlots, constraints) * costScale })
       }
     }
-    states = next.sort((a, b) => a.score - b.score).slice(0, beam)
+    states = next.sort((a, b) => a.score - b.score).slice(0, width)
   })
   const placed = (state: State) => {
     const byIndex: (SbcCandidate | undefined)[] = new Array(slots.length).fill(undefined)
