@@ -7,6 +7,7 @@ import type { ImportSummary } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import { CareerSelect } from '../components/CareerSelect'
 import { Button, Card, ErrorBox, Field, Input, Pill } from '../components/ui'
+import { importWarningText } from '../lib/importWarnings'
 import { useActiveCareerId } from '../state/careerStore'
 
 const FILES = [
@@ -15,6 +16,7 @@ const FILES = [
   { key: 'teamplayerlinks', label: 'teamplayerlinks.csv', required: true },
   { key: 'leagueteamlinks', label: 'leagueteamlinks.csv', required: false },
   { key: 'leagues', label: 'leagues.csv', required: false },
+  { key: 'playerloans', label: 'playerloans.csv', required: false },
 ] as const
 
 const STEPS = [
@@ -154,6 +156,9 @@ export function ImportPage() {
             {result.players} oyuncu, {result.teams} takım içe aktarıldı{result.generatedPlayers ? ` (${result.generatedPlayers} tanesi kariyerinde üretilmiş oyuncu; sadece bu kariyerde görünür)` : ''} · <strong>{result.freeAgents} serbest oyuncu</strong> bulundu.
             {result.unmatchedPlayers > 0 && ` (${result.unmatchedPlayers} oyuncu kataloğumuzda yok, atlandı.)`}
           </p>
+          {(result.warnings ?? []).map((code) => (
+            <p key={code} role="alert" className="mt-1 text-sm text-danger">{importWarningText(code, result)}</p>
+          ))}
           {result.squadSynced !== undefined && (
             <p className="mt-1 text-sm text-accent">
               Kadron {result.guessedTeamName} takımından otomatik kuruldu: <strong>{result.squadSynced} oyuncu</strong> (kiralık gelenler ve kiralık gidenler dahil). <Link to="/squad" className="underline">Kadroya git</Link>

@@ -477,6 +477,8 @@ export interface ImportSummary {
   guessedTeamId?: number
   guessedTeamName?: string
   squadSynced?: number
+  skippedNoPosition?: number
+  warnings?: string[]
 }
 
 export interface TeamSummary {
