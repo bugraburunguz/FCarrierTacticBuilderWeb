@@ -125,7 +125,7 @@ export const endpoints = {
   utChemStyle: (id: number, pos?: string) => api.post<MetaCard>(`/ut/card/${id}/chemstyle?${pos ? `pos=${pos}` : ''}`, undefined, false),
   utUpgrades: (id: number, pos?: string) => api.get<UpgradeResult>(`/ut/card/${id}/upgrades`, { pos, limit: 8 }),
   sbcStreamlined: (body: { targetScore: number; minRating?: number; pool: SbcPoolEntry[] }) =>
-    api.post<SbcResult>('/ut/sbc/streamlined', body, false),
+    api.post<SbcResult>('/ut/sbc/streamlined', body),
   utSquadEvaluate: (body: {
     slots: { slotId: string; position: string; playerId?: number; roleId?: string; card?: { name?: string; overall: number; positions?: string[]; attrs: Record<string, number> } }[]
     setup?: SetupBody
