@@ -207,7 +207,7 @@ Sayfa ↔ kapatılması zorunlu buglar:
 | V3-01 | P1 | `src/design/` (tokens.css, glass.css, components/), Radix kurulum, Inter self-host, aurora + grain katmanı, tema + mod + şeffaflık anahtarları | Ladle'da tüm bileşenler 2 tema × 2 mod × reduced-transparency |
 | V3-02 | P1 | stylelint + font-size lint + axe + Playwright 3 kırılım CI | Kapılar CI'da |
 | V3-03 | P1 | AppShell + yeni rota tablosu (D-08) + lazy rotalar | Eski yollar `<Navigate>` |
-| V3-04 | P1 | Çalışma alanı şablonu: Pitch + PitchSlot + SidePanel (08 §14-16) — UT ve kariyer ortak | Ekran onayı (D-07 kuralı: önce bu ekran) |
+| V3-04 | P1 | Çalışma alanı şablonu: Pitch + PitchSlot + SidePanel (08 §14-16) — UT ve kariyer ortak | Ekran onayı (D-07 kuralı: önce bu ekran). Kabul listesi: §8 Q1–Q10 + **Q11–Q15** (rol etiketi 2 satır/kesilmez, pasif buton ≥3:1 + neden, chip ≥12px/≥32px(44px), tek birincil eylem, axe serious/critical = 0) |
 | V3-05 | P1 | Katalog ve Detay şablonları → UT oyuncu, SBC, replikalar | §8 kapıları |
 | V3-06 | P1 | Kariyer ekranları yeni motorla (13 ENG-M8) | §8 kapıları |
 | V3-07 | P2 | Pano ve Akış şablonları → masa, gelişim, import, ayarlar | §8 kapıları |

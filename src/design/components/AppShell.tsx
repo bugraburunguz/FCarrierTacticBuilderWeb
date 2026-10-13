@@ -1,0 +1,144 @@
+import { Database, Layers, LayoutDashboard, LayoutTemplate, Puzzle, Shield, Sparkles, Swords, Target, Upload, Users, type LucideIcon } from 'lucide-react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { isStaticHostWithoutApi } from '../../api/client'
+import { useAuth } from '../../auth/AuthContext'
+import { CompareTray } from '../../components/CompareTray'
+import { useShellEffects } from '../../components/useShellEffects'
+import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
+import { MODES, NAV, UT_NAV, type NavGroup } from '../../lib/navConfig'
+import { useStorageError } from '../../state/bigStore'
+import { modeStore, useMode } from '../../state/modeStore'
+import { themeStore, useTheme } from '../../state/themeStore'
+import { Chip, Segmented } from './primitives'
+
+const THEME_LABEL = { dark: 'Koyu', light: 'Açık', system: 'Sistem' } as const
+
+const ICONS: Record<string, LucideIcon> = {
+  '/career/desk': LayoutDashboard,
+  '/players': Users,
+  '/squad/builder': Swords,
+  '/teams': Shield,
+  '/career/import': Upload,
+  '/ut/squad': LayoutTemplate,
+  '/ut/club': Layers,
+  '/ut/meta': Sparkles,
+  '/ut/sbc': Puzzle,
+  '/ut/objectives': Target,
+  '/ut/evo': Sparkles,
+  '/ut/import': Upload,
+}
+
+function isActive(group: NavGroup, pathname: string) {
+  return group.match.some((m) => pathname === m || pathname.startsWith(`${m}/`))
+}
+
+/** Küçük, kabuk-içi gezinme öğesi: ikon + etiket (rayda 72px, mobilde alt çubukta). */
+function RailLink({ group, active }: { group: NavGroup; active: boolean }) {
+  const Icon = ICONS[group.to] ?? Database
+  return (
+    <NavLink
+      to={group.to}
+      aria-current={active ? 'page' : undefined}
+      className={`flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-[var(--radius-sm)] px-1 py-1.5 text-center text-xs font-medium leading-4 ${active ? 'bg-[var(--accent-soft)] text-accent' : 'text-ink-2 hover:bg-[var(--glass-hover)]'}`}
+    >
+      <Icon size={20} aria-hidden="true" />
+      <span className="max-w-full break-words">{group.label}</span>
+    </NavLink>
+  )
+}
+
+/**
+ * v3 AppShell (11 §6): üstte 56px cam bar (logo + mod anahtarı + tema + hesap), masaüstünde solda cam ray, mobilde altta 64px cam tab bar.
+ * Mod = URL öneki (WEB-BUG-07). Hesap alanında tek birincil eylem: Kayıt ol primary, Giriş ikincil (Q14).
+ */
+export function AppShell() {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const mode = useMode()
+  const theme = useTheme()
+  const storageError = useStorageError()
+  const { authenticated, me, logout } = useAuth()
+  useShellEffects(pathname)
+  const nav = mode === 'ut' ? UT_NAV : NAV
+  const active = nav.find((g) => isActive(g, pathname))
+
+  return (
+    <div className="min-h-screen text-ink">
+      <header className="glass sticky top-0 z-20 flex h-14 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4">
+        <NavLink to="/" className="shrink-0 font-display text-xl font-bold text-accent"><span className="max-[479px]:hidden">FC Kariyer</span><span className="min-[480px]:hidden">FC</span></NavLink>
+        <Segmented
+          label="Mod"
+          value={mode}
+          options={MODES.map((m) => ({ id: m.id, label: m.id === 'ut' ? 'UT' : 'Kariyer' }))}
+          onChange={(id) => {
+            modeStore.set(id)
+            navigate(MODES.find((m) => m.id === id)?.home ?? '/')
+          }}
+        />
+        <div className="ml-auto flex items-center gap-2">
+          <button type="button" onClick={() => themeStore.cycle()} aria-label={`Tema: ${THEME_LABEL[theme]}. Değiştirmek için tıkla`} className="glass-3 min-h-8 px-3 text-xs font-medium text-ink-2 max-sm:hidden">
+            {THEME_LABEL[theme]}
+          </button>
+          {authenticated && me ? (
+            <>
+              <span className="hidden sm:block">{me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
+              <NavLink to="/profile" data-private className="hidden max-w-[180px] truncate text-sm text-ink-2 hover:underline lg:block">{me.email}</NavLink>
+              <button type="button" onClick={async () => { await logout(); navigate('/login') }} className="min-h-10 rounded-[var(--radius-sm)] px-3 text-sm font-semibold text-ink-2 hover:bg-[var(--glass-hover)] max-sm:min-h-11">
+                Çıkış
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="glass-3 inline-flex min-h-10 items-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold text-ink hover:bg-[var(--glass-hover)] max-sm:min-h-11">Giriş</NavLink>
+              <NavLink to="/register" className="inline-flex min-h-10 items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11">Kayıt ol</NavLink>
+            </>
+          )}
+        </div>
+      </header>
+
+      {isStaticHostWithoutApi() && (
+        <div role="alert" className="bg-[var(--warn-soft)] px-4 py-2 text-center text-sm text-warn">
+          Bu yayın yalnızca arayüzdür: API adresi (<code>VITE_API_BASE_URL</code>) tanımlı olmadığı için veri yüklenmez.
+        </div>
+      )}
+      {authenticated && <VerifyEmailBanner />}
+
+      <div className="flex">
+        <nav aria-label="Ana menü" className="glass sticky top-14 hidden h-[calc(100vh-3.5rem)] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
+          {nav.map((g) => (
+            <RailLink key={g.to} group={g} active={g === active} />
+          ))}
+        </nav>
+        <main className="mx-auto w-full min-w-0 max-w-[1600px] px-4 pb-24 pt-5 min-[820px]:pb-8">
+          {storageError && (
+            <div role="alert" className="mb-3 rounded-[var(--radius-sm)] bg-[var(--warn-soft)] px-3 py-2 text-sm text-warn">
+              {storageError}
+            </div>
+          )}
+          {active?.tabs && !/^\/players\/\d+/.test(pathname) && (
+            <nav aria-label={`${active.label} sekmeleri`} className="mb-4 flex flex-wrap gap-1">
+              {active.tabs.map((tab) => (
+                <NavLink
+                  key={tab.to}
+                  to={tab.to}
+                  end
+                  className={({ isActive: on }) => `inline-flex min-h-8 items-center rounded-[var(--radius-sm)] px-3 text-sm font-medium max-sm:min-h-11 ${on ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]'}`}
+                >
+                  {tab.label}
+                </NavLink>
+              ))}
+            </nav>
+          )}
+          <Outlet />
+        </main>
+      </div>
+
+      <nav aria-label="Mobil menü" className="glass fixed inset-x-0 bottom-0 z-20 grid h-16 grid-flow-col auto-cols-fr items-stretch gap-0.5 rounded-none border-x-0 border-b-0 px-1 min-[820px]:hidden">
+        {nav.slice(0, 5).map((g) => (
+          <RailLink key={g.to} group={g} active={g === active} />
+        ))}
+      </nav>
+      <CompareTray />
+    </div>
+  )
+}

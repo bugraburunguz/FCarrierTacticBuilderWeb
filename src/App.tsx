@@ -2,35 +2,40 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
-import { CareerDeskPage } from './pages/CareerDeskPage'
-import { CareerGrowthPage } from './pages/CareerGrowthPage'
-import { CareerNewPage } from './pages/CareerNewPage'
-import { CareerTransferPage } from './pages/CareerTransferPage'
-import { VerifyEmailPage } from './pages/VerifyEmailPage'
-import { ComparePage } from './pages/ComparePage'
-import { WizardPage } from './pages/WizardPage'
-import { WonderkidsPage } from './pages/WonderkidsPage'
-import { HomePage } from './pages/HomePage'
-import { ImportPage } from './pages/ImportPage'
-import { LoginPage, RegisterPage } from './pages/AuthPages'
-import { PlayerDetailPage } from './pages/PlayerDetailPage'
-import { PlayersPage } from './pages/PlayersPage'
-import { ProfilePage } from './pages/ProfilePage'
-import { RecommendPage } from './pages/RecommendPage'
-import { SquadBuilderPage } from './pages/SquadBuilderPage'
-import { ScoutingPage } from './pages/ScoutingPage'
-import { SquadPage } from './pages/SquadPage'
-import { TeamsPage } from './pages/TeamsPage'
-import { UtMetaPage } from './pages/UtMetaPage'
-import { UtClubPage } from './pages/UtClubPage'
-import { AdminUtPage } from './pages/AdminUtPage'
-import { UtEvolutionsPage } from './pages/UtEvolutionsPage'
-import { UtImportPage } from './pages/UtImportPage'
-import { UtObjectivesPage } from './pages/UtObjectivesPage'
-import { UtSbcPage } from './pages/UtSbcPage'
-import { UtSbcChallengePage } from './pages/UtSbcChallengePage'
-import { UtSquadPage } from './pages/UtSquadPage'
-import type { ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
+import { AppShell } from './design/components/AppShell'
+import { isV3 } from './design/uiVersion'
+
+// Rota başına lazy chunk (11 §8 Q10): ilk JS yalnız kabuk + açılan sayfa.
+const CareerDeskPage = lazy(() => import('./pages/CareerDeskPage').then((m) => ({ default: m.CareerDeskPage })))
+const CareerGrowthPage = lazy(() => import('./pages/CareerGrowthPage').then((m) => ({ default: m.CareerGrowthPage })))
+const CareerNewPage = lazy(() => import('./pages/CareerNewPage').then((m) => ({ default: m.CareerNewPage })))
+const CareerTransferPage = lazy(() => import('./pages/CareerTransferPage').then((m) => ({ default: m.CareerTransferPage })))
+const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })))
+const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ default: m.ComparePage })))
+const WizardPage = lazy(() => import('./pages/WizardPage').then((m) => ({ default: m.WizardPage })))
+const WonderkidsPage = lazy(() => import('./pages/WonderkidsPage').then((m) => ({ default: m.WonderkidsPage })))
+const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })))
+const ImportPage = lazy(() => import('./pages/ImportPage').then((m) => ({ default: m.ImportPage })))
+const LoginPage = lazy(() => import('./pages/AuthPages').then((m) => ({ default: m.LoginPage })))
+const RegisterPage = lazy(() => import('./pages/AuthPages').then((m) => ({ default: m.RegisterPage })))
+const PlayerDetailPage = lazy(() => import('./pages/PlayerDetailPage').then((m) => ({ default: m.PlayerDetailPage })))
+const PlayersPage = lazy(() => import('./pages/PlayersPage').then((m) => ({ default: m.PlayersPage })))
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
+const RecommendPage = lazy(() => import('./pages/RecommendPage').then((m) => ({ default: m.RecommendPage })))
+const SquadBuilderPage = lazy(() => import('./pages/SquadBuilderPage').then((m) => ({ default: m.SquadBuilderPage })))
+const ScoutingPage = lazy(() => import('./pages/ScoutingPage').then((m) => ({ default: m.ScoutingPage })))
+const SquadPage = lazy(() => import('./pages/SquadPage').then((m) => ({ default: m.SquadPage })))
+const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default: m.TeamsPage })))
+const UtMetaPage = lazy(() => import('./pages/UtMetaPage').then((m) => ({ default: m.UtMetaPage })))
+const UtClubPage = lazy(() => import('./pages/UtClubPage').then((m) => ({ default: m.UtClubPage })))
+const AdminUtPage = lazy(() => import('./pages/AdminUtPage').then((m) => ({ default: m.AdminUtPage })))
+const UtEvolutionsPage = lazy(() => import('./pages/UtEvolutionsPage').then((m) => ({ default: m.UtEvolutionsPage })))
+const UtImportPage = lazy(() => import('./pages/UtImportPage').then((m) => ({ default: m.UtImportPage })))
+const UtObjectivesPage = lazy(() => import('./pages/UtObjectivesPage').then((m) => ({ default: m.UtObjectivesPage })))
+const UtSbcPage = lazy(() => import('./pages/UtSbcPage').then((m) => ({ default: m.UtSbcPage })))
+const UtSbcChallengePage = lazy(() => import('./pages/UtSbcChallengePage').then((m) => ({ default: m.UtSbcChallengePage })))
+const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { authenticated, loading } = useAuth()
@@ -46,8 +51,9 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
 export function App() {
   return (
+    <Suspense fallback={<Spinner />}>
     <Routes>
-      <Route element={<Layout />}>
+      <Route element={isV3() ? <AppShell /> : <Layout />}>
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
@@ -84,5 +90,6 @@ export function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
+    </Suspense>
   )
 }

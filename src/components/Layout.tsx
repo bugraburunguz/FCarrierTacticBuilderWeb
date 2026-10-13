@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { endpoints } from '../api/endpoints'
-import { careerStore, useActiveCareerId } from '../state/careerStore'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import { useStorageError } from '../state/bigStore'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -10,71 +7,12 @@ import { CompareTray } from './CompareTray'
 import { VerifyEmailBanner } from './VerifyEmailBanner'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
-import { modeForPath, modeStore, useMode, type AppMode } from '../state/modeStore'
+import { modeStore, useMode } from '../state/modeStore'
 import { themeStore, useTheme } from '../state/themeStore'
+import { MODES, NAV, UT_NAV } from '../lib/navConfig'
+import { useShellEffects } from './useShellEffects'
 
 const THEME_LABEL = { dark: 'Koyu', light: 'Açık', system: 'Sistem' } as const
-
-interface NavGroup {
-  to: string
-  label: string
-  match: string[]
-  tabs?: { to: string; label: string }[]
-}
-
-const NAV: NavGroup[] = [
-  {
-    to: '/career/desk',
-    label: 'Menajer masası',
-    match: ['/career/desk', '/career/transfer', '/career/growth', '/career/new'],
-    tabs: [
-      { to: '/career/desk', label: 'Masa' },
-      { to: '/career/transfer', label: 'Transfer' },
-      { to: '/career/growth', label: 'Gelişim' },
-      { to: '/career/new', label: 'Yeni kariyer' },
-    ],
-  },
-  {
-    to: '/players',
-    label: 'Oyuncular',
-    match: ['/players', '/compare', '/wonderkids'],
-    tabs: [
-      { to: '/players', label: 'Oyuncu ara' },
-      { to: '/wonderkids', label: 'Wonderkids' },
-      { to: '/compare', label: 'Karşılaştır' },
-    ],
-  },
-  {
-    to: '/squad/builder',
-    label: 'Taktik & Kadro',
-    match: ['/tactics', '/squad', '/recommend', '/scouting'],
-    tabs: [
-      { to: '/squad/builder', label: 'Kadro kurucu' },
-      { to: '/tactics/wizard', label: 'Taktik sihirbazı' },
-      { to: '/squad', label: 'Kadro' },
-      { to: '/recommend', label: 'Transfer önerisi' },
-      { to: '/scouting', label: 'Scouting' },
-    ],
-  },
-  { to: '/teams', label: 'Takımlar', match: ['/teams'] },
-  { to: '/career/import', label: 'İçe aktar', match: ['/career/import'] },
-]
-
-const UT_NAV: NavGroup[] = [
-  { to: '/players', label: 'Kart veritabanı', match: ['/players', '/compare'] },
-  { to: '/ut/squad', label: 'Kadro kurucu', match: ['/ut/squad'] },
-  { to: '/ut/club', label: 'Kadrom', match: ['/ut/club'] },
-  { to: '/ut/meta', label: 'Meta', match: ['/ut/meta'] },
-  { to: '/ut/sbc', label: 'SBC çözücü', match: ['/ut/sbc'] },
-  { to: '/ut/objectives', label: 'Objective planı', match: ['/ut/objectives'] },
-  { to: '/ut/evo', label: 'Evolution', match: ['/ut/evo'] },
-  { to: '/ut/import', label: 'Kulüp içe aktar', match: ['/ut/import'] },
-]
-
-const MODES: { id: AppMode; label: string; home: string }[] = [
-  { id: 'career', label: 'FC Career', home: '/' },
-  { id: 'ut', label: 'Ultimate Team', home: '/ut/squad' },
-]
 
 export function Layout() {
   const storageError = useStorageError()
@@ -85,22 +23,9 @@ export function Layout() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
-  const activeCareer = useActiveCareerId()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
+  useShellEffects(pathname)
   useEffect(() => {
     setMenuOpen(false)
-  }, [pathname])
-  useEffect(() => {
-    // Seçili kariyer kullanıcının listesinde yoksa (silinmiş/eski/yabancı id) temizle: 403 yerine model verisi.
-    if (authenticated && careers.data && activeCareer !== undefined && !careers.data.some((c) => c.id === activeCareer)) {
-      careerStore.set(careers.data[0]?.id)
-    }
-  }, [authenticated, careers.data, activeCareer])
-  useEffect(() => {
-    const forced = modeForPath(pathname)
-    if (forced && modeStore.get() !== forced) {
-      modeStore.set(forced)
-    }
   }, [pathname])
   const activeGroup = nav.find((g) => g.match.some((m) => pathname === m || pathname.startsWith(`${m}/`)))
 

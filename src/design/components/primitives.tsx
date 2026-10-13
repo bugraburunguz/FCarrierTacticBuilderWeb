@@ -157,18 +157,21 @@ export function Segmented<T extends string>({ label, value, options, onChange }:
 
 /**
  * SidePanel (08 §15-16): sağda 380px `.glass-2`; mobilde alttan sheet (%85). Esc kapatır; açılınca odak panele gelir, kapanınca tetikleyiciye döner.
- * Modal değildir (sahada gezinmeye izin verir); odak tuzağı yok.
+ * `sheet`: dar ekranda alttan sheet (kart seçimi); aksi halde (varsayılan bilgi hâli) sayfa akışında durur. Modal değildir; odak tuzağı yok.
  */
-export function SidePanel({ title, onClose, children, open = true }: { title: string; onClose?: () => void; children: ReactNode; open?: boolean }) {
+export function SidePanel({ title, onClose, children, open = true, sheet = false }: { title: string; onClose?: () => void; children: ReactNode; open?: boolean; sheet?: boolean }) {
   const ref = useRef<HTMLElement>(null)
   useEffect(() => {
     if (!open) {
       return
     }
+    if (!sheet) {
+      return undefined
+    }
     const previous = document.activeElement as HTMLElement | null
-    ref.current?.focus()
-    return () => previous?.focus?.()
-  }, [open])
+    ref.current?.focus({ preventScroll: true })
+    return () => previous?.focus?.({ preventScroll: true })
+  }, [open, sheet])
   if (!open) {
     return null
   }
@@ -178,7 +181,7 @@ export function SidePanel({ title, onClose, children, open = true }: { title: st
       tabIndex={-1}
       aria-label={title}
       onKeyDown={(e) => e.key === 'Escape' && onClose?.()}
-      className="glass-2 fixed inset-x-0 bottom-0 z-30 flex max-h-[85vh] flex-col overflow-hidden p-4 text-ink outline-none min-[820px]:static min-[820px]:max-h-none min-[820px]:w-[380px] min-[820px]:shrink-0"
+      className={cx('glass-2 flex flex-col overflow-hidden p-4 text-ink outline-none min-[820px]:static min-[820px]:max-h-none min-[820px]:w-[380px] min-[820px]:shrink-0', sheet && 'fixed inset-x-0 bottom-0 z-30 max-h-[85vh]')}
     >
       <header className="mb-3 flex items-center justify-between gap-2">
         <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>

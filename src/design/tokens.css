@@ -32,6 +32,7 @@
   --r-bronze: #b07a4f; --r-silver: #b8c2cc; --r-gold: #e3c15c; --r-totw: #d4af37; --r-icon: #f3ead2; --r-hero: #8b5cf6; --r-evo: #14b8a6;
 
   --pitch-1: rgba(16, 94, 58, 0.55); --pitch-2: rgba(12, 74, 46, 0.55); --pitch-line: rgba(255, 255, 255, 0.35);
+  --pitch-a: var(--pitch-1); --pitch-b: var(--pitch-2);
 
   --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;

@@ -13,6 +13,8 @@ import type { FitState } from '../components/card/FitBadge'
 import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
 import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
 import { useUtRules } from '../state/rulesStore'
+import { isV3 } from '../design/uiVersion'
+import { UtSquadWorkspace, type UtSquadViewModel } from './v3/UtSquadWorkspace'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
@@ -214,6 +216,93 @@ export function UtSquadPage() {
     })
   }
 
+  const roleModal = dialog?.kind === 'role' && dialogSlot ? (
+      <RoleFocusModal
+        position={dialogSlot.position}
+        groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles.allowed)}
+                lock={eaRoles.status === 'ready' ? undefined : { status: eaRoles.status, retry: eaRoles.retry }}
+        currentRoleId={roleBySlot[dialogSlot.slotId]?.roleId ?? dialogSlot.defaultRole}
+        onApply={(rid) => {
+          setRoleOverride((cur) => ({ ...cur, [dialogSlot.slotId]: rid }))
+          setDialog(null)
+        }}
+        onClose={() => setDialog(null)}
+      />
+  ) : null
+
+  if (isV3()) {
+    const faceAverages = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].map((label, i) => {
+      const values = Object.values(picked).flatMap((card) => (card.faceStats?.[i] === undefined ? [] : [card.faceStats[i]]))
+      return { label, value: values.length > 0 ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : undefined }
+    })
+    const vm: UtSquadViewModel = {
+      views,
+      selectedSlotId: dialog?.kind === 'card' ? dialog.slotId : undefined,
+      onPickPlayer: (slotId) => setDialog({ kind: 'card', slotId }),
+      onPickRole: (slotId) => setDialog({ kind: 'role', slotId }),
+      onRemove: removeCard,
+      onSwap: (from, to) => setPicked((cur) => swapSlots(cur, from, to)),
+      pick: dialog?.kind === 'card' && dialogSlot ? {
+        title: `${dialogSlot.position} — Kart seç`,
+        onClose: () => setDialog(null),
+        body: (
+          <PickBody
+            position={dialogSlot.position}
+            current={picked[dialogSlot.slotId]}
+            roleName={roleBySlot[dialogSlot.slotId]?.roleName}
+            evaluation={evalBySlot[dialogSlot.slotId]}
+            chemLinks={chem.perSlot[slots.indexOf(dialogSlot)]}
+            usedKeys={new Set(Object.values(picked).map(personKey))}
+            onPick={(card) => {
+              setPicked((cur) => ({ ...cur, [dialogSlot.slotId]: card }))
+              setDialog(null)
+            }}
+          />
+        ),
+      } : undefined,
+      formations: (formations.data ?? []).map((f) => ({ id: f.id, label: f.label ?? f.id })),
+      formationsLoading: formations.isLoading,
+      formationsError: formations.error ? 'Formasyonlar yüklenemedi.' : undefined,
+      formationId: formation?.id,
+      onFormation: changeFormation,
+      buildUp: setup.buildUp,
+      onBuildUp: (buildUp) => setSetup((cur) => ({ ...cur, buildUp })),
+      depth: setup.depth,
+      onDepth: (depth) => setSetup((cur) => ({ ...cur, depth })),
+      rating: pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined,
+      chem: chem.total,
+      maxChem: MAX_SQUAD_CHEM,
+      filled: pickedSlots.length,
+      averages: faceAverages,
+      priceTotal: price.known > 0 ? shortCoins(price.total) : undefined,
+      priceAverage: price.average !== undefined ? shortCoins(price.average) : undefined,
+      priceKnown: `${price.known}/${price.count} kartın fiyatı biliniyor`,
+      metaAverage: evaluation.data?.averageMeta,
+      cards: utCardStore.get()?.cards ?? [],
+      loadNote,
+      tacticCode: (
+        <UtTacticCode
+          tactic={tactic}
+          resolved={resolved.data}
+          onLoaded={(r) => {
+            setFormationId(r.formation)
+            setPicked({})
+            setRoleOverride(Object.fromEntries(r.slots.map((s) => [s.slotId, s.roleId])))
+            setSetup({ buildUp: (BUILD_UPS as readonly string[]).includes(r.buildUp) ? (r.buildUp as Setup['buildUp']) : 'Balanced', depth: r.depth })
+          }}
+        />
+      ),
+      onClear: () => setPicked({}),
+      onLoadActive: capture?.activeSquad ? loadActiveSquad : undefined,
+    }
+    return (
+      <>
+        <UtSquadWorkspace vm={vm} />
+        {roleModal}
+      </>
+    )
+  }
+
   return (
     <div className="matchday space-y-3">
       <div className="flex flex-wrap items-stretch gap-px overflow-hidden rounded-md border border-line bg-line">
@@ -348,19 +437,7 @@ export function UtSquadPage() {
           }}
         />
       )}
-      {dialog?.kind === 'role' && dialogSlot && (
-        <RoleFocusModal
-          position={dialogSlot.position}
-          groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles.allowed)}
-                  lock={eaRoles.status === 'ready' ? undefined : { status: eaRoles.status, retry: eaRoles.retry }}
-          currentRoleId={roleBySlot[dialogSlot.slotId]?.roleId ?? dialogSlot.defaultRole}
-          onApply={(rid) => {
-            setRoleOverride((cur) => ({ ...cur, [dialogSlot.slotId]: rid }))
-            setDialog(null)
-          }}
-          onClose={() => setDialog(null)}
-        />
-      )}
+      {roleModal}
     </div>
   )
 }
@@ -512,7 +589,8 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
   )
 }
 
-function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys, onClose, onPick }: PickProps) {
+/** Kart seçim gövdesi (kaynak sekmeleri + arama + liste): modalda ve v3 yan panelinde ortak. */
+export function PickBody({ position, current, evaluation, chemLinks, usedKeys, onPick }: Omit<PickProps, 'slotId' | 'onClose'>) {
   const library = useMemo(() => utCardStore.get(), [])
   const [source, setSource] = useState<CardSource>(library && library.cards.some((c) => c.source === 'club') ? 'club' : 'catalog')
   const [q, setQ] = useState('')
@@ -537,7 +615,7 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
   }
 
   return (
-    <Modal wide title={`${slotId} · ${position} — Kart seç`} hint="Kulüp kartların, market ilanları veya katalog" onClose={onClose}>
+    <>
       {current && <CurrentCard card={current} evaluation={evaluation} chemLinks={chemLinks} />}
       <div role="tablist" aria-label="Kart kaynağı" className="mb-3 flex gap-1">
         {(['club', 'market', 'catalog'] as CardSource[]).map((s) => (
@@ -581,6 +659,14 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
       </div>
       {source === 'catalog' && <p className="mt-2 text-xs text-muted">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
       {library && <p className="mt-2 text-xs text-muted">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
+    </>
+  )
+}
+
+function PickModal({ slotId, position, onClose, ...body }: PickProps) {
+  return (
+    <Modal wide title={`${slotId} · ${position} — Kart seç`} hint="Kulüp kartların, market ilanları veya katalog" onClose={onClose}>
+      <PickBody position={position} {...body} />
     </Modal>
   )
 }

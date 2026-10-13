@@ -46,7 +46,7 @@
   pointer-events: none;
   background: linear-gradient(180deg, var(--glass-highlight), transparent 28%);
   opacity: 0.35;
-  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
   mask-composite: exclude;
   padding: 1px;
 }
@@ -75,4 +75,11 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Saha (11 §6 Pitch): cam panel içinde yarı saydam şeritli zemin; blur yok */
+:root[data-ui="v3"] .pitch-field {
+  background: transparent;
+  border-color: var(--glass-border);
+  border-radius: var(--radius-md);
 }

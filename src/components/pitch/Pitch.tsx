@@ -33,7 +33,7 @@ interface Drag {
 }
 
 const DRAG_THRESHOLD = 6
-const CARD_RATIO = 0.155
+const CARD_RATIO = 0.13
 const MIN_CARD = 44
 const MAX_CARD = 96
 
@@ -60,6 +60,7 @@ const STRIPES = Array.from({ length: 12 }, (_, i) => i)
 export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Props) {
   const boxRef = useRef<HTMLDivElement>(null)
   const [cardWidth, setCardWidth] = useState(72)
+  const [fieldWidth, setFieldWidth] = useState(560)
   const [drag, setDrag] = useState<Drag | null>(null)
   const [hover, setHover] = useState<string>()
   const [moving, setMoving] = useState<string>()
@@ -73,7 +74,10 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
     if (!box || typeof ResizeObserver === 'undefined') {
       return undefined
     }
-    const observer = new ResizeObserver(([entry]) => setCardWidth(Math.round(Math.min(MAX_CARD, Math.max(MIN_CARD, entry.contentRect.width * CARD_RATIO)))))
+    const observer = new ResizeObserver(([entry]) => {
+      setFieldWidth(entry.contentRect.width)
+      setCardWidth(Math.round(Math.min(MAX_CARD, Math.max(MIN_CARD, entry.contentRect.width * CARD_RATIO))))
+    })
     observer.observe(box)
     return () => observer.disconnect()
   }, [])
@@ -114,6 +118,9 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
     }
   }, [])
 
+  // Rol etiketi saha kenarında kesilmesin (11 Q11): etiket yarı genişliği kadar içeride tut.
+  const labelWidth = Math.round(Math.min(112, Math.max(72, cardWidth * 1.9)))
+  const edge = ((labelWidth / 2 + 4) / Math.max(fieldWidth, 1)) * 100
   const bySlot = useMemo(() => new Map(slots.map((s) => [s.slotId, s])), [slots])
   const hovered = hover ? bySlot.get(hover)?.player : undefined
   const dragged = drag ? bySlot.get(drag.slotId) : undefined
@@ -156,12 +163,12 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   }
 
   return (
-    <div ref={boxRef} className="relative mx-auto aspect-[68/105] w-full max-w-[560px] overflow-hidden rounded-md border border-grass-900 bg-grass-700">
+    <div ref={boxRef} className="pitch-field relative mx-auto aspect-[68/105] w-full max-w-[560px] overflow-hidden rounded-md border border-grass-900 bg-grass-700">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 680 1050" preserveAspectRatio="none" aria-hidden="true">
         {STRIPES.map((i) => (
-          <rect key={i} x="0" y={i * 87.5} width="680" height="87.5" fill={i % 2 === 0 ? 'var(--color-grass-700)' : 'var(--color-grass-500)'} opacity={i % 2 === 0 ? 1 : 0.85} />
+          <rect key={i} x="0" y={i * 87.5} width="680" height="87.5" fill={i % 2 === 0 ? 'var(--pitch-a, var(--color-grass-700))' : 'var(--pitch-b, var(--color-grass-500))'} opacity={i % 2 === 0 ? 1 : 0.85} />
         ))}
-        <g fill="none" stroke="var(--color-chalk)" strokeWidth="3" opacity="0.8">
+        <g fill="none" stroke="var(--pitch-line, var(--color-chalk))" strokeWidth="3" opacity="0.8">
           <rect x="30" y="30" width="620" height="990" />
           <line x1="30" y1="525" x2="650" y2="525" />
           <circle cx="340" cy="525" r="91" />
@@ -190,7 +197,8 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
         const linked = Boolean(hovered) && hover !== slot.slotId && shares(hovered, slot.player)
         const isOver = Boolean(drag) && drag?.over === slot.slotId && drag?.slotId !== slot.slotId
         return (
-          <div key={slot.slotId} className="absolute -translate-x-1/2 -translate-y-1/2 text-center" style={{ left: `${slot.x}%`, top: `${slot.y}%`, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
+          <div key={slot.slotId} className="absolute -translate-x-1/2 -translate-y-1/2 text-center" style={{ left: `${Math.min(Math.max(slot.x, edge), 100 - edge)}%`, top: `${slot.y}%`, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
+            <div className="group relative inline-block">
             <div
               role="button"
               tabIndex={0}
@@ -214,44 +222,48 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
               onMouseLeave={() => setHover(undefined)}
               onFocus={() => setHover(slot.slotId)}
               onBlur={() => setHover(undefined)}
-              className={`group relative inline-block cursor-pointer rounded-md outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-flood-400 ${isOver || slot.selected || moving === slot.slotId ? 'ring-2 ring-flood-400' : linked ? 'ring-2 ring-flood-400/70' : ''}`}
+              className={`relative inline-block cursor-pointer rounded-md outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-flood-400 ${isOver || slot.selected || moving === slot.slotId ? 'ring-2 ring-flood-400' : linked ? 'ring-2 ring-flood-400/70' : ''}`}
               style={{ touchAction: slot.player && onSwap ? 'pan-y' : undefined }}
             >
               {slot.player ? (
                 <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} />
               ) : (
-                <span className="flex flex-col items-center justify-center rounded-full border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth * 0.8, height: cardWidth * 0.8 }}>
-                  <span className="text-sm font-bold leading-none">{slot.position}</span>
-                  <span className="text-lg leading-none">+</span>
+                <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.35) }}>
+                  <span className="text-xl leading-none">+</span>
                 </span>
               )}
-              {slot.player && onRemove && (
-                <button
-                  type="button"
-                  aria-label={`${slot.player.name} kartını kaldır`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onRemove(slot.slotId)
-                  }}
-                  onPointerDown={(e) => e.stopPropagation()}
-                  className="absolute -left-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-sm bg-ink-950 text-xs font-bold text-paper-50 opacity-0 transition focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100"
-                >
-                  ×
-                </button>
-              )}
+            </div>
+            {slot.player && onRemove && (
+              <button
+                type="button"
+                aria-label={`${slot.player.name} kartını kaldır`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onRemove(slot.slotId)
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="absolute -left-2 -top-2 z-10 flex h-7 w-7 items-center justify-center rounded-sm bg-ink-950 text-xs font-bold text-paper-50 opacity-0 transition focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100"
+              >
+                ×
+              </button>
+            )}
             </div>
             {slot.roleLabel && (
               <button
                 type="button"
+                aria-label={slot.roleLabel}
+                title={slot.roleLabel}
                 onClick={(e) => {
                   e.stopPropagation()
                   onPickRole?.(slot.slotId)
                 }}
-                className="mt-3 block max-w-[110px] truncate rounded-sm bg-ink-950/80 px-1.5 py-0.5 font-display text-[11px] font-semibold uppercase tracking-wide text-paper-50 hover:bg-ink-950"
+                style={{ width: labelWidth }} className="mt-2 block rounded-sm bg-ink-950/80 px-1.5 py-0.5 text-center text-xs font-semibold leading-tight text-paper-50 hover:bg-ink-950"
               >
-                {slot.roleLabel}
+                <span className="block break-words">{slot.roleLabel.split(' · ')[0]}</span>
+                {slot.roleLabel.includes(' · ') && <span className="block font-normal text-chalk">{slot.roleLabel.split(' · ').slice(1).join(' · ')}</span>}
               </button>
             )}
+            <span className="mt-1 inline-block rounded-sm bg-ink-950/80 px-1.5 font-mono text-xs leading-5 text-paper-50">{slot.position}</span>
           </div>
         )
       })}

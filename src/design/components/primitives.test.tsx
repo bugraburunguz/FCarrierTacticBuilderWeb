@@ -42,7 +42,7 @@ describe('v3 bileşenleri', () => {
 
   it('SidePanel Esc ile kapanır ve odağı panele alır', async () => {
     const onClose = vi.fn()
-    render(<SidePanel title="Kadro bilgisi" onClose={onClose}><p>içerik</p></SidePanel>)
+    render(<SidePanel sheet title="Kadro bilgisi" onClose={onClose}><p>içerik</p></SidePanel>)
     const panel = screen.getByLabelText('Kadro bilgisi')
     expect(panel).toHaveFocus()
     await userEvent.keyboard('{Escape}')

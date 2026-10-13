@@ -1,0 +1,37 @@
+{
+  "taskId": "V3-04",
+  "route": "/ut/squad",
+  "mode": "ut",
+  "matrix": "core",
+  "base": "http://localhost:8081",
+  "shots": [
+    {
+      "file": "ut-dark-375-filled.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-filled.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-reduced-motion-filled.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-reduced-transparency-filled.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    }
+  ]
+}
