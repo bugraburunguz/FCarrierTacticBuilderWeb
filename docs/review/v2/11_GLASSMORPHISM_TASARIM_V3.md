@@ -74,6 +74,7 @@ Katman 2  ince saha çizgisi deseni (SVG, %4 opaklık) + film grain (SVG feTurbu
 }
 ```
 ### 3.2 Açık tema
+Saha tema bağımsız bir içerik yüzeyidir: açık temada da koyu çim kalır (`--pitch-1:#1f6a45; --pitch-2:#1a5c3c; --pitch-line:rgba(255,255,255,0.55)`). Mobil sheet yüzeyi `--sheet-bg` (koyu `rgba(18,24,38,0.97)`, açık `rgba(255,255,255,0.97)`).
 ```css
 :root[data-theme="light"] {
   --bg-base: #eef1f7;
@@ -165,17 +166,18 @@ v3 bir sayfa için ancak şu kontrol listesi yeşilse "bitti" sayılır (PR şab
 | Q2 | 11px altı metin yok; renk yalnız token | stylelint kuralı (hex ve `emerald|slate|teal|sky` yasak), font-size lint |
 | Q3 | 375 / 768 / 1280'de yatay taşma yok | Playwright görsel snapshot 3 kırılım |
 | Q4 | Klavyeyle tamamlanabilir; axe 0 ihlal (AA) | `@axe-core/playwright` CI |
-| Q5 | Kontrast: metin/cam ≥ 4,5:1 en kötü aurora rengiyle | axe + özel kontrast testi |
+| Q5 | Kontrast: metin/cam ≥ 4,5:1 en kötü aurora rengiyle. **Metin hiçbir zaman saha veya kart üstünde saydam cam üzerinde durmaz**; mobil sheet opak yüzeydir (`--sheet-bg`, alpha ≥ 0,92) ve arkada scrim vardır | axe + özel kontrast testi + `SquadWorkspaceView.test.tsx` |
 | Q6 | Kariyer ekranları yalnız yeni motor uçlarını kullanır (13) | Eski uçlara çağrı yok (ağ testi) |
 | Q7 | Sayfaya ait bilinen buglar kapalı | Aşağıdaki eşleme tablosu |
 | Q8 | Açıklama paragrafı yok, `HelpPopover` var | Gözden geçirme |
 | Q9 | Reduced transparency / motion fallback'i görsel snapshot'ta | Playwright `emulateMedia` |
-| Q10 | İlk JS ≤ 250 KB, rota başına lazy chunk | Build raporu CI'da (WEB-PERF-01) |
+| Q10 | İlk JS ≤ 250 KB **gzip** (giriş rotası için geçerli), rota başına lazy chunk; Radix/Inter/Ladle bu sınırın içindedir (Ladle yalnız devDependency) | Build raporu CI'da (WEB-PERF-01) |
 | Q11 | Saha rol etiketi kısa ad + odak, 2 satıra sarılır; tam ad `title`/tooltip'te; 375px'de hiçbir rol etiketi kesilmez | Playwright 375px + metin taşma testi |
 | Q12 | Devre dışı kontroller de metin ve kenarda arka planla ≥ 3:1; nedeni yanında kısa yardım metniyle görünür (örn. "Yükle" pasifken) | axe + görsel snapshot |
 | Q13 | Chip: yazı ≥ 12px, dokunma hedefi ≥ 32px (mobilde 44px) | Playwright ölçüm |
 | Q14 | Giriş/Kayıt: tek birincil eylem (Kayıt ol primary, Giriş secondary/ghost), tüm sayfalarda aynı | Görsel snapshot |
 | Q15 | axe serious/critical ihlal sayısı 0 (her v3 ekranı) | `@axe-core/playwright` |
+| Q17 | Çakışma yok: slot gruplarının (kart + rol + mevki) sınır kutuları hiçbir formasyonda ve boyutta kesişmez, içerik grup kutusundan taşmaz, rol etiketi kesilmez (en uzun rol adıyla); 1280×800'de saha kaydırma istemez | `scripts/q17.mjs` (29 formasyon × 375/768/1280×800 × boş/dolu × UT/kariyer) + `pitch/layout.test.ts` |
 | Q16 | UT ve kariyer kadro sayfaları `src/features/squad/` çekirdeğini paylaşır: tek çözme sorgusu, tek taktik kodu bileşeni, ortak formasyon/rol/eski-kayıt temizliği ve yan panel şablonu. Yeni kadro/taktik işi çekirdeğe girer; yalnız-UT / yalnız-kariyer olan iş raporda gerekçesiyle yazılır | `src/features/squad/q16.test.ts` + `describe.each(['ut','career'])` parite testleri |
 
 Sayfa ↔ kapatılması zorunlu buglar:

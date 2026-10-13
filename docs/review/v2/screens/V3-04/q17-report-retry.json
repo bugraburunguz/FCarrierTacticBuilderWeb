@@ -1,0 +1,246 @@
+{
+ "total": 30,
+ "failed": 0,
+ "results": [
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "375",
+   "formation": "4-1-3-2",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "375",
+   "formation": "4-1-4-1",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "375",
+   "formation": "4-5-1",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "375",
+   "formation": "5-2-1-2",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "375",
+   "formation": "5-2-3",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "768",
+   "formation": "4-1-3-2",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "768",
+   "formation": "4-1-4-1",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "768",
+   "formation": "4-5-1",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "768",
+   "formation": "5-2-1-2",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "768",
+   "formation": "5-2-3",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "1280x800",
+   "formation": "4-1-3-2",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "1280x800",
+   "formation": "4-1-4-1",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "1280x800",
+   "formation": "4-5-1",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "1280x800",
+   "formation": "5-2-1-2",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "empty",
+   "size": "1280x800",
+   "formation": "5-2-3",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "375",
+   "formation": "4-1-3-2",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "375",
+   "formation": "4-1-4-1",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "375",
+   "formation": "4-5-1",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "375",
+   "formation": "5-2-1-2",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "375",
+   "formation": "5-2-3",
+   "fieldWidth": 317,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "768",
+   "formation": "4-1-3-2",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "768",
+   "formation": "4-1-4-1",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "768",
+   "formation": "4-5-1",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "768",
+   "formation": "5-2-1-2",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "768",
+   "formation": "5-2-3",
+   "fieldWidth": 710,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "1280x800",
+   "formation": "4-1-3-2",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "1280x800",
+   "formation": "4-1-4-1",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "1280x800",
+   "formation": "4-5-1",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "1280x800",
+   "formation": "5-2-1-2",
+   "fieldWidth": 738,
+   "problems": []
+  },
+  {
+   "mode": "career",
+   "state": "filled",
+   "size": "1280x800",
+   "formation": "5-2-3",
+   "fieldWidth": 738,
+   "problems": []
+  }
+ ]
+}

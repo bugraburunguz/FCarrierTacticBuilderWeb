@@ -103,8 +103,21 @@ for (const mode of modes) {
           },
           { mode, formation: formation.id, picked, session, careerFilled: mode === 'career' && state === 'filled' },
         )
-        await page.goto(`${base}${mode === 'ut' ? '/ut/squad' : '/squad/builder'}?ui=v3`, { waitUntil: 'networkidle' })
-        await page.waitForSelector('[data-slot-group]', { timeout: 15000 })
+        let loaded = false
+        for (let attempt = 0; attempt < 2 && !loaded; attempt += 1) {
+          try {
+            await page.goto(`${base}${mode === 'ut' ? '/ut/squad' : '/squad/builder'}?ui=v3`, { waitUntil: 'networkidle' })
+            await page.waitForSelector('[data-slot-group]', { timeout: 15000 })
+            loaded = true
+          } catch {
+            await page.waitForTimeout(4000)
+          }
+        }
+        if (!loaded) {
+          results.push({ mode, state, size: size.name, formation: formation.id, fieldWidth: 0, problems: ['sayfa yüklenmedi (2 deneme)'] })
+          await page.close()
+          continue
+        }
         await page.waitForTimeout(state === 'filled' ? 900 : 200)
         const report = await page.evaluate(
           ({ formationId, expected, longest }) => {
