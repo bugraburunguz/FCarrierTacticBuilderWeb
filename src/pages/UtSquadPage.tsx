@@ -19,6 +19,7 @@ import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
 import { useEaRoles } from '../lib/eaRoles'
+import { faceAverages } from '../lib/faceAverages'
 import { carryOver, fromSummary, personKey, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -231,10 +232,6 @@ export function UtSquadPage() {
   ) : null
 
   if (isV3()) {
-    const faceAverages = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'].map((label, i) => {
-      const values = Object.values(picked).flatMap((card) => (card.faceStats?.[i] === undefined ? [] : [card.faceStats[i]]))
-      return { label, value: values.length > 0 ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : undefined }
-    })
     const vm: UtSquadViewModel = {
       views,
       selectedSlotId: dialog?.kind === 'card' ? dialog.slotId : undefined,
@@ -273,7 +270,7 @@ export function UtSquadPage() {
       chem: chem.total,
       maxChem: MAX_SQUAD_CHEM,
       filled: pickedSlots.length,
-      averages: faceAverages,
+      averages: faceAverages(Object.values(picked)),
       priceTotal: price.known > 0 ? shortCoins(price.total) : undefined,
       priceAverage: price.average !== undefined ? shortCoins(price.average) : undefined,
       priceKnown: `${price.known}/${price.count} kartın fiyatı biliniyor`,

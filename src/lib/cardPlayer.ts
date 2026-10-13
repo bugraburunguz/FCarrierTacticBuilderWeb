@@ -17,6 +17,7 @@ export function cardPlayerOf(card: UtCard | SbcCandidate, position?: string): Ca
     league: card.league,
     faceStats: isUt ? card.faceStats : undefined,
     faceLabels: isUt ? card.faceLabels : undefined,
+    faceStatsApproximate: isUt ? card.faceStatsApproximate : undefined,
     weakFoot: isUt ? card.weakFoot : undefined,
     skillMoves: isUt ? card.skillMoves : undefined,
   }

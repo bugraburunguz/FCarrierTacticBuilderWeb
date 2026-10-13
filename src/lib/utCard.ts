@@ -30,6 +30,8 @@ export interface UtCard {
   faceUrl?: string
   faceStats?: number[]
   faceLabels?: string[]
+  faceStatsSource?: string
+  faceStatsApproximate?: boolean
   weakFoot?: number
   skillMoves?: number
 }
@@ -89,6 +91,12 @@ export function fromSummary(player: PlayerSummary): UtCard {
     gender: player.gender,
     playerId: player.id,
     faceUrl: player.faceUrl,
+    faceStats: player.faceStats,
+    faceLabels: player.faceLabels,
+    faceStatsSource: player.faceStatsSource,
+    faceStatsApproximate: player.faceStatsApproximate,
+    weakFoot: player.weakFoot,
+    skillMoves: player.skillMoves,
   }
 }
 

@@ -21,6 +21,8 @@ export interface CardPlayer extends CardKind {
   /** Yüz statları (PAC/SHO/PAS/DRI/DEF/PHY ya da kaleci karşılıkları) ve etiketleri. */
   faceStats?: number[]
   faceLabels?: string[]
+  /** Hesaplanan ve ağırlığı doğrulanmamış değerler "≈" ile işaretlenir. */
+  faceStatsApproximate?: boolean
   weakFoot?: number
   skillMoves?: number
 }
@@ -136,7 +138,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
           <div className="absolute grid grid-cols-6 text-center font-display" style={{ left: 24, right: 24, top: 176 }}>
             {player.faceStats!.slice(0, 6).map((value, i) => (
               <div key={i} style={{ lineHeight: 1 }}>
-                <div style={{ fontSize: 15, fontWeight: 700 }}>{value}</div>
+                <div style={{ fontSize: 15, fontWeight: 700 }}>{player.faceStatsApproximate ? '≈' : ''}{value}</div>
                 <div style={{ fontSize: 8, fontWeight: 600, opacity: 0.8, marginTop: 2 }}>{player.faceLabels?.[i] ?? ''}</div>
               </div>
             ))}

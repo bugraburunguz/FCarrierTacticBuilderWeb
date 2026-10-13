@@ -41,6 +41,12 @@ export interface PlayerSummary {
   valuationEstimated: boolean
   faceUrl?: string
   faceAssetId?: number
+  /** Yüz istatistikleri (F10): saha PAC/SHO/PAS/DRI/DEF/PHY, kaleci DIV/HAN/KIC/REF/SPD/POS. Kaynak OFFICIAL ya da COMPUTED. */
+  faceStats?: number[]
+  faceLabels?: string[]
+  faceStatsSource?: 'OFFICIAL' | 'COMPUTED'
+  /** true: hesaplanan değer, ağırlıkları doğrulanmamış formülden (arayüzde "≈"). */
+  faceStatsApproximate?: boolean
   changed?: boolean
   changeSummary?: ChangeSummary
 }

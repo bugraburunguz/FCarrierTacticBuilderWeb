@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Workspace } from '../../design/components/Workspace'
 import { Button, ChemBar, Chip, EmptyState, Panel, Segmented, SidePanel, Skeleton, StatTile } from '../../design/components/primitives'
+import { HelpPopover } from '../../components/ui'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import type { UtCard } from '../../lib/utCard'
 
@@ -27,7 +28,7 @@ export interface UtSquadViewModel {
   chem: number
   maxChem: number
   filled: number
-  averages: { label: string; value?: number }[]
+  averages: { label: string; value?: number; approximate?: boolean }[]
   priceTotal?: string
   priceAverage?: string
   priceKnown: string
@@ -73,9 +74,13 @@ function SquadInfo({ vm }: { vm: UtSquadViewModel }) {
         </div>
         <div className="grid grid-cols-3 gap-2">
           {vm.averages.map((a) => (
-            <StatTile key={a.label} label={a.label} value={a.value} />
+            <StatTile key={a.label} label={a.label} value={a.value === undefined ? undefined : `${a.approximate ? '≈' : ''}${a.value}`} />
           ))}
         </div>
+        <p className="flex items-center gap-1 text-xs text-muted">
+          Saha oyuncusu ortalaması
+          <HelpPopover label="Yüz ortalaması nasıl hesaplanır">Altı ortalama yalnız saha oyuncularından hesaplanır; kaleci (DIV/HAN/KIC/REF/SPD/POS) dışarıda kalır. "≈": değer ağırlığı doğrulanmamış formülle hesaplandı.</HelpPopover>
+        </p>
       </section>
 
       <section aria-label="Toplam kimya" className="space-y-2">
