@@ -41,3 +41,6 @@ Durum: yapıldı / kısmen / bekliyor. Hash'ler web `v3` dalı; "BE" = backend `
 | 4 sbcTraditional perf testi | yapıldı | `npm run test:perf` ayrı komut (5 koşu tek başına hep geçti, ~0,6 sn); ana `npm test` flaky değil |
 | 5 22 yetim kulüp | yapıldı | 0 bağ doğrulandı (FK'siz tablolar dahil); 12 alias + 22 silme, yedek `backups/club_before_orphans_*.sql`; yer tutucu ad ingestion'da reddedilir (test) |
 | 6 diakritik veri kalitesi testi | yapıldı | `ClubDataQuality` (aksan düşmüş/sıyrılmış ikiz, U+FFFD, yer tutucu) + açılışta uyarı logu + test |
+
+## Faz E3 (motor) — başladı
+- Denetim + teşhis: `eng_audit_E3.md`; golden set taslağı: `golden_set_draft.md` (Buğra onayı bekliyor). Motor kodu yazılmadı. V3-05 bekliyor.
