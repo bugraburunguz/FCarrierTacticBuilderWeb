@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { request } from '../api/client'
+import { useAuth } from '../auth/AuthContext'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
 import { parseChallengeText } from '../lib/sbcText'
 
-const KEY = 'fc.adminKey'
 type Tab = 'queue' | 'entry' | 'contributors' | 'maintenance'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'queue', label: 'Onay kuyruğu' },
@@ -19,58 +19,34 @@ const KINDS = [
   { id: 'evolution', label: 'Evolution' },
 ]
 
-function readKey(): string {
-  try {
-    return sessionStorage.getItem(KEY) ?? ''
-  } catch {
-    return ''
-  }
-}
-
-/** Yönetici CMS'i (DATA-07). Anahtar yalnız oturum belleğinde (sessionStorage) tutulur, hiçbir yere kaydedilmez. */
+/** Yönetici CMS'i (DATA-07). Kimlik JWT'deki ADMIN rolüdür (BE-SEC-07); paylaşılan anahtar tarayıcıya girmez. */
 export function AdminUtPage() {
-  const [adminKey, setAdminKey] = useState(readKey)
+  const { me, authenticated } = useAuth()
   const [tab, setTab] = useState<Tab>('queue')
-  const call = <T,>(path: string, method: 'GET' | 'POST' | 'PUT' = 'GET', body?: unknown) =>
-    request<T>(`/admin/ut${path}`, { method, body, headers: { 'X-Admin-Key': adminKey }, auth: false })
+  const call = <T,>(path: string, method: 'GET' | 'POST' | 'PUT' = 'GET', body?: unknown) => request<T>(`/admin/ut${path}`, { method, body })
 
+  if (!authenticated) {
+    return <Card title="Yönetici"><EmptyState>Yönetici paneli için giriş yap.</EmptyState></Card>
+  }
+  if (me?.role !== 'ADMIN') {
+    return <Card title="403 — Yetkin yok"><EmptyState>Bu sayfa yalnız yönetici hesaplarına açık.</EmptyState></Card>
+  }
   return (
     <div className="space-y-4">
       <Card title="Yönetici">
-        <div className="grid items-end gap-3 sm:grid-cols-[1fr_auto]">
-          <Field label="Yönetici anahtarı (X-Admin-Key)">
-            <Input
-              type="password"
-              autoComplete="off"
-              value={adminKey}
-              onChange={(e) => {
-                setAdminKey(e.target.value)
-                try {
-                  sessionStorage.setItem(KEY, e.target.value)
-                } catch {
-                  /* oturum belleği yoksa anahtar yalnız bu sayfada kalır */
-                }
-              }}
-            />
-          </Field>
-          <div role="tablist" aria-label="Bölüm" className="flex flex-wrap gap-1.5">
-            {TABS.map((t) => (
-              <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}
-                className={`rounded-md px-2.5 py-1 font-display text-sm font-semibold uppercase tracking-wide ${tab === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink hover:bg-line'}`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
+        <div role="tablist" aria-label="Bölüm" className="flex flex-wrap gap-1.5">
+          {TABS.map((t) => (
+            <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}
+              className={`rounded-md px-2.5 py-1 font-display text-sm font-semibold uppercase tracking-wide ${tab === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink hover:bg-line'}`}>
+              {t.label}
+            </button>
+          ))}
         </div>
       </Card>
-      {!adminKey ? <EmptyState>Devam etmek için yönetici anahtarını gir.</EmptyState> : (
-        <>
-          {tab === 'queue' && <QueuePanel call={call} />}
-          {tab === 'entry' && <EntryPanel call={call} />}
-          {tab === 'contributors' && <ContributorPanel call={call} />}
-          {tab === 'maintenance' && <MaintenancePanel call={call} />}
-        </>
-      )}
+      {tab === 'queue' && <QueuePanel call={call} />}
+      {tab === 'entry' && <EntryPanel call={call} />}
+      {tab === 'contributors' && <ContributorPanel call={call} />}
+      {tab === 'maintenance' && <MaintenancePanel call={call} />}
     </div>
   )
 }
