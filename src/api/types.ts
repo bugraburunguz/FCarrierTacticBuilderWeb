@@ -357,6 +357,8 @@ export interface Career {
   spoilerMode?: 'SHOW' | 'SCOUT_RANGE'
   wageBudgetEur?: number
   windowEndsOn?: string
+  /** Kariyerin oyun içi tarihi (BE-BUG-18); yaş filtreleri buna göre çalışır. */
+  gameDate?: string
   challengeId?: string
 }
 
