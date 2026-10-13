@@ -13,6 +13,9 @@ import { formatEur } from '../lib/format'
 import { toTacticRequest, useTactic } from '../state/tacticStore'
 import { useActiveCareerId } from '../state/careerStore'
 
+/** Sunucu `@Max(4)`: position başına en fazla 4 aday (aşılırsa 400 ve liste hep boş kalır). */
+const MAX_TARGETS_PER_POSITION = 4
+
 const ACQ: Record<Acquisition, { label: string; tone: 'emerald' | 'sky' | 'amber' }> = {
   FREE: { label: 'Bedava', tone: 'emerald' },
   LOAN: { label: 'Kiralık', tone: 'sky' },
@@ -54,7 +57,7 @@ export function CareerTransferPage() {
 
   const targets = useQuery({
     queryKey: ['transfer-targets', id, need?.position, need?.roleId],
-    queryFn: () => endpoints.transferTargets({ careerId: id!, perPosition: 6, slots: [{ position: need!.position, roleId: need!.roleId }] }),
+    queryFn: () => endpoints.transferTargets({ careerId: id!, perPosition: MAX_TARGETS_PER_POSITION, slots: [{ position: need!.position, roleId: need!.roleId }] }),
     enabled: id !== undefined && need !== undefined,
     retry: false,
   })
