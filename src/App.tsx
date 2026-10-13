@@ -6,6 +6,7 @@ import { CareerDeskPage } from './pages/CareerDeskPage'
 import { CareerGrowthPage } from './pages/CareerGrowthPage'
 import { CareerNewPage } from './pages/CareerNewPage'
 import { CareerTransferPage } from './pages/CareerTransferPage'
+import { VerifyEmailPage } from './pages/VerifyEmailPage'
 import { ComparePage } from './pages/ComparePage'
 import { WizardPage } from './pages/WizardPage'
 import { WonderkidsPage } from './pages/WonderkidsPage'
@@ -50,6 +51,7 @@ export function App() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="players" element={<PlayersPage />} />
         <Route path="players/:id" element={<PlayerDetailPage />} />
         <Route path="compare" element={<ComparePage />} />

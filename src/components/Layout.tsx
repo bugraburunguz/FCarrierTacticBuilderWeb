@@ -7,6 +7,7 @@ import { useStorageError } from '../state/bigStore'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../api/client'
 import { CompareTray } from './CompareTray'
+import { VerifyEmailBanner } from './VerifyEmailBanner'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
 import { modeStore, useMode, type AppMode } from '../state/modeStore'
@@ -227,6 +228,7 @@ export function Layout() {
             </div>
           </div>
         )}
+        {authenticated && <VerifyEmailBanner />}
         {authenticated && me?.showAds && (
           <div role="complementary" aria-label="Reklam alanı" className="border-t border-dashed border-line bg-surface-2 py-1 text-center text-xs text-muted">
             Reklam alanı — PREMIUM ile kaldırılır

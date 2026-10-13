@@ -108,6 +108,8 @@ export const endpoints = {
   login: (email: string, password: string) => api.post<TokenResponse>('/auth/login', { email, password }, false),
   logout: (refreshToken: string) => api.post<void>('/auth/logout', { refreshToken }, false),
   me: () => api.get<Me>('/me'),
+  verifyEmail: (token: string) => api.post<void>('/auth/verify-email', { token }, false),
+  resendVerification: () => api.post<void>('/me/email/resend'),
   subscribe: () => api.post<Subscription>('/billing/subscribe'),
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),

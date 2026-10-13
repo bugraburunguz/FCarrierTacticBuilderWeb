@@ -337,6 +337,8 @@ export interface Me {
   creditBalance?: number
   dailyCreditLimit: number
   showAds: boolean
+  emailVerified?: boolean
+  emailVerificationRequired?: boolean
   createdAt?: string
 }
 
