@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
-import { ApiError } from '../api/client'
+import { errorMessage } from '../lib/errorMessage'
 import type { WeaponState } from '../api/types'
 
 const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(' ')
@@ -87,8 +87,7 @@ export function ErrorBox({ error }: { error: unknown }) {
   if (!error) {
     return null
   }
-  const network = error instanceof ApiError && error.code === 'client.network'
-  const message = error instanceof ApiError ? error.message : 'Beklenmeyen bir hata oluştu.'
+  const { message, network } = errorMessage(error)
   return (
     <div role="alert" className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-sm text-danger">
       {message}
