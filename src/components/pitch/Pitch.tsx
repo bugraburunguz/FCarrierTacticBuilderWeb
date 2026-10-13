@@ -240,7 +240,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
                 </button>
               )}
             </div>
-            {slot.roleLabel && slot.player && (
+            {slot.roleLabel && (
               <button
                 type="button"
                 onClick={(e) => {
