@@ -36,5 +36,8 @@ export function useUtBinding() {
     }),
     [state, patch],
   )
-  return { binding, saved, origin }
+  const markActiveSquad = useCallback(() => {
+    origin.current = 'active-squad'
+  }, [])
+  return { binding, saved, markActiveSquad }
 }

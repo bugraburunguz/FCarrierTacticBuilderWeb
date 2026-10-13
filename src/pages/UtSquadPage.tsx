@@ -36,7 +36,7 @@ const PANEL_TITLE = 'mb-2.5 border-b border-line pb-1.5 font-display text-lg fon
 
 export function UtSquadPage() {
   useUtRules()
-  const { binding, saved, origin } = useUtBinding()
+  const { binding, saved, markActiveSquad } = useUtBinding()
   const ws = useSquadWorkspace('ut', binding)
   const { state, slots, roleBySlot, formation, formations, selection, selectedSlot: dialogSlot } = ws
   const picked = state.assigned
@@ -109,11 +109,11 @@ export function UtSquadPage() {
     autoApplied.current = true
     const loaded = mapActiveSquad(capture.activeSquad, formations.data)
     if (loaded.formationId) {
-      origin.current = 'active-squad'
+      markActiveSquad()
       ws.patch({ formationId: loaded.formationId, assigned: loaded.picked })
       ws.setNote(`Kulübünün aktif kadrosu otomatik yüklendi (${Object.keys(loaded.picked).length} kart${capture.activeSquad.tactic?.tacticName ? ` · taktik: ${capture.activeSquad.tactic.tacticName}` : ''}).`)
     }
-  }, [saved, capture, formations.data, origin, ws])
+  }, [saved, capture, formations.data, markActiveSquad, ws])
 
   function loadActiveSquad() {
     const squad = capture?.activeSquad
@@ -122,7 +122,7 @@ export function UtSquadPage() {
     }
     const loaded = mapActiveSquad(squad, formations.data, formation)
     ws.patch({ ...(loaded.formationId ? { formationId: loaded.formationId } : {}), roleOverride: {}, assigned: loaded.picked })
-    origin.current = 'active-squad'
+    markActiveSquad()
     ws.clearSelection()
     ws.setNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}${squad.tactic?.tacticName ? ` · taktik: ${squad.tactic.tacticName}` : ''}. Taktik talimatları (rol/focus) henüz çözülmediği için roller otomatik.`)
   }
