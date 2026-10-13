@@ -405,6 +405,8 @@ export type PlayerTagKind = 'LOCKED' | 'ROTATION' | 'DEVELOPING' | 'FOR_SALE' | 
 
 export interface ShortlistItem {
   playerId: number
+  /** Gömülü oyuncu özeti (WEB-BUG-13); katalogdan kalkmış oyuncuda yok. */
+  player?: PlayerSummary
   note?: string
   maxFeeEur?: number
   createdAt?: string

@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints'
 import type { Acquisition, TransferTarget } from '../api/types'
 import { CompareButton } from '../components/CompareButton'
 import { MoneyInput } from '../components/MoneyInput'
+import { ShortlistLabel } from '../components/ShortlistLabel'
 import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Pill, Skeleton, Stat } from '../components/ui'
 import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP, weakSlots } from '../lib/deskRules'
 import { formatEur } from '../lib/format'
@@ -145,7 +146,7 @@ export function CareerTransferPage() {
             <ul className="space-y-2">
               {(shortlist.data ?? []).map((s) => (
                 <li key={s.playerId} className="flex flex-wrap items-end justify-between gap-2 text-sm">
-                  <Link to={`/players/${s.playerId}`} className="underline decoration-dotted">Oyuncu #{s.playerId}{s.note ? ` · ${s.note}` : ''}</Link>
+                  <ShortlistLabel item={s} />
                   <div className="flex items-end gap-2">
                     <Field label="Tavan"><MoneyInput key={s.playerId} className="w-60" value={s.maxFeeEur ?? undefined} onChange={() => undefined} onCommit={(fee) => setFee.mutate({ playerId: s.playerId, fee, note: s.note })} /></Field>
                     <Button variant="ghost" onClick={() => remove.mutate(s.playerId)}>Çıkar</Button>
