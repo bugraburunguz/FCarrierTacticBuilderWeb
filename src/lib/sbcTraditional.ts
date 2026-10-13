@@ -303,3 +303,21 @@ function penalty(picks: SbcCandidate[], slots: SbcSlot[], constraints: SbcConstr
   const extra = extraIssues(picks, constraints).reduce((sum, issue) => sum + issue.missing, 0)
   return Math.max(0, constraints.chemMin - projectedChem) * CHEM_WEIGHT + Math.max(0, constraints.teamRatingMin - average) * RATING_WEIGHT + (missing + extra) * REQUIRED_WEIGHT
 }
+
+export const POOL_SPREAD_DOWN = 8
+export const POOL_SPREAD_UP = 6
+const QUALITY_FLOOR = { 1: 0, 2: 65, 3: 75 } as const
+const QUALITY_CEILING = { 1: 64, 2: 74, 3: 99 } as const
+
+/**
+ * Market havuzu için OVR penceresi (WEB-BUG-02). Rating şartı yoksa (yalnız kimya/sayı/lig) pencere kalite taban-tavanından türer ve ucuzdan başlar;
+ * aksi halde şartın etrafında dar bir pencere kullanılır. "En çok" kalite tavanı pencereyi daraltır.
+ */
+export function marketWindow(min: number, quality: { minQuality?: 1 | 2 | 3; maxQuality?: 1 | 2 | 3 }): { ovrMin: number; ovrMax: number; order: 'asc' | 'desc' } {
+  const floor = quality.minQuality ? QUALITY_FLOOR[quality.minQuality] : 0
+  const ceiling = quality.maxQuality ? QUALITY_CEILING[quality.maxQuality] : 99
+  if (min <= 0) {
+    return { ovrMin: Math.max(45, floor), ovrMax: ceiling, order: 'asc' }
+  }
+  return { ovrMin: Math.max(min - POOL_SPREAD_DOWN, floor, 45), ovrMax: Math.min(min + POOL_SPREAD_UP, ceiling), order: 'desc' }
+}
