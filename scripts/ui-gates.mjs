@@ -49,7 +49,7 @@ async function login(request) {
   return body.data
 }
 
-// --squad-sample: UT kadro kurucu için API'deki en iyi katalog oyuncularından dolu bir 4-2-3-1 (2) kadro tohumlar (yalnız localStorage).
+// --squad-sample (gerçek katalog yanıtından, yüz değerleri dahil): UT kadro kurucu için API'deki en iyi katalog oyuncularından dolu bir 4-2-3-1 (2) kadro tohumlar (yalnız localStorage).
 let squadSample
 if (args.includes('--squad-sample')) {
   const formations = (await (await fetch(`${base}/api/v1/formations`)).json()).data
@@ -60,7 +60,7 @@ if (args.includes('--squad-sample')) {
     const res = await (await fetch(`${base}/api/v1/players?pos=${slot.position}&sort=overall&order=desc&size=12&gender=0`)).json()
     const p = res.data.items.find((i) => !used.has(i.id))
     used.add(p.id)
-    picked[slot.slotId] = { key: `p:${p.id}`, source: 'catalog', name: p.name, rating: p.overall, positions: p.positions, club: p.club, league: p.league, nationality: p.nationality, playerId: p.id, faceUrl: p.faceUrl }
+    picked[slot.slotId] = { key: `p:${p.id}`, source: 'catalog', name: p.name, rating: p.overall, positions: p.positions, club: p.club, league: p.league, nationality: p.nationality, playerId: p.id, faceUrl: p.faceUrl, faceStats: p.faceStats, faceLabels: p.faceLabels, faceStatsSource: p.faceStatsSource, faceStatsApproximate: p.faceStatsApproximate }
   }
   squadSample = { formationId: formation.id, setup: { buildUp: 'Balanced', depth: 55 }, picked, roleOverride: {}, origin: 'manual' }
 }
