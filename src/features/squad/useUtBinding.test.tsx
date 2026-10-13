@@ -66,3 +66,18 @@ describe('useUtBinding tazeleme (F12)', () => {
     expect(stored.name).toBe('')
   })
 })
+
+describe('gereksiz istek yok (hız sınırı)', () => {
+  it('yüz değeri zaten olan katalog kartı için katalog isteği gitmez', async () => {
+    vi.clearAllMocks()
+    utSquadStore.clear()
+    vi.spyOn(utCardStore, 'get').mockReturnValue(undefined)
+    const full: UtCard = { key: 'p:7', source: 'catalog', name: 'Tam', rating: 90, positions: ['ST'], playerId: 7, faceLabels: OUT, faceStats: [1, 2, 3, 4, 5, 6] }
+    utSquadStore.set({ formationId: '4-4-2', setup: { buildUp: 'Balanced', depth: 55 }, picked: { ST1: full }, roleOverride: {}, origin: 'manual' })
+    renderProbe()
+
+    await waitFor(() => expect(screen.getByTestId('cards')).toHaveTextContent('1/2/3/4/5/6'))
+    await new Promise((r) => setTimeout(r, 50))
+    expect(endpoints.player).not.toHaveBeenCalled()
+  })
+})

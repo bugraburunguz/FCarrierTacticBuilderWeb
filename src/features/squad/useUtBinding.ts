@@ -40,6 +40,8 @@ export function useUtBinding() {
     queries: catalogSlots.map(([, card]) => ({
       queryKey: ['ut-hydrate', card.playerId],
       queryFn: () => endpoints.player(card.playerId!),
+      // Yalnız kimlik olarak kayıtlı (içeriksiz) ya da yüz değeri olmayan eski kopya tazelenir; tam kart için istek gitmez.
+      enabled: card.name === '' || card.faceStats === undefined,
       staleTime: HYDRATE_STALE_MS,
       retry: false,
     })),
