@@ -1,0 +1,170 @@
+import type { ReactNode } from 'react'
+import { HelpPopover } from '../../components/ui'
+import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
+import { RoleFocusModal } from '../../components/squadBuilder/RoleFocusModal'
+import { Workspace } from '../../design/components/Workspace'
+import { Button, ChemBar, Segmented, SidePanel, Skeleton, StatTile } from '../../design/components/primitives'
+import type { FaceAverage } from '../../lib/faceAverages'
+import { roleGroups } from '../../lib/squadBuilder'
+import type { TacticSetup } from './types'
+import type { SquadWorkspaceApi } from './useSquadWorkspace'
+
+const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
+
+export interface SquadViewProps {
+  title: string
+  slots: PitchSlot[]
+  selectedSlotId?: string
+  onPickPlayer: (slotId: string) => void
+  onPickRole: (slotId: string) => void
+  onRemove: (slotId: string) => void
+  onSwap?: (from: string, to: string) => void
+  pitchHint?: ReactNode
+  /** Slot seçiliyken yan panelin gövdesi (UT: kart seçimi, kariyer: oyuncu/davranış/öneri sekmeleri; 08 §15). */
+  slotPanel?: { title: string; onClose: () => void; body: ReactNode }
+  formations: { id: string; label: string }[]
+  formationsLoading: boolean
+  formationsError?: string
+  formationId?: string
+  onFormation: (id: string) => void
+  setup: TacticSetup
+  onSetup: (setup: TacticSetup) => void
+  /** Üst istatistik karoları (UT: Rating/Dolu, kariyer: Ort. OVR/Dolu). */
+  stats: { label: string; value?: string | number; suffix?: string }[]
+  averages: FaceAverage[]
+  /** UT'de kimya çubuğu; kariyerde kimya yok. */
+  chem?: { value: number; max: number }
+  /** Modun kendi bölümleri (UT: meta/fiyat; kariyer: rol uyumu). */
+  sections?: ReactNode
+  tacticCode: ReactNode
+  onClear: () => void
+  clearDisabled: boolean
+  clearLabel?: string
+  note?: string
+  actions?: ReactNode
+  header?: ReactNode
+  footer?: ReactNode
+}
+
+/** Slot seçili değilken yan panel varsayılan hâli (08 §16.1): kadro bilgisi, kimya, mod bölümleri, taktik kodu. Boş değerler "–". */
+function SquadInfo(p: SquadViewProps) {
+  return (
+    <div className="space-y-4">
+      <section aria-label="Kadro bilgisi" className="space-y-3">
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <label htmlFor="v3-formation" className="text-ink-2">Formasyon</label>
+          {p.formationsLoading ? (
+            <Skeleton className="h-10 w-40" />
+          ) : p.formationsError ? (
+            <span role="alert" className="text-bad">{p.formationsError}</span>
+          ) : (
+            <select id="v3-formation" value={p.formationId} onChange={(e) => p.onFormation(e.target.value)} className="glass-3 min-h-10 max-w-[220px] px-3 text-sm text-ink max-sm:min-h-11">
+              {p.formations.map((f) => (
+                <option key={f.id} value={f.id}>{f.label}</option>
+              ))}
+            </select>
+          )}
+        </div>
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <span className="text-ink-2">Build-Up</span>
+          <Segmented label="Build-Up" value={p.setup.buildUp} options={BUILD_UPS.map((b) => ({ id: b, label: b }))} onChange={(buildUp) => p.onSetup({ ...p.setup, buildUp })} />
+        </div>
+        <label className="block text-sm text-ink-2">
+          Savunma hattı: <span className="font-[var(--font-num)] tabular-nums text-ink">{p.setup.depth}</span>
+          <input type="range" min={0} max={100} value={p.setup.depth} onChange={(e) => p.onSetup({ ...p.setup, depth: Number(e.target.value) })} className="mt-1 block w-full accent-[var(--accent)]" />
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {p.stats.map((s) => (
+            <StatTile key={s.label} label={s.label} value={s.value} suffix={s.suffix} />
+          ))}
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {p.averages.map((a) => (
+            <StatTile key={a.label} label={a.label} value={a.value === undefined ? undefined : `${a.approximate ? '≈' : ''}${a.value}`} />
+          ))}
+        </div>
+        <p className="flex items-center gap-1 text-xs text-muted">
+          Saha oyuncusu ortalaması
+          <HelpPopover label="Yüz ortalaması nasıl hesaplanır">Altı ortalama yalnız saha oyuncularından hesaplanır; kaleci (DIV/HAN/KIC/REF/SPD/POS) dışarıda kalır. "≈": değer ağırlığı doğrulanmamış formülle hesaplandı.</HelpPopover>
+        </p>
+      </section>
+
+      {p.chem && (
+        <section aria-label="Toplam kimya" className="space-y-2">
+          <h3 className="font-display text-lg font-semibold">Toplam kimya</h3>
+          <ChemBar value={p.chem.value} max={p.chem.max} />
+        </section>
+      )}
+
+      {p.sections}
+
+      <section aria-label="EA taktik kodu">{p.tacticCode}</section>
+
+      <div className="flex flex-wrap gap-2">
+        <Button variant="ghost" onClick={p.onClear} disabled={p.clearDisabled} disabledReason="Kadro zaten boş">{p.clearLabel ?? "Kartları temizle"}</Button>
+        {p.actions}
+      </div>
+      {p.note && <p role="status" className="text-xs text-accent">{p.note}</p>}
+    </div>
+  )
+}
+
+/**
+ * v3 kadro çalışma alanı (V3-04, 08 §14-16): UT ve kariyerin ortak şablonu. Sahada tıklanan mevki yan paneli seçime çevirir;
+ * mod yalnız `slotPanel`, `stats`, `sections` ve `actions` ile içerik verir.
+ */
+export function SquadWorkspaceView(p: SquadViewProps) {
+  return (
+    <Workspace
+      title={p.title}
+      header={p.header}
+      hero={
+        <>
+          <Pitch
+            slots={p.slots.map((s) => ({ ...s, selected: s.slotId === p.selectedSlotId }))}
+            onPickPlayer={p.onPickPlayer}
+            onPickRole={p.onPickRole}
+            onRemove={p.onRemove}
+            onSwap={p.onSwap}
+          />
+          <p className="mt-2 px-1 text-xs text-muted">
+            {p.pitchHint ?? <>Sürükle ya da <kbd className="rounded-sm border border-line px-1">M</kbd> ile taşı · Enter seç · Rol çipine tıkla: rol ve odak.</>}
+          </p>
+          {p.footer}
+        </>
+      }
+      side={
+        p.slotPanel ? (
+          <SidePanel sheet title={p.slotPanel.title} onClose={p.slotPanel.onClose}>
+            {p.slotPanel.body}
+          </SidePanel>
+        ) : (
+          <SidePanel title="Kadro bilgisi">
+            <SquadInfo {...p} />
+          </SidePanel>
+        )
+      }
+    />
+  )
+}
+
+/** Rol çipine tıklayınca açılan rol/odak penceresi: iki modda aynı. */
+export function SquadRoleDialog<T>({ ws }: { ws: SquadWorkspaceApi<T> }) {
+  const slot = ws.selection?.panel === 'role' ? ws.selectedSlot : undefined
+  if (!slot) {
+    return null
+  }
+  return (
+    <RoleFocusModal
+      position={slot.position}
+      groups={roleGroups(ws.roles.data ?? [], slot.position, ws.eaRoles.allowed)}
+      lock={ws.eaRoles.status === 'ready' ? undefined : { status: ws.eaRoles.status, retry: ws.eaRoles.retry }}
+      currentRoleId={ws.roleBySlot.get(slot.slotId)?.roleId ?? ws.state.roleOverride[slot.slotId] ?? slot.defaultRole}
+      onApply={(roleId) => {
+        ws.setRole(slot.slotId, roleId)
+        ws.clearSelection()
+      }}
+      onClose={ws.clearSelection}
+    />
+  )
+}

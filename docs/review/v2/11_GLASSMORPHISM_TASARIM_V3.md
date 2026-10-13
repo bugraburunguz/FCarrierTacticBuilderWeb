@@ -176,6 +176,7 @@ v3 bir sayfa için ancak şu kontrol listesi yeşilse "bitti" sayılır (PR şab
 | Q13 | Chip: yazı ≥ 12px, dokunma hedefi ≥ 32px (mobilde 44px) | Playwright ölçüm |
 | Q14 | Giriş/Kayıt: tek birincil eylem (Kayıt ol primary, Giriş secondary/ghost), tüm sayfalarda aynı | Görsel snapshot |
 | Q15 | axe serious/critical ihlal sayısı 0 (her v3 ekranı) | `@axe-core/playwright` |
+| Q16 | UT ve kariyer kadro sayfaları `src/features/squad/` çekirdeğini paylaşır: tek çözme sorgusu, tek taktik kodu bileşeni, ortak formasyon/rol/eski-kayıt temizliği ve yan panel şablonu. Yeni kadro/taktik işi çekirdeğe girer; yalnız-UT / yalnız-kariyer olan iş raporda gerekçesiyle yazılır | `src/features/squad/q16.test.ts` + `describe.each(['ut','career'])` parite testleri |
 
 Sayfa ↔ kapatılması zorunlu buglar:
 | Sayfa | Zorunlu düzeltmeler |
@@ -207,7 +208,7 @@ Sayfa ↔ kapatılması zorunlu buglar:
 | V3-01 | P1 | `src/design/` (tokens.css, glass.css, components/), Radix kurulum, Inter self-host, aurora + grain katmanı, tema + mod + şeffaflık anahtarları | Ladle'da tüm bileşenler 2 tema × 2 mod × reduced-transparency |
 | V3-02 | P1 | stylelint + font-size lint + axe + Playwright 3 kırılım CI | Kapılar CI'da |
 | V3-03 | P1 | AppShell + yeni rota tablosu (D-08) + lazy rotalar | Eski yollar `<Navigate>` |
-| V3-04 | P1 | Çalışma alanı şablonu: Pitch + PitchSlot + SidePanel (08 §14-16) — UT ve kariyer ortak | Ekran onayı (D-07 kuralı: önce bu ekran). Kabul listesi: §8 Q1–Q10 + **Q11–Q15** (rol etiketi 2 satır/kesilmez, pasif buton ≥3:1 + neden, chip ≥12px/≥32px(44px), tek birincil eylem, axe serious/critical = 0) |
+| V3-04 | P1 | Çalışma alanı şablonu: Pitch + PitchSlot + SidePanel (08 §14-16) — UT ve kariyer ortak | Ekran onayı (D-07 kuralı: önce bu ekran). Kabul listesi: §8 Q1–Q10 + **Q11–Q16** (rol etiketi 2 satır/kesilmez, pasif buton ≥3:1 + neden, chip ≥12px/≥32px(44px), tek birincil eylem, axe serious/critical = 0, UT↔kariyer ortak çekirdek) |
 | V3-05 | P1 | Katalog ve Detay şablonları → UT oyuncu, SBC, replikalar | §8 kapıları |
 | V3-06 | P1 | Kariyer ekranları yeni motorla (13 ENG-M8) | §8 kapıları |
 | V3-07 | P2 | Pano ve Akış şablonları → masa, gelişim, import, ayarlar | §8 kapıları |

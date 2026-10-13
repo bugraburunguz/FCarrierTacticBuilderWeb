@@ -1,104 +1,57 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
-import type { ResolvedTactic, TacticRequest, WeaponState } from '../api/types'
+import type { WeaponState } from '../api/types'
 import { FormationStyleChips } from '../components/FormationStyleChips'
-import { Modal } from '../components/Modal'
 import { Pitch, type PitchSlot } from '../components/pitch/Pitch'
-import { ExportWarnings } from '../components/ExportWarnings'
 import { cardPlayerOf } from '../lib/cardPlayer'
-import { ChemDiamonds } from '../components/card/ChemDiamonds'
 import type { FitState } from '../components/card/FitBadge'
-import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
-import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
+import { Button, ErrorBox, Pill, Select, Spinner } from '../components/ui'
+import { coins, shortCoins } from '../lib/coins'
+import { PickBody, PickModal } from '../features/squad/ut/PickBody'
+import { Chip, EmptyState as V3Empty, Panel, StatTile } from '../design/components/primitives'
+import { SquadRoleDialog, SquadWorkspaceView } from '../features/squad/SquadWorkspaceView'
+import { TacticCodeCard } from '../features/squad/TacticCodeCard'
+import type { TacticSetup } from '../features/squad/types'
+import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
+import { useUtBinding } from '../features/squad/useUtBinding'
 import { useUtRules } from '../state/rulesStore'
 import { isV3 } from '../design/uiVersion'
-import { UtSquadWorkspace, type UtSquadViewModel } from './v3/UtSquadWorkspace'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
-import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
-import { useEaRoles } from '../lib/eaRoles'
-import { faceAverages } from '../lib/faceAverages'
-import { carryOver, fromSummary, personKey, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
+import { roleBaseName } from '../lib/squadBuilder'
+import { personKey, priceSummary, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
 import { useUtCapture } from '../state/utCaptureStore'
 import { utCardStore } from '../state/utCardStore'
-import { DEFAULT_UT_FORMATION, DEFAULT_UT_SETUP, utSquadStore } from '../state/utSquadStore'
+import { DEFAULT_UT_SETUP } from '../state/utSquadStore'
 
 const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
 const FIT_STATE: Record<WeaponState, FitState> = { GREEN: 'good', YELLOW: 'ok', RED: 'bad' }
 const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
-const TIER_TONE: Record<string, 'emerald' | 'sky' | 'amber' | 'slate'> = { 'A+': 'emerald', A: 'sky', B: 'amber', C: 'slate' }
-const SOURCE_LABEL: Record<CardSource, string> = { club: 'Kulübüm', market: 'Market', catalog: 'Katalog' }
-const MAX_LISTED = 60
-
-interface Setup {
-  buildUp: (typeof BUILD_UPS)[number]
-  depth: number
-}
-
-type Dialog = { kind: 'card' | 'role'; slotId: string }
 
 const PANEL = 'rounded-md border border-line bg-surface p-3.5 text-ink'
 const PANEL_TITLE = 'mb-2.5 border-b border-line pb-1.5 font-display text-lg font-bold uppercase tracking-wide'
 
-function coins(value?: number) {
-  return value === undefined ? '—' : value.toLocaleString('tr-TR')
-}
-
-function shortCoins(value?: number) {
-  if (value === undefined) {
-    return '—'
-  }
-  return value >= 1_000_000 ? `${(value / 1_000_000).toFixed(1)}M` : value >= 1000 ? `${Math.round(value / 1000)}K` : String(value)
-}
-
 export function UtSquadPage() {
   useUtRules()
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
-  const eaRoles = useEaRoles()
-  const saved = useMemo(() => utSquadStore.get(), [])
-  const [formationId, setFormationId] = useState(saved?.formationId ?? DEFAULT_UT_FORMATION)
-  const [setup, setSetup] = useState<Setup>(saved?.setup ?? DEFAULT_UT_SETUP)
-  const [picked, setPicked] = useState<Record<string, UtCard>>(saved?.picked ?? {})
-  const [roleOverride, setRoleOverride] = useState<Record<string, string>>(saved?.roleOverride ?? {})
-  const origin = useRef<'manual' | 'active-squad'>(saved?.origin ?? 'manual')
-  const [dialog, setDialog] = useState<Dialog | null>(null)
+  const { binding, saved, origin } = useUtBinding()
+  const ws = useSquadWorkspace('ut', binding)
+  const { state, slots, roleBySlot, formation, formations, selection, selectedSlot: dialogSlot } = ws
+  const picked = state.assigned
+  const setup = state.setup ?? DEFAULT_UT_SETUP
+  const setSetup = (change: Partial<TacticSetup>) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_UT_SETUP), ...change } }))
   const capture = useUtCapture()
-  const [loadNote, setLoadNote] = useState<string>()
+  const loadNote = ws.note
 
-  const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
-  const slots = formation?.slots ?? []
-  // Kayıtlı formasyon/rol/slot kayıtları güncel formasyonla uyuşmuyorsa (temizlenene kadar) çözme isteği gitmez.
-  const slotIds = new Set(slots.map((s) => s.slotId))
-  const knownFormation = formations.data?.some((f) => f.id === formationId) ?? false
-  const stale = Boolean(formations.data?.length) && (!knownFormation || Object.keys(roleOverride).some((id) => !slotIds.has(id)) || Object.keys(picked).some((id) => !slotIds.has(id)))
-
-  const tactic: TacticRequest = useMemo(
-    () => ({
-      formation: formation?.id,
-      slots: Object.entries(roleOverride).map(([slotId, roleId]) => ({ slotId, tags: [], roleId })),
-      setup,
-    }),
-    [formation?.id, roleOverride, setup],
-  )
-  const resolved = useQuery({
-    queryKey: ['ut-resolve', JSON.stringify(tactic)],
-    queryFn: () => endpoints.resolveTactic(tactic),
-    enabled: Boolean(formation) && !stale,
-    retry: false,
-  })
-  const roleBySlot = Object.fromEntries((resolved.data?.slots ?? []).map((s) => [s.slotId, s]))
-
-  const pickedSlots = slots.filter((s) => picked[s.slotId] && roleBySlot[s.slotId])
+  const pickedSlots = slots.filter((s) => picked[s.slotId] && roleBySlot.get(s.slotId))
   const evaluationBody = pickedSlots.map((s) => {
     const card = picked[s.slotId]
     return {
       slotId: s.slotId,
       position: s.position,
-      roleId: roleBySlot[s.slotId].roleId,
+      roleId: roleBySlot.get(s.slotId)!.roleId,
       ...(card.attrs
         ? { card: { name: card.name, overall: card.rating, positions: card.positions, attrs: card.attrs } }
         : { playerId: card.playerId }),
@@ -128,11 +81,11 @@ export function UtSquadPage() {
   )
   const price = priceSummary(slots.map((s) => picked[s.slotId]))
 
-  const roleById = new Map((roles.data ?? []).map((r) => [r.id, r]))
+  const roleById = new Map((ws.roles.data ?? []).map((r) => [r.id, r]))
   const views: PitchSlot[] = slots.map((s, i) => {
     const card = picked[s.slotId]
     const e = evalBySlot[s.slotId]
-    const role = roleById.get(roleBySlot[s.slotId]?.roleId ?? s.defaultRole)
+    const role = roleById.get(roleBySlot.get(s.slotId)?.roleId ?? s.defaultRole)
     const band = e?.roleFit !== undefined ? (e.badge ?? CHEM_BADGE[chem.perSlot[i]]) : undefined
     return {
       slotId: s.slotId,
@@ -142,43 +95,12 @@ export function UtSquadPage() {
       player: card && cardPlayerOf(card, s.position),
       chem: card ? (chem.perSlot[i] as 0 | 1 | 2 | 3) : undefined,
       price: card?.price !== undefined ? shortCoins(card.price) : undefined,
-      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : roleBySlot[s.slotId]?.roleName,
+      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : roleBySlot.get(s.slotId)?.roleName,
       fit: card && e?.roleFit !== undefined && band ? { pct: Math.round(e.roleFit), state: FIT_STATE[band] } : undefined,
     }
   })
 
-  const dialogSlot = slots.find((s) => s.slotId === dialog?.slotId)
-
-  function changeFormation(id: string) {
-    const next = formations.data?.find((f) => f.id === id)
-    setPicked((cur) => carryOver(slots, cur, next?.slots ?? []))
-    setFormationId(id)
-    setRoleOverride({})
-    setDialog(null)
-  }
-
-  // Kayıtlı formasyon artık yoksa ya da rol/slot kayıtları formasyonla uyuşmuyorsa sessizce temizle, küçük not göster (V3-00).
-  useEffect(() => {
-    if (!stale || !formations.data) {
-      return
-    }
-    const target = formations.data.find((f) => f.id === formationId) ?? formations.data[0]
-    const targetSlots = new Set(target.slots.map((s) => s.slotId))
-    setFormationId(target.id)
-    setRoleOverride({})
-    setPicked((cur) => Object.fromEntries(Object.entries(cur).filter(([id]) => targetSlots.has(id))))
-    setLoadNote('Kayıtlı formasyon/rol bilgisi güncel formasyonla uyuşmadığı için sıfırlandı.')
-  }, [stale, formations.data, formationId])
-
-  // Kadro her değişimde kaydedilir; sayfa yenilenince ya da dosya tekrar yüklenmeden geri gelir.
-  useEffect(() => {
-    if (!saved && Object.keys(picked).length === 0) {
-      return // henüz kullanıcı bir şey yapmadıysa boş kadro kaydedilmez (aktif kadro otomatik yüklenebilsin)
-    }
-    utSquadStore.set({ formationId, setup, picked, roleOverride, origin: origin.current })
-  }, [saved, formationId, setup, picked, roleOverride])
-
-  // Kayıtlı kadro yokken yakalamada aktif kadro varsa otomatik yerleştirilir.
+  // Kadro her değişimde utSquadStore'a kaydedilir (useUtBinding); kayıtlı kadro yokken yakalamada aktif kadro varsa otomatik yerleşir.
   const autoApplied = useRef(false)
   useEffect(() => {
     if (autoApplied.current || saved || !capture?.activeSquad || !formations.data) {
@@ -188,11 +110,10 @@ export function UtSquadPage() {
     const loaded = mapActiveSquad(capture.activeSquad, formations.data)
     if (loaded.formationId) {
       origin.current = 'active-squad'
-      setFormationId(loaded.formationId)
-      setPicked(loaded.picked)
-      setLoadNote(`Kulübünün aktif kadrosu otomatik yüklendi (${Object.keys(loaded.picked).length} kart${capture.activeSquad.tactic?.tacticName ? ` · taktik: ${capture.activeSquad.tactic.tacticName}` : ''}).`)
+      ws.patch({ formationId: loaded.formationId, assigned: loaded.picked })
+      ws.setNote(`Kulübünün aktif kadrosu otomatik yüklendi (${Object.keys(loaded.picked).length} kart${capture.activeSquad.tactic?.tacticName ? ` · taktik: ${capture.activeSquad.tactic.tacticName}` : ''}).`)
     }
-  }, [saved, capture, formations.data])
+  }, [saved, capture, formations.data, origin, ws])
 
   function loadActiveSquad() {
     const squad = capture?.activeSquad
@@ -200,102 +121,80 @@ export function UtSquadPage() {
       return
     }
     const loaded = mapActiveSquad(squad, formations.data, formation)
-    if (loaded.formationId) {
-      setFormationId(loaded.formationId)
-    }
-    setRoleOverride({})
+    ws.patch({ ...(loaded.formationId ? { formationId: loaded.formationId } : {}), roleOverride: {}, assigned: loaded.picked })
     origin.current = 'active-squad'
-    setPicked(loaded.picked)
-    setDialog(null)
-    setLoadNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}${squad.tactic?.tacticName ? ` · taktik: ${squad.tactic.tacticName}` : ''}. Taktik talimatları (rol/focus) henüz çözülmediği için roller otomatik.`)
+    ws.clearSelection()
+    ws.setNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}${squad.tactic?.tacticName ? ` · taktik: ${squad.tactic.tacticName}` : ''}. Taktik talimatları (rol/focus) henüz çözülmediği için roller otomatik.`)
   }
 
-  function removeCard(slotId: string) {
-    setPicked((cur) => {
-      const { [slotId]: _removed, ...rest } = cur
-      return rest
-    })
+  const tacticCode = <TacticCodeCard mode="ut" tactic={ws.tactic} resolved={ws.resolved.data} onLoaded={ws.applyImportedCode} />
+  const pickDialog = selection?.panel === 'card' && dialogSlot ? dialogSlot : undefined
+  const pickProps = pickDialog && {
+    position: pickDialog.position,
+    current: picked[pickDialog.slotId],
+    roleName: roleBySlot.get(pickDialog.slotId)?.roleName,
+    evaluation: evalBySlot[pickDialog.slotId],
+    chemLinks: chem.perSlot[slots.indexOf(pickDialog)],
+    usedKeys: new Set(Object.values(picked).map(personKey)),
+    onPick: (card: UtCard) => {
+      ws.assign(pickDialog.slotId, card)
+      ws.clearSelection()
+    },
   }
-
-  const roleModal = dialog?.kind === 'role' && dialogSlot ? (
-      <RoleFocusModal
-        position={dialogSlot.position}
-        groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles.allowed)}
-                lock={eaRoles.status === 'ready' ? undefined : { status: eaRoles.status, retry: eaRoles.retry }}
-        currentRoleId={roleBySlot[dialogSlot.slotId]?.roleId ?? dialogSlot.defaultRole}
-        onApply={(rid) => {
-          setRoleOverride((cur) => ({ ...cur, [dialogSlot.slotId]: rid }))
-          setDialog(null)
-        }}
-        onClose={() => setDialog(null)}
-      />
-  ) : null
 
   if (isV3()) {
-    const vm: UtSquadViewModel = {
-      views,
-      selectedSlotId: dialog?.kind === 'card' ? dialog.slotId : undefined,
-      onPickPlayer: (slotId) => setDialog({ kind: 'card', slotId }),
-      onPickRole: (slotId) => setDialog({ kind: 'role', slotId }),
-      onRemove: removeCard,
-      onSwap: (from, to) => setPicked((cur) => swapSlots(cur, from, to)),
-      pick: dialog?.kind === 'card' && dialogSlot ? {
-        title: `${dialogSlot.position} — Kart seç`,
-        onClose: () => setDialog(null),
-        body: (
-          <PickBody
-            position={dialogSlot.position}
-            current={picked[dialogSlot.slotId]}
-            roleName={roleBySlot[dialogSlot.slotId]?.roleName}
-            evaluation={evalBySlot[dialogSlot.slotId]}
-            chemLinks={chem.perSlot[slots.indexOf(dialogSlot)]}
-            usedKeys={new Set(Object.values(picked).map(personKey))}
-            onPick={(card) => {
-              setPicked((cur) => ({ ...cur, [dialogSlot.slotId]: card }))
-              setDialog(null)
-            }}
-          />
-        ),
-      } : undefined,
-      formations: (formations.data ?? []).map((f) => ({ id: f.id, label: f.label ?? f.id })),
-      formationsLoading: formations.isLoading,
-      formationsError: formations.error ? 'Formasyonlar yüklenemedi.' : undefined,
-      formationId: formation?.id,
-      onFormation: changeFormation,
-      buildUp: setup.buildUp,
-      onBuildUp: (buildUp) => setSetup((cur) => ({ ...cur, buildUp })),
-      depth: setup.depth,
-      onDepth: (depth) => setSetup((cur) => ({ ...cur, depth })),
-      rating: pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined,
-      chem: chem.total,
-      maxChem: MAX_SQUAD_CHEM,
-      filled: pickedSlots.length,
-      averages: faceAverages(Object.values(picked)),
-      priceTotal: price.known > 0 ? shortCoins(price.total) : undefined,
-      priceAverage: price.average !== undefined ? shortCoins(price.average) : undefined,
-      priceKnown: `${price.known}/${price.count} kartın fiyatı biliniyor`,
-      metaAverage: evaluation.data?.averageMeta,
-      cards: utCardStore.get()?.cards ?? [],
-      loadNote,
-      tacticCode: (
-        <UtTacticCode
-          tactic={tactic}
-          resolved={resolved.data}
-          onLoaded={(r) => {
-            setFormationId(r.formation)
-            setPicked({})
-            setRoleOverride(Object.fromEntries(r.slots.map((s) => [s.slotId, s.roleId])))
-            setSetup({ buildUp: (BUILD_UPS as readonly string[]).includes(r.buildUp) ? (r.buildUp as Setup['buildUp']) : 'Balanced', depth: r.depth })
-          }}
-        />
-      ),
-      onClear: () => setPicked({}),
-      onLoadActive: capture?.activeSquad ? loadActiveSquad : undefined,
-    }
     return (
       <>
-        <UtSquadWorkspace vm={vm} />
-        {roleModal}
+        <SquadWorkspaceView
+          title="UT Kadro Kurucu"
+          slots={views}
+          selectedSlotId={pickDialog?.slotId}
+          onPickPlayer={(slotId) => ws.select(slotId, 'card')}
+          onPickRole={(slotId) => ws.select(slotId, 'role')}
+          onRemove={(slotId) => ws.assign(slotId, null)}
+          onSwap={ws.swap}
+          slotPanel={pickProps && pickDialog ? { title: `${pickDialog.position} — Kart seç`, onClose: ws.clearSelection, body: <PickBody {...pickProps} /> } : undefined}
+          formations={(formations.data ?? []).map((f) => ({ id: f.id, label: f.label ?? f.id }))}
+          formationsLoading={formations.isLoading}
+          formationsError={formations.error ? 'Formasyonlar yüklenemedi.' : undefined}
+          formationId={formation?.id}
+          onFormation={(id) => ws.changeFormation(id)}
+          setup={setup}
+          onSetup={(next) => setSetup(next)}
+          stats={[{ label: 'Rating', value: pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined }, { label: 'Dolu', value: pickedSlots.length, suffix: '/ 11' }]}
+          averages={ws.averages}
+          chem={{ value: chem.total, max: MAX_SQUAD_CHEM }}
+          sections={
+            <>
+              <section aria-label="Meta" className="space-y-2">
+                <Chip tone="info">Meta ort. {evaluation.data?.averageMeta ?? '–'}</Chip>
+              </section>
+              <section aria-label="Fiyat" className="space-y-2">
+                <h3 className="font-display text-lg font-semibold">Fiyat</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <StatTile label="Toplam" value={price.known > 0 ? shortCoins(price.total) : undefined} />
+                  <StatTile label="Ortalama" value={price.average !== undefined ? shortCoins(price.average) : undefined} />
+                </div>
+                <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+              </section>
+            </>
+          }
+          tacticCode={tacticCode}
+          onClear={ws.clearAssigned}
+          clearDisabled={pickedSlots.length === 0}
+          note={loadNote}
+          actions={capture?.activeSquad ? <Button onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button> : undefined}
+          header={
+            (utCardStore.get()?.cards ?? []).length === 0 && pickedSlots.length === 0 ? (
+              <Panel>
+                <V3Empty action={<Link to="/ut/import" className="inline-flex min-h-10 items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent">Kulüp içe aktar</Link>}>
+                  Kulübündeki kartlar yok: sahada bir mevkiye tıkla, katalogdan kart seç ya da yakalama dosyanı yükle.
+                </V3Empty>
+              </Panel>
+            ) : undefined
+          }
+        />
+        <SquadRoleDialog ws={ws} />
       </>
     )
   }
@@ -311,16 +210,7 @@ export function UtSquadPage() {
       </div>
       <div className="grid items-start gap-4 min-[820px]:grid-cols-[360px_1fr]">
         <div className="order-2 flex flex-col gap-3.5 min-[820px]:order-1">
-          <UtTacticCode
-            tactic={tactic}
-            resolved={resolved.data}
-            onLoaded={(r) => {
-              setFormationId(r.formation)
-              setPicked({})
-              setRoleOverride(Object.fromEntries(r.slots.map((s) => [s.slotId, s.roleId])))
-              setSetup({ buildUp: (BUILD_UPS as readonly string[]).includes(r.buildUp) ? (r.buildUp as Setup['buildUp']) : 'Balanced', depth: r.depth })
-            }}
-          />
+          {tacticCode}
 
           <section className={PANEL}>
             <h2 className={PANEL_TITLE}>Kadro Özeti</h2>
@@ -332,7 +222,7 @@ export function UtSquadPage() {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 text-[13px]">
                   <label htmlFor="ut-formation">Formasyon ({formations.data?.length ?? 0})</label>
-                  <Select id="ut-formation" value={formation?.id} onChange={(e) => changeFormation(e.target.value)} className="!w-auto !bg-surface-2 !text-ink">
+                  <Select id="ut-formation" value={formation?.id} onChange={(e) => ws.changeFormation(e.target.value)} className="!w-auto !bg-surface-2 !text-ink">
                     {(formations.data ?? []).map((f) => (
                       <option key={f.id} value={f.id}>{f.label ?? f.id}</option>
                     ))}
@@ -348,7 +238,7 @@ export function UtSquadPage() {
                         type="button"
                         role="radio"
                         aria-checked={setup.buildUp === b}
-                        onClick={() => setSetup((cur) => ({ ...cur, buildUp: b }))}
+                        onClick={() => setSetup({ buildUp: b })}
                         className={`rounded-md border px-2.5 py-1 text-[11.5px] ${setup.buildUp === b ? 'border-accent text-accent' : 'border-line text-muted'}`}
                       >
                         {b}
@@ -358,7 +248,7 @@ export function UtSquadPage() {
                 </div>
                 <label className="block text-[13px]">
                   <span className="mb-1 block">Savunma hattı: {setup.depth}</span>
-                  <input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup((cur) => ({ ...cur, depth: Number(e.target.value) }))} className="w-full accent-accent" />
+                  <input type="range" min={0} max={100} value={setup.depth} onChange={(e) => setSetup({ depth: Number(e.target.value) })} className="w-full accent-accent" />
                 </label>
                 <div className="flex flex-wrap items-center gap-1.5 border-t border-line pt-2.5 text-sm">
                   <Pill tone={chem.total >= 30 ? 'emerald' : chem.total >= 20 ? 'amber' : 'rose'}>kimya {chem.total} / {MAX_SQUAD_CHEM}</Pill>
@@ -373,7 +263,7 @@ export function UtSquadPage() {
                 <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
                 <Summary evaluation={evaluation.data?.slots ?? []} />
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="ghost" onClick={() => setPicked({})}>Kartları temizle</Button>
+                  <Button variant="ghost" onClick={ws.clearAssigned}>Kartları temizle</Button>
                   {capture?.activeSquad && (
                     <Button variant="secondary" onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button>
                   )}
@@ -409,36 +299,20 @@ export function UtSquadPage() {
         <div className="order-1 rounded-md border border-line bg-surface p-2.5 min-[820px]:order-2">
           <Pitch
             slots={views}
-            onPickPlayer={(slotId) => setDialog({ kind: 'card', slotId })}
-            onPickRole={(slotId) => setDialog({ kind: 'role', slotId })}
-            onRemove={removeCard}
-            onSwap={(from, to) => setPicked((cur) => swapSlots(cur, from, to))}
+            onPickPlayer={(slotId) => ws.select(slotId, 'card')}
+            onPickRole={(slotId) => ws.select(slotId, 'role')}
+            onRemove={(slotId) => ws.assign(slotId, null)}
+            onSwap={ws.swap}
           />
           <p className="mt-2 px-1 text-xs text-muted">Sürükle ya da <kbd className="rounded-sm border border-line px-1">M</kbd> ile taşı · Enter seç · kartın üstüne gelince aynı kulüp/lig/ülkedekiler vurgulanır.</p>
         </div>
       </div>
 
-      {dialog?.kind === 'card' && dialogSlot && (
-        <PickModal
-          position={dialogSlot.position}
-          slotId={dialogSlot.slotId}
-          current={picked[dialogSlot.slotId]}
-          roleName={roleBySlot[dialogSlot.slotId]?.roleName}
-          evaluation={evalBySlot[dialogSlot.slotId]}
-          chemLinks={chem.perSlot[slots.indexOf(dialogSlot)]}
-          usedKeys={new Set(Object.values(picked).map(personKey))}
-          onClose={() => setDialog(null)}
-          onPick={(card) => {
-            setPicked((cur) => ({ ...cur, [dialogSlot.slotId]: card }))
-            setDialog(null)
-          }}
-        />
-      )}
-      {roleModal}
+      {pickDialog && pickProps && <PickModal slotId={pickDialog.slotId} onClose={ws.clearSelection} {...pickProps} />}
+      <SquadRoleDialog ws={ws} />
     </div>
   )
 }
-
 function Summary({ evaluation }: { evaluation: { slotId: string; badge?: WeaponState; badgeText?: string; roleName?: string }[] }) {
   const weak = evaluation.filter((e) => e.badge === 'RED')
   const strong = evaluation.filter((e) => e.badge === 'GREEN')
@@ -453,220 +327,6 @@ function Summary({ evaluation }: { evaluation: { slotId: string; badge?: WeaponS
   )
 }
 
-/** Taktik çözümü üst bileşendeki tek sorgudan gelir (aynı anahtarı iki yerde farklı koşullarla açmak formasyonsuz 400 veriyordu, V3-00). */
-function UtTacticCode({ tactic, resolved, onLoaded }: { tactic: TacticRequest; resolved: ResolvedTactic | undefined; onLoaded: (r: { formation: string; buildUp: string; depth: number; slots: { slotId: string; roleId: string }[] }) => void }) {
-  const [input, setInput] = useState('')
-  const exportRequest: TacticRequest | undefined = resolved
-    ? { ...tactic, slots: resolved.slots.map((s) => ({ slotId: s.slotId, tags: [], roleId: s.roleId })) }
-    : undefined
-  const exportCode = useQuery({
-    queryKey: ['ut-code', JSON.stringify(exportRequest)],
-    queryFn: () => endpoints.exportTacticCode(exportRequest!),
-    enabled: Boolean(exportRequest),
-    retry: false,
-    staleTime: 300_000,
-  })
-  const [copied, setCopied] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [importError, setImportError] = useState<unknown>()
-  const code = exportCode.data?.code
-  async function copy() {
-    if (!code) {
-      return
-    }
-    try {
-      await navigator.clipboard.writeText(code)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      setCopied(false)
-    }
-  }
-  async function load() {
-    try {
-      setImportError(undefined)
-      onLoaded(await endpoints.importTacticCode(input.trim()))
-    } catch (e) {
-      setImportError(e)
-    }
-  }
-  return (
-    <section className={PANEL}>
-      <h2 className={PANEL_TITLE}>EA Taktik Kodu</h2>
-      <div aria-live="polite" className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-xl font-extrabold tracking-[3px] text-code">
-        {code ?? (exportCode.isFetching ? '…' : '—')}
-      </div>
-      <div className="mt-2.5 flex gap-2">
-        <button type="button" disabled={!code} onClick={copy} className="flex-1 rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent disabled:opacity-50">
-          {copied ? 'Kopyalandı' : 'Kopyala'}
-        </button>
-        <button type="button" disabled={!code} onClick={() => setOpen(true)} className="flex-1 rounded-md bg-surface-2 py-2 text-[12.5px] font-bold text-ink disabled:opacity-50">
-          Oyuna Aktar
-        </button>
-      </div>
-      <p className="mt-1.5 text-xs text-muted">Kod formasyon, rol, Build-Up ve hat değiştikçe otomatik güncellenir.</p>
-      <ExportWarnings warnings={exportCode.data?.warnings} />
-      <ErrorBox error={exportCode.error} />
-      <div className="mt-2.5 flex items-center gap-2">
-        <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="EA kodunu yapıştır" className="font-mono" maxLength={16} aria-label="EA kodunu yapıştır" />
-        <Button disabled={!input.trim()} onClick={load}>Yükle</Button>
-      </div>
-      <ErrorBox error={importError} />
-      <p className="mt-1.5 text-xs text-muted">Kod mod-bağımsızdır: kariyerdeki taktik kodunun aynısı. Yüklemek formasyonu, rolleri, Build-Up'ı ve hattı değiştirir, kartları temizler.</p>
-      {open && code && (
-        <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
-          <div className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-code">{code}</div>
-          <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-ink">
-            <li>Kodu kopyala.</li>
-            <li>Oyunda Takım Yönetimi → Taktikler → Kod Kullan bölümüne gir.</li>
-            <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
-          </ol>
-          <button type="button" onClick={copy} className="mt-4 w-full rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">Kopyala</button>
-        </Modal>
-      )}
-    </section>
-  )
-}
-
-interface PickProps {
-  position: string
-  slotId: string
-  current?: UtCard
-  roleName?: string
-  evaluation?: {
-    card: { metaRating: number; tier: string; bestChemStyle?: string; chemStyles?: { style: string; metaRating: number; delta: number }[] }
-    roleFit?: number
-    badge?: WeaponState
-    roleName?: string
-    setupDelta?: number
-    reason?: string
-  }
-  chemLinks?: number
-  usedKeys: Set<string>
-  onClose: () => void
-  onPick: (c: UtCard) => void
-}
-
-function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation: PickProps['evaluation']; chemLinks?: number }) {
-  const links = chemLinks ?? 0
-  return (
-    <div className="mb-3 space-y-1.5 rounded-md border border-line bg-surface-2 p-3 text-sm">
-      <p className="font-semibold">{card.name}</p>
-      <p className="text-xs text-muted">
-        {SOURCE_LABEL[card.source]} · {card.rating} OVR{card.rarity ? ` · ${card.rarity}` : ''}{card.club ? ` · ${card.club}` : ''} · fiyat {coins(card.price)}
-        {card.untradeable ? ' · untradeable' : ''}
-      </p>
-      {evaluation ? (
-        <>
-          <p>
-            Meta rating* <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Pill tone={TIER_TONE[evaluation.card.tier] ?? 'slate'}>{evaluation.card.tier}</Pill>
-            {' · '}Kimya <ChemDiamonds value={links} size={12} />
-          </p>
-          {evaluation.roleFit !== undefined && (
-            <p className="flex items-center gap-1.5">
-              {evaluation.badge && <BadgeDot state={evaluation.badge} />} RoleFit <b>%{Math.round(evaluation.roleFit)}</b> · {evaluation.roleName}
-              {evaluation.setupDelta !== undefined && evaluation.setupDelta !== 0 && <span className="text-xs text-muted">(ayar {evaluation.setupDelta > 0 ? '+' : ''}{evaluation.setupDelta})</span>}
-            </p>
-          )}
-          {evaluation.reason && <p className="text-xs text-muted">{evaluation.reason}</p>}
-          {evaluation.card.chemStyles && (
-            <p className="text-xs">
-              Chem style önerisi: <b>{evaluation.card.bestChemStyle}</b>{' '}
-              {evaluation.card.chemStyles.filter((c) => c.style === evaluation.card.bestChemStyle).map((c) => `(meta ${c.metaRating}, +${c.delta})`)}
-            </p>
-          )}
-          {!card.club && card.source !== 'catalog' && (
-            <p className="text-xs text-code">Bu kartın kulüp/lig/ülke adı çözülemedi; kimya bağları hesaba katılmıyor olabilir.</p>
-          )}
-        </>
-      ) : (
-        <Spinner />
-      )}
-    </div>
-  )
-}
-
-/** Kart seçim gövdesi (kaynak sekmeleri + arama + liste): modalda ve v3 yan panelinde ortak. */
-export function PickBody({ position, current, evaluation, chemLinks, usedKeys, onPick }: Omit<PickProps, 'slotId' | 'onClose'>) {
-  const library = useMemo(() => utCardStore.get(), [])
-  const [source, setSource] = useState<CardSource>(library && library.cards.some((c) => c.source === 'club') ? 'club' : 'catalog')
-  const [q, setQ] = useState('')
-  const catalog = useQuery({
-    queryKey: ['ut-pick', position, q],
-    queryFn: () => endpoints.players({ pos: [position], q: q || undefined, sort: 'overall', order: 'desc', size: 20, gender: 0 }),
-    enabled: source === 'catalog',
-    staleTime: 60_000,
-  })
-  const local = useMemo(() => {
-    const needle = q.trim().toLowerCase()
-    return (library?.cards ?? [])
-      .filter((c) => c.source === source && c.positions.includes(position) && (!needle || c.name.toLowerCase().includes(needle)))
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, MAX_LISTED)
-  }, [library, source, position, q])
-  const rows: UtCard[] = source === 'catalog' ? (catalog.data?.items ?? []).map(fromSummary) : local
-  const counts: Record<CardSource, number> = {
-    club: library?.cards.filter((c) => c.source === 'club').length ?? 0,
-    market: library?.cards.filter((c) => c.source === 'market').length ?? 0,
-    catalog: 0,
-  }
-
-  return (
-    <>
-      {current && <CurrentCard card={current} evaluation={evaluation} chemLinks={chemLinks} />}
-      <div role="tablist" aria-label="Kart kaynağı" className="mb-3 flex gap-1">
-        {(['club', 'market', 'catalog'] as CardSource[]).map((s) => (
-          <button
-            key={s}
-            type="button"
-            role="tab"
-            aria-selected={source === s}
-            onClick={() => setSource(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${source === s ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink/80 hover:bg-surface-2'}`}
-          >
-            {SOURCE_LABEL[s]}{s !== 'catalog' ? ` (${counts[s]})` : ''}
-          </button>
-        ))}
-      </div>
-      <Input placeholder="İsim ara…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Kart ara" />
-      <div className="mt-3 max-h-80 overflow-y-auto">
-        {source === 'catalog' && catalog.isLoading ? (
-          <Spinner />
-        ) : rows.length === 0 ? (
-          <EmptyState>
-            {source === 'catalog' ? 'Sonuç yok.' : counts[source] === 0 ? (
-              <>Henüz {SOURCE_LABEL[source].toLowerCase()} verisi yok. <Link to="/ut/import" className="text-accent underline">Kulüp içe aktar</Link> sayfasından yakalama dosyanı yükle.</>
-            ) : 'Bu mevkide kart yok.'}
-          </EmptyState>
-        ) : (
-          <ul className="divide-y divide-line text-sm">
-            {rows.map((c) => (
-              <li key={c.key}>
-                <button type="button" disabled={usedKeys.has(personKey(c)) && (!current || personKey(c) !== personKey(current))} className="flex w-full items-center justify-between gap-2 px-1 py-1.5 text-left hover:bg-surface-2 disabled:opacity-40" onClick={() => onPick(c)}>
-                  <span>
-                    <b>{c.rating}</b> {c.name} <span className="text-xs text-muted">{c.club ?? ''}{c.rarity ? ` · ${c.rarity}` : ''}</span>
-                    {c.untradeable && <Pill tone="emerald">untradeable</Pill>}
-                  </span>
-                  <span className="text-xs tabular-nums text-muted">{c.price !== undefined ? coins(c.price) : c.league ?? ''}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      {source === 'catalog' && <p className="mt-2 text-xs text-muted">Katalog kartları temel EA kartlarıdır; fiyatları yoktur.</p>}
-      {library && <p className="mt-2 text-xs text-muted">Kulüp/market verisi: {new Date(library.importedAt).toLocaleString('tr-TR')} tarihli yakalama.</p>}
-    </>
-  )
-}
-
-function PickModal({ slotId, position, onClose, ...body }: PickProps) {
-  return (
-    <Modal wide title={`${slotId} · ${position} — Kart seç`} hint="Kulüp kartların, market ilanları veya katalog" onClose={onClose}>
-      <PickBody position={position} {...body} />
-    </Modal>
-  )
-}
 
 function Kpi({ label, value, suffix }: { label: string; value: string; suffix?: string }) {
   return (

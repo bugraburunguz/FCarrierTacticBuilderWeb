@@ -12,9 +12,9 @@ interface Props {
 
 const FIT_STATE = { GREEN: 'good', YELLOW: 'ok', RED: 'bad' } as const satisfies Record<string, FitState>
 
-/** Kariyer sahası: UT ile aynı FC kartları; oyuncu ve rol uyumu SlotView'dan gelir. */
-export function Pitch({ slots, ...handlers }: Props) {
-  const mapped: PitchSlot[] = slots.map((s) => ({
+/** SlotView → ortak saha slotu (kariyer ve UT aynı FC kartlarını çizer; yüz değerleri kartta görünür). */
+export function pitchSlotsOf(slots: SlotView[]): PitchSlot[] {
+  return slots.map((s) => ({
     slotId: s.slotId,
     position: s.position,
     x: s.x,
@@ -27,10 +27,17 @@ export function Pitch({ slots, ...handlers }: Props) {
       club: s.player.club,
       league: s.player.league,
       nationality: s.player.nationality,
+      faceStats: s.player.faceStats,
+      faceLabels: s.player.faceLabels,
+      faceStatsApproximate: s.player.faceStatsApproximate,
     },
     fit: s.fit && { pct: s.fit.pct, state: FIT_STATE[s.fit.band] },
     roleLabel: s.roleLabel,
     selected: s.selected,
   }))
-  return <CardPitch slots={mapped} {...handlers} />
+}
+
+/** Kariyer sahası: oyuncu ve rol uyumu SlotView'dan gelir. */
+export function Pitch({ slots, ...handlers }: Props) {
+  return <CardPitch slots={pitchSlotsOf(slots)} {...handlers} />
 }

@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest'
  * dağınık backdrop-filter ve `transition-all` olmaz. Sayfa taşındıkça `V3_FILES` listesine eklenir.
  */
 const V3_FILES = [
-  'src/pages/v3/UtSquadWorkspace.tsx',
+  'src/features/squad/SquadWorkspaceView.tsx',
   'src/design/components/AppShell.tsx',
   'src/design/components/Pitch3.tsx',
   'src/design/components/Workspace.tsx',
