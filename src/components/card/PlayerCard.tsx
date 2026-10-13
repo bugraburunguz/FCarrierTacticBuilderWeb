@@ -36,6 +36,10 @@ export interface PlayerCardProps {
   fit?: { pct: number; state: FitState }
   price?: string
   className?: string
+  /** Okunabilirlik kapısı (Q18): ölçeklenmiş yazı bu px'in altına inecekse o öğe gizlenir (saha kartları 11). */
+  minText?: number
+  /** OVR'nin ölçeklenmiş en küçük px'i (saha kartları 14); küçük kartta OVR büyütülür. */
+  minRating?: number
 }
 
 const NAME_MIN_WIDTH = 72
@@ -48,16 +52,19 @@ const FRAME_PATH = 'M90 2 C122 2 160 10 176 24 L176 196 C176 214 150 232 90 248 
  * Tek oyuncu kartı (DS-05): 180×250 taban tasarım, boyut `transform: scale` ile ölçeklenir; böylece her boyutta oranlar sabit kalır.
  * Çerçeve kendi SVG'miz; portre yoksa ya da yüklenmezse silüet çizilir.
  */
-export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '' }: PlayerCardProps) {
+export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '', minText = 0, minRating = 0 }: PlayerCardProps) {
   const uid = useId().replace(/:/g, '')
   const [failed, setFailed] = useState(false)
   const w = width ?? SIZE_WIDTH[size]
   const scale = w / BASE_W
   const design = designFor(player.rating, player)
   const { look } = design
-  const showName = w >= NAME_MIN_WIDTH
-  const showMeta = w >= META_MIN_WIDTH
-  const showStats = w >= STATS_MIN_WIDTH && Boolean(player.faceStats?.length)
+  const readable = (basePx: number) => basePx * scale >= minText
+  const showName = w >= NAME_MIN_WIDTH && readable(21)
+  const showPosition = readable(19)
+  const showMeta = w >= META_MIN_WIDTH && readable(9)
+  const showStats = w >= STATS_MIN_WIDTH && readable(8) && Boolean(player.faceStats?.length)
+  const ratingBase = Math.max(46, minRating / scale)
   const face = assetUrl(player.faceUrl)
   const surname = player.name.split(' ').slice(-1)[0]
   const tags = [player.nationality, player.club, player.league].map(shortLabel)
@@ -101,8 +108,8 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
         </svg>
 
         <div className="absolute font-display leading-none" style={{ left: 24, top: 38 }}>
-          <div style={{ fontSize: 46, fontWeight: 800 }}>{player.rating}</div>
-          {player.position && <div style={{ fontSize: 19, fontWeight: 700, marginTop: 2 }}>{player.position}</div>}
+          <div style={{ fontSize: ratingBase, fontWeight: 800 }}>{player.rating}</div>
+          {player.position && showPosition && <div style={{ fontSize: 19, fontWeight: 700, marginTop: 2 }}>{player.position}</div>}
           {showMeta && (
             <div className="mt-2 flex flex-col gap-1" style={{ fontSize: 9, fontWeight: 700 }}>
               {tags.filter(Boolean).map((tag, i) => (
@@ -150,7 +157,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
       {(chem !== undefined || price) && (
         <div className="absolute left-0 right-0 flex items-center justify-center gap-1" style={{ bottom: -Math.max(8, w * 0.1) }}>
           {chem !== undefined && <ChemDiamonds value={chem} size={Math.max(7, Math.round(w * 0.11))} />}
-          {price && <span className="num rounded-[3px] bg-ink-950/85 px-1 text-[10px] font-medium text-flood-400">{price}</span>}
+          {price && <span className="num rounded-[3px] bg-ink-950/85 px-1 text-[11px] font-medium text-flood-400">{price}</span>}
         </div>
       )}
     </div>

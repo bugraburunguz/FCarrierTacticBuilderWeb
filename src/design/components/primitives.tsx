@@ -181,7 +181,7 @@ export function SidePanel({ title, onClose, children, open = true, sheet = false
       tabIndex={-1}
       aria-label={title}
       onKeyDown={(e) => e.key === 'Escape' && onClose?.()}
-      className={cx('glass-2 flex flex-col overflow-hidden p-4 text-ink outline-none min-[820px]:static min-[820px]:max-h-none min-[820px]:w-[380px] min-[820px]:shrink-0', sheet && 'fixed inset-x-0 bottom-0 z-30 max-h-[85vh]')}
+      className={cx('glass-2 flex flex-col overflow-hidden p-4 text-ink outline-none min-[820px]:sticky min-[820px]:top-14 min-[820px]:max-h-[calc(100dvh-4.5rem)] min-[820px]:w-[380px] min-[820px]:shrink-0 min-[820px]:self-start', sheet && 'fixed inset-x-0 bottom-0 z-30 max-h-[85vh]')}
     >
       <header className="mb-3 flex items-center justify-between gap-2">
         <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>

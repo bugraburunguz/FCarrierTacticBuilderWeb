@@ -3,7 +3,8 @@
  * Satır bantları formasyonun dikey katmanlarından kurulur (kaleci kendi bandında); sığmayan katman iki alt banda bölünür,
  * birbirine yakın ve yatayda çakışmayan katmanlar tek bantta birleşir. Gruplar hiçbir zaman kesişmez.
  */
-export type LabelMode = 'two' | 'one'
+/** 'full': tam rol adı (kısaltmasız), en çok 2 satır; 'one': dar ekranda tek satırlık kısa form. */
+export type LabelMode = 'full' | 'one'
 
 export interface LayoutSlot {
   slotId: string
@@ -39,18 +40,20 @@ export interface LayoutInput {
   height?: number
   /** Dar ekran: rol etiketi tek satırlık kısa form. */
   narrow: boolean
+  /** En küçük kart genişliği (Q18): ≥1024px'te 56, 375'te 48. Sığmazsa saha uzar (sayfa kayar), kart küçülmez. */
+  minCard?: number
 }
 
 const CARD_RATIO = 0.13
-export const MIN_CARD = 40
-const PREFERRED_MIN_CARD = 50
+export const MIN_CARD = 48
 const MAX_CARD = 96
 const CARD_HEIGHT_RATIO = 1.39
 const CHAIN_HEIGHT = 12
 const LABEL_GAP = 4
 const PILL_GAP = 2
 const PILL_HEIGHT = 18
-const LABEL_HEIGHT: Record<LabelMode, number> = { two: 36, one: 22 }
+const LABEL_HEIGHT: Record<LabelMode, number> = { full: 36, one: 22 }
+const FULL_LABEL_WIDTH = 150
 const ONE_LINE_LABEL_WIDTH = 96
 const GAP_X = 6
 const GAP_Y = 8
@@ -61,7 +64,7 @@ const MERGE_Y_PCT = 17
 const MIN_ASPECT = 1.35
 
 export function labelWidthOf(cardWidth: number, mode: LabelMode): number {
-  return mode === 'one' ? ONE_LINE_LABEL_WIDTH : Math.round(Math.min(112, Math.max(72, cardWidth * 1.9)))
+  return mode === 'one' ? ONE_LINE_LABEL_WIDTH : Math.max(FULL_LABEL_WIDTH, cardWidth)
 }
 
 export function groupWidthOf(cardWidth: number, mode: LabelMode): number {
@@ -172,9 +175,9 @@ function place(rows: LayoutSlot[][], cardWidth: number, mode: LabelMode, width: 
   })
 }
 
-export function layoutPitch({ slots, width, height, narrow }: LayoutInput): PitchLayout {
-  const modes: LabelMode[] = narrow ? ['one'] : ['two', 'one']
-  const widthCard = Math.round(Math.min(MAX_CARD, Math.max(MIN_CARD, width * CARD_RATIO)))
+export function layoutPitch({ slots, width, height, narrow, minCard = MIN_CARD }: LayoutInput): PitchLayout {
+  const modes: LabelMode[] = narrow ? ['one'] : ['full']
+  const widthCard = Math.round(Math.min(MAX_CARD, Math.max(minCard, width * CARD_RATIO)))
   if (height === undefined) {
     const mode = modes[0]
     const rows = buildRows(slots, groupWidthOf(widthCard, mode), width)
@@ -183,17 +186,16 @@ export function layoutPitch({ slots, width, height, narrow }: LayoutInput): Pitc
   }
   let fallback: PitchLayout | undefined
   for (const [pass, mode] of modes.entries()) {
-    const floor = pass === modes.length - 1 ? MIN_CARD : PREFERRED_MIN_CARD
-    for (let card = widthCard; card >= floor; card -= 1) {
+    for (let card = widthCard; card >= minCard; card -= 1) {
       const rows = buildRows(slots, groupWidthOf(card, mode), width)
       if (requiredHeight(rows.length, card, mode) <= height) {
         return { cardWidth: card, labelWidth: labelWidthOf(card, mode), labelMode: mode, fieldHeight: height, boxes: place(rows, card, mode, width, height), fits: true }
       }
     }
     if (pass === modes.length - 1) {
-      const rows = buildRows(slots, groupWidthOf(MIN_CARD, mode), width)
-      const need = requiredHeight(rows.length, MIN_CARD, mode)
-      fallback = { cardWidth: MIN_CARD, labelWidth: labelWidthOf(MIN_CARD, mode), labelMode: mode, fieldHeight: need, boxes: place(rows, MIN_CARD, mode, width, need), fits: false }
+      const rows = buildRows(slots, groupWidthOf(minCard, mode), width)
+      const need = requiredHeight(rows.length, minCard, mode)
+      fallback = { cardWidth: minCard, labelWidth: labelWidthOf(minCard, mode), labelMode: mode, fieldHeight: need, boxes: place(rows, minCard, mode, width, need), fits: false }
     }
   }
   return fallback as PitchLayout

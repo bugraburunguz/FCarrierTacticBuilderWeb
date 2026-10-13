@@ -177,7 +177,8 @@ v3 bir sayfa için ancak şu kontrol listesi yeşilse "bitti" sayılır (PR şab
 | Q13 | Chip: yazı ≥ 12px, dokunma hedefi ≥ 32px (mobilde 44px) | Playwright ölçüm |
 | Q14 | Giriş/Kayıt: tek birincil eylem (Kayıt ol primary, Giriş secondary/ghost), tüm sayfalarda aynı | Görsel snapshot |
 | Q15 | axe serious/critical ihlal sayısı 0 (her v3 ekranı) | `@axe-core/playwright` |
-| Q17 | Çakışma yok: slot gruplarının (kart + rol + mevki) sınır kutuları hiçbir formasyonda ve boyutta kesişmez, içerik grup kutusundan taşmaz, rol etiketi kesilmez (en uzun rol adıyla); 1280×800'de saha kaydırma istemez | `scripts/q17.mjs` (29 formasyon × 375/768/1280×800 × boş/dolu × UT/kariyer) + `pitch/layout.test.ts` |
+| Q17 | Çakışma yok: slot gruplarının (kart + rol + mevki) sınır kutuları hiçbir formasyonda ve boyutta kesişmez, içerik grup kutusundan taşmaz, rol etiketi kesilmez (en uzun rol adıyla); kaydırmasız sığma yalnız **hedef**tir (kapı değil, bkz. Q18 öncelik sırası) | `scripts/q17.mjs` (29 formasyon × 375/768/1280×800 × boş/dolu × UT/kariyer) + `pitch/layout.test.ts` |
+| Q18 | Okunabilirlik (öncelik: 1 Q17 çakışma yok, 2 Q18, 3 kaydırmasız sığma = hedef): ≥1024px'te saha kartı ≥56px, 375px'te ≥48px; kart içi hiçbir yazı <11px, OVR ≥14px. Masaüstünde rol etiketi kısaltılmaz (≤150px, en çok 2 satır); kısa form yalnız <480px. Sığmazsa saha uzar ve sayfa kayar, sağ panel sticky kalır | `scripts/q17.mjs` (her kombinasyon için cardWidth, minFont, ovrFont, fitsViewport raporu) + `pitch/layout.test.ts` |
 | Q16 | UT ve kariyer kadro sayfaları `src/features/squad/` çekirdeğini paylaşır: tek çözme sorgusu, tek taktik kodu bileşeni, ortak formasyon/rol/eski-kayıt temizliği ve yan panel şablonu. Yeni kadro/taktik işi çekirdeğe girer; yalnız-UT / yalnız-kariyer olan iş raporda gerekçesiyle yazılır | `src/features/squad/q16.test.ts` + `describe.each(['ut','career'])` parite testleri |
 
 Sayfa ↔ kapatılması zorunlu buglar:

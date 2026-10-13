@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { PlayerCard, type CardPlayer } from '../card/PlayerCard'
 import type { FitState } from '../card/FitBadge'
 import { layoutPitch } from './layout'
-import { fitRoleName, shortRoleLabel } from './shortRole'
+import { shortRoleLabel } from './shortRole'
 
 export interface PitchSlot {
   slotId: string
@@ -134,7 +134,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
 
   // Slot grubu (kart + rol + mevki) tek birimdir; bantlar formasyon katmanlarından, çakışmasız (Q17).
   const layout = useMemo(
-    () => layoutPitch({ slots: slots.map((s) => ({ slotId: s.slotId, x: s.x, y: s.y })), width: fieldWidth, height: available, narrow: fieldWidth < NARROW_PX }),
+    () => layoutPitch({ slots: slots.map((s) => ({ slotId: s.slotId, x: s.x, y: s.y })), width: fieldWidth, height: available, narrow: fieldWidth < NARROW_PX, minCard: fieldWidth < NARROW_PX ? 48 : window.innerWidth >= 1024 ? 56 : 52 }),
     [slots, fieldWidth, available],
   )
   const { cardWidth, labelWidth, labelMode, fieldHeight } = layout
@@ -225,8 +225,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
         const dimmed = Boolean(hovered) && hover !== slot.slotId && !shares(hovered, slot.player)
         const linked = Boolean(hovered) && hover !== slot.slotId && shares(hovered, slot.player)
         const isOver = Boolean(drag) && drag?.over === slot.slotId && drag?.slotId !== slot.slotId
-        const [roleName, ...roleRest] = (slot.roleLabel ?? '').split(' · ')
-        return (
+                return (
           <div key={slot.slotId} data-slot-group={slot.slotId} className="absolute flex flex-col items-center text-center" style={{ left: box.cx - box.width / 2, top: box.top, width: box.width, height: box.height, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
             <div className="group relative inline-block">
             <div
@@ -256,7 +255,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
               style={{ touchAction: slot.player && onSwap ? 'pan-y' : undefined }}
             >
               {slot.player ? (
-                <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} />
+                <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} minText={11} minRating={14} />
               ) : (
                 <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
                   <span className="text-xl leading-none">+</span>
@@ -292,10 +291,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
                 {labelMode === 'one' ? (
                   <span className="block whitespace-nowrap">{shortRoleLabel(slot.roleLabel)}</span>
                 ) : (
-                  <>
-                    <span className="block whitespace-nowrap">{fitRoleName(roleName)}</span>
-                    {roleRest.length > 0 && <span className="block font-normal text-chalk">{roleRest.join(' · ')}</span>}
-                  </>
+                  <span className="block break-words">{slot.roleLabel}</span>
                 )}
               </button>
             )}

@@ -19,8 +19,9 @@ const SIZES = [
   { name: '375', width: 375, height: 812 },
   { name: '768', width: 768, height: 1024 },
   { name: '1280x800', width: 1280, height: 800 },
+  { name: '1440x900', width: 1440, height: 900 },
 ]
-const LONGEST = { one: 'Wide Mid · Vers', name: 'Wide Playmaker', focus: 'Ball-Winning' }
+const LONGEST = { one: 'Wide Mid · Vers', full: 'Ball-Playing Defender · Ball-Winning' }
 
 const cache = new Map()
 async function api(path) {
@@ -125,11 +126,8 @@ for (const mode of modes) {
             groups.forEach((g) => {
               const label = g.querySelector('button[title]')
               const spans = label ? [...label.querySelectorAll('span')] : []
-              if (spans.length === 1) {
-                spans[0].textContent = longest.one
-              } else if (spans.length >= 2) {
-                spans[0].textContent = longest.name
-                spans[1].textContent = longest.focus
+              if (spans.length >= 1) {
+                spans[0].textContent = window.innerWidth < 480 ? longest.one : longest.full
               }
             })
             const rect = (el) => el.getBoundingClientRect()
@@ -157,16 +155,37 @@ for (const mode of modes) {
               const label = g.querySelector('button[title]')
               if (label && label.scrollWidth > label.clientWidth + 1) problems.push(`${g.dataset.slotGroup}: rol etiketi kesiliyor`)
             })
+            // Q18: kart genişliği ve kart içi en küçük yazı (ölçekli kapsayıcıdaki yazı genişlik/180 ile çarpılır)
+            const cards = groups.map((g) => g.querySelector('[role="img"]')).filter(Boolean)
+            let cardWidth = cards.length ? Infinity : null
+            let minFont = cards.length ? Infinity : null
+            let ovrFont = cards.length ? Infinity : null
+            cards.forEach((card) => {
+              const cw = card.getBoundingClientRect().width
+              cardWidth = Math.min(cardWidth, cw)
+              const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT)
+              for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+                if (!node.textContent.trim()) continue
+                const el = node.parentElement
+                const scaled = el.closest('[style*="scale("]') ? cw / 180 : 1
+                minFont = Math.min(minFont, parseFloat(getComputedStyle(el).fontSize) * scaled)
+              }
+              const ovr = card.querySelector('.font-display > div')
+              if (ovr) ovrFont = Math.min(ovrFont, parseFloat(getComputedStyle(ovr).fontSize) * (cw / 180))
+            })
             const root = document.documentElement
-            return { formationId, problems: [...new Set(problems)], pageOverflowY: root.scrollHeight - window.innerHeight, fieldBottom: field.bottom, fieldWidth: field.width, innerHeight: window.innerHeight }
+            return { formationId, problems: [...new Set(problems)], pageOverflowY: root.scrollHeight - window.innerHeight, fieldBottom: field.bottom, fieldWidth: field.width, innerHeight: window.innerHeight, cardWidth, minFont, ovrFont }
           },
           { formationId: formation.id, expected: formation.slots.length, longest: LONGEST },
         )
-        const desktop = size.name === '1280x800'
-        if (desktop) {
-          if (report.fieldBottom > report.innerHeight + 1) report.problems.push('saha ekranın altından taşıyor')
+        const minCard = size.width < 480 ? 48 : size.width >= 1024 ? 56 : 0
+        if (report.cardWidth !== null) {
+          if (report.cardWidth < minCard - 0.5) report.problems.push(`Q18: kart ${Math.round(report.cardWidth)}px < ${minCard}px`)
+          if (report.minFont < 10.95) report.problems.push(`Q18: kart içi yazı ${report.minFont.toFixed(1)}px < 11px`)
+          if (report.ovrFont < 13.95) report.problems.push(`Q18: OVR ${report.ovrFont.toFixed(1)}px < 14px`)
         }
-        results.push({ mode, state, size: size.name, formation: formation.id, fieldWidth: Math.round(report.fieldWidth), problems: report.problems })
+        // Scroll'suz sığma artık kapı değil, hedef: yalnız raporlanır.
+        results.push({ mode, state, size: size.name, formation: formation.id, fieldWidth: Math.round(report.fieldWidth), cardWidth: report.cardWidth && Math.round(report.cardWidth), minFont: report.minFont && Number(report.minFont.toFixed(1)), ovrFont: report.ovrFont && Number(report.ovrFont.toFixed(1)), fitsViewport: report.fieldBottom <= report.innerHeight + 1, problems: report.problems })
         await page.close()
       }
       await context.close()
@@ -176,6 +195,10 @@ for (const mode of modes) {
 await browser.close()
 
 const bad = results.filter((r) => r.problems.length > 0)
+for (const size of SIZES.filter((z) => z.width >= 1024)) {
+  const rows = results.filter((r) => r.size === size.name)
+  console.log(`${size.name}: scroll'suz sığan ${rows.filter((r) => r.fitsViewport).length}/${rows.length}`)
+}
 console.log(`${results.length} kombinasyon; sorunlu: ${bad.length}`)
 bad.slice(0, 40).forEach((r) => console.log(`${r.mode}/${r.state}/${r.size}/${r.formation}: ${r.problems.join('; ')}`))
 if (outFile) {

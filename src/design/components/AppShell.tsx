@@ -61,10 +61,11 @@ export function AppShell() {
   useShellEffects(pathname)
   const nav = mode === 'ut' ? UT_NAV : NAV
   const active = nav.find((g) => isActive(g, pathname))
+  const showTabs = !/^\/players\/\d+/.test(pathname)
 
   return (
     <div className="min-h-screen text-ink">
-      <header className="glass sticky top-0 z-20 flex h-14 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4">
+      <header className="glass sticky top-0 z-20 flex h-12 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4">
         <NavLink to="/" className="shrink-0 font-display text-xl font-bold text-accent"><span className="max-[479px]:hidden">FC Kariyer</span><span className="min-[480px]:hidden">FC</span></NavLink>
         <Segmented
           label="Mod"
@@ -75,6 +76,20 @@ export function AppShell() {
             navigate(MODES.find((m) => m.id === id)?.home ?? '/')
           }}
         />
+        {showTabs && active?.tabs && (
+          <nav aria-label={`${active.label} sekmeleri`} className="ml-1 hidden min-w-0 items-center gap-1 min-[820px]:flex">
+            {active.tabs.map((tab) => (
+              <NavLink
+                key={tab.to}
+                to={tab.to}
+                end
+                className={({ isActive: on }) => `inline-flex min-h-8 items-center whitespace-nowrap rounded-[var(--radius-sm)] px-3 text-sm font-medium ${on ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]'}`}
+              >
+                {tab.label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
         <div className="ml-auto flex items-center gap-2">
           <button type="button" onClick={() => themeStore.cycle()} aria-label={`Tema: ${THEME_LABEL[theme]}. Değiştirmek için tıkla`} className="glass-3 min-h-8 px-3 text-xs font-medium text-ink-2 max-sm:hidden">
             {THEME_LABEL[theme]}
@@ -104,19 +119,19 @@ export function AppShell() {
       {authenticated && <VerifyEmailBanner />}
 
       <div className="flex">
-        <nav aria-label="Ana menü" className="glass sticky top-14 hidden h-[calc(100vh-3.5rem)] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
+        <nav aria-label="Ana menü" className="glass sticky top-12 hidden h-[calc(100vh-3rem)] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
           {nav.map((g) => (
             <RailLink key={g.to} group={g} active={g === active} />
           ))}
         </nav>
-        <main className="mx-auto w-full min-w-0 max-w-[1600px] px-4 pb-24 pt-5 min-[820px]:pb-8">
+        <main className="mx-auto w-full min-w-0 max-w-[1600px] px-4 pb-24 pt-3 min-[820px]:pb-8">
           {storageError && (
             <div role="alert" className="mb-3 rounded-[var(--radius-sm)] bg-[var(--warn-soft)] px-3 py-2 text-sm text-warn">
               {storageError}
             </div>
           )}
-          {active?.tabs && !/^\/players\/\d+/.test(pathname) && (
-            <nav aria-label={`${active.label} sekmeleri`} className="mb-4 flex flex-wrap gap-1">
+          {active?.tabs && showTabs && (
+            <nav aria-label={`${active.label} sekmeleri`} className="mb-4 flex flex-wrap gap-1 min-[820px]:hidden">
               {active.tabs.map((tab) => (
                 <NavLink
                   key={tab.to}
