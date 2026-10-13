@@ -78,8 +78,9 @@ export function CareerTransferPage() {
   const inList = new Set((shortlist.data ?? []).map((s) => s.playerId))
   const spend = (shortlist.data ?? []).reduce((sum, s) => sum + (s.maxFeeEur ?? 0), 0)
   const income = sellPlan.reduce((sum, c) => sum + (c.player.valueEur ?? 0) * 0.8, 0)
-  const budget = career?.budgetEur ?? 0
-  const after = budget + income - spend
+  // Bütçe girilmemişse bilinmiyor (0 değil, ENG-02): dönem sonu bütçe de bilinmez.
+  const budget = career?.budgetEur ?? undefined
+  const after = budget === undefined ? undefined : budget + income - spend
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -94,7 +95,7 @@ export function CareerTransferPage() {
         <Stat label="Bütçe" value={formatEur(budget)} />
         <Stat label="Satış planı (tahmini)" value={formatEur(Math.round(income))} />
         <Stat label="Kısa liste tavanı" value={formatEur(spend)} />
-        <Stat label="Dönem sonu bütçe" value={formatEur(Math.round(after))} tone={after < 0 ? 'bad' : 'good'} />
+        <Stat label="Dönem sonu bütçe" value={after === undefined ? '—' : formatEur(Math.round(after))} tone={after === undefined ? undefined : after < 0 ? 'bad' : 'good'} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[280px_1fr]">

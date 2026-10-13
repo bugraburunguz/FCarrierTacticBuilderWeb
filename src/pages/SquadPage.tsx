@@ -46,17 +46,17 @@ function NewCareer() {
 function CareerSettings({ career }: { career: Career }) {
   const refresh = useInvalidateCareer()
   const [name, setName] = useState(career.name ?? '')
-  const [budget, setBudget] = useState<number | undefined>(career.budgetEur ?? 0)
+  const [budget, setBudget] = useState<number | undefined>(career.budgetEur ?? undefined)
   const [season, setSeason] = useState(String(career.season ?? 1))
 
   useEffect(() => {
     setName(career.name ?? '')
-    setBudget(career.budgetEur ?? 0)
+    setBudget(career.budgetEur ?? undefined)
     setSeason(String(career.season ?? 1))
   }, [career.id, career.name, career.budgetEur, career.season])
 
   const save = useMutation({
-    mutationFn: () => endpoints.updateCareer(career.id, { name, budgetEur: budget ?? 0, season: Number(season) || 1 }),
+    mutationFn: () => endpoints.updateCareer(career.id, { name, budgetEur: budget, season: Number(season) || 1 }),
     onSuccess: refresh,
   })
   const remove = useMutation({

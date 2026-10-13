@@ -29,4 +29,16 @@ describe('CareerTransferPage', () => {
     expect(body.perPosition).toBeLessThanOrEqual(4)
     expect(await screen.findByText('Bu ihtiyaç için aday bulunamadı.')).toBeInTheDocument()
   })
+
+  it('bütçesi girilmemiş kariyerde dönem sonu bütçe uydurma bir sayı değil "—" gösterir (ENG-02)', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValueOnce([{ id: 1, clubName: 'Crewe' } as never])
+    render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <MemoryRouter><CareerTransferPage /></MemoryRouter>
+      </QueryClientProvider>,
+    )
+
+    const stat = (await screen.findByText('Dönem sonu bütçe')).parentElement as HTMLElement
+    expect(stat).toHaveTextContent('—')
+  })
 })
