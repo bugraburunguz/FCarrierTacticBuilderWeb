@@ -8,6 +8,7 @@ import type { Career } from '../api/types'
 import { careerStore } from '../state/careerStore'
 import { CareerDeskPage } from './CareerDeskPage'
 
+vi.mock('../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true }) }))
 vi.mock('../api/endpoints', () => {
   const none = () => Promise.resolve([])
   return {

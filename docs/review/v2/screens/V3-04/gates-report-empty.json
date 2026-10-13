@@ -1,0 +1,105 @@
+{
+  "taskId": "V3-04",
+  "route": "/squad/builder",
+  "mode": "career",
+  "matrix": "full",
+  "base": "http://localhost:8081",
+  "shots": [
+    {
+      "file": "career-dark-375-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-light-375-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-dark-768-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-light-768-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-dark-1280-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-light-1280-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-dark-1280-reduced-motion-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    },
+    {
+      "file": "career-dark-1280-reduced-transparency-empty.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()",
+        "HTTP 401 /api/v1/careers",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ]
+    }
+  ]
+}
