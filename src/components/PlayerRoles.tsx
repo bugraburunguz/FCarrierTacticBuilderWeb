@@ -1,3 +1,4 @@
+import { toneOf } from '../lib/fitTone'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthContext'
 import { endpoints } from '../api/endpoints'
@@ -6,7 +7,7 @@ import { useActiveCareerId } from '../state/careerStore'
 import { FitMeter } from './FitMeter'
 import { Card, ErrorBox, Pill, Spinner } from './ui'
 
-const BADGE_TONE = { GREEN: 'emerald', YELLOW: 'amber', RED: 'rose' } as const
+const BADGE_TONE = { GREEN: 'emerald', YELLOW: 'amber', RED: 'rose', NEUTRAL: 'slate' } as const
 
 export function PlayerRoles({ playerId, listed }: { playerId: number; listed: string[] }) {
   const { authenticated } = useAuth()
@@ -44,7 +45,7 @@ export function PlayerRoles({ playerId, listed }: { playerId: number; listed: st
                       <span className="min-w-0 flex-1 text-sm">
                         <span className="flex flex-wrap items-center gap-1.5">
                           <b>{r.roleName}</b>
-                          <Pill tone={BADGE_TONE[r.badge]}>{r.badgeText}</Pill>
+                          <Pill tone={BADGE_TONE[toneOf(r.badge)]}>{r.badgeText}</Pill>
                           {i === 0 && <Pill tone="emerald">En uygun</Pill>}
                         </span>
                         <span className="block text-xs text-muted">

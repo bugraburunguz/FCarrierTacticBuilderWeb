@@ -215,8 +215,14 @@ export interface RoleFit {
   roleName: string
   score: number
   projectedRating: number
-  badge: WeaponState
-  badgeText: string
+  badge?: WeaponState | null
+  badgeText?: string
+  /** v3 (E3-5): currentFit = score; levelFit seviye-normalize; fitLabel GOOD|AT_LEVEL|WEAK|WRONG_ROLE (AT_LEVEL → badge boş) */
+  engineVersion?: string
+  currentFit?: number
+  levelFit?: number
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  contributions?: { term: string; key: string; points: number }[]
   outOfPosition: boolean
   reasons: string[]
   weaponChecks: WeaponCheck[]
@@ -592,7 +598,7 @@ export interface PlayerRoleFit {
   focus?: string
   score: number
   projectedRating: number
-  badge: WeaponState
+  badge?: WeaponState | null
   badgeText: string
   reasons: string[]
   gaps: { attr: string; value: number; needed: number }[]

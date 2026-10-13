@@ -1,12 +1,12 @@
+import { FIT_STATE_OF } from '../../../lib/fitTone'
 import type { ReactNode } from 'react'
-import type { WeaponState } from '../../../api/types'
 import { PlayerCard, type CardPlayer } from '../../../components/card/PlayerCard'
 import type { FitState } from '../../../components/card/FitBadge'
 import { ChemDiamonds } from '../../../components/card/ChemDiamonds'
 import { Chip, EmptyState, Skeleton } from '../../../design/components/primitives'
 
 /** Rozet → uyum durumu (sahadaki rozetle aynı eşlemeler). */
-export const FIT_STATE: Record<WeaponState, FitState> = { GREEN: 'good', YELLOW: 'ok', RED: 'bad' }
+export const FIT_STATE = FIT_STATE_OF
 
 export interface PickRow {
   key: string

@@ -1,3 +1,4 @@
+import { toneOf, type FitTone } from '../../lib/fitTone'
 import { X } from 'lucide-react'
 import type { WeaponState } from '../../api/types'
 import { BadgeDot } from '../ui'
@@ -10,13 +11,14 @@ export interface SlotView {
   y: number
   player?: { id: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string; faceStats?: number[]; faceLabels?: string[]; faceStatsApproximate?: boolean }
   roleLabel: string
-  fit?: { pct: number; band: WeaponState }
+  fit?: { pct: number; band?: WeaponState | null }
   placeholder?: string
   sub?: string
   selected?: boolean
 }
 
-const FIT_STYLE: Record<WeaponState, string> = {
+const FIT_STYLE: Record<FitTone, string> = {
+  NEUTRAL: 'bg-surface-2 text-ink',
   GREEN: 'bg-accent-soft text-ink',
   YELLOW: 'bg-code-soft text-code',
   RED: 'bg-danger-soft text-danger',
@@ -60,7 +62,7 @@ export function PositionCard({ view, onPickPlayer, onPickRole, onRemove, onGrab,
         {player ? <div className="mt-3.5 truncate text-[11.5px] font-bold">{player.name}</div> : <div className="mt-2.5 text-xl text-muted">{view.placeholder ?? '+'}</div>}
         {player && view.sub && <div className="truncate text-[9px] text-muted">{view.sub}</div>}
         {fit && (
-          <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[fit.band]}`}>
+          <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-px text-[9px] font-extrabold ${FIT_STYLE[toneOf(fit.band)]}`}>
             <BadgeDot state={fit.band} /> %{fit.pct}
           </span>
         )}

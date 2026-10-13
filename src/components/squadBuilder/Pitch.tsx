@@ -1,5 +1,5 @@
+import { FIT_STATE_OF, toneOf } from '../../lib/fitTone'
 import { Pitch as CardPitch, type PitchSlot } from '../pitch/Pitch'
-import type { FitState } from '../card/FitBadge'
 import type { SlotView } from './PositionCard'
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   onSwap?: (fromSlotId: string, toSlotId: string) => void
 }
 
-const FIT_STATE = { GREEN: 'good', YELLOW: 'ok', RED: 'bad' } as const satisfies Record<string, FitState>
+const FIT_STATE = FIT_STATE_OF
 
 /** SlotView → ortak saha slotu (kariyer ve UT aynı FC kartlarını çizer; yüz değerleri kartta görünür). */
 export function pitchSlotsOf(slots: SlotView[]): PitchSlot[] {
@@ -31,7 +31,7 @@ export function pitchSlotsOf(slots: SlotView[]): PitchSlot[] {
       faceLabels: s.player.faceLabels,
       faceStatsApproximate: s.player.faceStatsApproximate,
     },
-    fit: s.fit && { pct: s.fit.pct, state: FIT_STATE[s.fit.band] },
+    fit: s.fit && { pct: s.fit.pct, state: FIT_STATE[toneOf(s.fit.band)] },
     roleLabel: s.roleLabel,
     selected: s.selected,
   }))

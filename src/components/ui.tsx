@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
 import { errorMessage } from '../lib/errorMessage'
+import { toneOf } from '../lib/fitTone'
 import type { WeaponState } from '../api/types'
 
 const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(' ')
@@ -114,15 +115,16 @@ const DOT = {
   GREEN: { label: 'Uygun', color: '#2fbf71', shape: 'M5 1 A4 4 0 1 1 4.99 1 Z' },
   YELLOW: { label: 'Zayıf yön var', color: '#e6b325', shape: 'M5 1 L9 9 L1 9 Z' },
   RED: { label: 'Rolü oynayamaz', color: '#e5484d', shape: 'M1.5 1.5 H8.5 V8.5 H1.5 Z' },
+  NEUTRAL: { label: 'Seviyesinde', color: 'none', shape: 'M1.5 5 H8.5' },
 } as const
 
 /** Durum noktası: renk + şekil (daire / üçgen / kare) + erişilebilir ad; emoji değil. */
-export function BadgeDot({ state }: { state: WeaponState }) {
-  const dot = DOT[state]
+export function BadgeDot({ state }: { state: WeaponState | null | undefined }) {
+  const dot = DOT[toneOf(state)]
   return (
     <svg role="img" aria-label={dot.label} width="12" height="12" viewBox="0 0 10 10" className="inline-block align-[-1px]">
       <title>{dot.label}</title>
-      <path d={dot.shape} fill={dot.color} />
+      <path d={dot.shape} fill={dot.color} stroke={dot.color === 'none' ? 'currentColor' : undefined} strokeWidth={dot.color === 'none' ? 1.5 : undefined} />
     </svg>
   )
 }
