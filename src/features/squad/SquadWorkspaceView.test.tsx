@@ -84,3 +84,31 @@ describe('F2: mobil sheet', () => {
     })
   })
 })
+
+describe('F6/F8: kadro bilgisi eksikleri ve dokunmatik ipucu', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('kadro adı localStorage\'a yazılır ve yenilemede geri gelir; erişilemezse çökmez', () => {
+    const { unmount } = render(<MemoryRouter><SquadWorkspaceView {...baseProps} squadNameKey="fc.squadName.test" /></MemoryRouter>)
+    fireEvent.change(screen.getByLabelText('Kadro adı'), { target: { value: 'Hafta Sonu 11' } })
+    expect(localStorage.getItem('fc.squadName.test')).toBe('Hafta Sonu 11')
+    unmount()
+
+    render(<MemoryRouter><SquadWorkspaceView {...baseProps} squadNameKey="fc.squadName.test" /></MemoryRouter>)
+    expect(screen.getByLabelText('Kadro adı')).toHaveValue('Hafta Sonu 11')
+  })
+
+  it('squad rating yıldızı, "Tüm kadro ortalamaları" açılır bölümü ve boş durumlar görünür', () => {
+    render(<MemoryRouter><SquadWorkspaceView {...baseProps} ratingStars={90} chem={{ value: 10, max: 33 }} allAverages={[{ label: 'Ort. OVR', value: 84 }]} averages={[{ label: 'PAC', value: 80, approximate: false }]} /></MemoryRouter>)
+
+    expect(screen.getByRole('img', { name: /Squad rating yıldızı: 4.5 \/ 5/ })).toBeInTheDocument()
+    expect(screen.getByText('Tüm kadro ortalamaları')).toBeInTheDocument()
+    expect(screen.getByText('Ort. OVR')).toBeInTheDocument()
+    expect(screen.getByText(/Kimya dökümü .* henüz hesaplanmıyor/)).toBeInTheDocument()
+  })
+
+  it('dokunmatikte "Mevkiye dokun → kart seç" ipucu bulunur', () => {
+    render(<MemoryRouter><SquadWorkspaceView {...baseProps} /></MemoryRouter>)
+    expect(screen.getByText(/Mevkiye dokun → kart seç/)).toBeInTheDocument()
+  })
+})

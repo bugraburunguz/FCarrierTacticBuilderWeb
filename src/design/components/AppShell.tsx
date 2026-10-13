@@ -8,10 +8,8 @@ import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
 import { MODES, NAV, UT_NAV, type NavGroup } from '../../lib/navConfig'
 import { useStorageError } from '../../state/bigStore'
 import { modeStore, useMode } from '../../state/modeStore'
-import { themeStore, useTheme } from '../../state/themeStore'
 import { Chip, Segmented } from './primitives'
-
-const THEME_LABEL = { dark: 'Koyu', light: 'Açık', system: 'Sistem' } as const
+import { MobileMenu, ThemeToggle } from './ThemeToggle'
 
 const ICONS: Record<string, LucideIcon> = {
   '/career/desk': LayoutDashboard,
@@ -55,7 +53,6 @@ export function AppShell() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const mode = useMode()
-  const theme = useTheme()
   const storageError = useStorageError()
   const { authenticated, me, logout } = useAuth()
   useShellEffects(pathname)
@@ -91,9 +88,8 @@ export function AppShell() {
           </nav>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <button type="button" onClick={() => themeStore.cycle()} aria-label={`Tema: ${THEME_LABEL[theme]}. Değiştirmek için tıkla`} className="glass-3 min-h-8 px-3 text-xs font-medium text-ink-2 max-sm:hidden">
-            {THEME_LABEL[theme]}
-          </button>
+          <ThemeToggle className="max-sm:hidden" />
+          <MobileMenu email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
           {authenticated && me ? (
             <>
               <span className="hidden sm:block">{me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>

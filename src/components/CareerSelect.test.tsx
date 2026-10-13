@@ -36,3 +36,14 @@ describe('CareerSelect (F11)', () => {
     expect(endpoints.careers).toHaveBeenCalled()
   })
 })
+
+describe('F9: kariyer seçicide yıkıcı eylem yok', () => {
+  it('seçicinin yanında "Kariyeri sil" görünmez', async () => {
+    auth.authenticated = true
+    vi.mocked(endpoints.careers).mockResolvedValueOnce([{ id: 1, clubId: 5, clubName: 'X', budgetEur: 0, squadSize: 11 } as never])
+    renderSelect()
+
+    expect(await screen.findByText(/\+ Yeni kariyer/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Kariyeri sil' })).not.toBeInTheDocument()
+  })
+})

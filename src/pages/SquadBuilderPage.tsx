@@ -211,6 +211,9 @@ export function SquadBuilderPage() {
           onFormation={changeFormation}
           setup={setup}
           onSetup={(next) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_SETUP), ...next } }))}
+          squadNameKey="fc.squadName.career"
+          ratingStars={placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined}
+          allAverages={[{ label: 'Rol uyumu', value: fitted.length ? `%${Math.round(fitted.reduce((s, v) => s + (v.fit?.pct ?? 0), 0) / fitted.length)}` : undefined }, { label: 'Dolu', value: `${placed.length}/11` }]}
           stats={[
             { label: 'Ort. OVR', value: placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined },
             { label: 'Dolu', value: placed.length, suffix: '/ 11' },

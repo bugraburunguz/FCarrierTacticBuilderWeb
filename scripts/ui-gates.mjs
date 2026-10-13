@@ -28,6 +28,7 @@ if (args.includes('--auto-account')) {
 const mode = flag('mode', route.startsWith('/ut') ? 'ut' : 'career')
 const auth = args.includes('--auth') || args.includes('--auto-account')
 const matrix = flag('matrix', 'full')
+// --formation <id>: UT örnek kadrosu ve kariyer taktiği bu formasyonla başlar (örn. 3-5-2).
 // Ek durum: sayfa yüklendikten sonra --click <css seçici> ile tıklanır ve dosya adına --tag eklenir
 const clickSelector = flag('click', undefined)
 const stateTag = flag('tag', clickSelector ? 'state' : '')
@@ -57,7 +58,7 @@ async function login(request) {
 let squadSample
 if (args.includes('--squad-sample')) {
   const formations = (await (await fetch(`${base}/api/v1/formations`)).json()).data
-  const formation = formations.find((f) => f.id === '4-2-3-1 (2)') ?? formations[0]
+  const formation = formations.find((f) => f.id === flag('formation', '4-2-3-1 (2)')) ?? formations[0]
   const used = new Set()
   const picked = {}
   for (const slot of formation.slots) {
@@ -82,7 +83,7 @@ for (const v of variants) {
   await new Promise((r) => setTimeout(r, 2500)) // anonim istek hız sınırına (429) takılmamak için
   const context = await browser.newContext({ viewport: { width: v.w, height: v.w === 375 ? 812 : 900 }, reducedMotion: v.reducedMotion ?? 'no-preference' })
   await context.addInitScript(
-    ({ theme, mode, reducedTransparency, session, squadSample }) => {
+    ({ theme, mode, reducedTransparency, session, squadSample, careerFormation }) => {
       localStorage.setItem('fc.theme', theme)
       localStorage.setItem('fc.mode', mode)
       if (reducedTransparency) {
@@ -95,9 +96,12 @@ for (const v of variants) {
       if (squadSample) {
         localStorage.setItem('fc.utSquad', JSON.stringify(squadSample))
       }
+      if (careerFormation) {
+        localStorage.setItem('fc.tactic', JSON.stringify({ formation: careerFormation, slots: {} }))
+      }
       document.documentElement.classList.toggle('dark', theme === 'dark')
     },
-    { theme: v.theme, mode, reducedTransparency: v.reducedTransparency ?? false, session, squadSample },
+    { theme: v.theme, mode, reducedTransparency: v.reducedTransparency ?? false, session, squadSample, careerFormation: mode === 'career' ? flag('formation', undefined) : undefined },
   )
   const page = await context.newPage()
   const problems = []

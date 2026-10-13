@@ -1,3 +1,4 @@
+import { Star, StarHalf } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { HelpPopover } from '../../components/ui'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
@@ -44,6 +45,12 @@ export interface SquadViewProps {
   note?: string
   actions?: ReactNode
   header?: ReactNode
+  /** Kadro adı alanının localStorage anahtarı (F6); verilmezse alan görünmez. */
+  squadNameKey?: string
+  /** Squad rating yıldızı (0-5, yarım adım); yaklaşık gösterilir. */
+  ratingStars?: number
+  /** "Tüm kadro ortalamaları" açılır bölümünün ek satırları (OVR, rol uyumu vb.). */
+  allAverages?: { label: string; value?: string | number }[]
   /** Sahayı itmeyen, kapatılabilir tek satırlık not (yan panelin üstünde; F5). */
   notice?: { id: string; text: ReactNode }
   footer?: ReactNode
@@ -86,10 +93,50 @@ function DismissibleNote({ id, children }: { id: string; children: ReactNode }) 
   )
 }
 
+function SquadName({ storageKey }: { storageKey: string }) {
+  const [name, setName] = useState(() => {
+    try {
+      return localStorage.getItem(storageKey) ?? ''
+    } catch {
+      return ''
+    }
+  })
+  return (
+    <label className="block text-sm text-ink-2">
+      Kadro adı
+      <input
+        value={name}
+        maxLength={40}
+        placeholder="Kadroya bir ad ver"
+        onChange={(e) => {
+          setName(e.target.value)
+          try {
+            localStorage.setItem(storageKey, e.target.value)
+          } catch {
+            /* depolama yoksa ad yalnız bu oturumda durur */
+          }
+        }}
+        className="glass-3 mt-1 min-h-10 w-full px-3 text-sm text-ink placeholder:text-muted max-sm:min-h-11"
+      />
+    </label>
+  )
+}
+
+/** Squad rating yıldızları: rating/20, yarım adımla; yaklaşık (EA'nın yıldız eşikleri doğrulanmadı). */
+function RatingStars({ rating }: { rating: number }) {
+  const stars = Math.min(5, Math.max(0, Math.round((rating / 20) * 2) / 2))
+  return (
+    <div role="img" aria-label={`Squad rating yıldızı: ${stars} / 5 (yaklaşık)`} title="Yaklaşık: rating / 20" className="flex items-center gap-0.5 text-warn">
+      {[1, 2, 3, 4, 5].map((i) => (stars >= i ? <Star key={i} size={16} fill="currentColor" aria-hidden="true" /> : stars >= i - 0.5 ? <StarHalf key={i} size={16} fill="currentColor" aria-hidden="true" /> : <Star key={i} size={16} className="text-faint" aria-hidden="true" />))}
+    </div>
+  )
+}
+
 function SquadInfo(p: SquadViewProps) {
   return (
     <div className="space-y-4">
       {p.notice && <DismissibleNote id={p.notice.id}>{p.notice.text}</DismissibleNote>}
+      {p.squadNameKey && <SquadName storageKey={p.squadNameKey} />}
       <section aria-label="Kadro bilgisi" className="space-y-3">
         <div className="flex items-center justify-between gap-2 text-sm">
           <label htmlFor="v3-formation" className="text-ink-2">Formasyon</label>
@@ -118,11 +165,23 @@ function SquadInfo(p: SquadViewProps) {
             <StatTile key={s.label} label={s.label} value={s.value} suffix={s.suffix} />
           ))}
         </div>
+        {p.ratingStars !== undefined && p.ratingStars > 0 && <RatingStars rating={p.ratingStars} />}
         <div className="grid grid-cols-3 gap-2">
           {p.averages.map((a) => (
             <StatTile key={a.label} label={a.label} value={a.value === undefined ? undefined : `${a.approximate ? '≈' : ''}${a.value}`} />
           ))}
         </div>
+        <details className="glass-3 px-3 py-2 text-sm">
+          <summary className="min-h-8 cursor-pointer font-medium text-ink-2">Tüm kadro ortalamaları</summary>
+          <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+            {[...p.averages.map((a) => ({ label: a.label, value: a.value === undefined ? undefined : `${a.approximate ? '≈' : ''}${a.value}` })), ...(p.allAverages ?? [])].map((row) => (
+              <div key={row.label} className="flex justify-between gap-2">
+                <dt className="text-muted">{row.label}</dt>
+                <dd className="font-[var(--font-num)] tabular-nums text-ink">{row.value ?? '–'}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
         <p className="flex items-center gap-1 text-xs text-muted">
           Saha oyuncusu ortalaması
           <HelpPopover label="Yüz ortalaması nasıl hesaplanır">Altı ortalama yalnız saha oyuncularından hesaplanır; kaleci (DIV/HAN/KIC/REF/SPD/POS) dışarıda kalır. "≈": değer ağırlığı doğrulanmamış formülle hesaplandı.</HelpPopover>
@@ -133,6 +192,7 @@ function SquadInfo(p: SquadViewProps) {
         <section aria-label="Toplam kimya" className="space-y-2">
           <h3 className="font-display text-lg font-semibold">Toplam kimya</h3>
           <ChemBar value={p.chem.value} max={p.chem.max} />
+          <p className="text-xs text-muted">Kimya dökümü (lig / ülke / kulüp): henüz hesaplanmıyor.</p>
         </section>
       )}
 
@@ -172,7 +232,12 @@ export function SquadWorkspaceView(p: SquadViewProps) {
             onSwap={p.onSwap}
           />
           <p className="mt-2 px-1 text-xs text-muted">
-            {p.pitchHint ?? <>Sürükle ya da <kbd className="rounded-sm border border-line px-1">M</kbd> ile taşı · Enter seç · Rol çipine tıkla: rol ve odak.</>}
+            {p.pitchHint ?? (
+              <>
+                <span className="[@media(hover:none)]:hidden">Sürükle ya da <kbd className="rounded-sm border border-line px-1">M</kbd> ile taşı · Enter seç · Rol çipine tıkla: rol ve odak.</span>
+                <span className="hidden [@media(hover:none)]:inline">Mevkiye dokun → kart seç · Rol çipine dokun → rol ve odak.</span>
+              </>
+            )}
           </p>
           {p.footer}
         </>

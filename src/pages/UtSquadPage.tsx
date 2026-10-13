@@ -77,6 +77,8 @@ export function UtSquadPage() {
       }),
     )
   const chem = useMemo(() => chemOf((slotId) => picked[slotId]), [slots, picked]) // eslint-disable-line react-hooks/exhaustive-deps
+  const fitted = (evaluation.data?.slots ?? []).flatMap((e) => (e.roleFit === undefined ? [] : [e.roleFit]))
+  const roleFitAverage = fitted.length > 0 ? Math.round(fitted.reduce((a, b) => a + b, 0) / fitted.length) : undefined
   const price = priceSummary(slots.map((s) => picked[s.slotId]))
 
   const roleById = new Map((ws.roles.data ?? []).map((r) => [r.id, r]))
@@ -166,13 +168,16 @@ export function UtSquadPage() {
           onFormation={(id) => ws.changeFormation(id)}
           setup={setup}
           onSetup={(next) => setSetup(next)}
+          squadNameKey="fc.squadName.ut"
+          ratingStars={pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined}
+          allAverages={[{ label: 'Ort. OVR', value: evaluation.data?.averageOverall }, { label: 'Rol uyumu', value: roleFitAverage === undefined ? undefined : `%${roleFitAverage}` }, { label: 'Dolu', value: `${pickedSlots.length}/11` }]}
           stats={[{ label: 'Rating', value: pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined }, { label: 'Dolu', value: pickedSlots.length, suffix: '/ 11' }]}
           averages={ws.averages}
           chem={{ value: chem.total, max: MAX_SQUAD_CHEM }}
           sections={
             <>
               <section aria-label="Meta" className="space-y-2">
-                <Chip tone="info">Meta ort. {evaluation.data?.averageMeta ?? '–'}</Chip>
+                <Chip tone="info">Rol uyumu {roleFitAverage === undefined ? '–' : `%${roleFitAverage}`}</Chip>
               </section>
               <section aria-label="Fiyat" className="space-y-2">
                 <h3 className="font-display text-lg font-semibold">Fiyat</h3>
@@ -181,6 +186,7 @@ export function UtSquadPage() {
                   <StatTile label="Ortalama" value={price.average !== undefined ? shortCoins(price.average) : undefined} />
                 </div>
                 <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+                <p className="text-xs text-muted">Fiyat grafiği: henüz veri yok.</p>
               </section>
             </>
           }

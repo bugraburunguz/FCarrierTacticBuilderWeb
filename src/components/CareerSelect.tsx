@@ -4,7 +4,6 @@ import { endpoints } from '../api/endpoints'
 import { useAuth } from '../auth/AuthContext'
 import { careerStore, useActiveCareerId } from '../state/careerStore'
 import { formatEur } from '../lib/format'
-import { DeleteCareerButton } from './DeleteCareerButton'
 import { Modal } from './Modal'
 import { NewCareerForm } from './NewCareerForm'
 import { Button, Field, Select, Spinner } from './ui'
@@ -46,7 +45,6 @@ export function CareerSelect() {
       <Button variant={selected ? 'secondary' : 'primary'} onClick={() => setCreating(true)}>
         + Yeni kariyer
       </Button>
-      {selected && <DeleteCareerButton career={selected} />}
       {creating && (
         <Modal wide title="Yeni kariyer" hint="Kulüp seç, bütçeni gir; veri aktarmak şart değil" onClose={() => setCreating(false)}>
           <NewCareerForm onCreated={() => setCreating(false)} />
