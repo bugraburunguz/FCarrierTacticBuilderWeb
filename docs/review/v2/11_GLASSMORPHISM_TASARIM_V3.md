@@ -171,6 +171,11 @@ v3 bir sayfa için ancak şu kontrol listesi yeşilse "bitti" sayılır (PR şab
 | Q8 | Açıklama paragrafı yok, `HelpPopover` var | Gözden geçirme |
 | Q9 | Reduced transparency / motion fallback'i görsel snapshot'ta | Playwright `emulateMedia` |
 | Q10 | İlk JS ≤ 250 KB, rota başına lazy chunk | Build raporu CI'da (WEB-PERF-01) |
+| Q11 | Saha rol etiketi kısa ad + odak, 2 satıra sarılır; tam ad `title`/tooltip'te; 375px'de hiçbir rol etiketi kesilmez | Playwright 375px + metin taşma testi |
+| Q12 | Devre dışı kontroller de metin ve kenarda arka planla ≥ 3:1; nedeni yanında kısa yardım metniyle görünür (örn. "Yükle" pasifken) | axe + görsel snapshot |
+| Q13 | Chip: yazı ≥ 12px, dokunma hedefi ≥ 32px (mobilde 44px) | Playwright ölçüm |
+| Q14 | Giriş/Kayıt: tek birincil eylem (Kayıt ol primary, Giriş secondary/ghost), tüm sayfalarda aynı | Görsel snapshot |
+| Q15 | axe serious/critical ihlal sayısı 0 (her v3 ekranı) | `@axe-core/playwright` |
 
 Sayfa ↔ kapatılması zorunlu buglar:
 | Sayfa | Zorunlu düzeltmeler |
@@ -206,6 +211,6 @@ Sayfa ↔ kapatılması zorunlu buglar:
 | V3-05 | P1 | Katalog ve Detay şablonları → UT oyuncu, SBC, replikalar | §8 kapıları |
 | V3-06 | P1 | Kariyer ekranları yeni motorla (13 ENG-M8) | §8 kapıları |
 | V3-07 | P2 | Pano ve Akış şablonları → masa, gelişim, import, ayarlar | §8 kapıları |
-| V3-08 | P2 | Eski bileşenleri sil (`ui.tsx` eski Card/Pill/Modal, `Modal.tsx`, `PitchView.tsx`, `PositionCard`, `matchday.css` renkleri), codemod | Repoda eski token/sınıf yok |
+| V3-08 | P2 | Kapanış kontrolü: Q11–Q15 tüm ekranlarda yeşil. Eski bileşenleri sil (`ui.tsx` eski Card/Pill/Modal, `Modal.tsx`, `PitchView.tsx`, `PositionCard`, `matchday.css` renkleri), codemod | Repoda eski token/sınıf yok |
 
 Yayın: v3 ayrı branch'te tüm sayfalar §8'i geçince tek seferde yayınlanır (karma görünüm yok). Geçiş süresince `?ui=v3` ön izleme bayrağı ile Buğra ekran ekran onaylar.
