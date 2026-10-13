@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Arşiv ve paket dosyaları (docs/spec.zip takipte kalır, BE-ARCH-06)
+MacOS_Dock_TD.rar
+*.rar
+*.zip
