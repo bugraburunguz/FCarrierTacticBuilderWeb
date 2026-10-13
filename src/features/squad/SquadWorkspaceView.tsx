@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { HelpPopover } from '../../components/ui'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { RoleFocusModal } from '../../components/squadBuilder/RoleFocusModal'
+import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Workspace } from '../../design/components/Workspace'
 import { Button, ChemBar, Segmented, SidePanel, Skeleton, StatTile } from '../../design/components/primitives'
 import type { FaceAverage } from '../../lib/faceAverages'
@@ -43,13 +44,52 @@ export interface SquadViewProps {
   note?: string
   actions?: ReactNode
   header?: ReactNode
+  /** Sahayı itmeyen, kapatılabilir tek satırlık not (yan panelin üstünde; F5). */
+  notice?: { id: string; text: ReactNode }
   footer?: ReactNode
 }
 
 /** Slot seçili değilken yan panel varsayılan hâli (08 §16.1): kadro bilgisi, kimya, mod bölümleri, taktik kodu. Boş değerler "–". */
+const NOTE_KEY = 'fc.note.'
+
+/** Tek satırlık (≤ 48px) kapatılabilir not; kapatma tercihi localStorage'da (erişilemezse yalnız oturumluk). */
+function DismissibleNote({ id, children }: { id: string; children: ReactNode }) {
+  const [hidden, setHidden] = useState(() => {
+    try {
+      return localStorage.getItem(NOTE_KEY + id) === '1'
+    } catch {
+      return false
+    }
+  })
+  if (hidden) {
+    return null
+  }
+  return (
+    <div role="note" className="glass-3 mb-3 flex max-h-12 items-center justify-between gap-2 overflow-hidden px-3 py-1 text-xs text-ink-2">
+      <span className="min-w-0 flex-1 leading-4">{children}</span>
+      <button
+        type="button"
+        aria-label="Notu kapat"
+        onClick={() => {
+          setHidden(true)
+          try {
+            localStorage.setItem(NOTE_KEY + id, '1')
+          } catch {
+            /* depolama yoksa yalnız bu oturumda gizli kalır */
+          }
+        }}
+        className="flex min-h-8 min-w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] hover:bg-[var(--glass-hover)] max-sm:min-h-11 max-sm:min-w-11"
+      >
+        ×
+      </button>
+    </div>
+  )
+}
+
 function SquadInfo(p: SquadViewProps) {
   return (
     <div className="space-y-4">
+      {p.notice && <DismissibleNote id={p.notice.id}>{p.notice.text}</DismissibleNote>}
       <section aria-label="Kadro bilgisi" className="space-y-3">
         <div className="flex items-center justify-between gap-2 text-sm">
           <label htmlFor="v3-formation" className="text-ink-2">Formasyon</label>
@@ -114,7 +154,11 @@ function SquadInfo(p: SquadViewProps) {
  * mod yalnız `slotPanel`, `stats`, `sections` ve `actions` ile içerik verir.
  */
 export function SquadWorkspaceView(p: SquadViewProps) {
+  const mobile = useIsMobile()
+  const sheet = mobile && p.slotPanel
+  const focusSelector = p.selectedSlotId ? `[data-pitch-slot="${p.selectedSlotId}"]` : undefined
   return (
+    <>
     <Workspace
       title={p.title}
       header={p.header}
@@ -134,8 +178,8 @@ export function SquadWorkspaceView(p: SquadViewProps) {
         </>
       }
       side={
-        p.slotPanel ? (
-          <SidePanel sheet title={p.slotPanel.title} onClose={p.slotPanel.onClose}>
+        p.slotPanel && !mobile ? (
+          <SidePanel title={p.slotPanel.title} onClose={p.slotPanel.onClose}>
             {p.slotPanel.body}
           </SidePanel>
         ) : (
@@ -145,6 +189,12 @@ export function SquadWorkspaceView(p: SquadViewProps) {
         )
       }
     />
+    {sheet && p.slotPanel && (
+      <MobileSheet title={p.slotPanel.title} onClose={p.slotPanel.onClose} restoreFocusTo={focusSelector}>
+        {p.slotPanel.body}
+      </MobileSheet>
+    )}
+    </>
   )
 }
 

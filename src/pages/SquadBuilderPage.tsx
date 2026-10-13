@@ -17,7 +17,7 @@ import type { SlotView } from '../components/squadBuilder/PositionCard'
 import { SlotModal, type SlotTab } from '../components/squadBuilder/SlotModal'
 import { SquadSummaryCard } from '../components/squadBuilder/SquadSummaryCard'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
-import { Chip, EmptyState, Panel, Segmented, StatTile } from '../design/components/primitives'
+import { Chip, Segmented, StatTile } from '../design/components/primitives'
 import { isV3 } from '../design/uiVersion'
 import { SquadRoleDialog, SquadWorkspaceView } from '../features/squad/SquadWorkspaceView'
 import { TacticCodeCard } from '../features/squad/TacticCodeCard'
@@ -218,6 +218,7 @@ export function SquadBuilderPage() {
           averages={ws.averages}
           sections={
             <section aria-label="Rol uyumu" className="space-y-2">
+              <CareerSelect />
               <h3 className="font-display text-lg font-semibold">Rol uyumu</h3>
               <div className="grid grid-cols-2 gap-2">
                 <StatTile label="Kadro uyumu" value={fitted.length ? `%${Math.round(fitted.reduce((s, v) => s + (v.fit?.pct ?? 0), 0) / fitted.length)}` : undefined} />
@@ -241,18 +242,7 @@ export function SquadBuilderPage() {
               <Button variant="ghost" onClick={resetBehaviors}>Davranışları sıfırla</Button>
             </>
           }
-          header={
-            <div className="flex flex-wrap items-center gap-3">
-              <CareerSelect />
-              {!hasCareer && (
-                <Panel className="flex-1">
-                  <EmptyState action={<Link to="/login" className="inline-flex min-h-10 items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent">Giriş yap</Link>}>
-                    Oyuncu atamak için giriş yapıp bir kariyer seç; taktiği kariyersiz de kurabilirsin.
-                  </EmptyState>
-                </Panel>
-              )}
-            </div>
-          }
+          notice={!hasCareer ? { id: 'career-login', text: <>Oyuncu atamak için <Link to="/login" className="text-accent underline">giriş yap</Link> ve bir kariyer seç; taktiği kariyersiz de kurabilirsin.</> } : undefined}
         />
         <SquadRoleDialog ws={ws} />
       </>

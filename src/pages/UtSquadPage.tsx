@@ -10,7 +10,7 @@ import type { FitState } from '../components/card/FitBadge'
 import { Button, ErrorBox, Pill, Select, Spinner } from '../components/ui'
 import { coins, shortCoins } from '../lib/coins'
 import { PickBody, PickModal } from '../features/squad/ut/PickBody'
-import { Chip, EmptyState as V3Empty, Panel, StatTile } from '../design/components/primitives'
+import { Chip, StatTile } from '../design/components/primitives'
 import { SquadRoleDialog, SquadWorkspaceView } from '../features/squad/SquadWorkspaceView'
 import { TacticCodeCard } from '../features/squad/TacticCodeCard'
 import type { TacticSetup } from '../features/squad/types'
@@ -189,15 +189,7 @@ export function UtSquadPage() {
           clearDisabled={pickedSlots.length === 0}
           note={loadNote}
           actions={capture?.activeSquad ? <Button onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button> : undefined}
-          header={
-            (utCardStore.get()?.cards ?? []).length === 0 && pickedSlots.length === 0 ? (
-              <Panel>
-                <V3Empty action={<Link to="/ut/import" className="inline-flex min-h-10 items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent">Kulüp içe aktar</Link>}>
-                  Kulübündeki kartlar yok: sahada bir mevkiye tıkla, katalogdan kart seç ya da yakalama dosyanı yükle.
-                </V3Empty>
-              </Panel>
-            ) : undefined
-          }
+          notice={(utCardStore.get()?.cards ?? []).length === 0 && pickedSlots.length === 0 ? { id: 'ut-no-cards', text: <>Kulüp kartların yok: mevkiye tıkla, katalogdan seç ya da <Link to="/ut/import" className="text-accent underline">kulüp içe aktar</Link>.</> } : undefined}
         />
         <SquadRoleDialog ws={ws} />
       </>
