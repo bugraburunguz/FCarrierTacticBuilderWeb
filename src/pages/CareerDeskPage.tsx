@@ -149,7 +149,7 @@ export function CareerDeskPage() {
         </Card>
       </div>
 
-      <DeskSettings career={career} />
+      <DeskSettings key={career.id} career={career} />
     </div>
   )
 }
@@ -214,7 +214,7 @@ function DeskSettings({ career }: { career: Career }) {
             <option value="SCOUT_RANGE">Scout aralığı (ör. 80–84)</option>
           </Select>
         </Field>
-        <Field label="Maaş bütçesi (haftalık)"><MoneyInput value={wage} onChange={setWage} /></Field>
+        <Field label="Maaş bütçesi (haftalık)"><MoneyInput key={career.id} value={wage} onChange={setWage} /></Field>
         <Field label="Transfer dönemi bitişi"><Input type="date" value={windowEnds} onChange={(e) => setWindowEnds(e.target.value)} /></Field>
         <Field label="Challenge (isteğe bağlı)"><Input value={challenge} onChange={(e) => setChallenge(e.target.value)} placeholder="Road to Glory" maxLength={40} /></Field>
       </div>
