@@ -57,6 +57,6 @@ Faz B'nin geri kalanı (DS-03/07/08/09/10, UX-01/03..06), Faz C (veri platformu)
 
 
 ## v2 inceleme (2026-10-12) — docs/review/v2/
-- P0 açık: WEB-BUG-01 (BE-SEC-01, BE-BUG-02, BE-BUG-03 DONE; BE-BUG-01 kod DONE, price TRUNCATE migration onay bekliyor)
+- P0 açık: TAC-08..10 (A2 kalanı). BE-SEC-01, BE-BUG-02/03, WEB-BUG-01 DONE; BE-BUG-01 kod DONE (price TRUNCATE migration onay bekliyor)
 - STALE düzeltildi: SEC-08 (reuse yapılmış), BUG-09 (kısmi), BUG-11 (yapılmış), BUG-17 (yapılmış), DS-01 (token'lar global)
 - Geri alınan DONE: SEC-02, SEC-05, BUG-01 (backend), BUG-14, DS-05 (EA_ASSET kapalı)

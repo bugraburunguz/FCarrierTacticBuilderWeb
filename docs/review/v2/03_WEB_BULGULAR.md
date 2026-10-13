@@ -4,7 +4,7 @@ Her madde: **Sorun → Düzeltme → Kabul**.
 
 ---
 ## P0
-### WEB-BUG-01 · Bir kariyerin ayarları başka kariyere yazılabiliyor
+### WEB-BUG-01 · Bir kariyerin ayarları başka kariyere yazılabiliyor — DONE (8a5c018)
 `W/pages/CareerDeskPage.tsx:152` (`<DeskSettings career={career} />`), `:175-183`
 - **Sorun:** `DeskSettings`'in `key`'i yok. State'i (spoiler, maaş bütçesi, dönem sonu, challenge) `useState(career.x)` ile yalnız ilk render'da alınıyor. CareerSelect ile kariyer değişince eski değerler kalıyor, "Kaydet" A'nın değerlerini B'ye PATCH'liyor.
 - **Düzeltme:** `<DeskSettings key={career.id} career={career} />`, içindeki `MoneyInput`'a da `key={career.id}`.
