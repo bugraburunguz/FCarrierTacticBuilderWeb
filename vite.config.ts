@@ -2,6 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { configDefaults } from 'vitest/config'
 
 const backend = process.env.VITE_BACKEND_URL ?? 'http://localhost:8080'
 
@@ -18,5 +19,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // Performans testleri ayrı koşar: npm run test:perf (ana npm test yük altında flaky olmasın)
+    exclude: [...configDefaults.exclude, '**/*.perf.test.ts'],
   },
 })

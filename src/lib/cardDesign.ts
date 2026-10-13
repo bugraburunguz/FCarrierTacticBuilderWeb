@@ -65,5 +65,5 @@ export function designFor(rating: number, kind: CardKind = {}): CardDesign {
 
 /** Kart alt satırında sığacak kısa etiket (ülke/kulüp/lig için ilk 3 harf). */
 export function shortLabel(value?: string): string {
-  return value ? value.replace(/[^\p{L}\p{N} ]/gu, '').trim().slice(0, 3).toUpperCase() : ''
+  return value ? value.replace(/[^\p{L}\p{N} ]/gu, '').trim().slice(0, 3).toLocaleUpperCase('en') : ''
 }

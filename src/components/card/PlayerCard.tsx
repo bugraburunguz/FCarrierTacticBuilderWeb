@@ -1,3 +1,4 @@
+import { langOfNationality } from '../../lib/nameCase'
 import { useId, useState } from 'react'
 import { assetUrl } from '../../lib/assetUrl'
 import { designFor, shortLabel, type CardKind } from '../../lib/cardDesign'
@@ -69,6 +70,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
   const ratingBase = Math.max(46, minRating / scale)
   const face = assetUrl(player.faceUrl)
   const surname = player.name.split(' ').slice(-1)[0]
+  const nameLang = langOfNationality(player.nationality)
   const tags = [player.nationality, player.club, player.league].map(shortLabel)
 
   return (
@@ -136,7 +138,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
 
         {showName && (
           <div className="absolute left-0 right-0 text-center font-display" style={{ top: 141, padding: '0 22px' }}>
-            <div className="truncate uppercase" style={{ fontSize: 21, fontWeight: 800, lineHeight: 1 }}>
+            <div lang={nameLang} className="truncate uppercase" style={{ fontSize: 21, fontWeight: 800, lineHeight: 1 }}>
               {surname}
             </div>
             <div style={{ height: 1, background: look.rule, margin: '5px auto 0', width: '78%' }} />
@@ -158,6 +160,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
       {nameStrip && (
         <div
           data-card-name
+          lang={nameLang}
           title={player.name}
           className="absolute left-0 right-0 truncate text-center font-display font-extrabold uppercase leading-none"
           style={{ top: BASE_H * scale * (141 / BASE_H), padding: '0 6%', fontSize: Math.max(minText, 21 * scale), color: look.ink }}

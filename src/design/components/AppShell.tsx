@@ -89,7 +89,7 @@ export function AppShell() {
         )}
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle className="max-sm:hidden" />
-          <MobileMenu email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
+          <MobileMenu loginLink={!(authenticated && me)} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
           {authenticated && me ? (
             <>
               <span className="hidden sm:block">{me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
@@ -100,8 +100,8 @@ export function AppShell() {
             </>
           ) : (
             <>
-              <NavLink to="/login" className="glass-3 inline-flex min-h-10 items-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold text-ink hover:bg-[var(--glass-hover)] max-sm:min-h-11">Giriş</NavLink>
-              <NavLink to="/register" className="inline-flex min-h-10 items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11">Kayıt ol</NavLink>
+              <NavLink to="/login" className="glass-3 inline-flex max-[479px]:hidden min-h-10 items-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold text-ink hover:bg-[var(--glass-hover)] max-sm:min-h-11">Giriş</NavLink>
+              <NavLink to="/register" className="inline-flex min-h-10 whitespace-nowrap items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11">Kayıt ol</NavLink>
             </>
           )}
         </div>

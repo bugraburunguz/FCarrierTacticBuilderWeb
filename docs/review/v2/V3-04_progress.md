@@ -1,4 +1,4 @@
-# V3-04 ilerleme (onay bekliyor — V3-05'e geçilmez)
+# V3-04 ilerleme — **V3-04 onaylandı (2026-10-13)**; V3-04.1 düzeltmeleri aşağıda. Sonraki: Faz E3 motor (13_KARIYER_MOTORU_YENIDEN.md), V3-05 bekliyor
 
 Durum: yapıldı / kısmen / bekliyor. Hash'ler web `v3` dalı; "BE" = backend `main`.
 
@@ -31,3 +31,13 @@ Durum: yapıldı / kısmen / bekliyor. Hash'ler web `v3` dalı; "BE" = backend `
 ## Ertelenenler
 - Ladle story'leri: V3-08.
 - Kalan yetim kulüpler (22): raporlandı, silinmedi.
+
+## V3-04.1 (onay koşulu düzeltmeleri)
+| Madde | Durum | Not |
+|---|---|---|
+| 1 Türkçe büyük harf (PEDRİ) | yapıldı | isim öğesinin lang'ı uyruktan (TR/AZ → tr, diğerleri en); `lib/nameCase.ts`; kart isim şeridi + scaled isim, avatar/kulüp kısaltması `toLocaleUpperCase('en')`; evolution/objective adları lang="en"; kaynak kapısı: yalın `toUpperCase()` yok |
+| 2 375px "Kayıt ol" | yapıldı | nowrap; <480px "Giriş" üst çubuktan menüye iner |
+| 3 "Meta rating*" HelpPopover | yapıldı | |
+| 4 sbcTraditional perf testi | yapıldı | `npm run test:perf` ayrı komut (5 koşu tek başına hep geçti, ~0,6 sn); ana `npm test` flaky değil |
+| 5 22 yetim kulüp | yapıldı | 0 bağ doğrulandı (FK'siz tablolar dahil); 12 alias + 22 silme, yedek `backups/club_before_orphans_*.sql`; yer tutucu ad ingestion'da reddedilir (test) |
+| 6 diakritik veri kalitesi testi | yapıldı | `ClubDataQuality` (aksan düşmüş/sıyrılmış ikiz, U+FFFD, yer tutucu) + açılışta uyarı logu + test |

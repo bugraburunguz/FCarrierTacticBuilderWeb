@@ -6,7 +6,7 @@ import type { WeaponState } from '../../../api/types'
 import { ChemDiamonds } from '../../../components/card/ChemDiamonds'
 import type { FitState } from '../../../components/card/FitBadge'
 import { Modal } from '../../../components/Modal'
-import { BadgeDot, Pill, Spinner } from '../../../components/ui'
+import { BadgeDot, HelpPopover, Pill, Spinner } from '../../../components/ui'
 import { cardPlayerOf } from '../../../lib/cardPlayer'
 import { coins, shortCoins } from '../../../lib/coins'
 import { fromSummary, personKey, type CardSource, type UtCard } from '../../../lib/utCard'
@@ -57,7 +57,7 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
       {evaluation ? (
         <>
           <p>
-            Meta rating* <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Pill tone={TIER_TONE[evaluation.card.tier] ?? 'slate'}>{evaluation.card.tier}</Pill>
+            Meta rating* <HelpPopover label="Meta rating nedir">Meta rating platformun tahmin metriğidir: kartın rol ağırlıklı attribute'larından ve evrensel meta eğrisinden hesaplanır, EA'nın resmî bir değeri değildir. Kendi kulüp kartlarında gerçek attribute'lar kullanılır; katalog kartlarında temel kart değerleri. Rol uyumu (RoleFit) ayrı bir ölçüdür.</HelpPopover> <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Pill tone={TIER_TONE[evaluation.card.tier] ?? 'slate'}>{evaluation.card.tier}</Pill>
             {' · '}Kimya <ChemDiamonds value={links} size={12} />
           </p>
           {evaluation.roleFit !== undefined && (

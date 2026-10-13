@@ -18,7 +18,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
 }
 
 /** Mobil menü (<640px): tema ve hesap bağlantıları tek açılır kutuda (Radix Popover). */
-export function MobileMenu({ email, onLogout }: { email?: string; onLogout?: () => void }) {
+export function MobileMenu({ email, onLogout, loginLink }: { email?: string; onLogout?: () => void; loginLink?: boolean }) {
   return (
     <Popover.Root>
       <Popover.Trigger aria-label="Menü" className="glass-3 inline-flex min-h-11 min-w-11 items-center justify-center text-ink-2 hover:bg-[var(--glass-hover)] sm:hidden">
@@ -30,6 +30,9 @@ export function MobileMenu({ email, onLogout }: { email?: string; onLogout?: () 
             <span className="text-ink-2">Tema</span>
             <ThemeToggle />
           </div>
+          {loginLink && (
+            <NavLink to="/login" className="block min-h-11 rounded-[var(--radius-sm)] px-2 py-2.5 text-sm hover:bg-[var(--glass-hover)]">Giriş</NavLink>
+          )}
           {email && (
             <NavLink to="/profile" className="block min-h-11 rounded-[var(--radius-sm)] px-2 py-2.5 text-sm hover:bg-[var(--glass-hover)]">Profil</NavLink>
           )}
