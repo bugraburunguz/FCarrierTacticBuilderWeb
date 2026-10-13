@@ -118,8 +118,13 @@ export function challengeSetup(challenge: SbcChallenge, formations: Formation[])
         r.op === 'MAX' ? (max.nations = value) : (minDistinct.nations = value)
         break
       case 'QUALITY':
-        if (r.op === 'MIN' && value >= 1 && value <= 3) {
+        if (value >= 1 && value <= 3 && r.op === 'MIN') {
           extra.minQuality = value as 1 | 2 | 3
+        } else if (value >= 1 && value <= 3 && r.op === 'MAX') {
+          extra.maxQuality = value as 1 | 2 | 3
+        } else if (value >= 1 && value <= 3 && r.op === 'EXACT') {
+          extra.minQuality = value as 1 | 2 | 3
+          extra.maxQuality = value as 1 | 2 | 3
         } else {
           notes.push(describeRequirement(r))
         }

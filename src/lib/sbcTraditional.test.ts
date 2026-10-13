@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { solveTraditional, teamRating, type SbcCandidate, type SbcSlot } from './sbcTraditional'
+import { prunePool, solveTraditional, teamRating, type SbcCandidate, type SbcSlot } from './sbcTraditional'
 
 const SLOTS: SbcSlot[] = ['GK', 'LB', 'CB', 'CB', 'RB', 'CM', 'CM', 'LM', 'RM', 'ST', 'ST'].map((position, i) => ({ slotId: `s${i}`, position }))
 
@@ -109,5 +109,26 @@ describe('coin bazlı maliyet', () => {
     const result = solveTraditional(SLOTS, cards, { teamRatingMin: 82, chemMin: 18 })
     expect(performance.now() - started).toBeLessThan(1500)
     expect(result.picks.filter(Boolean)).toHaveLength(11)
+  })
+})
+
+describe('kalite tavanı (WEB-BUG-03)', () => {
+  it('Max Gümüş çözümünde 75+ kart seçilmez', () => {
+    const cards: SbcCandidate[] = []
+    let id = 1
+    ;['GK', 'LB', 'CB', 'RB', 'CM', 'LM', 'RM', 'ST'].forEach((position) => {
+      ;[68, 70, 72, 74, 76, 78, 80, 82].forEach((overall) => cards.push({ ...card(id++, position, overall, 'Club', 'League', 'Nation'), price: overall >= 75 ? 100 : 1000 }))
+    })
+
+    const solution = solveTraditional(SLOTS, cards, { teamRatingMin: 0, chemMin: 0, maxQuality: 2 })
+
+    expect(solution.picks.filter(Boolean).length).toBeGreaterThan(0)
+    expect(solution.picks.every((p) => !p || p.overall <= 74)).toBe(true)
+  })
+
+  it('prunePool kalite tavanını ve tam kaliteyi uygular', () => {
+    const cards = [card(1, 'ST', 70, 'A', 'L', 'N'), card(2, 'ST', 80, 'A', 'L', 'N'), card(3, 'ST', 60, 'A', 'L', 'N')]
+    expect(prunePool([{ slotId: 's', position: 'ST' }], cards, { teamRatingMin: 0, chemMin: 0, maxQuality: 2 }).map((c) => c.overall).sort()).toEqual([60, 70])
+    expect(prunePool([{ slotId: 's', position: 'ST' }], cards, { teamRatingMin: 0, chemMin: 0, minQuality: 2, maxQuality: 2 }).map((c) => c.overall)).toEqual([70])
   })
 })

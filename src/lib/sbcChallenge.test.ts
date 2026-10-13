@@ -66,3 +66,17 @@ describe('describeRequirement — parser v2 türleri (BE-BUG-05)', () => {
     expect(describeRequirement({ kind: 'UNKNOWN', op: 'MIN', value: 9, raw: [{ type: 'BRAND_NEW_KEY' }] })).toBe('Şart: BRAND_NEW_KEY en az 9')
   })
 })
+
+describe('QUALITY MAX/EXACT (WEB-BUG-03)', () => {
+  const base = { ...challenge, requirements: [] as typeof challenge.requirements }
+
+  it('"en çok" ve "tam" kalite kısıta çevrilir, nota düşmez', () => {
+    const max = challengeSetup({ ...base, requirements: [{ kind: 'QUALITY', op: 'MAX', value: 2 }] }, formations)
+    expect(max.extra.maxQuality).toBe(2)
+    expect(max.notes).toEqual([])
+
+    const exact = challengeSetup({ ...base, requirements: [{ kind: 'QUALITY', op: 'EXACT', value: 1 }] }, formations)
+    expect(exact.extra.minQuality).toBe(1)
+    expect(exact.extra.maxQuality).toBe(1)
+  })
+})

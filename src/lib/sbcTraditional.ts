@@ -34,6 +34,8 @@ export interface SbcConstraints {
   minDistinct?: { clubs?: number; leagues?: number; nations?: number }
   /** Tüm oyuncular en az bu kalitede: 1 bronz, 2 gümüş, 3 altın (rating'den türetilir: <65, 65-74, 75+). */
   minQuality?: 1 | 2 | 3
+  /** Tüm oyuncular en çok bu kalitede ("Max Silver" = 2); tam kalite minQuality = maxQuality ile ifade edilir. */
+  maxQuality?: 1 | 2 | 3
   /** En az N oyuncu bu seviyede ya da üstünde. */
   levelCounts?: { level: 1 | 2 | 3; min: number }[]
   /** Verilen kulüp/lig/ülkelerden herhangi birinden en az N oyuncu (ör. "Liverpool veya Manchester City'den en az 2"). */
@@ -88,6 +90,12 @@ export function extraIssues(cards: SbcCandidate[], constraints: SbcConstraints):
     const below = cards.filter((c) => qualityOf(c.overall) < constraints.minQuality!).length
     if (below > 0) {
       issues.push({ text: `Tüm oyuncular en az ${QUALITY_LABELS[constraints.minQuality]} olmalı`, missing: below })
+    }
+  }
+  if (constraints.maxQuality) {
+    const above = cards.filter((c) => qualityOf(c.overall) > constraints.maxQuality!).length
+    if (above > 0) {
+      issues.push({ text: `Tüm oyuncular en çok ${QUALITY_LABELS[constraints.maxQuality]} olmalı`, missing: above })
     }
   }
   constraints.levelCounts?.forEach((r) => {
@@ -218,6 +226,9 @@ export function prunePool(slots: SbcSlot[], pool: SbcCandidate[], constraints: S
   const cheapest = new Map<string, SbcCandidate>()
   pool.forEach((card) => {
     if (constraints.minOverallEach && card.overall < constraints.minOverallEach) {
+      return
+    }
+    if ((constraints.maxQuality && qualityOf(card.overall) > constraints.maxQuality) || (constraints.minQuality && qualityOf(card.overall) < constraints.minQuality)) {
       return
     }
     const key = playerKeyOf(card)
