@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import type { CaptureResult } from '../api/types'
+import { mergeSummary } from '../lib/captureMerge'
 import { bigStore } from './bigStore'
 
 const NAME = 'utCapture'
@@ -14,21 +15,15 @@ export interface UtCaptureSummary {
   coins?: number
   unknownPaths: string[]
   sbcChallenges: NonNullable<CaptureResult['sbcChallenges']>
+  /** Bölüm başına son güncelleme zamanı; yakalama yalnız gelen bölümleri yeniler (WEB-BUG-14). */
+  sections: Partial<Record<'club' | 'market' | 'sbc' | 'evolutions' | 'squad', string>>
 }
 
 export const utCaptureStore = {
   get: (): UtCaptureSummary | undefined => bigStore.get<UtCaptureSummary>(NAME),
+  /** Yakalamadan yalnız gelen bölümleri önceki özetin üstüne birleştirir. */
   set(result: CaptureResult): boolean {
-    bigStore.set(NAME, {
-      importedAt: new Date().toISOString(),
-      sbcSets: result.sbcSets,
-      evolutions: result.evolutions,
-      activeSquad: result.activeSquad,
-      squads: result.squads,
-      coins: result.coins,
-      unknownPaths: result.unknownPaths ?? [],
-      sbcChallenges: result.sbcChallenges ?? [],
-    } satisfies UtCaptureSummary)
+    bigStore.set(NAME, mergeSummary(bigStore.get<UtCaptureSummary>(NAME), result, new Date().toISOString()))
     return true
   },
   subscribe: bigStore.subscribe,

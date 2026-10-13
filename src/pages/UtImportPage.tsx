@@ -8,6 +8,7 @@ import { ExtensionSync } from '../components/ExtensionSync'
 import { Button, Card, EmptyState, ErrorBox, Pill } from '../components/ui'
 import { toPlannerObjectives, toSbcPool } from '../lib/capture'
 import { objectiveStore } from '../state/objectiveStore'
+import { mergeCards } from '../lib/captureMerge'
 import { fromCapture, cardPrice, type UtCard } from '../lib/utCard'
 import { sbcPoolStore } from '../state/sbcPoolStore'
 import { utCardStore } from '../state/utCardStore'
@@ -49,7 +50,7 @@ export function UtImportPage() {
   const upload = useMutation({
     mutationFn: async (source: File | unknown[]) => endpoints.utCapture(Array.isArray(source) ? source : parseCaptures(await source.text())),
     onSuccess: async (data) => {
-      const saved = utCardStore.set(toLibrary(data))
+      const saved = utCardStore.set(mergeCards(utCardStore.get()?.cards, toLibrary(data)))
       utCaptureStore.set(data)
       let placed = ''
       if (data.activeSquad) {
