@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../api/types'
-import { canPlaySlot, compatiblePositions, depthState, groupByPrimaryPosition } from './positions'
+import { canPlaySlot, compatiblePositions, depthState, formationName, groupByPrimaryPosition } from './positions'
 
 const entry = (id: number, name: string, positions: string[], overall: number): CareerPlayer => ({
   player: { id, name, positions, overall, valuationEstimated: false },
@@ -38,5 +38,13 @@ describe('positions', () => {
     expect(depthState('GK', 1)).toBe('thin')
     expect(depthState('GK', 2)).toBe('ok')
     expect(depthState('ST', 5)).toBe('dense')
+  })
+})
+
+describe('formationName', () => {
+  it('displayNameTr, yoksa label, yoksa id', () => {
+    expect(formationName({ id: '4-3-3', label: '4-3-3', displayNameTr: '4-3-3 Pivotlu' })).toBe('4-3-3 Pivotlu')
+    expect(formationName({ id: 'x', label: 'Y' })).toBe('Y')
+    expect(formationName({ id: 'x' })).toBe('x')
   })
 })

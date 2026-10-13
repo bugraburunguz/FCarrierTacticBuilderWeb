@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formationName } from '../lib/positions'
 import type { CareerPlayer, Formation, FormationSlot } from '../api/types'
 import type { PositionNeed } from '../lib/depth'
 import { DEPTH_GUIDE, depthState, POSITION_LABELS, primaryPosition, type DepthState } from '../lib/positions'
@@ -168,7 +169,7 @@ export function SquadDensity({ squad, needs, formation, compact = false }: { squ
       <div className="rounded-md border border-line bg-gradient-to-b from-emerald-50 to-white p-3" aria-label="Mevki yoğunluk haritası">
         {formation && (
           <div className="mb-2 flex items-center justify-between gap-2 text-xs">
-            <strong>{byTactic ? `Dizilim: ${formation.label ?? formation.id}` : 'Genel mevki haritası'}</strong>
+            <strong>{byTactic ? `Dizilim: ${formationName(formation)}` : 'Genel mevki haritası'}</strong>
             <div role="tablist" className="flex gap-1">
               {(['tactic', 'general'] as const).map((m) => (
                 <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)}

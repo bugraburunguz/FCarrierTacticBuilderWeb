@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { formationName } from '../lib/positions'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import { solveTraditionalAsync } from '../lib/solveAsync'
@@ -169,7 +170,7 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
         <Field label="Formasyon">
           <Select value={formation?.id} onChange={(e) => setFormationId(e.target.value)}>
             {(formations.data ?? []).map((f) => (
-              <option key={f.id} value={f.id}>{f.label ?? f.id}</option>
+              <option key={f.id} value={f.id}>{formationName(f)}</option>
             ))}
           </Select>
         </Field>

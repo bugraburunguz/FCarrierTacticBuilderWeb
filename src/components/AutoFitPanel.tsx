@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { formationName } from '../lib/positions'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError, ErrorCodes } from '../api/client'
@@ -102,7 +103,7 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
               <option value="">Serbest — en iyisini bul</option>
               {formations.map((f) => (
                 <option key={f.id} value={f.id}>
-                  {f.label ?? f.id}
+                  {formationName(f)}
                 </option>
               ))}
             </Select>

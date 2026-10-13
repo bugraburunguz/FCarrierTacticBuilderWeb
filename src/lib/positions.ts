@@ -71,3 +71,8 @@ export function depthState(position: string, count: number): DepthState {
   }
   return count > max ? 'dense' : 'ok'
 }
+
+/** Formasyon görünen adı (EA/FUT.GG adlandırması, BE-BUG-10): displayNameTr, yoksa label, yoksa id. */
+export function formationName(f: { id: string; label?: string; displayNameTr?: string }): string {
+  return f.displayNameTr ?? f.label ?? f.id
+}

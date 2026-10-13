@@ -1,4 +1,5 @@
 import type { Formation } from '../../api/types'
+import { formationName } from '../../lib/positions'
 import { Select } from '../ui'
 import type { SlotView } from './PositionCard'
 
@@ -29,7 +30,7 @@ export function SquadSummaryCard({ formations, formationId, onFormation, views, 
                 .filter((f) => f.id.startsWith(String(backs)))
                 .map((f) => (
                   <option key={f.id} value={f.id}>
-                    {f.label ?? f.id}
+                    {formationName(f)}
                   </option>
                 ))}
             </optgroup>

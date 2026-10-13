@@ -138,6 +138,12 @@ export interface FormationSlot {
 export interface Formation {
   id: string
   label?: string
+  eaFormationId?: string
+  eaLabel?: string
+  futggName?: string
+  displayNameTr?: string
+  displayNameEn?: string
+  usage?: { community: number; pro: number; asOf: string }
   slots: FormationSlot[]
 }
 
