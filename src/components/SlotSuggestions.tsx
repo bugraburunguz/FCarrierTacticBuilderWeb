@@ -40,7 +40,7 @@ export function SlotSuggestions({ roleId, position, tags, gender, setup }: Props
     queryKey: ['slot-view', active, careerId, roleId, position, tagKey, gender, leagueId, setup?.buildUp, setup?.depth],
     queryFn: () =>
       active === 'ALL'
-        ? endpoints.previewSlot({ roleId: roleId!, position, tags, gender, limit: 8, setup })
+        ? endpoints.previewSlot({ roleId: roleId!, position, tags, gender, limit: 3, setup })
         : endpoints.slotView({ careerId: careerId!, scope: active, slot: { roleId: roleId!, position, tags, leagueId, limit: 8, setup } }),
     enabled: roleId !== undefined && (active !== 'LEAGUE' || leagueId !== undefined),
     staleTime: 60_000,
