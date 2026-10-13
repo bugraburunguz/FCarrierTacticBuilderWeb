@@ -60,7 +60,9 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
   const design = designFor(player.rating, player)
   const { look } = design
   const readable = (basePx: number) => basePx * scale >= minText
-  const showName = w >= NAME_MIN_WIDTH && readable(21)
+  // Okunabilirlik kapısı açıkken (saha) isim ölçekli alanda değil, kartın alt şeridinde sabit ≥ minText px yazılır; isim asla gizlenmez.
+  const nameStrip = minText > 0
+  const showName = !nameStrip && w >= NAME_MIN_WIDTH
   const showPosition = readable(19)
   const showMeta = w >= META_MIN_WIDTH && readable(9)
   const showStats = w >= STATS_MIN_WIDTH && readable(8) && Boolean(player.faceStats?.length)
@@ -153,6 +155,16 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
         )}
       </div>
 
+      {nameStrip && (
+        <div
+          data-card-name
+          title={player.name}
+          className="absolute left-0 right-0 truncate text-center font-display font-extrabold uppercase leading-none"
+          style={{ top: BASE_H * scale * (141 / BASE_H), padding: '0 6%', fontSize: Math.max(minText, 21 * scale), color: look.ink }}
+        >
+          {surname}
+        </div>
+      )}
       {fit && <FitBadge state={fit.state} pct={fit.pct} className="absolute -right-1 -top-1" compact={w < 100} />}
       {(chem !== undefined || price) && (
         <div className="absolute left-0 right-0 flex items-center justify-center gap-1" style={{ bottom: -Math.max(8, w * 0.1) }}>

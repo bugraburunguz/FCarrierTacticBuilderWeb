@@ -23,6 +23,8 @@ const SIZES = [
   { name: '375', width: 375, height: 812 },
   { name: '768', width: 768, height: 1024 },
   { name: '1280x800', width: 1280, height: 800 },
+  { name: '1366x768', width: 1366, height: 768 },
+  { name: '1536x864', width: 1536, height: 864 },
   { name: '1440x900', width: 1440, height: 900 },
 ]
 const LONGEST = { one: 'Wide Mid · Vers', full: 'Ball-Playing Defender · Ball-Winning' }
@@ -177,6 +179,15 @@ for (const mode of modes) {
               const ovr = card.querySelector('.font-display > div')
               if (ovr) ovrFont = Math.min(ovrFont, parseFloat(getComputedStyle(ovr).fontSize) * (cw / 180))
             })
+            // Q18 eki: her dolu kartta isim görünür ve ≥ 11px
+            let nameProblem = null
+            cards.forEach((card) => {
+              const el = card.parentElement?.querySelector('[data-card-name]') ?? card.closest('[data-pitch-slot]')?.querySelector('[data-card-name]')
+              const r = el?.getBoundingClientRect()
+              if (!el || !el.textContent.trim() || r.width < 4 || r.height < 4) nameProblem = 'Q18: kartta isim görünmüyor'
+              else if (parseFloat(getComputedStyle(el).fontSize) < 10.95) nameProblem = 'Q18: isim yazısı 11px altında'
+            })
+            if (nameProblem) problems.push(nameProblem)
             const root = document.documentElement
             return { formationId, problems: [...new Set(problems)], pageOverflowY: root.scrollHeight - window.innerHeight, fieldBottom: field.bottom, fieldWidth: field.width, innerHeight: window.innerHeight, cardWidth, minFont, ovrFont }
           },

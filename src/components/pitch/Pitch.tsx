@@ -37,8 +37,7 @@ interface Drag {
 const DRAG_THRESHOLD = 6
 /** Dar ekran sınırı: altında rol etiketi tek satırlık kısa forma iner (F1). */
 const NARROW_PX = 480
-/** Çalışma alanı iki sütunlu olduğunda (≥820px) saha görünür yüksekliğe ölçeklenir; altta ipucu satırı + dolgu için ayrılan px. */
-const DESKTOP_MIN_VIEWPORT = 820
+/** Dar olmayan sahada (≥480px, tablet dahil) saha görünür yüksekliğe ölçeklenir; altta ipucu satırı + dolgu için ayrılan px. */
 const RESERVE_BELOW = 48
 const MIN_FIELD_HEIGHT = 360
 
@@ -83,7 +82,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
     const measure = () => {
       setFieldWidth(box.getBoundingClientRect().width)
       const top = box.getBoundingClientRect().top + window.scrollY
-      setAvailable(window.innerWidth >= DESKTOP_MIN_VIEWPORT ? Math.max(MIN_FIELD_HEIGHT, window.innerHeight - top - RESERVE_BELOW) : undefined)
+      setAvailable(box.getBoundingClientRect().width >= NARROW_PX ? Math.max(MIN_FIELD_HEIGHT, window.innerHeight - top - RESERVE_BELOW) : undefined)
     }
     measure()
     window.addEventListener('resize', measure)
