@@ -915,6 +915,7 @@ export interface KbPricePoint {
   p10?: number
   p50?: number
   minBin?: number
+  lowConfidence?: boolean
   samples: number
 }
 
