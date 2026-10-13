@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
-import type { TacticRequest, WeaponState } from '../api/types'
+import type { ResolvedTactic, TacticRequest, WeaponState } from '../api/types'
 import { FormationStyleChips } from '../components/FormationStyleChips'
 import { Modal } from '../components/Modal'
 import { Pitch, type PitchSlot } from '../components/pitch/Pitch'
@@ -68,6 +68,10 @@ export function UtSquadPage() {
 
   const formation = formations.data?.find((f) => f.id === formationId) ?? formations.data?.[0]
   const slots = formation?.slots ?? []
+  // Kayıtlı formasyon/rol/slot kayıtları güncel formasyonla uyuşmuyorsa (temizlenene kadar) çözme isteği gitmez.
+  const slotIds = new Set(slots.map((s) => s.slotId))
+  const knownFormation = formations.data?.some((f) => f.id === formationId) ?? false
+  const stale = Boolean(formations.data?.length) && (!knownFormation || Object.keys(roleOverride).some((id) => !slotIds.has(id)) || Object.keys(picked).some((id) => !slotIds.has(id)))
 
   const tactic: TacticRequest = useMemo(
     () => ({
@@ -80,7 +84,7 @@ export function UtSquadPage() {
   const resolved = useQuery({
     queryKey: ['ut-resolve', JSON.stringify(tactic)],
     queryFn: () => endpoints.resolveTactic(tactic),
-    enabled: Boolean(formation),
+    enabled: Boolean(formation) && !stale,
     retry: false,
   })
   const roleBySlot = Object.fromEntries((resolved.data?.slots ?? []).map((s) => [s.slotId, s]))
@@ -150,6 +154,19 @@ export function UtSquadPage() {
     setDialog(null)
   }
 
+  // Kayıtlı formasyon artık yoksa ya da rol/slot kayıtları formasyonla uyuşmuyorsa sessizce temizle, küçük not göster (V3-00).
+  useEffect(() => {
+    if (!stale || !formations.data) {
+      return
+    }
+    const target = formations.data.find((f) => f.id === formationId) ?? formations.data[0]
+    const targetSlots = new Set(target.slots.map((s) => s.slotId))
+    setFormationId(target.id)
+    setRoleOverride({})
+    setPicked((cur) => Object.fromEntries(Object.entries(cur).filter(([id]) => targetSlots.has(id))))
+    setLoadNote('Kayıtlı formasyon/rol bilgisi güncel formasyonla uyuşmadığı için sıfırlandı.')
+  }, [stale, formations.data, formationId])
+
   // Kadro her değişimde kaydedilir; sayfa yenilenince ya da dosya tekrar yüklenmeden geri gelir.
   useEffect(() => {
     if (!saved && Object.keys(picked).length === 0) {
@@ -210,6 +227,7 @@ export function UtSquadPage() {
         <div className="order-2 flex flex-col gap-3.5 min-[820px]:order-1">
           <UtTacticCode
             tactic={tactic}
+            resolved={resolved.data}
             onLoaded={(r) => {
               setFormationId(r.formation)
               setPicked({})
@@ -361,11 +379,11 @@ function Summary({ evaluation }: { evaluation: { slotId: string; badge?: WeaponS
   )
 }
 
-function UtTacticCode({ tactic, onLoaded }: { tactic: TacticRequest; onLoaded: (r: { formation: string; buildUp: string; depth: number; slots: { slotId: string; roleId: string }[] }) => void }) {
+/** Taktik çözümü üst bileşendeki tek sorgudan gelir (aynı anahtarı iki yerde farklı koşullarla açmak formasyonsuz 400 veriyordu, V3-00). */
+function UtTacticCode({ tactic, resolved, onLoaded }: { tactic: TacticRequest; resolved: ResolvedTactic | undefined; onLoaded: (r: { formation: string; buildUp: string; depth: number; slots: { slotId: string; roleId: string }[] }) => void }) {
   const [input, setInput] = useState('')
-  const resolved = useQuery({ queryKey: ['ut-resolve', JSON.stringify(tactic)], queryFn: () => endpoints.resolveTactic(tactic), retry: false })
-  const exportRequest: TacticRequest | undefined = resolved.data
-    ? { ...tactic, slots: resolved.data.slots.map((s) => ({ slotId: s.slotId, tags: [], roleId: s.roleId })) }
+  const exportRequest: TacticRequest | undefined = resolved
+    ? { ...tactic, slots: resolved.slots.map((s) => ({ slotId: s.slotId, tags: [], roleId: s.roleId })) }
     : undefined
   const exportCode = useQuery({
     queryKey: ['ut-code', JSON.stringify(exportRequest)],
