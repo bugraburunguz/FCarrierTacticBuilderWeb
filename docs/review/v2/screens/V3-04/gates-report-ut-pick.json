@@ -2,35 +2,135 @@
   "taskId": "V3-04",
   "route": "/ut/squad",
   "mode": "ut",
-  "matrix": "core",
+  "matrix": "full",
   "base": "http://localhost:8081",
   "shots": [
     {
       "file": "ut-dark-375-pick.png",
       "horizontalOverflow": false,
-      "axeSeriousCritical": 0,
-      "axeViolations": [],
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            "div[role=\"tablist\"]"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-375-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            "div[role=\"tablist\"]"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-768-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            "div[role=\"tablist\"]"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-768-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            "div[role=\"tablist\"]"
+          ]
+        }
+      ],
       "consoleAndNetwork": []
     },
     {
       "file": "ut-dark-1280-pick.png",
       "horizontalOverflow": false,
-      "axeSeriousCritical": 0,
-      "axeViolations": [],
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            ".flex-wrap"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-1280-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            ".flex-wrap"
+          ]
+        }
+      ],
       "consoleAndNetwork": []
     },
     {
       "file": "ut-dark-1280-reduced-motion-pick.png",
       "horizontalOverflow": false,
-      "axeSeriousCritical": 0,
-      "axeViolations": [],
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            ".flex-wrap"
+          ]
+        }
+      ],
       "consoleAndNetwork": []
     },
     {
       "file": "ut-dark-1280-reduced-transparency-pick.png",
       "horizontalOverflow": false,
-      "axeSeriousCritical": 0,
-      "axeViolations": [],
+      "axeSeriousCritical": 1,
+      "axeViolations": [
+        {
+          "id": "aria-required-children",
+          "impact": "critical",
+          "nodes": 1,
+          "sample": [
+            ".flex-wrap"
+          ]
+        }
+      ],
       "consoleAndNetwork": []
     }
   ]

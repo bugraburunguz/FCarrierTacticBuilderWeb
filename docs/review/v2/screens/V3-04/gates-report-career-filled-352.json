@@ -1,0 +1,83 @@
+{
+  "taskId": "V3-04",
+  "route": "/squad/builder",
+  "mode": "career",
+  "matrix": "core",
+  "base": "http://localhost:8081",
+  "shots": [
+    {
+      "file": "career-dark-375-filled-352.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-filled-352.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-reduced-motion-filled-352.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()"
+      ]
+    },
+    {
+      "file": "career-dark-1280-reduced-transparency-filled-352.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": [
+        "HTTP 429 /api/v1/tactics/resolve",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()",
+        "HTTP 429 /api/v1/fit/role",
+        "console: Failed to load resource: the server responded with a status of 429 ()"
+      ]
+    }
+  ]
+}

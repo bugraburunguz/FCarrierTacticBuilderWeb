@@ -60,7 +60,7 @@ export function PickList({ rows, loading, emptyText, search, onSearch, tabs, act
   return (
     <div className="space-y-3">
       {tabs && (
-        <div role="tablist" aria-label="Kart kaynağı" className="flex flex-wrap gap-1">
+        <div role="group" aria-label="Kart kaynağı" className="flex flex-wrap gap-1">
           {tabs.map((t) => (
             <Chip key={t.id} onClick={() => onTab?.(t.id)} pressed={activeTab === t.id}>
               {t.label}
