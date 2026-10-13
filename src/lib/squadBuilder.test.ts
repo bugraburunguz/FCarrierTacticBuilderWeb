@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { FormationSlot, Role } from '../api/types'
+import { eaRoleKey } from './eaRoles'
 import { firstFocus, ovrBand, remapAssignments, roleGroups, swapSlots } from './squadBuilder'
 
 const role = (id: string, name: string, focus: string, positions: string[]): Role => ({ id, baseRole: name, name: `${name} (${focus})`, positions, focus, weapons: [], accelerate: [], movementTags: [] })
@@ -12,10 +13,22 @@ describe('squad builder yardımcıları', () => {
       role('stopper_aggressive', 'Stopper', 'Aggressive', ['CB']),
       role('poacher_attack', 'Poacher', 'Attack', ['ST']),
     ]
-    const groups = roleGroups(roles, 'CB')
+    const allowed = new Set([eaRoleKey('CB', 'Stopper', 'Balanced'), eaRoleKey('CB', 'Stopper', 'Aggressive'), eaRoleKey('ST', 'Poacher', 'Attack')])
+    const groups = roleGroups(roles, 'CB', allowed)
     expect(groups).toHaveLength(1)
     expect(groups[0].options.map((o) => o.focus)).toEqual(['Balanced', 'Aggressive'])
     expect(firstFocus(groups[0]).roleId).toBe('stopper_balanced')
+  })
+
+  it('EA listesi yüklenmediyse rol seçici kilitli: hiçbir rol uydurulmaz (TAC-10)', () => {
+    expect(roleGroups([role('stopper_balanced', 'Stopper', 'Balanced', ['CB'])], 'CB', undefined)).toEqual([])
+  })
+
+  it('focus (mevki, rol) bazında süzülür: RM Winger Versatile oyunda yok', () => {
+    const roles = [role('winger_balanced', 'Winger', 'Balanced', ['RM', 'RW']), role('winger_versatile', 'Winger', 'Versatile', ['RM', 'RW'])]
+    const allowed = new Set([eaRoleKey('RM', 'Winger', 'Balanced'), eaRoleKey('RW', 'Winger', 'Balanced'), eaRoleKey('RW', 'Winger', 'Versatile')])
+    expect(roleGroups(roles, 'RM', allowed)[0].options.map((o) => o.focus)).toEqual(['Balanced'])
+    expect(roleGroups(roles, 'RW', allowed)[0].options.map((o) => o.focus)).toEqual(['Balanced', 'Versatile'])
   })
 
   it('OVR bandı eşikleri', () => {

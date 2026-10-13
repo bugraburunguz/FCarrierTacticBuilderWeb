@@ -5,6 +5,8 @@ import { Modal } from '../Modal'
 interface Props {
   position: string
   groups: RoleGroup[]
+  /** EA rol listesi hazır değilse seçici kilitli. */
+  lock?: { status: 'loading' | 'error'; retry: () => void }
   currentRoleId: string
   onApply: (roleId: string) => void
   onClose: () => void
@@ -19,7 +21,7 @@ export function RoleFocusModal(props: Props) {
   )
 }
 
-export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Props) {
+export function RoleFocusPanel({ groups, lock, currentRoleId, onApply, onClose }: Props) {
   const initial = groups.find((g) => g.options.some((o) => o.roleId === currentRoleId)) ?? groups[0]
   const [base, setBase] = useState(initial?.base)
   const [roleId, setRoleId] = useState(initial?.options.find((o) => o.roleId === currentRoleId)?.roleId ?? (initial ? firstFocus(initial).roleId : ''))
@@ -28,6 +30,15 @@ export function RoleFocusPanel({ groups, currentRoleId, onApply, onClose }: Prop
   function pickBase(next: RoleGroup) {
     setBase(next.base)
     setRoleId(firstFocus(next).roleId)
+  }
+
+  if (lock) {
+    return (
+      <div role="status" className="space-y-3 text-sm">
+        <p className="text-muted">{lock.status === 'loading' ? 'Oyundaki roller yükleniyor…' : 'Oyundaki rol listesi alınamadı; rol seçimi bu liste olmadan kapalı.'}</p>
+        {lock.status === 'error' && <button type="button" onClick={lock.retry} className="rounded-md bg-accent-bg px-3 py-1.5 text-[12.5px] font-bold text-on-accent">Yeniden dene</button>}
+      </div>
+    )
   }
 
   return (

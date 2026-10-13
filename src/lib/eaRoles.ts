@@ -13,8 +13,19 @@ export function eaRoleSet(options: EaRoleOption[]): Set<string> {
   return new Set(options.map((o) => eaRoleKey(o.position, o.baseRole, o.focus)))
 }
 
-/** EA'nın izin verdiği rol+odak kümesi (TAC-02): rol seçici yalnız bunları gösterir; yüklenene kadar filtre uygulanmaz. */
-export function useEaRoleSet(): Set<string> | undefined {
-  const query = useQuery({ queryKey: ['ea-roles'], queryFn: endpoints.eaRoles, staleTime: 3_600_000, retry: false })
-  return query.data && query.data.length > 0 ? eaRoleSet(query.data) : undefined
+export interface EaRolesState {
+  allowed?: Set<string>
+  status: 'loading' | 'error' | 'ready'
+  retry: () => void
+}
+
+/** EA'nın izin verdiği (mevki, rol, odak) kümesi (TAC-10): rol seçici yalnız bundan beslenir; yüklenene kadar kilitli, hata olursa yeniden denenir. */
+export function useEaRoles(): EaRolesState {
+  const query = useQuery({ queryKey: ['ea-roles'], queryFn: endpoints.eaRoles, staleTime: 3_600_000, retry: 3 })
+  const ready = query.data !== undefined && query.data.length > 0
+  return {
+    allowed: ready ? eaRoleSet(query.data!) : undefined,
+    status: ready ? 'ready' : query.isError || query.data?.length === 0 ? 'error' : 'loading',
+    retry: () => void query.refetch(),
+  }
 }

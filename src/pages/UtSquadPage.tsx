@@ -15,7 +15,7 @@ import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } 
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
-import { useEaRoleSet } from '../lib/eaRoles'
+import { useEaRoles } from '../lib/eaRoles'
 import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -53,7 +53,7 @@ function shortCoins(value?: number) {
 export function UtSquadPage() {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
-  const eaRoles = useEaRoleSet()
+  const eaRoles = useEaRoles()
   const saved = useMemo(() => utSquadStore.get(), [])
   const [formationId, setFormationId] = useState(saved?.formationId ?? DEFAULT_UT_FORMATION)
   const [setup, setSetup] = useState<Setup>(saved?.setup ?? DEFAULT_UT_SETUP)
@@ -331,7 +331,8 @@ export function UtSquadPage() {
       {dialog?.kind === 'role' && dialogSlot && (
         <RoleFocusModal
           position={dialogSlot.position}
-          groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles)}
+          groups={roleGroups(roles.data ?? [], dialogSlot.position, eaRoles.allowed)}
+                  lock={eaRoles.status === 'ready' ? undefined : { status: eaRoles.status, retry: eaRoles.retry }}
           currentRoleId={roleBySlot[dialogSlot.slotId]?.roleId ?? dialogSlot.defaultRole}
           onApply={(rid) => {
             setRoleOverride((cur) => ({ ...cur, [dialogSlot.slotId]: rid }))

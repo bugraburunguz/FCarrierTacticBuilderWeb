@@ -24,11 +24,14 @@ export interface RoleGroup {
 
 import { eaRoleKey } from './eaRoles'
 
-/** Mevkide gerçekten var olan roller, ailesine göre gruplu. Backend ne veriyorsa o; frontend rol uydurmaz. */
-export function roleGroups(roles: Role[], position: string, allowed?: Set<string>): RoleGroup[] {
+/** Mevkide oyunda gerçekten var olan roller, ailesine göre gruplu. EA listesi (allowed) yoksa seçici kilitli: boş döner, rol uydurulmaz (TAC-10). */
+export function roleGroups(roles: Role[], position: string, allowed: Set<string> | undefined): RoleGroup[] {
+  if (!allowed) {
+    return []
+  }
   const groups = new Map<string, FocusOption[]>()
   roles
-    .filter((r) => r.positions.includes(position) && (!allowed || allowed.has(eaRoleKey(position, roleBaseName(r), r.focus))))
+    .filter((r) => r.positions.includes(position) && allowed.has(eaRoleKey(position, roleBaseName(r), r.focus)))
     .forEach((r) => {
       const base = roleBaseName(r)
       groups.set(base, [...(groups.get(base) ?? []), { focus: r.focus, roleId: r.id }])
