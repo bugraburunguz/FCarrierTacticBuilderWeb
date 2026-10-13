@@ -38,7 +38,7 @@ export function Button({ variant = 'primary', className, ...props }: ButtonHTMLA
   const styles: Record<ButtonVariant, string> = {
     primary: 'bg-accent-bg text-on-accent hover:opacity-90 disabled:opacity-40',
     secondary: 'border border-line bg-surface text-ink hover:bg-surface-2 disabled:opacity-40',
-    danger: 'bg-danger text-surface hover:opacity-90 disabled:opacity-40',
+    danger: 'bg-danger text-on-accent hover:opacity-90 disabled:opacity-40',
     ghost: 'text-muted hover:bg-surface-2 hover:text-ink disabled:opacity-40',
   }
   return (

@@ -1,0 +1,37 @@
+{
+  "taskId": "V3-04",
+  "route": "/squad/builder",
+  "mode": "career",
+  "matrix": "core",
+  "base": "http://localhost:8081",
+  "shots": [
+    {
+      "file": "career-dark-375-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-reduced-motion-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-reduced-transparency-pick.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    }
+  ]
+}

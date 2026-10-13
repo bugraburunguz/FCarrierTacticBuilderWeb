@@ -122,7 +122,7 @@ for (const v of variants) {
 }
 await browser.close()
 
-const reportPath = fileURLToPath(new URL(stateTag ? `gates-report-${stateTag}.json` : 'gates-report.json', out))
+const reportPath = fileURLToPath(new URL(`gates-report-${mode}${stateTag ? `-${stateTag}` : ''}.json`, out))
 writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n')
 const bad = report.shots.filter((s) => s.horizontalOverflow || s.axeSeriousCritical > 0 || s.consoleAndNetwork.length > 0)
 console.log(`${report.shots.length} görüntü; sorunlu: ${bad.length}`)

@@ -34,6 +34,8 @@ interface Drag {
 
 const DRAG_THRESHOLD = 6
 const CARD_RATIO = 0.13
+/** Kartın altındaki rol etiketi (2 satır) + mevki rozeti + boşluklar, px. */
+const BLOCK_EXTRA = 74
 const MIN_CARD = 44
 const MAX_CARD = 96
 
@@ -61,6 +63,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   const boxRef = useRef<HTMLDivElement>(null)
   const [cardWidth, setCardWidth] = useState(72)
   const [fieldWidth, setFieldWidth] = useState(560)
+  const [fieldHeight, setFieldHeight] = useState(865)
   const [drag, setDrag] = useState<Drag | null>(null)
   const [hover, setHover] = useState<string>()
   const [moving, setMoving] = useState<string>()
@@ -76,6 +79,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
     }
     const observer = new ResizeObserver(([entry]) => {
       setFieldWidth(entry.contentRect.width)
+      setFieldHeight(entry.contentRect.height)
       setCardWidth(Math.round(Math.min(MAX_CARD, Math.max(MIN_CARD, entry.contentRect.width * CARD_RATIO))))
     })
     observer.observe(box)
@@ -121,6 +125,9 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   // Rol etiketi saha kenarında kesilmesin (11 Q11): etiket yarı genişliği kadar içeride tut.
   const labelWidth = Math.round(Math.min(112, Math.max(72, cardWidth * 1.9)))
   const edge = ((labelWidth / 2 + 4) / Math.max(fieldWidth, 1)) * 100
+  // Kart + 2 satır rol etiketi + mevki rozeti bloğu da alt/üst kenarda kesilmesin.
+  const blockHeight = Math.round(cardWidth * 1.35) + BLOCK_EXTRA
+  const edgeY = ((blockHeight / 2 + 4) / Math.max(fieldHeight, 1)) * 100
   const bySlot = useMemo(() => new Map(slots.map((s) => [s.slotId, s])), [slots])
   const hovered = hover ? bySlot.get(hover)?.player : undefined
   const dragged = drag ? bySlot.get(drag.slotId) : undefined
@@ -163,7 +170,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   }
 
   return (
-    <div ref={boxRef} className="pitch-field relative mx-auto aspect-[68/105] w-full max-w-[560px] overflow-hidden rounded-md border border-grass-900 bg-grass-700">
+    <div ref={boxRef} className="pitch-field relative mx-auto aspect-[68/105] max-[479px]:aspect-[68/150] w-full max-w-[560px] overflow-hidden rounded-md border border-grass-900 bg-grass-700">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 680 1050" preserveAspectRatio="none" aria-hidden="true">
         {STRIPES.map((i) => (
           <rect key={i} x="0" y={i * 87.5} width="680" height="87.5" fill={i % 2 === 0 ? 'var(--pitch-a, var(--color-grass-700))' : 'var(--pitch-b, var(--color-grass-500))'} opacity={i % 2 === 0 ? 1 : 0.85} />
@@ -197,7 +204,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
         const linked = Boolean(hovered) && hover !== slot.slotId && shares(hovered, slot.player)
         const isOver = Boolean(drag) && drag?.over === slot.slotId && drag?.slotId !== slot.slotId
         return (
-          <div key={slot.slotId} className="absolute -translate-x-1/2 -translate-y-1/2 text-center" style={{ left: `${Math.min(Math.max(slot.x, edge), 100 - edge)}%`, top: `${slot.y}%`, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
+          <div key={slot.slotId} className="absolute -translate-x-1/2 -translate-y-1/2 text-center" style={{ left: `${Math.min(Math.max(slot.x, edge), 100 - edge)}%`, top: `${Math.min(Math.max(slot.y, edgeY), 100 - edgeY)}%`, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
             <div className="group relative inline-block">
             <div
               role="button"
