@@ -8,6 +8,7 @@ CREATE TEMP TABLE doomed_career AS SELECT id FROM career WHERE user_id IN (SELEC
 DELETE FROM roster_event WHERE career_id IN (SELECT id FROM doomed_career);
 DELETE FROM user_player_state WHERE career_id IN (SELECT id FROM doomed_career);
 DELETE FROM user_save_snapshot WHERE career_id IN (SELECT id FROM doomed_career);
+DELETE FROM player_rating WHERE base_player_id IN (SELECT id FROM base_player WHERE owner_career_id IN (SELECT id FROM doomed_career)); -- üretilen oyuncuların derecelendirmesi (FK cascade değil)
 DELETE FROM career WHERE id IN (SELECT id FROM doomed_career);
 DELETE FROM contributor_audit WHERE user_id IN (SELECT id FROM doomed_user);
 DELETE FROM contributor WHERE user_id IN (SELECT id FROM doomed_user);

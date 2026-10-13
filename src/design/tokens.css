@@ -39,7 +39,7 @@
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
   --font-display: "Barlow Condensed", system-ui, sans-serif;
   /* Inter dosyası henüz yok (paket onayı bekliyor): o gelene kadar IBM Plex Sans. */
-  --font-body: "Inter", "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "Inter Variable", "Inter", "IBM Plex Sans", system-ui, sans-serif;
   --font-num: "IBM Plex Mono", ui-monospace, monospace;
 
   --aurora-opacity: 0.45;
