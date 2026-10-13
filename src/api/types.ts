@@ -943,6 +943,10 @@ export interface SbcRequirement {
   value?: number
   level?: number
   refs?: SbcRef[]
+  /** Aynı slottaki PLAYER_COUNT (parser v2). */
+  count?: number
+  /** Ham elgReq girdileri; bilinmeyen şartın tipi buradadır. */
+  raw?: { type?: string; eligibilityValue?: number }[]
 }
 
 export interface SbcChallenge {

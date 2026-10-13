@@ -52,3 +52,17 @@ describe('SBC challenge → çözücü kısıtları', () => {
     expect(describeRequirement(challenge.requirements[6])).toBe("Takım rating'i en az 75")
   })
 })
+
+describe('describeRequirement — parser v2 türleri (BE-BUG-05)', () => {
+  it('sayısı olan ana şart sayıyı korur', () => {
+    expect(describeRequirement({ kind: 'RARITY_GROUP', op: 'MIN', value: 23, count: 1 })).toBe('Özel kart grubu #23: en az 1 oyuncu')
+    expect(describeRequirement({ kind: 'MIN_OVR', op: 'MIN', value: 82, count: 2 })).toBe('en az 2 oyuncu en az 82 OVR')
+    expect(describeRequirement({ kind: 'EXACT_OVR', op: 'EXACT', value: 85, count: 1 })).toBe('tam 1 oyuncu tam 85 OVR')
+    expect(describeRequirement({ kind: 'CHEMISTRY_PER_PLAYER', op: 'MIN', value: 2 })).toBe('Her oyuncuda kimya en az 2')
+    expect(describeRequirement({ kind: 'TEAM_STAR_RATING', op: 'MIN', value: 4 })).toBe('Takım yıldızı en az 4')
+  })
+
+  it('bilinmeyen şart ham tipini gösterir', () => {
+    expect(describeRequirement({ kind: 'UNKNOWN', op: 'MIN', value: 9, raw: [{ type: 'BRAND_NEW_KEY' }] })).toBe('Şart: BRAND_NEW_KEY en az 9')
+  })
+})

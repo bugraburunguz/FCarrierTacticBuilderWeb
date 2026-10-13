@@ -34,8 +34,30 @@ export function describeRequirement(r: SbcRequirement): string {
       const names = (r.refs ?? []).map((x) => x.name ?? `${REF_LABEL[x.kind as keyof typeof REF_LABEL] ?? x.kind} #${x.id}`).join(' / ')
       return `${names} içinden ${op} ${r.value} oyuncu`
     }
+    case 'RARITY_GROUP':
+      return `Özel kart grubu #${r.value}: ${op} ${r.count ?? 1} oyuncu`
+    case 'RARITY':
+      return `Nadirlik #${r.value}: ${op} ${r.count ?? 1} oyuncu`
+    case 'MIN_OVR':
+      return `${op} ${r.count ?? 1} oyuncu en az ${r.value} OVR`
+    case 'MAX_OVR':
+      return `${op} ${r.count ?? 1} oyuncu en çok ${r.value} OVR`
+    case 'EXACT_OVR':
+      return `${op} ${r.count ?? 1} oyuncu tam ${r.value} OVR`
+    case 'CHEMISTRY_PER_PLAYER':
+      return `Her oyuncuda kimya ${op} ${r.value}`
+    case 'TEAM_STAR_RATING':
+      return `Takım yıldızı ${op} ${r.value}`
+    case 'FIRST_OWNER':
+      return `İlk sahibi olduğun ${op} ${r.value} oyuncu`
+    case 'TRADABILITY':
+      return `Ticaret durumu şartı (${op} ${r.count ?? 1} oyuncu)`
+    case 'LEGEND_COUNT':
+      return `${op} ${r.value} efsane`
+    case 'PLAYER_COUNT':
+      return `${op} ${r.value} oyuncu`
     default:
-      return `Şart: ${r.kind.replace('UNKNOWN:', '')} ${op} ${r.value ?? ''}`.trim()
+      return `Şart: ${r.raw?.[0]?.type ?? r.kind} ${op} ${r.value ?? ''}`.trim()
   }
 }
 
