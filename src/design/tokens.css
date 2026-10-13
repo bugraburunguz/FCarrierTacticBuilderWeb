@@ -75,6 +75,7 @@
   --ink: #0d1424; --ink-2: #2b3547; --muted: #5b6577; --faint: #8b94a5;
   --accent: #4353ff; --accent-ink: #ffffff; --accent-soft: rgba(67, 83, 255, 0.12);
   --good: #14733c; --warn: #8a5a00; --bad: #a82227; --info: #1d5fc4;
+  --pitch-1: #1f6a45; --pitch-2: #1a5c3c; --pitch-line: rgba(255, 255, 255, 0.55); /* saha tema bağımsız içerik yüzeyi: açık temada da koyu çim (F4) */
   --aurora-opacity: 0.28;
   --grain-opacity: 0.02;
   color-scheme: light;

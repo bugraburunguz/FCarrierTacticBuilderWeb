@@ -1,3 +1,4 @@
+import type { PlayerSummary } from '../api/types'
 import type { CardPlayer } from '../components/card/PlayerCard'
 import type { SbcCandidate } from './sbcTraditional'
 import type { UtCard } from './utCard'
@@ -20,5 +21,23 @@ export function cardPlayerOf(card: UtCard | SbcCandidate, position?: string): Ca
     faceStatsApproximate: isUt ? card.faceStatsApproximate : undefined,
     weakFoot: isUt ? card.weakFoot : undefined,
     skillMoves: isUt ? card.skillMoves : undefined,
+  }
+}
+
+/** Katalog/kariyer oyuncusu → kart bileşeninin beklediği biçim (yüz değerleri dahil). */
+export function cardPlayerOfSummary(player: PlayerSummary, position?: string): CardPlayer {
+  return {
+    name: player.name,
+    rating: player.overall,
+    position,
+    faceUrl: player.faceUrl,
+    nationality: player.nationality,
+    club: player.club,
+    league: player.league,
+    faceStats: player.faceStats,
+    faceLabels: player.faceLabels,
+    faceStatsApproximate: player.faceStatsApproximate,
+    weakFoot: player.weakFoot,
+    skillMoves: player.skillMoves,
   }
 }

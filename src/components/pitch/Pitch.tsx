@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { PlayerCard, type CardPlayer } from '../card/PlayerCard'
 import type { FitState } from '../card/FitBadge'
+import { layoutPitch } from './layout'
+import { fitRoleName, shortRoleLabel } from './shortRole'
 
 export interface PitchSlot {
   slotId: string
@@ -33,11 +35,12 @@ interface Drag {
 }
 
 const DRAG_THRESHOLD = 6
-const CARD_RATIO = 0.13
-/** Kartın altındaki rol etiketi (2 satır) + mevki rozeti + boşluklar, px. */
-const BLOCK_EXTRA = 74
-const MIN_CARD = 44
-const MAX_CARD = 96
+/** Dar ekran sınırı: altında rol etiketi tek satırlık kısa forma iner (F1). */
+const NARROW_PX = 480
+/** Çalışma alanı iki sütunlu olduğunda (≥820px) saha görünür yüksekliğe ölçeklenir; altta ipucu satırı + dolgu için ayrılan px. */
+const DESKTOP_MIN_VIEWPORT = 820
+const RESERVE_BELOW = 48
+const MIN_FIELD_HEIGHT = 360
 
 function slotAt(x: number, y: number): string | undefined {
   const element = document.elementsFromPoint(x, y).find((el) => (el as HTMLElement).dataset?.pitchSlot !== undefined) as HTMLElement | undefined
@@ -61,9 +64,8 @@ const STRIPES = Array.from({ length: 12 }, (_, i) => i)
  */
 export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Props) {
   const boxRef = useRef<HTMLDivElement>(null)
-  const [cardWidth, setCardWidth] = useState(72)
   const [fieldWidth, setFieldWidth] = useState(560)
-  const [fieldHeight, setFieldHeight] = useState(865)
+  const [available, setAvailable] = useState<number>()
   const [drag, setDrag] = useState<Drag | null>(null)
   const [hover, setHover] = useState<string>()
   const [moving, setMoving] = useState<string>()
@@ -72,18 +74,26 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
   const swapRef = useRef(onSwap)
   swapRef.current = onSwap
 
-  useEffect(() => {
+  // Genişlik kapsayıcıdan, yükseklik (iki sütunlu düzende) görünür pencereden: saha kaydırma gerektirmeden sığar.
+  useLayoutEffect(() => {
     const box = boxRef.current
-    if (!box || typeof ResizeObserver === 'undefined') {
+    if (!box) {
       return undefined
     }
-    const observer = new ResizeObserver(([entry]) => {
-      setFieldWidth(entry.contentRect.width)
-      setFieldHeight(entry.contentRect.height)
-      setCardWidth(Math.round(Math.min(MAX_CARD, Math.max(MIN_CARD, entry.contentRect.width * CARD_RATIO))))
-    })
-    observer.observe(box)
-    return () => observer.disconnect()
+    const measure = () => {
+      setFieldWidth(box.getBoundingClientRect().width)
+      const top = box.getBoundingClientRect().top + window.scrollY
+      setAvailable(window.innerWidth >= DESKTOP_MIN_VIEWPORT ? Math.max(MIN_FIELD_HEIGHT, window.innerHeight - top - RESERVE_BELOW) : undefined)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(measure)
+    observer?.observe(box)
+    observer?.observe(document.body) // üstteki içerik (banner, yüklenen başlık) kayınca saha yüksekliği yeniden hesaplanır
+    return () => {
+      window.removeEventListener('resize', measure)
+      observer?.disconnect()
+    }
   }, [])
 
   useEffect(() => {
@@ -122,12 +132,13 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
     }
   }, [])
 
-  // Rol etiketi saha kenarında kesilmesin (11 Q11): etiket yarı genişliği kadar içeride tut.
-  const labelWidth = Math.round(Math.min(112, Math.max(72, cardWidth * 1.9)))
-  const edge = ((labelWidth / 2 + 4) / Math.max(fieldWidth, 1)) * 100
-  // Kart + 2 satır rol etiketi + mevki rozeti bloğu da alt/üst kenarda kesilmesin.
-  const blockHeight = Math.round(cardWidth * 1.35) + BLOCK_EXTRA
-  const edgeY = ((blockHeight / 2 + 4) / Math.max(fieldHeight, 1)) * 100
+  // Slot grubu (kart + rol + mevki) tek birimdir; bantlar formasyon katmanlarından, çakışmasız (Q17).
+  const layout = useMemo(
+    () => layoutPitch({ slots: slots.map((s) => ({ slotId: s.slotId, x: s.x, y: s.y })), width: fieldWidth, height: available, narrow: fieldWidth < NARROW_PX }),
+    [slots, fieldWidth, available],
+  )
+  const { cardWidth, labelWidth, labelMode, fieldHeight } = layout
+  const boxById = useMemo(() => new Map(layout.boxes.map((b) => [b.slotId, b])), [layout])
   const bySlot = useMemo(() => new Map(slots.map((s) => [s.slotId, s])), [slots])
   const hovered = hover ? bySlot.get(hover)?.player : undefined
   const dragged = drag ? bySlot.get(drag.slotId) : undefined
@@ -169,29 +180,36 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
     }
   }
 
+  const W = fieldWidth
+  const H = fieldHeight
+  const inset = 8
+  const boxW = Math.min(W * 0.593, W - 2 * inset)
+  const boxD = Math.min(H * 0.157, H / 4)
+  const goalW = W * 0.27
+  const goalD = Math.min(H * 0.052, H / 8)
+  const circle = Math.min(W * 0.1346, H * 0.0871)
+
   return (
-    <div ref={boxRef} className="pitch-field relative mx-auto aspect-[68/105] max-[479px]:aspect-[68/150] w-full max-w-[560px] overflow-hidden rounded-md border border-grass-900 bg-grass-700">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 680 1050" preserveAspectRatio="none" aria-hidden="true">
+    <div ref={boxRef} className="pitch-field relative w-full" style={{ height: fieldHeight }}>
+      <div className="absolute inset-0 overflow-hidden rounded-md border border-grass-900 bg-grass-700">
+      <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
         {STRIPES.map((i) => (
-          <rect key={i} x="0" y={i * 87.5} width="680" height="87.5" fill={i % 2 === 0 ? 'var(--pitch-a, var(--color-grass-700))' : 'var(--pitch-b, var(--color-grass-500))'} opacity={i % 2 === 0 ? 1 : 0.85} />
+          <rect key={i} x="0" y={(i * H) / STRIPES.length} width={W} height={H / STRIPES.length} fill={i % 2 === 0 ? 'var(--pitch-a, var(--color-grass-700))' : 'var(--pitch-b, var(--color-grass-500))'} opacity={i % 2 === 0 ? 1 : 0.85} />
         ))}
-        <g fill="none" stroke="var(--pitch-line, var(--color-chalk))" strokeWidth="3" opacity="0.8">
-          <rect x="30" y="30" width="620" height="990" />
-          <line x1="30" y1="525" x2="650" y2="525" />
-          <circle cx="340" cy="525" r="91" />
-          <rect x="138" y="30" width="404" height="165" />
-          <rect x="138" y="855" width="404" height="165" />
-          <rect x="230" y="30" width="220" height="55" />
-          <rect x="230" y="965" width="220" height="55" />
-          <path d="M248 195 A91 91 0 0 0 432 195" />
-          <path d="M248 855 A91 91 0 0 1 432 855" />
+        <g fill="none" stroke="var(--pitch-line, var(--color-chalk))" strokeWidth="2" opacity="0.8">
+          <rect x={inset} y={inset} width={W - 2 * inset} height={H - 2 * inset} />
+          <line x1={inset} y1={H / 2} x2={W - inset} y2={H / 2} />
+          <circle cx={W / 2} cy={H / 2} r={circle} />
+          <rect x={(W - boxW) / 2} y={inset} width={boxW} height={boxD} />
+          <rect x={(W - boxW) / 2} y={H - inset - boxD} width={boxW} height={boxD} />
+          <rect x={(W - goalW) / 2} y={inset} width={goalW} height={goalD} />
+          <rect x={(W - goalW) / 2} y={H - inset - goalD} width={goalW} height={goalD} />
         </g>
-        <g fill="var(--color-chalk)" opacity="0.8">
-          <circle cx="340" cy="525" r="5" />
-          <circle cx="340" cy="140" r="4" />
-          <circle cx="340" cy="910" r="4" />
+        <g fill="var(--pitch-line, var(--color-chalk))" opacity="0.8">
+          <circle cx={W / 2} cy={H / 2} r="3" />
         </g>
       </svg>
+      </div>
 
       {moving && (
         <p role="status" className="absolute left-2 top-2 z-20 rounded-sm bg-ink-950/85 px-2 py-1 font-display text-xs font-semibold tracking-wide text-flood-400">
@@ -200,11 +218,16 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
       )}
 
       {slots.map((slot) => {
+        const box = boxById.get(slot.slotId)
+        if (!box) {
+          return null
+        }
         const dimmed = Boolean(hovered) && hover !== slot.slotId && !shares(hovered, slot.player)
         const linked = Boolean(hovered) && hover !== slot.slotId && shares(hovered, slot.player)
         const isOver = Boolean(drag) && drag?.over === slot.slotId && drag?.slotId !== slot.slotId
+        const [roleName, ...roleRest] = (slot.roleLabel ?? '').split(' · ')
         return (
-          <div key={slot.slotId} className="absolute -translate-x-1/2 -translate-y-1/2 text-center" style={{ left: `${Math.min(Math.max(slot.x, edge), 100 - edge)}%`, top: `${Math.min(Math.max(slot.y, edgeY), 100 - edgeY)}%`, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
+          <div key={slot.slotId} data-slot-group={slot.slotId} className="absolute flex flex-col items-center text-center" style={{ left: box.cx - box.width / 2, top: box.top, width: box.width, height: box.height, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
             <div className="group relative inline-block">
             <div
               role="button"
@@ -235,7 +258,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
               {slot.player ? (
                 <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} />
               ) : (
-                <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.35) }}>
+                <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
                   <span className="text-xl leading-none">+</span>
                 </span>
               )}
@@ -264,13 +287,19 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
                   e.stopPropagation()
                   onPickRole?.(slot.slotId)
                 }}
-                style={{ width: labelWidth }} className="mt-2 block rounded-sm bg-ink-950/80 px-1.5 py-0.5 text-center text-xs font-semibold leading-tight text-paper-50 hover:bg-ink-950"
+                style={{ width: labelWidth, marginTop: 12 }} className="mx-auto block rounded-sm bg-ink-950/80 px-1.5 py-0.5 text-center text-xs font-semibold leading-tight text-paper-50 hover:bg-ink-950"
               >
-                <span className="block break-words">{slot.roleLabel.split(' · ')[0]}</span>
-                {slot.roleLabel.includes(' · ') && <span className="block font-normal text-chalk">{slot.roleLabel.split(' · ').slice(1).join(' · ')}</span>}
+                {labelMode === 'one' ? (
+                  <span className="block whitespace-nowrap">{shortRoleLabel(slot.roleLabel)}</span>
+                ) : (
+                  <>
+                    <span className="block whitespace-nowrap">{fitRoleName(roleName)}</span>
+                    {roleRest.length > 0 && <span className="block font-normal text-chalk">{roleRest.join(' · ')}</span>}
+                  </>
+                )}
               </button>
             )}
-            <span className="mt-1 inline-block rounded-sm bg-ink-950/80 px-1.5 font-mono text-xs leading-5 text-paper-50">{slot.position}</span>
+            <span data-slot-pill className="mt-0.5 block rounded-sm bg-ink-950/80 px-1.5 font-mono text-xs leading-[18px] text-paper-50">{slot.position}</span>
           </div>
         )
       })}

@@ -1,10 +1,10 @@
 import type { BehaviorTag, CareerPlayer, FormationSlot, Preset, Role } from '../../api/types'
 import { SlotSuggestions } from '../../components/SlotSuggestions'
 import { BehaviorsPanel } from '../../components/squadBuilder/BehaviorsPanel'
-import { PlayerSelectPanel } from '../../components/squadBuilder/PlayerSelectModal'
 import { RoleFocusPanel } from '../../components/squadBuilder/RoleFocusModal'
 import type { SlotTab } from '../../components/squadBuilder/SlotModal'
 import { roleGroups } from '../../lib/squadBuilder'
+import { CareerPickList } from './pick/CareerPickList'
 import type { TacticSetup } from './types'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
 
@@ -32,7 +32,7 @@ export function careerSlotTabs({ ws, slot, hasCareer, candidates, roleId, slotTa
       id: 'card',
       label: 'Oyuncu',
       node: hasCareer ? (
-        <PlayerSelectPanel
+        <CareerPickList
           position={slot.position}
           roleId={roleId}
           tags={slotTags}
@@ -40,6 +40,10 @@ export function careerSlotTabs({ ws, slot, hasCareer, candidates, roleId, slotTa
           currentPlayerId={ws.state.assigned[slot.slotId]}
           onPick={(pid) => {
             ws.assign(slot.slotId, pid)
+            ws.clearSelection()
+          }}
+          onClear={() => {
+            ws.assign(slot.slotId, null)
             ws.clearSelection()
           }}
         />

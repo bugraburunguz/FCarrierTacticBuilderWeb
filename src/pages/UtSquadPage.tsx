@@ -66,19 +66,17 @@ export function UtSquadPage() {
   })
   const evalBySlot = Object.fromEntries((evaluation.data?.slots ?? []).map((e) => [e.slotId, e]))
 
-  const chem = useMemo(
-    () =>
-      squadChemistry(
-        slots.map((s, i) => {
-          const p = picked[s.slotId]
-          return {
-            position: s.position,
-            card: p ? { id: i, gender: p.gender, club: p.club, league: p.league, nationality: p.nationality, clubId: p.clubId, leagueId: p.leagueId, nationId: p.nationId, positions: p.positions, cardType: p.cardType } : undefined,
-          }
-        }),
-      ),
-    [slots, picked],
-  )
+  const chemOf = (cardAt: (slotId: string) => UtCard | undefined) =>
+    squadChemistry(
+      slots.map((s, i) => {
+        const p = cardAt(s.slotId)
+        return {
+          position: s.position,
+          card: p ? { id: i, gender: p.gender, club: p.club, league: p.league, nationality: p.nationality, clubId: p.clubId, leagueId: p.leagueId, nationId: p.nationId, positions: p.positions, cardType: p.cardType } : undefined,
+        }
+      }),
+    )
+  const chem = useMemo(() => chemOf((slotId) => picked[slotId]), [slots, picked]) // eslint-disable-line react-hooks/exhaustive-deps
   const price = priceSummary(slots.map((s) => picked[s.slotId]))
 
   const roleById = new Map((ws.roles.data ?? []).map((r) => [r.id, r]))
@@ -133,6 +131,13 @@ export function UtSquadPage() {
     position: pickDialog.position,
     current: picked[pickDialog.slotId],
     roleName: roleBySlot.get(pickDialog.slotId)?.roleName,
+    roleId: roleBySlot.get(pickDialog.slotId)?.roleId,
+    setup,
+    chemFor: (card: UtCard) => chemOf((slotId) => (slotId === pickDialog.slotId ? card : picked[slotId])).perSlot[slots.indexOf(pickDialog)] as 0 | 1 | 2 | 3,
+    onClear: () => {
+      ws.assign(pickDialog.slotId, null)
+      ws.clearSelection()
+    },
     evaluation: evalBySlot[pickDialog.slotId],
     chemLinks: chem.perSlot[slots.indexOf(pickDialog)],
     usedKeys: new Set(Object.values(picked).map(personKey)),
