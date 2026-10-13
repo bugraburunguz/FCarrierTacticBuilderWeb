@@ -10,7 +10,7 @@ import { CompareTray } from './CompareTray'
 import { VerifyEmailBanner } from './VerifyEmailBanner'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
-import { modeStore, useMode, type AppMode } from '../state/modeStore'
+import { modeForPath, modeStore, useMode, type AppMode } from '../state/modeStore'
 import { themeStore, useTheme } from '../state/themeStore'
 
 const THEME_LABEL = { dark: 'Koyu', light: 'Açık', system: 'Sistem' } as const
@@ -97,8 +97,9 @@ export function Layout() {
     }
   }, [authenticated, careers.data, activeCareer])
   useEffect(() => {
-    if (pathname.startsWith('/ut/') && modeStore.get() !== 'ut') {
-      modeStore.set('ut')
+    const forced = modeForPath(pathname)
+    if (forced && modeStore.get() !== forced) {
+      modeStore.set(forced)
     }
   }, [pathname])
   const activeGroup = nav.find((g) => g.match.some((m) => pathname === m || pathname.startsWith(`${m}/`)))

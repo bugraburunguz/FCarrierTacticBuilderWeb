@@ -35,3 +35,13 @@ export const modeStore = {
 export function useMode(): AppMode {
   return useSyncExternalStore(modeStore.subscribe, modeStore.get, modeStore.get)
 }
+
+const CAREER_PREFIXES = ['/career', '/squad', '/tactics', '/recommend', '/scouting', '/teams', '/wonderkids']
+
+/** Mod URL önekinden çıkar (WEB-BUG-07): /ut → ut, kariyer yolları → career; ortak sayfalarda (ana sayfa, oyuncular, profil) son seçim korunur (undefined). */
+export function modeForPath(pathname: string): AppMode | undefined {
+  if (pathname === '/ut' || pathname.startsWith('/ut/')) {
+    return 'ut'
+  }
+  return CAREER_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ? 'career' : undefined
+}
