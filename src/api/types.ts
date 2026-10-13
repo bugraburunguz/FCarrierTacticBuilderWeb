@@ -959,6 +959,10 @@ export interface SbcChallenge {
   name: string
   status?: string
   type?: string
+  /** Bilgi tabanından gelen challenge türü ('ITEM_SCORE' = hedef skor tipi). */
+  kind?: string
+  /** Hedef SBC skoru (ITEM_SCORE). */
+  pointsRequired?: number
   formation?: string
   formationLabel?: string
   repeatable: boolean

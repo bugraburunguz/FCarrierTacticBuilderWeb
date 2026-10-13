@@ -1,5 +1,10 @@
 import type { KbSbcSet, SbcChallenge } from '../api/types'
 
+/** Hedef skor tipi (item-score) challenge'lar squad değil streamlined çözücüyle çözülür. */
+export function isItemScore(challenge: SbcChallenge): boolean {
+  return challenge.kind === 'ITEM_SCORE' || challenge.type === 'ONE_CLICK' || challenge.type === 'BRICK'
+}
+
 /** Herkese açık bilgi tabanındaki challenge'ı çözücünün kullandığı biçime çevirir (şartlar aynı normalleştirilmiş yapıdadır). */
 export function kbChallenges(set?: KbSbcSet): SbcChallenge[] {
   return (set?.challenges ?? []).map((c) => ({
@@ -9,6 +14,8 @@ export function kbChallenges(set?: KbSbcSet): SbcChallenge[] {
     name: c.name,
     status: 'NOT_STARTED',
     type: c.kind === 'ITEM_SCORE' ? 'ONE_CLICK' : 'OPEN_CHALLENGE',
+    kind: c.kind,
+    pointsRequired: c.itemScoreTarget,
     formation: c.formation,
     formationLabel: c.formation,
     repeatable: set!.repeatable !== undefined && set!.repeatable !== null,

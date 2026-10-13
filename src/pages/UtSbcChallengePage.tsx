@@ -5,7 +5,8 @@ import { TraditionalSbc } from '../components/TraditionalSbc'
 import { SbcVote, useSbcVotes } from '../components/SbcVote'
 import { Card, Skeleton } from '../components/ui'
 import { challengeSetup, describeRequirement } from '../lib/sbcChallenge'
-import { kbChallenges } from '../lib/kbSbc'
+import { isItemScore, kbChallenges } from '../lib/kbSbc'
+import { StreamlinedSolver } from '../components/StreamlinedSolver'
 import { useUtCapture } from '../state/utCaptureStore'
 
 export function UtSbcChallengePage() {
@@ -59,7 +60,9 @@ export function UtSbcChallengePage() {
           </div>
         )}
       </Card>
-      <TraditionalSbc key={challenge.challengeId} challenge={challenge} autoRun />
+      {isItemScore(challenge)
+        ? <StreamlinedSolver key={challenge.challengeId} initialTarget={challenge.pointsRequired} />
+        : <TraditionalSbc key={challenge.challengeId} challenge={challenge} autoRun />}
     </div>
   )
 }
