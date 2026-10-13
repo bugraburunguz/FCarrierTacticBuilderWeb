@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { request } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
+import { useRulesStale } from '../state/rulesStore'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
 import { parseChallengeText } from '../lib/sbcText'
 
@@ -22,6 +23,7 @@ const KINDS = [
 /** Yönetici CMS'i (DATA-07). Kimlik JWT'deki ADMIN rolüdür (BE-SEC-07); paylaşılan anahtar tarayıcıya girmez. */
 export function AdminUtPage() {
   const { me, authenticated } = useAuth()
+  const rulesStale = useRulesStale()
   const [tab, setTab] = useState<Tab>('queue')
   const call = <T,>(path: string, method: 'GET' | 'POST' | 'PUT' = 'GET', body?: unknown) => request<T>(`/admin/ut${path}`, { method, body })
 
@@ -33,6 +35,7 @@ export function AdminUtPage() {
   }
   return (
     <div className="space-y-4">
+      {rulesStale && <p role="alert" className="rounded-md border border-line bg-code-soft px-3 py-2 text-sm text-code">Kural kopyası eski: sunucudaki oyun kuralları paketli kopyadan farklı. <code>npm run sync:rules</code> ile güncelle.</p>}
       <Card title="Yönetici">
         <div role="tablist" aria-label="Bölüm" className="flex flex-wrap gap-1.5">
           {TABS.map((t) => (

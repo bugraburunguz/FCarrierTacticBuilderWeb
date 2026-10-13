@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import bundled from '../lib/utRules.fc27.json'
+import bundledHash from '../lib/utRules.fc27.hash.json'
 
 export type UtRulesDoc = typeof bundled
 
@@ -9,6 +10,7 @@ export type UtRulesDoc = typeof bundled
  */
 let current: UtRulesDoc = bundled
 let source: 'bundled' | 'server' = 'bundled'
+let stale = false
 const listeners = new Set<() => void>()
 
 function isRulesDoc(value: unknown): value is UtRulesDoc {
@@ -19,18 +21,26 @@ function isRulesDoc(value: unknown): value is UtRulesDoc {
 export const rulesStore = {
   get: () => current,
   source: () => source,
+  /** Sunucudaki kural hash'i paketli kopyadan farklı (kopya eski). */
+  stale: () => stale,
   set(doc: unknown): boolean {
     if (!isRulesDoc(doc)) {
       return false
     }
+    const served = (doc as { rulesHash?: string }).rulesHash
     current = doc
     source = 'server'
+    stale = Boolean(served) && served !== bundledHash.rulesHash
+    if (stale) {
+      console.warn("Oyun kuralları: kural kopyası eski (sunucu hash'i farklı). `npm run sync:rules` ile güncelle.")
+    }
     listeners.forEach((l) => l())
     return true
   },
   reset() {
     current = bundled
     source = 'bundled'
+    stale = false
     listeners.forEach((l) => l())
   },
   subscribe(listener: () => void) {
@@ -46,6 +56,10 @@ export async function hydrateRules(fetchRules: () => Promise<unknown>): Promise<
   } catch {
     /* paketli kopya geçerli */
   }
+}
+
+export function useRulesStale(): boolean {
+  return useSyncExternalStore(rulesStore.subscribe, rulesStore.stale)
 }
 
 export function useUtRules(): UtRulesDoc {
