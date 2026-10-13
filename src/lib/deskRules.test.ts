@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer, SlotAssignment } from '../api/types'
-import { ageProfile, alerts, depthRows, suggestActions, weakSlots } from './deskRules'
+import roleIds from './roleIds.fixture.json'
+import { ageProfile, alerts, depthRows, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots } from './deskRules'
 
 function player(id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer['player']> = {}, loanedOut = false): CareerPlayer {
   return { player: { id, name: `P${id}`, overall, age, positions: [position], potential: overall + 2, valueEur: 2_000_000, ...extra } as CareerPlayer['player'], onLoan: false, loanedOut }
@@ -50,5 +51,11 @@ describe('deskRules', () => {
       windowEndsOn: '2027-01-31', today: new Date('2027-01-25'),
     })
     expect(list.map((a) => a.text)).toEqual(expect.arrayContaining([expect.stringContaining('potansiyeline ulaştı'), expect.stringContaining('düşüşte'), expect.stringContaining('6 gün')]))
+  })
+})
+
+describe('TRANSFER_ROLE_BY_GROUP (WEB-BUG-06)', () => {
+  it('her roleId backend rol listesinde var', () => {
+    Object.entries(TRANSFER_ROLE_BY_GROUP).forEach(([group, { roleId }]) => expect(roleIds, `${group}: ${roleId}`).toContain(roleId))
   })
 })

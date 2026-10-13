@@ -10,6 +10,16 @@ const GROUP_OF: Record<string, PositionGroup> = {
 export const GROUP_LABEL: Record<PositionGroup, string> = { GK: 'Kaleci', CB: 'Stoper', FB: 'Bek', MID: 'Orta saha', W: 'Kanat', ST: 'Forvet' }
 const MIN_DEPTH: Record<PositionGroup, number> = { GK: 2, CB: 3, FB: 3, MID: 4, W: 2, ST: 2 }
 
+/** Derinlik açığında aday aranan (mevki, rol): roleId'ler /roles'taki gerçek id'lerdir (deskRules.test doğrular). */
+export const TRANSFER_ROLE_BY_GROUP: Record<PositionGroup, { position: string; roleId: string }> = {
+  GK: { position: 'GK', roleId: 'goalkeeper_defend' },
+  CB: { position: 'CB', roleId: 'defender_defend' },
+  FB: { position: 'LB', roleId: 'fullback_defend' },
+  MID: { position: 'CM', roleId: 'box_to_box_balanced' },
+  W: { position: 'RW', roleId: 'winger_attack' },
+  ST: { position: 'ST', roleId: 'poacher_attack' },
+}
+
 const WEAK_FIT = 70
 const SELL_AGE = 29
 const LOAN_MAX_AGE = 21

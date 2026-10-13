@@ -7,7 +7,7 @@ import type { Acquisition, TransferTarget } from '../api/types'
 import { CompareButton } from '../components/CompareButton'
 import { MoneyInput } from '../components/MoneyInput'
 import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Pill, Skeleton, Stat } from '../components/ui'
-import { depthRows, GROUP_LABEL, weakSlots, type PositionGroup } from '../lib/deskRules'
+import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP, weakSlots } from '../lib/deskRules'
 import { formatEur } from '../lib/format'
 import { toTacticRequest, useTactic } from '../state/tacticStore'
 import { useActiveCareerId } from '../state/careerStore'
@@ -16,15 +16,6 @@ const ACQ: Record<Acquisition, { label: string; tone: 'emerald' | 'sky' | 'amber
   FREE: { label: 'Bedava', tone: 'emerald' },
   LOAN: { label: 'Kiralık', tone: 'sky' },
   BUY: { label: 'Satın al', tone: 'amber' },
-}
-
-const GROUP_POSITION: Record<PositionGroup, { position: string; roleId: string }> = {
-  GK: { position: 'GK', roleId: 'goalkeeper_defend' },
-  CB: { position: 'CB', roleId: 'defender_defend' },
-  FB: { position: 'LB', roleId: 'fullback_defend' },
-  MID: { position: 'CM', roleId: 'box_to_box_support' },
-  W: { position: 'RW', roleId: 'winger_attack' },
-  ST: { position: 'ST', roleId: 'poacher_attack' },
 }
 
 interface Need {
@@ -53,7 +44,7 @@ export function CareerTransferPage() {
 
   const needs = useMemo<Need[]>(() => {
     const weak = weakSlots(lineup.data?.slots ?? []).map((w) => ({ key: `slot-${w.slotId}`, position: w.position, roleId: w.roleId, label: `${w.position} · zayıf halka`, detail: `${w.playerName ?? 'boş'} · RoleFit %${w.fit}` }))
-    const gaps = depthRows(squad.data ?? []).filter((d) => d.short > 0).map((d) => ({ key: `depth-${d.group}`, ...GROUP_POSITION[d.group], label: `${GROUP_LABEL[d.group]} · derinlik`, detail: `${d.have}/${d.need} oyuncu` }))
+    const gaps = depthRows(squad.data ?? []).filter((d) => d.short > 0).map((d) => ({ key: `depth-${d.group}`, ...TRANSFER_ROLE_BY_GROUP[d.group], label: `${GROUP_LABEL[d.group]} · derinlik`, detail: `${d.have}/${d.need} oyuncu` }))
     return [...weak, ...gaps]
   }, [lineup.data, squad.data])
 
