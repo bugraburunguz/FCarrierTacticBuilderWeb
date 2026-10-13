@@ -44,3 +44,6 @@ Durum: yapıldı / kısmen / bekliyor. Hash'ler web `v3` dalı; "BE" = backend `
 
 ## Faz E3 (motor) — başladı
 - Denetim + teşhis: `eng_audit_E3.md`; golden set taslağı: `golden_set_draft.md` (Buğra onayı bekliyor). Motor kodu yazılmadı. V3-05 bekliyor.
+- Sıra (Buğra kararı): E3-3 → E3-4 → E3-5 → E3-1 → E3-2 → E3-6 …
+- **E3-3 yapıldı** (attr-norms, pos-dist seed'leri, CI değişmezleri) · **E3-4 yapıldı** (124 rol vektörü, temel attr, PS, aşinalık/ayak/fiziksel seed'leri) · **E3-5 yapıldı**: FitEngineV3, altın set 51/51 + τ 1,00, jqwik özellik testleri, `fit_level_norms` (V30), `engine_version` yapılandırması; rapor `E3-5_rapor.md` (sapmalar dahil). Buğra kararı bekleyen: UT motor sürümü (karşılaştırma tablosuna göre), rozet eşikleri, Holding ayarı notu.
+- Sıradaki: E3-1 (career_player tasarım+şema+kırmızı arch testi; veri silen göç yok).
