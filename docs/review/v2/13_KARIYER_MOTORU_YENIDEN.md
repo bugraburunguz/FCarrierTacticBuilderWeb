@@ -46,6 +46,7 @@ Yöntem: Uçtan uca kod izlendi. Java testleri çalıştırılamadı (Maven Cent
 5. **Açıklama = sayı:** her cümle hesaplanmış bir katkıdan üretilir. Sayısı olmayan iddia yok.
 6. **Önce aday, sonra kesme yok:** OVR'ye göre kesme yasak. Havuz rol ön-skoruyla seçilir.
 7. **Test edilebilirlik:** saf fonksiyon, versiyonlu (`engine_version`), altın veri seti + özellik testleri.
+8. **currentFit kaliteyi değil, rolün oyuncuya oturmasını ölçer** (Buğra kararı 2026-10-14). Kalite ile rolü birlikte tartan sıralama öneri hattının işidir (§3.3). Seviye bağlamı `levelFit` ile ayrı çıktıdır (§3.2 madde 11).
 
 ---
 ## 3. SIFIRDAN TASARIM
@@ -95,6 +96,7 @@ currentFit(player, position, role, focus, ctx) ∈ [0,100]
 8. **Mevki uzaklığı** `posDist` (config): RB↔LB 0,97, CM↔CDM 0,93, CB→CDM 0,90, CAM↔ST 0,90, RW↔RM 0,97, diğerleri ≤ 0,75. Mevki dışında rol vektörü yerine pozisyonun genel vektörü kullanılır, aşinalık yok (FC27 "basitleştirilmiş rol").
 9. **Katkı çıktısı:** her terim için `w_i·(u_i − ū_i)` + temel, PS, aşinalık, ayak, mevki etkileri. Bütün açıklama metni yalnız bunlardan üretilir.
 10. **Ayrı:** `futureFit(t)` = attribute büyüme modeli (yaş eğrisi × potansiyel boşluğu × pozisyon ağırlıkları; pace erken gelişir, ~28 sonrası düşer) üstünden aynı fonksiyon; `value` = face stat özellikleri (04 ağırlıkları), lig tier'ı, kontrat, oyun tarihi.
+11. **levelFit (Buğra kararı 2026-10-14):** `currentFit` mutlaktır; öneri ve aday sıralamaları bunu kullanır. `levelFit` = aynı (mevki, rol, focus) için OVR ±3 bandındaki katalog oyuncuları arasında `currentFit` yüzdeliği. Tablo `fit_level_norms(position, role, focus, ovr_band)` seed zamanında hesaplanır; bantta 30'dan az oyuncu varsa bant genişler ve **kullanılan bant kayıtlı tutulur**. Sahadaki rozet ve "Rol uyumu" `levelFit` gösterir (iki modda aynı anlamla); kart seçme listesi `currentFit`'e göre sıralanır, iki değer de görünür; tooltip ikisini açıklar.
 
 ### 3.3 Öneri hattı
 1. **Bağlam:** `CareerContext(game_date, user_team, league, budget|null, wage_budget|null, available squad)`.
