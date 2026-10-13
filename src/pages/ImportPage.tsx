@@ -8,6 +8,7 @@ import { useAuth } from '../auth/AuthContext'
 import { CareerSelect } from '../components/CareerSelect'
 import { Button, Card, ErrorBox, Field, Input, Pill } from '../components/ui'
 import { importWarningText } from '../lib/importWarnings'
+import { EXPORT_DONE_WINDOW } from '../lib/leExport'
 import { useActiveCareerId } from '../state/careerStore'
 
 const FILES = [
@@ -23,7 +24,7 @@ const STEPS = [
   'Oyunu aç ve KARİYERİNİ yükle. Kariyerin içindeyken (ana menüde değil, kariyer ana ekranında) kal.',
   'Live Editor’ü başlat. Oyun açıkken Live Editor penceresinde “Lua Engine” sekmesine gir.',
   'Aşağıdaki “Script’i indir” ile fc27_career_export.lua dosyasını indir, Live Editor’ün Lua Engine bölümünden bu dosyayı seçip çalıştır.',
-  'İşlem bitince “Dışa aktarım bitti” penceresi çıkar. Live Editor verileri dosyaya değil kendi log dosyasına yazar: Live Editor klasörü → Logs → live_editor_<tarih>.log.',
+  `İşlem bitince “${EXPORT_DONE_WINDOW}” penceresi çıkar. Live Editor verileri dosyaya değil kendi log dosyasına yazar: Live Editor klasörü → Logs → live_editor_<tarih>.log.`,
   'Aşağıdaki kutuya bu .log dosyasını bırak (ya da seç) ve “Yükle”ye bas. Dosya büyükse birkaç saniye sürebilir.',
   'Yükleme bitince takımını seç; kadron oyundaki gerçek kadronla (güncel overall ve potential dahil) kurulur.',
 ]

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "sync:rules": "node scripts/sync-rules.mjs",
+    "sync:le-script": "node scripts/sync-le-script.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
