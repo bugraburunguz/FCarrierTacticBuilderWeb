@@ -17,7 +17,7 @@ import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
 import { useEaRoles } from '../lib/eaRoles'
-import { carryOver, fromSummary, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
+import { carryOver, fromSummary, personKey, priceSummary, type CardSource, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
 import { useUtCapture } from '../state/utCaptureStore'
 import { utCardStore } from '../state/utCardStore'
@@ -322,7 +322,7 @@ export function UtSquadPage() {
           roleName={roleBySlot[dialogSlot.slotId]?.roleName}
           evaluation={evalBySlot[dialogSlot.slotId]}
           chemLinks={chem.perSlot[slots.indexOf(dialogSlot)]}
-          usedKeys={new Set(Object.values(picked).map((c) => c.key))}
+          usedKeys={new Set(Object.values(picked).map(personKey))}
           onClose={() => setDialog(null)}
           onPick={(card) => {
             setPicked((cur) => ({ ...cur, [dialogSlot.slotId]: card }))
@@ -549,7 +549,7 @@ function PickModal({ position, slotId, current, evaluation, chemLinks, usedKeys,
           <ul className="divide-y divide-line text-sm">
             {rows.map((c) => (
               <li key={c.key}>
-                <button type="button" disabled={usedKeys.has(c.key) && c.key !== current?.key} className="flex w-full items-center justify-between gap-2 px-1 py-1.5 text-left hover:bg-surface-2 disabled:opacity-40" onClick={() => onPick(c)}>
+                <button type="button" disabled={usedKeys.has(personKey(c)) && (!current || personKey(c) !== personKey(current))} className="flex w-full items-center justify-between gap-2 px-1 py-1.5 text-left hover:bg-surface-2 disabled:opacity-40" onClick={() => onPick(c)}>
                   <span>
                     <b>{c.rating}</b> {c.name} <span className="text-xs text-muted">{c.club ?? ''}{c.rarity ? ` · ${c.rarity}` : ''}</span>
                     {c.untradeable && <Pill tone="emerald">untradeable</Pill>}

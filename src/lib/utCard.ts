@@ -20,6 +20,8 @@ export interface UtCard {
   rarity?: string
   cardType?: 'ICON' | 'HERO' | 'HOF'
   playerId?: number
+  /** EA varlık kimliği: aynı oyuncunun tüm versiyonları paylaşır (kart `key`'i versiyona özgüdür). */
+  assetId?: number
   attrs?: Record<string, number>
   /** Kulüp kartında yığın: 'club' | 'storage' (SBC storage) | 'purchased'. Eski kayıtlarda yok. */
   pile?: string
@@ -30,6 +32,11 @@ export interface UtCard {
   faceLabels?: string[]
   weakFoot?: number
   skillMoves?: number
+}
+
+/** Gerçek oyuncu kimliği (`assetId ?? playerId`, ikisi de yoksa kart anahtarı): kadroda aynı oyuncunun iki versiyonu bulunamaz. */
+export function personKey(card: UtCard): string {
+  return String(card.assetId ?? card.playerId ?? card.key)
 }
 
 /** Kulüp kartı için fiyat sinyali: pazar ortalaması, yoksa son satış, yoksa pazar alt sınırı. */
@@ -56,6 +63,7 @@ export function fromCapture(card: CaptureCard, source: Exclude<CardSource, 'cata
     rarity: card.rarity,
     cardType: card.cardType,
     playerId: card.playerId,
+    assetId: card.assetId,
     attrs: card.attrs,
     pile: card.pile,
     duplicate: card.duplicate,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CaptureCard } from '../api/types'
-import { cardPrice, carryOver, fromCapture, priceSummary, type UtCard } from './utCard'
+import { cardPrice, carryOver, fromCapture, personKey, priceSummary, type UtCard } from './utCard'
 
 function capture(patch: Partial<CaptureCard>): CaptureCard {
   return { instanceId: 1, assetId: 9, rating: 88, positions: ['ST', 'CF'], teamId: 1, leagueId: 1, nation: 1, untradeable: false, faceLabels: [], faceStats: [], duplicate: false, pile: 'club', ...patch }
@@ -24,6 +24,17 @@ describe('utCard', () => {
     expect(converted.positions).toEqual(['LW'])
     expect(converted.price).toBe(120)
     expect(converted.key).toBe('c:1')
+  })
+
+  it('aynı oyuncunun iki versiyonu (TOTW + altın) aynı kimliği paylaşır, farklı oyuncular paylaşmaz (WEB-BUG-08)', () => {
+    const totw = fromCapture(capture({ instanceId: 1, assetId: 231747 }), 'club')
+    const gold = fromCapture(capture({ instanceId: 2, assetId: 231747 }), 'club')
+    const other = fromCapture(capture({ instanceId: 3, assetId: 158023 }), 'club')
+    expect(totw.key).not.toBe(gold.key)
+    expect(personKey(totw)).toBe(personKey(gold))
+    expect(personKey(totw)).not.toBe(personKey(other))
+    expect(personKey({ ...card('p:7'), playerId: 7 })).toBe('7')
+    expect(personKey(card('x'))).toBe('x')
   })
 
   it('ortalama ücreti yalnızca fiyatı bilinen kartlardan hesaplar', () => {
