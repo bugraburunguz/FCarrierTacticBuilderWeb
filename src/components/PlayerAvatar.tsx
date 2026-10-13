@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { assetUrl } from '../lib/assetUrl'
 
 const POSITION_HUE: Record<string, string> = {
   GK: 'bg-code-soft', CB: 'bg-info-soft', LB: 'bg-info-soft', RB: 'bg-info-soft', CDM: 'bg-accent-bg', CM: 'bg-accent-bg', CAM: 'bg-accent-bg',
@@ -15,8 +16,9 @@ function initials(name: string): string {
 export function PlayerAvatar({ name, position, faceUrl, size = 28 }: { name: string; position?: string; faceUrl?: string; size?: number }) {
   const [failed, setFailed] = useState(false)
   const style = { width: size, height: size }
-  if (faceUrl && !failed) {
-    return <img src={faceUrl} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} style={style} className="shrink-0 rounded-full bg-surface-2 object-cover" />
+  const src = assetUrl(faceUrl)
+  if (src && !failed) {
+    return <img src={src} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} style={style} className="shrink-0 rounded-full bg-surface-2 object-cover" />
   }
   return (
     <span aria-hidden="true" style={{ ...style, fontSize: size * 0.4 }} className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white ${POSITION_HUE[position ?? ''] ?? 'bg-slate-500'}`}>

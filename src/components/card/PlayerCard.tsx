@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { API_ORIGIN } from '../../api/client'
+import { assetUrl } from '../../lib/assetUrl'
 import { designFor, shortLabel, type CardKind } from '../../lib/cardDesign'
 import { ChemDiamonds } from './ChemDiamonds'
 import { FitBadge, type FitState } from './FitBadge'
@@ -39,11 +39,6 @@ export interface PlayerCardProps {
 const NAME_MIN_WIDTH = 72
 const STATS_MIN_WIDTH = 100
 const META_MIN_WIDTH = 84
-
-/** Göreli adresleri (proxy) API kökü ile birleştirir; GitHub Pages gibi ayrı API alanında da çalışır. */
-export function assetUrl(url?: string): string | undefined {
-  return url && url.startsWith('/') ? API_ORIGIN + url : url
-}
 
 const FRAME_PATH = 'M90 2 C122 2 160 10 176 24 L176 196 C176 214 150 232 90 248 C30 232 4 214 4 196 L4 24 C20 10 58 2 90 2 Z'
 
