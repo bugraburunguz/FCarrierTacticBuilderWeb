@@ -55,7 +55,7 @@ describe('chemistry', () => {
     ]
     const result = squadChemistry(slots)
     expect(result.perSlot.slice(0, 2)).toEqual([3, 3])
-    expect(result.perSlot[2]).toBe(1) // lig L: 3 oyuncu → +1
+    expect(result.perSlot[2]).toBe(2) // lig L: Hero 1+1, HoF 1+1, oyuncu 1 = 5 → +2 (artış yoksa 3 → +1 olurdu)
   })
 
   it('kadın ve erkek ligleri birbirine bağlanmaz', () => {

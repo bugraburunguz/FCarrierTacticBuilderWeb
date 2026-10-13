@@ -1,4 +1,4 @@
-import rules from './utRules.fc27.json'
+import { rulesStore } from '../state/rulesStore'
 
 export type ChemCardType = 'ICON' | 'HERO' | 'HOF'
 
@@ -7,6 +7,10 @@ export interface ChemCard {
   club?: string
   league?: string
   nationality?: string
+  /** EA kimlikleri varsa adın yerine bunlar kullanılır (aynı ada sahip farklı kulüpler birleşmez). */
+  clubId?: number
+  leagueId?: number
+  nationId?: number
   gender?: number
   positions: string[]
   cardType?: ChemCardType
@@ -20,16 +24,15 @@ export interface ChemSlot {
 export interface ChemManager {
   nationality?: string
   league?: string
+  nationId?: number
+  leagueId?: number
 }
+
+/** Kulüp, lig ve ülke anahtarı: id varsa id, yoksa ad. */
+const keyOf = (id: number | undefined, name: string | undefined): string | undefined => (id !== undefined ? `#${id}` : name)
 
 export const MAX_PLAYER_CHEM = 3
 export const MAX_SQUAD_CHEM = 33
-
-// Eşikler utRules.fc27.json'dan gelir (kaynak: fifauteam.com/fc-27-chemistry, 08 D-21); koda gömülmez.
-const CLUB_THRESHOLDS = rules.chemistry.club
-const LEAGUE_THRESHOLDS = rules.chemistry.league
-const NATION_THRESHOLDS = rules.chemistry.nation
-const MANAGER_BONUS = 1
 
 export function thresholdPoints(count: number, thresholds: number[]): number {
   return thresholds.filter((t) => count >= t).length
@@ -42,8 +45,9 @@ function add(map: Map<string, number>, key: string | undefined, weight: number) 
 }
 
 /** Kadın ve erkek ligleri birbirine bağlanmaz; ülke ve kulüp anahtarı ortaktır. */
-function leagueKey(card: { league?: string; gender?: number }): string | undefined {
-  return card.league ? `${card.gender ?? 0}:${card.league}` : undefined
+function leagueKey(card: { league?: string; leagueId?: number; gender?: number }): string | undefined {
+  const key = keyOf(card.leagueId, card.league)
+  return key ? `${card.gender ?? 0}:${key}` : undefined
 }
 
 export interface ChemResult {
@@ -52,13 +56,12 @@ export interface ChemResult {
 }
 
 /**
- * FC27 kimya kuralları: kulüp 2/4/7, lig 3/5/8, ülke 2/5/8 eşikleri (oyuncunun kendisi dahil).
- * Mevki dışı oyuncu (ana veya alternatif mevki dışında) 0 alır ve kimseye katkı vermez.
- * Icon: doğru mevkide her zaman 3, ülkesine +1 ve XI'deki her lige +1 katkı.
- * Hero ve Hall of FUT: doğru mevkide her zaman 3, ülkesine +1 ve kendi ligine +1 katkı.
- * Menajer: aynı ülke veya lig olan oyuncuya +1 (en fazla 1). Yalnızca ilk 11 sayılır.
+ * FC27 kimya kuralları (backend ChemistryCalculator ile aynı; ortak vektörler utRules.fc27.vectors.json). Eşikler ve artışlar rulesStore'dan gelir.
+ * Mevki dışı oyuncu 0 alır ve kimseye katkı vermez. Icon: doğru mevkide 3, ülkesine +1 ve XI'deki her lige +1.
+ * Hero ve Hall of FUT: doğru mevkide 3, ülkesine +1 ve kendi ligine +1. Menajer: aynı ülke veya lig olan oyuncuya +1 (en fazla 1). Yalnızca ilk 11 sayılır.
  */
 export function squadChemistry(slots: ChemSlot[], manager?: ChemManager): ChemResult {
+  const rules = rulesStore.get().chemistry
   const placed = slots.map((s) => (s.card && s.card.positions.includes(s.position) ? s.card : undefined))
   const cards = placed.flatMap((c) => (c ? [c] : []))
   const clubs = new Map<string, number>()
@@ -66,27 +69,36 @@ export function squadChemistry(slots: ChemSlot[], manager?: ChemManager): ChemRe
   const nations = new Map<string, number>()
   const allLeagues = new Set(cards.flatMap((c) => leagueKey(c) ?? []))
   cards.forEach((c) => {
-    add(clubs, c.club, 1)
-    add(nations, c.nationality, 1)
+    add(clubs, keyOf(c.clubId, c.club), 1)
+    add(nations, keyOf(c.nationId, c.nationality), 1)
     if (c.cardType === 'ICON') {
-      allLeagues.forEach((league) => add(leagues, league, 1))
+      add(nations, keyOf(c.nationId, c.nationality), rules.icon.nationIncrement)
+      allLeagues.forEach((league) => add(leagues, league, rules.icon.everyLeagueInXiIncrement))
     } else {
       add(leagues, leagueKey(c), 1)
+      if (c.cardType === 'HERO' || c.cardType === 'HOF') {
+        add(nations, keyOf(c.nationId, c.nationality), rules.hero.nationIncrement)
+        add(leagues, leagueKey(c), rules.hero.leagueIncrement)
+      }
     }
   })
+  const managerNation = manager && keyOf(manager.nationId, manager.nationality)
+  const managerLeague = manager && keyOf(manager.leagueId, manager.league)
   const perSlot = placed.map((card) => {
     if (!card) {
-      return 0
+      return rules.outOfPositionChem
     }
     if (card.cardType) {
-      return MAX_PLAYER_CHEM
+      return rules.maxPerPlayer
     }
     const points =
-      thresholdPoints(clubs.get(card.club ?? '') ?? 0, CLUB_THRESHOLDS) +
-      thresholdPoints(leagues.get(leagueKey(card) ?? '') ?? 0, LEAGUE_THRESHOLDS) +
-      thresholdPoints(nations.get(card.nationality ?? '') ?? 0, NATION_THRESHOLDS)
-    const managerMatch = Boolean(manager) && (card.nationality === manager?.nationality || card.league === manager?.league)
-    return Math.min(MAX_PLAYER_CHEM, points + (managerMatch ? MANAGER_BONUS : 0))
+      thresholdPoints(clubs.get(keyOf(card.clubId, card.club) ?? '') ?? 0, rules.thresholds.club) +
+      thresholdPoints(leagues.get(leagueKey(card) ?? '') ?? 0, rules.thresholds.league) +
+      thresholdPoints(nations.get(keyOf(card.nationId, card.nationality) ?? '') ?? 0, rules.thresholds.nation)
+    const managerMatch =
+      (managerNation !== undefined && keyOf(card.nationId, card.nationality) === managerNation) ||
+      (managerLeague !== undefined && keyOf(card.leagueId, card.league) === managerLeague)
+    return Math.min(rules.maxPerPlayer, points + (managerMatch ? rules.manager.bonus : 0))
   })
-  return { perSlot, total: Math.min(MAX_SQUAD_CHEM, perSlot.reduce((a, b) => a + b, 0)) }
+  return { perSlot, total: Math.min(rules.maxSquad, perSlot.reduce((a, b) => a + b, 0)) }
 }

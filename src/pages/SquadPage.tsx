@@ -12,6 +12,7 @@ import { SquadList } from '../components/SquadList'
 import { SquadDensity } from '../components/SquadDensity'
 import { TacticLineup } from '../components/TacticLineup'
 import { analyzeDepth } from '../lib/depth'
+import { useUtRules } from '../state/rulesStore'
 import { bestSquadRating, starRating } from '../lib/squadRating'
 import { useTactic } from '../state/tacticStore'
 import { TransferDialog } from '../components/TransferDialog'
@@ -192,6 +193,7 @@ function History({ careerId, events }: { careerId: number; events: RosterEvent[]
 }
 
 export function SquadPage() {
+  useUtRules()
   const careerId = useActiveCareerId()
   const refresh = useInvalidateCareer()
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })

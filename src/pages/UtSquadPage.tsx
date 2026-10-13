@@ -12,6 +12,7 @@ import { ChemDiamonds } from '../components/card/ChemDiamonds'
 import type { FitState } from '../components/card/FitBadge'
 import { RoleFocusModal } from '../components/squadBuilder/RoleFocusModal'
 import { BadgeDot, Button, EmptyState, ErrorBox, Input, Pill, Select, Spinner } from '../components/ui'
+import { useUtRules } from '../state/rulesStore'
 import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
 import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName, roleGroups, swapSlots } from '../lib/squadBuilder'
@@ -51,6 +52,7 @@ function shortCoins(value?: number) {
 }
 
 export function UtSquadPage() {
+  useUtRules()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
   const eaRoles = useEaRoles()
@@ -111,7 +113,7 @@ export function UtSquadPage() {
           const p = picked[s.slotId]
           return {
             position: s.position,
-            card: p ? { id: i, gender: p.gender, club: p.club, league: p.league, nationality: p.nationality, positions: p.positions, cardType: p.cardType } : undefined,
+            card: p ? { id: i, gender: p.gender, club: p.club, league: p.league, nationality: p.nationality, clubId: p.clubId, leagueId: p.leagueId, nationId: p.nationId, positions: p.positions, cardType: p.cardType } : undefined,
           }
         }),
       ),

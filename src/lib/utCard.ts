@@ -11,6 +11,9 @@ export interface UtCard {
   club?: string
   league?: string
   nationality?: string
+  clubId?: number
+  leagueId?: number
+  nationId?: number
   gender?: number
   price?: number
   untradeable?: boolean
@@ -44,6 +47,9 @@ export function fromCapture(card: CaptureCard, source: Exclude<CardSource, 'cata
     club: card.club,
     league: card.league,
     nationality: card.nationality,
+    clubId: card.teamId,
+    leagueId: card.leagueId,
+    nationId: card.nation,
     gender: card.gender,
     price,
     untradeable: card.untradeable,

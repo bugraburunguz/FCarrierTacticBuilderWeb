@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { bestSquadRating, squadRating, starRating } from './squadRating'
 import { teamRating } from './sbcTraditional'
-import rules from './utRules.fc27.json'
+import vectors from './utRules.fc27.vectors.json'
 
 describe('squad rating — paylaşılan test vektörleri (backend ile aynı dosya)', () => {
-  rules.ratingTestVectors.forEach((v) => {
+  vectors.squadRating.forEach((v) => {
     it(v.name, () => {
-      expect(squadRating(v.ratings)).toBe(v.expected)
-      expect(teamRating(v.ratings)).toBe(v.expected)
+      expect(squadRating(v.ratings, v.size)).toBe(v.expected)
+      if (v.size === 11) {
+        expect(teamRating(v.ratings)).toBe(v.expected)
+      }
     })
   })
 })

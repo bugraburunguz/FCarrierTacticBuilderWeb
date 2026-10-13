@@ -1,4 +1,4 @@
-import rules from './utRules.fc27.json'
+import { rulesStore } from '../state/rulesStore'
 /**
  * Piyasa fiyatı verisi olmadığında SBC maliyeti için rating başına kaba coin tahmini (yakın dönem SBC dolgu kartı seviyeleri).
  * Gerçek fiyat DEĞİLDİR; yalnızca "en ucuz yol" sıralaması için bir yaklaşıktır. Kendi piyasa ilanların yakalandıysa o fiyatlar kullanılmalı.
@@ -29,7 +29,11 @@ export function clubCardCost(price?: number): number {
   return (price ?? 0) * CLUB_OPPORTUNITY_WEIGHT
 }
 
-const REFRESH = rules.dailyRefresh
+/** Günlük yenileme: contentCalendar.dailyRefresh (kural dokümanı), saat dilimi contentCalendar.tz. */
+function refreshRule(): { timezone: string; hour: number } {
+  const calendar = rulesStore.get().contentCalendar
+  return { timezone: calendar.tz, hour: Number(calendar.dailyRefresh.time.split(':')[0]) }
+}
 
 /** Verilen anda belirtilen saat diliminin UTC'ye göre farkı (ms); yaz/kış saatini Intl ile hesaplar. */
 function zoneOffsetMs(instant: number, timeZone: string): number {
@@ -50,6 +54,7 @@ function zonedInstant(year: number, month: number, day: number, hour: number, ti
  * Saat EA içerik takviminden alınmıştır, oyun içinde doğrulanmadı (utRules.fc27.json: dailyRefresh.verified=false).
  */
 export function lastDailyRefresh(now: Date = new Date()): Date {
+  const REFRESH = refreshRule()
   const local = new Date(now.getTime() + zoneOffsetMs(now.getTime(), REFRESH.timezone))
   const today = zonedInstant(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate(), REFRESH.hour, REFRESH.timezone)
   if (today <= now.getTime()) {

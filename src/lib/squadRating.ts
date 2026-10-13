@@ -1,39 +1,32 @@
+import { rulesStore } from '../state/rulesStore'
+
 /**
  * Resmî olmayan ama rehberde adım adım verilen Squad Rating hesabı (FC 27 Squad Rating Guide):
- * ortalamanın üstündeki oyuncuların farkları düzeltme katsayısı olur, toplam + katsayı yuvarlanır, 18'e bölünüp aşağı yuvarlanır.
+ * ortalamanın üstündeki oyuncuların farkları düzeltme katsayısı olur, toplam + katsayı yuvarlanır, oyuncu sayısına bölünüp aşağı yuvarlanır.
  * Oyun içi değer her zaman esastır; üçüncü taraf hesaplayıcılar küçük sapma gösterebilir.
+ * Boyutlar kurallardan gelir: kadro ekranı 18 (XI + 7 yedek), SBC 11 (rulesStore → squadRating.sizes).
  */
-export const SQUAD_SIZE = 18
+export const squadSize = () => rulesStore.get().squadRating.sizes.squad
+export const sbcSize = () => rulesStore.get().squadRating.sizes.sbc
 
-export function squadRating(ratings: number[]): number {
-  if (ratings.length === 0) {
+/** En iyi `size` oyuncu üzerinden rating (varsayılan: SBC boyutu değil, verilen listenin tamamı). */
+export function squadRating(ratings: number[], size: number = ratings.length): number {
+  const top = [...ratings].sort((a, b) => b - a).slice(0, size)
+  if (top.length === 0) {
     return 0
   }
-  const sum = ratings.reduce((a, b) => a + b, 0)
-  const average = sum / ratings.length
-  const correction = ratings.reduce((acc, r) => acc + Math.max(0, r - average), 0)
-  return Math.floor(Math.round(sum + correction) / ratings.length)
+  const sum = top.reduce((a, b) => a + b, 0)
+  const average = sum / top.length
+  const correction = top.reduce((acc, r) => acc + Math.max(0, r - average), 0)
+  return Math.floor(Math.round(sum + correction) / top.length)
 }
 
 /** Kadronun en iyi 18 oyuncusu (11 ilk + 7 yedek) üzerinden rating. */
 export function bestSquadRating(overalls: number[]): { rating: number; counted: number } {
-  const top = [...overalls].sort((a, b) => b - a).slice(0, SQUAD_SIZE)
+  const top = [...overalls].sort((a, b) => b - a).slice(0, squadSize())
   return { rating: squadRating(top), counted: top.length }
 }
 
-const STAR_STEPS: { min: number; stars: number }[] = [
-  { min: 83, stars: 5 },
-  { min: 79, stars: 4.5 },
-  { min: 75, stars: 4 },
-  { min: 71, stars: 3.5 },
-  { min: 69, stars: 3 },
-  { min: 67, stars: 2.5 },
-  { min: 65, stars: 2 },
-  { min: 63, stars: 1.5 },
-  { min: 60, stars: 1 },
-  { min: 2, stars: 0.5 },
-]
-
 export function starRating(rating: number): number {
-  return STAR_STEPS.find((s) => rating >= s.min)?.stars ?? 0
+  return rulesStore.get().squadRating.starRating.find((s) => rating >= s.min)?.stars ?? 0
 }
