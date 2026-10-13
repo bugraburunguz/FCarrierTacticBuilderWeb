@@ -13,6 +13,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
   const [club, setClub] = useState<Club | undefined>()
   const [budget, setBudget] = useState<number | undefined>(undefined)
   const [name, setName] = useState('')
+  const [resetCount, setResetCount] = useState(0)
   const clubs = useQuery({ queryKey: ['clubs', term], queryFn: () => endpoints.clubs(term), enabled: term.trim().length >= 1 && !club })
   const create = useMutation({
     mutationFn: () => endpoints.createCareer({ clubId: club!.id, budgetEur: budget ?? 0, name: name || undefined }),
@@ -23,6 +24,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
       setTerm('')
       setBudget(undefined)
       setName('')
+      setResetCount((n) => n + 1)
       onCreated?.()
     },
   })
@@ -37,7 +39,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
           <Input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Örn. Port Vale 2026" />
         </Field>
         <Field label="Transfer bütçesi (€)">
-          <MoneyInput key={name + String(club?.id)} value={budget} onChange={setBudget} />
+          <MoneyInput key={resetCount} value={budget} onChange={setBudget} />
         </Field>
         <Button className="lg:mt-[22px]" disabled={!club || create.isPending} onClick={() => create.mutate()}>
           {create.isPending ? 'Oluşturuluyor…' : 'Başlat'}
