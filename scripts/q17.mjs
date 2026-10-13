@@ -1,9 +1,10 @@
 // Q17 "çakışma yok" (11 §8): slot gruplarının sınır kutuları kesişmez; 1280×800'de saha scroll istemez.
-// Kullanım: node scripts/q17.mjs [--formations 4-3-3,3-5-2] [--mode ut|career|both] [--out dosya.json] [--base http://localhost:8081]
+// Kullanım: node scripts/q17.mjs [--auto-account] [--formations 4-3-3,3-5-2] [--mode ut|career|both] [--out dosya.json] [--base http://localhost:8081]
 // Matris: 29 formasyon × 375/768/1280×800 × boş/dolu × UT/kariyer. Rol etiketi metni en uzun adlarla değiştirilir (taşma da ölçülür).
 // Dolu kariyer için GATE_EMAIL/GATE_PASSWORD (yerel test hesabı, en az bir kariyeri olmalı). Yalnız localhost/127.0.0.1.
 import { writeFileSync } from 'node:fs'
 import { chromium } from 'playwright-core'
+import { createGateAccount } from './lib/gateAccount.mjs'
 
 const args = process.argv.slice(2)
 const flag = (name, fallback) => (args.includes(`--${name}`) ? args[args.indexOf(`--${name}`) + 1] : fallback)
@@ -11,6 +12,9 @@ const base = flag('base', 'http://localhost:8081')
 if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
+}
+if (args.includes('--auto-account')) {
+  await createGateAccount(base, 'q17-') // koşu sonunda yerel DB'den silinir (scripts/teardown-gate-accounts.sql)
 }
 const only = flag('formations', undefined)?.split(',')
 const modes = flag('mode', 'both') === 'both' ? ['ut', 'career'] : [flag('mode', 'both')]

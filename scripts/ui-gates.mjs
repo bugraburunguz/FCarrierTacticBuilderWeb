@@ -6,6 +6,7 @@ import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
+import { createGateAccount } from './lib/gateAccount.mjs'
 
 const args = process.argv.slice(2)
 const [taskId, rawRoute] = args
@@ -21,8 +22,11 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
+if (args.includes('--auto-account')) {
+  await createGateAccount(base, 'gate-') // koşu sonunda yerel DB'den silinir (scripts/teardown-gate-accounts.sql)
+}
 const mode = flag('mode', route.startsWith('/ut') ? 'ut' : 'career')
-const auth = args.includes('--auth')
+const auth = args.includes('--auth') || args.includes('--auto-account')
 const matrix = flag('matrix', 'full')
 // Ek durum: sayfa yüklendikten sonra --click <css seçici> ile tıklanır ve dosya adına --tag eklenir
 const clickSelector = flag('click', undefined)
