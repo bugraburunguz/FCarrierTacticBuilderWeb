@@ -5,7 +5,7 @@ Durum: yapıldı / kısmen / bekliyor. Hash'ler web `v3` dalı; "BE" = backend `
 | Madde | Durum | Commit | Not |
 |---|---|---|---|
 | Paketler (Radix dialog/popover/tooltip, Inter variable, Ladle dev) | yapıldı | f5d8b84 | Sabit sürüm, lock'lu. Radix yalnız dialog kullanılıyor; Inter/Ladle henüz bağlanmadı |
-| F1 saha düzeni (layout.ts) + Q17 | yapıldı | 8dd0adf, f62f446 | Q17 çakışma yok (bkz. Q18 satırı güncel koşu) |
+| F1 saha düzeni (layout.ts) + Q17 | yapıldı | 8dd0adf, f62f446 | Q17+Q18 tam matris (29 formasyon × 4 boyut × boş/dolu × UT/kariyer = 464): 0 kesişme, 0 taşma, 0 okunabilirlik ihlali; 5 sayfa-yüklenmedi (kariyer dolu, geçici) yeniden koşuda 40/40 temiz |
 | **Q18 okunabilirlik kapısı** | yapıldı | bu oturum | ≥1024px kart ≥56, 375px ≥48, kart içi yazı ≥11px, OVR ≥14px; masaüstünde rol etiketi kısaltmasız; kompakt üst bar (48px) + sekmeler üst barda; sağ panel sticky. Raporda 1280×800 ve 1440×900 scroll'suz sığma ayrı (hedef). Rapor: `screens/V3-04/q17-q18-report.json` |
 | B. Kulüp ikizleri dry-run | yapıldı (birleştirme YOK) | bu oturum | `docs/review/v2/club_twins_dryrun.md`; `club_alias` şeması önerildi, onay bekliyor |
 | C. Gate/Q17 hesap teardown | yapıldı | bu oturum | `--auto-account` + `scripts/teardown-gate-accounts.sql` (yalnız `gate-`/`q17-` önekleri, localhost). Eski f11-gate-* ve diğer test hesapları silme maddesinde bekliyor |
