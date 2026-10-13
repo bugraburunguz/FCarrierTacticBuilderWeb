@@ -1,0 +1,98 @@
+/*
+ * Tasarım sistemi v3 token'ları (docs/review/v2/11 §3). Yalnız `data-ui="v3"` iken etkin (ön izleme bayrağı `?ui=v3`).
+ * Aşağıdaki "köprü" bloğu eski semantik adları (--bg, --surface, --ink ...) v3 değerlerine bağlar; böylece henüz taşınmamış sayfalar da v3 renklerinde görünür.
+ * Yeni kodda yalnız bu dosyadaki v3 adları kullanılır; yeni renk/font uydurulmaz.
+ */
+:root[data-ui="v3"] {
+  --bg-base: #070a12;
+  --aurora-1: #2b4cff; --aurora-2: #00c2a8; --aurora-3: #7a2cff;
+
+  --glass-1: rgba(18, 24, 38, 0.62);
+  --glass-2: rgba(22, 30, 48, 0.74);
+  --glass-3: rgba(255, 255, 255, 0.06);
+  --glass-hover: rgba(255, 255, 255, 0.09);
+  --glass-press: rgba(255, 255, 255, 0.12);
+  --glass-blur-1: 18px; --glass-blur-2: 24px; --glass-saturate: 140%;
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+
+  --ink: #f2f5fb; --ink-2: #c4cbd8; --muted: #8e98aa; --faint: #5d6678;
+
+  --accent: #8f9bff; --accent-ink: #0b0f1d; --accent-soft: rgba(143, 155, 255, 0.16);
+
+  --good: #4ade80; --good-soft: rgba(74, 222, 128, 0.14);
+  --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, 0.14);
+  --bad: #f87171; --bad-soft: rgba(248, 113, 113, 0.14);
+  --info: #60a5fa; --info-soft: rgba(96, 165, 250, 0.14);
+
+  --chem-0: #5d6678; --chem-1: #f59e0b; --chem-2: #a3e635; --chem-3: #22c55e;
+  --rate-90: #22c55e; --rate-80: #84cc16; --rate-70: #eab308; --rate-60: #f97316; --rate-low: #ef4444;
+
+  --r-bronze: #b07a4f; --r-silver: #b8c2cc; --r-gold: #e3c15c; --r-totw: #d4af37; --r-icon: #f3ead2; --r-hero: #8b5cf6; --r-evo: #14b8a6;
+
+  --pitch-1: rgba(16, 94, 58, 0.55); --pitch-2: rgba(12, 74, 46, 0.55); --pitch-line: rgba(255, 255, 255, 0.35);
+
+  --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
+  --font-display: "Barlow Condensed", system-ui, sans-serif;
+  /* Inter dosyası henüz yok (paket onayı bekliyor): o gelene kadar IBM Plex Sans. */
+  --font-body: "Inter", "IBM Plex Sans", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, monospace;
+
+  --aurora-opacity: 0.45;
+  --grain-opacity: 0.03;
+
+  /* Köprü: eski semantik adlar → v3 */
+  --bg: var(--bg-base);
+  --surface: var(--glass-1);
+  --surface-2: var(--glass-3);
+  --line: var(--glass-border);
+  --accent-bg: var(--accent);
+  --on-accent: var(--accent-ink);
+  --code: var(--accent);
+  --code-soft: var(--accent-soft);
+  --danger: var(--bad);
+  --danger-soft: var(--bad-soft);
+  --danger-line: rgba(248, 113, 113, 0.4);
+  color-scheme: dark;
+}
+
+/* Kariyer modu: sıcak vurgu */
+:root[data-ui="v3"][data-mode="career"] {
+  --aurora-1: #ff9f1c; --aurora-2: #3a7d44; --aurora-3: #c2410c;
+  --accent: #ffb547; --accent-soft: rgba(255, 181, 71, 0.16);
+}
+
+/* Açık tema */
+:root[data-ui="v3"][data-theme="light"] {
+  --bg-base: #eef1f7;
+  --glass-1: rgba(255, 255, 255, 0.62); --glass-2: rgba(255, 255, 255, 0.78); --glass-3: rgba(10, 20, 40, 0.05);
+  --glass-hover: rgba(10, 20, 40, 0.07); --glass-press: rgba(10, 20, 40, 0.10);
+  --glass-border: rgba(10, 20, 40, 0.10); --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 8px 28px rgba(20, 30, 60, 0.12);
+  --ink: #0d1424; --ink-2: #2b3547; --muted: #5b6577; --faint: #8b94a5;
+  --accent: #4353ff; --accent-ink: #ffffff; --accent-soft: rgba(67, 83, 255, 0.12);
+  --good: #14733c; --warn: #8a5a00; --bad: #a82227; --info: #1d5fc4;
+  --aurora-opacity: 0.28;
+  --grain-opacity: 0.02;
+  color-scheme: light;
+}
+:root[data-ui="v3"][data-theme="light"][data-mode="career"] { --accent: #c2410c; --accent-soft: rgba(194, 65, 12, 0.12); }
+
+/* Mobil: daha hafif blur (§7) */
+@media (max-width: 768px) {
+  :root[data-ui="v3"] { --glass-blur-1: 12px; --glass-blur-2: 12px; --glass-saturate: 120%; }
+}
+
+/* Fallback'ler (§3.4): destek yok / şeffaflık azalt / yüksek kontrast → düz yüzey */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-ui="v3"] { --glass-1: rgba(18, 24, 38, 0.96); --glass-2: rgba(22, 30, 48, 0.98); }
+  :root[data-ui="v3"][data-theme="light"] { --glass-1: rgba(255, 255, 255, 0.96); --glass-2: rgba(255, 255, 255, 0.98); }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root[data-ui="v3"] { --glass-1: #121826; --glass-2: #161e30; --glass-3: #1c2538; }
+  :root[data-ui="v3"][data-theme="light"] { --glass-1: #ffffff; --glass-2: #ffffff; --glass-3: #e8ecf4; }
+}
+:root[data-ui="v3"][data-transparency="reduced"] { --glass-1: #121826; --glass-2: #161e30; --glass-3: #1c2538; }
+:root[data-ui="v3"][data-theme="light"][data-transparency="reduced"] { --glass-1: #ffffff; --glass-2: #ffffff; --glass-3: #e8ecf4; }

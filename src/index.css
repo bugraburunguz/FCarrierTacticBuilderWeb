@@ -76,6 +76,11 @@
   --color-good-soft: var(--good-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
+  /* v3 ek token'lar (src/design/tokens.css); v2'de tanımsızdır ve kullanılmaz */
+  --color-ink-2: var(--ink-2);
+  --color-faint: var(--faint);
+  --color-bad: var(--bad);
+  --color-warn: var(--warn);
 }
 
 @keyframes pop {
