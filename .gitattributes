@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+# Özet (sha256) ile doğrulanan dosyalar her platformda LF kalır
+*.lua text eol=lf
+*.sha256 text eol=lf
