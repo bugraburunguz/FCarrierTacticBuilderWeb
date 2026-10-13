@@ -37,6 +37,25 @@ describe('api client', () => {
     await expect(api.post('/fit/squad', {})).rejects.toMatchObject({ code: 'fc.exception.0004', message: 'Yeterli krediniz yok.', status: 200 })
   })
 
+  it('yabancı ya da silinmiş kariyer kimliği (404, BE-SEC-09) kariyersiz bir kez yeniden denenir', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ success: false, error: [{ code: 'fc.exception.0001', message: 'Kayıt bulunamadı.' }] }, 404))
+      .mockResolvedValueOnce(jsonResponse({ success: true, data: { items: [] } }))
+
+    const data = await api.get<{ items: unknown[] }>('/players', { career: 5, size: 3 })
+
+    expect(data).toEqual({ items: [] })
+    expect(fetchMock.mock.calls[0][0]).toContain('career=5')
+    expect(fetchMock.mock.calls[1][0]).not.toContain('career=')
+  })
+
+  it('kariyer sorgusu olmayan 404 yeniden denenmez', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ success: false, error: [{ code: 'fc.exception.0001', message: 'Kayıt bulunamadı.' }] }, 404))
+
+    await expect(api.get('/players/9')).rejects.toMatchObject({ status: 404 })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
   it('refreshes once on 401 and retries with the rotated token', async () => {
     tokens.set('expired', 'refresh-1')
     fetchMock

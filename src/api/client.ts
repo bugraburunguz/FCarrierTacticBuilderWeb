@@ -25,7 +25,8 @@ export const ErrorCodes = {
   insufficientCredit: 'fc.exception.0004',
   premiumRequired: 'fc.exception.0005',
   unauthorized: 'fc.exception.0016',
-  careerForbidden: 'fc.exception.0009',
+  /** Yabancı kariyer artık olmayan kariyerle aynı görünür (BE-SEC-09): 404 + bu kod. */
+  notFound: 'fc.exception.0001',
 } as const
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
@@ -139,9 +140,9 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
   if (!res.ok || !envelope.success) {
     const first = envelope.error?.[0]
-    if (first?.code === ErrorCodes.careerForbidden && options.query?.career !== undefined) {
-      // Eski/yabancı kariyer kimliği: kimliği bırak ve kariyersiz (model verisiyle) bir kez yeniden dene.
-      console.warn('[FCareer] kariyer erişimi reddedildi, careerId temizlendi:', options.query.career)
+    if (res.status === 404 && first?.code === ErrorCodes.notFound && options.query?.career !== undefined) {
+      // Eski/yabancı kariyer kimliği (sunucu 404 döner): kimliği bırak ve kariyersiz (model verisiyle) bir kez yeniden dene.
+      console.warn('[FCareer] kariyer bulunamadı, careerId temizlendi:', options.query.career)
       careerStore.set(undefined)
       const { career: _dropped, ...rest } = options.query
       return request<T>(path, { ...options, query: rest })
