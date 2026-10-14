@@ -14,3 +14,15 @@ describe.each([48, 56, 72, 96])('saha kartı %ipx', (width) => {
     expect(parseFloat(name.style.fontSize)).toBeGreaterThanOrEqual(11)
   })
 })
+
+describe('uzun isimler (05a-b)', () => {
+  it.each(['Khvicha Kvaratskhelia', 'Trent Alexander-Arnold', 'Pierre-Emerick Aubameyang', 'Wojciech Szczęsny', 'Georginio Wijnaldum', 'Oleksandr Zinchenko'])('%s: kartta ellipsis (truncate), tam ad title\'da, okunur alanın içinde', (full) => {
+    const { container } = render(<PlayerCard player={{ name: full, rating: 89, position: 'LW' }} size="md" />)
+    const name = screen.getAllByTitle(full).find((el) => el.className.includes('truncate'))!
+    expect(name.className).toContain('truncate')
+    expect(name).toHaveAttribute('title', full)
+    // ad bloğu bayrak/lig sütunlarına binmesin: yatay dolgu ≥ 30px
+    expect((name.parentElement as HTMLElement).style.padding).toBe('0px 30px')
+    container.remove()
+  })
+})

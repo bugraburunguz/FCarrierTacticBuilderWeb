@@ -63,11 +63,33 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 1280, h: 900 }]) {
       await page.getByText('Daha fazla filtre').click()
       await record(page, problems, `gelismis-${theme}-${w}.png`)
     }
+    // karşılaştırma tepsisi: boşken yok; bir kart eklenince çıkar; masaüstünde içeriği kapatmaz, mobilde küçük düğme
+    await open('/players?ui=v3', (p) => p.getByRole('status').filter({ hasText: 'kart' }).first().waitFor())
+    const trayBefore = await page.locator('[aria-label="Karşılaştırma"], [data-compare-spacer]').count() + await page.getByRole('button', { name: /^Karşılaştır [(]/ }).count()
+    await page.getByRole('button', { name: 'Karşılaştırmaya ekle' }).first().click()
+    await page.waitForTimeout(300)
+    if (w >= 820) {
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+      await page.waitForTimeout(300)
+      const geo = await page.evaluate(() => {
+        const tray = document.querySelector('section[aria-label="Karşılaştırma"]').getBoundingClientRect()
+        const footer = document.querySelector('footer').getBoundingClientRect()
+        return { trayTop: tray.top, footerBottom: footer.bottom }
+      })
+      report.push({ shot: `tepsi-geometri-${theme}-${w}`, trayBeforeCount: trayBefore, overlap: geo.footerBottom > geo.trayTop + 0.5, geo, overflow: false, axeSeriousCritical: 0, problems: [] })
+    } else {
+      const geo = await page.evaluate(() => {
+        const fab = [...document.querySelectorAll('button')].find((b) => /^Karşılaştır [(]/.test(b.textContent.trim())).getBoundingClientRect()
+        return { width: fab.width, height: fab.height, left: fab.left, viewport: window.innerWidth }
+      })
+      report.push({ shot: `tepsi-geometri-${theme}-${w}`, trayBeforeCount: trayBefore, fabSmall: geo.width < geo.viewport * 0.6, geo, overflow: false, axeSeriousCritical: 0, problems: [] })
+    }
+    await record(page, problems, `tepsi-${theme}-${w}.png`)
     await context.close()
   }
 }
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
-const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length)
+const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.overlap || r.fabSmall === false || r.trayBeforeCount > 0)
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r)))

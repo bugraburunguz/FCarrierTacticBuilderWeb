@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import { Input, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
+import { VirtualChunk } from '../../design/components/VirtualChunk'
 import { Button, Chip, EmptyState, ErrorState, Segmented, Skeleton } from '../../design/components/primitives'
 import { POSITIONS } from '../../lib/format'
 import { activeFilterCount, CARD_PAGE_SIZE, filtersFromParams, filtersToParams, toPlayerQuery, type CardFilters, type CardSort } from './cardFilters'
@@ -14,6 +15,10 @@ import { CardTile } from './CardTile'
 
 const STALE_MS = 120_000
 const SKELETONS = 12
+/** Pencereleme parça boyutu (kart) ve ilk yükseklik tahmini (px); ölçülünce gerçek yükseklik kullanılır. */
+export const CHUNK = 24
+const CHUNK_ESTIMATE = 1400
+const chunked = <T,>(items: T[]): T[][] => Array.from({ length: Math.ceil(items.length / CHUNK) }, (_, i) => items.slice(i * CHUNK, (i + 1) * CHUNK))
 const TEXT_SORTS = ['name', 'club', 'league', 'position']
 const SORT_LABEL: { id: CardSort; label: string }[] = [
   { id: 'overall', label: 'OVR' },
@@ -123,13 +128,19 @@ export function CardDatabasePage() {
         <>
           <p role="status" className="text-xs text-muted">{total.toLocaleString('tr-TR')} kart · {players.length} gösteriliyor</p>
           {filters.view === 'table' ? (
-            <CardTable players={players} filters={filters} onSort={sortBy} />
+            <CardTable groups={chunked(players)} filters={filters} onSort={sortBy} />
           ) : (
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-              {players.map((p) => (
-                <CardTile key={p.id} player={p} />
+            <div className="flex flex-col gap-3">
+              {chunked(players).map((group) => (
+                <VirtualChunk key={group[0].id} estimate={CHUNK_ESTIMATE}>
+                  <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+                    {group.map((p) => (
+                      <CardTile key={p.id} player={p} />
+                    ))}
+                  </ul>
+                </VirtualChunk>
               ))}
-            </ul>
+            </div>
           )}
           {query.hasNextPage && (
             <div className="flex justify-center">
