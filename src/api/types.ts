@@ -293,10 +293,12 @@ export interface WeakLink {
 
 export interface RuleFinding {
   ruleId: string
-  severity: 'RISK' | 'WARN' | 'PLUS'
+  severity: 'RISK' | 'WARN' | 'INFO' | 'PLUS'
   title: string
   message: string
   fix?: string
+  /** Analiz motoru (E3-7): sayısal kanıt (metrik, değer, işlem, eşik). */
+  evidence?: { metric: string; value: number; op: string; threshold: number; params?: Record<string, unknown> }[]
 }
 
 export interface SquadFit {
