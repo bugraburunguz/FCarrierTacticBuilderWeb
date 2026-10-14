@@ -40,6 +40,12 @@ describe('kart veritabanı', () => {
     expect(screen.getByText('2 kart · 2 gösteriliyor')).toBeInTheDocument()
   })
 
+  it('yapışkan filtre çubuğu opak yüzeydir (Q5: altından geçen kart görünmez)', async () => {
+    renderPage()
+    await screen.findByText(/2 kart/)
+    expect(screen.getByRole('region', { name: 'Süzgeçler' }).className).toContain('glass-sticky')
+  })
+
   it('mevki çipi sunucu sorgusuna mevki ekler', async () => {
     renderPage()
     await screen.findByText(/2 kart/)

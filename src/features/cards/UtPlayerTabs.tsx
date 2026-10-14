@@ -5,7 +5,8 @@ import type { PlayerDetail, PlayerRoleFit } from '../../api/types'
 import { FitBadge } from '../../components/card/FitBadge'
 import { FitNarrativeView } from '../../components/FitNarrativeView'
 import { Button, Chip, EmptyState, ErrorState, Segmented, Skeleton, StatTile } from '../../design/components/primitives'
-import { fitDisplay, levelText, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
+import { HelpPopover } from '../../components/ui'
+import { fitDisplay, ROLES_HELP, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
 import { ATTR_GROUPS, ATTR_LABELS } from '../../lib/format'
 import { TONE_VAR, ratingTone } from '../../lib/ratingTone'
 import { formatPrice } from './formatPrice'
@@ -30,7 +31,7 @@ export function StatsTab({ detail, version }: { detail: PlayerDetail; version: C
               const value = attrs[a] ?? 0
               return (
                 <div key={a} className="flex items-center gap-2 border-b border-[var(--glass-border)] py-1 text-sm">
-                  <dt className="w-32 shrink-0 truncate text-ink-2" title={ATTR_LABELS[a] ?? a}>{ATTR_LABELS[a] ?? a}</dt>
+                  <dt className="w-32 shrink-0 break-words leading-tight text-ink-2">{ATTR_LABELS[a] ?? a}</dt>
                   <dd className="flex min-w-0 flex-1 items-center gap-2">
                     <span aria-hidden="true" className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--glass-3)]"><span className="block h-full rounded-full" style={{ width: `${value}%`, background: TONE_VAR[ratingTone(value)] }} /></span>
                     <span className="min-w-7 text-right font-[var(--font-num)] font-medium tabular-nums text-ink">{value}</span>
@@ -55,28 +56,31 @@ export function StatsTab({ detail, version }: { detail: PlayerDetail; version: C
   )
 }
 
-function RoleRow({ role }: { role: PlayerRoleFit }) {
+/** Yüzde yalnız rozette (seviyesine göre); rol puanı ayrı sayıdır ve yalnız seviye değeri varken yazılır (yoksa rozetteki sayı odur). */
+function RoleRow({ role, tailored }: { role: PlayerRoleFit; tailored: boolean }) {
   const d = fitDisplay({ levelFit: role.levelFit, currentFit: role.currentFit, score: role.score, fitLabel: role.fitLabel ?? null, badge: role.badge })
   return (
     <li className="glass-3 flex flex-col gap-1 p-2.5">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="min-w-0 flex-1 truncate text-sm font-medium" title={role.roleName}>{role.roleName}</span>
-        {role.narrative?.tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
+        {tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
         <FitBadge state={d.state} pct={d.pct} />
-        <span className="text-xs text-muted">{role.levelFit !== undefined && role.levelFit !== null ? levelText(d.pct) : rolePointsText(d.rolePoints)}</span>
+        {role.levelFit !== undefined && role.levelFit !== null && <span className="text-xs text-muted">{rolePointsText(d.rolePoints)}</span>}
       </div>
-      {role.levelFit !== undefined && role.levelFit !== null && <p className="text-xs text-muted">{rolePointsText(d.rolePoints)}</p>}
       {role.narrative && (
         <details className="text-xs">
           <summary className="min-h-8 cursor-pointer font-semibold text-accent max-sm:min-h-11">Neden?</summary>
-          <FitNarrativeView narrative={role.narrative} />
+          <FitNarrativeView narrative={role.narrative} showTailored={false} />
         </details>
       )}
     </li>
   )
 }
 
-/** Roller: v3 uyum (seviyesine göre % + rol puanı + rozet), mevki başına en uygun roller; "Neden?" altında anlatım. Sözlük `fitLabels` (tek kaynak). */
+/**
+ * Roller: v3 uyum (rozet = seviyesine göre %, yanında rol puanı), mevki başına en uygun roller; "Neden?" altında anlatım.
+ * "Biçilmiş kaftan" mevki başına yalnız en iyi role, sunucu `tailored` derse. Sözlük `fitLabels` (tek kaynak).
+ */
 export function RolesTab({ playerId, positions }: { playerId: number; positions: string[] }) {
   const query = useQuery({ queryKey: ['player-roles-v3', playerId], queryFn: () => endpoints.playerRoles(playerId, undefined, 'v3'), staleTime: STALE_MS })
   const [open, setOpen] = useState<Record<string, boolean>>({})
@@ -94,6 +98,13 @@ export function RolesTab({ playerId, positions }: { playerId: number; positions:
   }
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2 text-xs text-muted">
+        Uygunluk nasıl okunur?
+        <HelpPopover label="Rozet ve rol puanı">
+          <p>{ROLES_HELP.badge}</p>
+          <p className="mt-1">{ROLES_HELP.rolePoints}</p>
+        </HelpPopover>
+      </div>
       {shownPositions.map((position, index) => {
         const roles = sortRoles(byPosition.get(position) ?? [])
         const all = open[position]
@@ -104,8 +115,8 @@ export function RolesTab({ playerId, positions }: { playerId: number; positions:
               {index === 0 && <Chip>Ana mevki</Chip>}
             </h2>
             <ul className="flex flex-col gap-1.5">
-              {(all ? roles : roles.slice(0, ROLES_SHOWN)).map((r) => (
-                <RoleRow key={r.roleId} role={r} />
+              {(all ? roles : roles.slice(0, ROLES_SHOWN)).map((r, i) => (
+                <RoleRow key={r.roleId} role={r} tailored={i === 0 && r.narrative?.tailored === true} />
               ))}
             </ul>
             {roles.length > ROLES_SHOWN && (

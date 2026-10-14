@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { KbItem, PlayerDetail, PlayerRoleFit } from '../../api/types'
+import { ROLES_HELP } from '../../lib/fitLabels'
 import { UtPlayerPage } from './UtPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
@@ -73,18 +74,67 @@ describe('UT oyuncu sayfası', () => {
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('v=50563395'))
   })
 
-  it('Roller sekmesi v3 ister: seviyesine göre %, rol puanı, rozet ve "Neden?" altında anlatım', async () => {
+  it('Roller sekmesi v3 ister: rozette seviyesine göre % (tek kez), rol puanı ve "Neden?" altında anlatım', async () => {
     renderPage('/ut/players/231747?sekme=roller')
     expect(await screen.findByText('Advanced Forward (Attack)')).toBeInTheDocument()
     expect(endpoints.playerRoles).toHaveBeenCalledWith(1, undefined, 'v3')
-    expect(screen.getByText('Seviyesine göre %88')).toBeInTheDocument()
+    // aynı sayı iki kez gösterilmez: yüzde yalnız rozette
+    expect(screen.getByText('%88')).toBeInTheDocument()
+    expect(screen.queryByText(/Seviyesine göre/)).toBeNull()
     expect(screen.getByText('Rol puanı 95')).toBeInTheDocument()
-    expect(screen.getAllByText('Biçilmiş kaftan').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Biçilmiş kaftan')).toHaveLength(1)
     expect(screen.getByText('Neden?')).toBeInTheDocument()
     expect(screen.getByText('Bitiricilik çok güçlü.')).toBeInTheDocument()
     // sıra: seviyesine göre uyum azalan
     const names = screen.getAllByRole('listitem').map((li) => li.textContent ?? '')
     expect(names.findIndex((t) => t.includes('Advanced Forward'))).toBeLessThan(names.findIndex((t) => t.includes('Poacher')))
+  })
+
+  it('Roller: sekme başında tek yardım; rozet ve rol puanı açıklaması fitLabels sözlüğünden', async () => {
+    renderPage('/ut/players/231747?sekme=roller')
+    await screen.findByText('Advanced Forward (Attack)')
+    const panel = screen.getByRole('tabpanel')
+    expect(within(panel).getAllByRole('note')).toHaveLength(1)
+    expect(within(panel).getByRole('note')).toHaveTextContent(ROLES_HELP.badge)
+    expect(within(panel).getByRole('note')).toHaveTextContent(ROLES_HELP.rolePoints)
+  })
+
+  it('"Biçilmiş kaftan" her mevkide yalnız en iyi role ve yalnız sunucu tailored derse', async () => {
+    const tailored = (roleId: string, levelFit: number, position = 'ST') => role({ roleId, roleName: roleId, levelFit, position })
+    vi.mocked(endpoints.playerRoles).mockResolvedValue([
+      tailored('st_a', 96), tailored('st_b', 94), tailored('st_c', 92), tailored('st_d', 90), tailored('st_e', 88),
+      role({ position: 'LW', roleId: 'lw_best', roleName: 'lw_best', levelFit: 93, narrative: { headline: '', tailored: false, strengths: [], weaknesses: [] } }),
+      tailored('lw_second', 80, 'LW'),
+    ])
+    renderPage('/ut/players/231747?sekme=roller')
+    const st = await screen.findByRole('region', { name: 'ST rolleri' })
+    expect(within(st).getAllByText('Biçilmiş kaftan')).toHaveLength(1)
+    expect(within(st).getAllByRole('listitem')[0]).toHaveTextContent('Biçilmiş kaftan')
+    // en iyi rol tailored değilse mevkide çip yok (ikinci rol tailored olsa da)
+    expect(within(screen.getByRole('region', { name: 'LW rolleri' })).queryByText('Biçilmiş kaftan')).toBeNull()
+  })
+
+  it('Statlar: etiketler kesilmez (ellipsis yok, iki satıra inebilir)', async () => {
+    renderPage()
+    const label = await screen.findByText('Bitiricilik')
+    expect(label.className).not.toContain('truncate')
+    expect(label.className).not.toContain('whitespace-nowrap')
+  })
+
+  it('mobilde (<820px) kart en çok 200px ve ortalı; versiyon şeridi opak yapışkan yüzey', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('max-width: 819px'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined }) as unknown as MediaQueryList) as typeof window.matchMedia
+    try {
+      renderPage()
+      const card = await screen.findByRole('img', { name: /^Kylian Mbappé, 91/ })
+      expect(parseFloat(card.style.width)).toBeLessThanOrEqual(200)
+      const strip = screen.getByRole('radiogroup', { name: 'Kart versiyonları' }).closest('.glass-sticky')!
+      expect(strip.className).toContain('sticky')
+      // yapışkan satır kart bölümünün doğrudan çocuğu: sticky'nin hareket alanı tüm bölüm
+      expect(strip.parentElement).toBe(screen.getByRole('region', { name: 'Kart' }))
+    } finally {
+      window.matchMedia = original
+    }
   })
 
   it('Fiyat: kart bilgi tabanında yoksa dürüst boş durum, uydurma sayı yok', async () => {

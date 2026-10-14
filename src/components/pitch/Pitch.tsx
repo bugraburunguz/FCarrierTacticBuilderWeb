@@ -316,7 +316,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
 
       {drag && dragged?.player && (
         <div className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-1/2 drop-shadow-xl" style={{ left: drag.x, top: drag.y }}>
-          <PlayerCard player={dragged.player} width={cardWidth} />
+          <PlayerCard player={dragged.player} width={cardWidth} minText={11} minRating={14} />
         </div>
       )}
     </div>

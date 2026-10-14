@@ -37,12 +37,18 @@ export interface PlayerCardProps {
   fit?: { pct: number; state: FitState }
   price?: string
   className?: string
-  /** Okunabilirlik kapısı (Q18): ölçeklenmiş yazı bu px'in altına inecekse o öğe gizlenir (saha kartları 11). */
+  /**
+   * Okunabilirlik kapısı (Q18, her boyutta varsayılan 11): ölçeklenmiş yazı bu px'in altına inecekse o öğe gizlenir.
+   * Açıkça verilirse (saha) soyad ölçekli alanda değil, kartın alt şeridinde sabit ≥ minText px yazılır ve hiç gizlenmez.
+   */
   minText?: number
-  /** OVR'nin ölçeklenmiş en küçük px'i (saha kartları 14); küçük kartta OVR büyütülür. */
+  /** OVR'nin ölçeklenmiş en küçük px'i (varsayılan 14); küçük kartta OVR büyütülür. */
   minRating?: number
 }
 
+/** Q18: kart içi yazı ≥ 11px, OVR ≥ 14px (11 §8). */
+export const CARD_MIN_TEXT = 11
+export const CARD_MIN_RATING = 14
 const NAME_MIN_WIDTH = 72
 const STATS_MIN_WIDTH = 100
 const META_MIN_WIDTH = 84
@@ -53,18 +59,20 @@ const FRAME_PATH = 'M90 2 C122 2 160 10 176 24 L176 196 C176 214 150 232 90 248 
  * Tek oyuncu kartı (DS-05): 180×250 taban tasarım, boyut `transform: scale` ile ölçeklenir; böylece her boyutta oranlar sabit kalır.
  * Çerçeve kendi SVG'miz; portre yoksa ya da yüklenmezse silüet çizilir.
  */
-export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '', minText = 0, minRating = 0 }: PlayerCardProps) {
+export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '', minText, minRating = CARD_MIN_RATING }: PlayerCardProps) {
   const uid = useId().replace(/:/g, '')
   const [failed, setFailed] = useState(false)
   const w = width ?? SIZE_WIDTH[size]
   const scale = w / BASE_W
   const design = designFor(player.rating, player)
   const { look } = design
-  const readable = (basePx: number) => basePx * scale >= minText
-  // Okunabilirlik kapısı açıkken (saha) isim ölçekli alanda değil, kartın alt şeridinde sabit ≥ minText px yazılır; isim asla gizlenmez.
-  const nameStrip = minText > 0
-  const showName = !nameStrip && w >= NAME_MIN_WIDTH
+  const textFloor = minText ?? CARD_MIN_TEXT
+  const readable = (basePx: number) => basePx * scale >= textFloor
+  // Saha (minText açıkça verilir): isim alt şeritte sabit ≥ minText px, asla gizlenmez. Diğer kartlarda ölçekli isim okunamıyorsa gizlenir.
+  const nameStrip = minText !== undefined && minText > 0
+  const showName = !nameStrip && w >= NAME_MIN_WIDTH && readable(21)
   const showPosition = readable(19)
+  // Sığmayan önce gizlenir: ülke/kulüp/lig çipleri (9px taban), sonra 6 stat (etiketi 8px taban).
   const showMeta = w >= META_MIN_WIDTH && readable(9)
   const showStats = w >= STATS_MIN_WIDTH && readable(8) && Boolean(player.faceStats?.length)
   const ratingBase = Math.max(46, minRating / scale)
@@ -163,7 +171,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
           lang={nameLang}
           title={player.name}
           className="absolute left-0 right-0 truncate text-center font-display font-extrabold uppercase leading-none"
-          style={{ top: BASE_H * scale * (141 / BASE_H), padding: '0 6%', fontSize: Math.max(minText, 21 * scale), color: look.ink }}
+          style={{ top: BASE_H * scale * (141 / BASE_H), padding: '0 6%', fontSize: Math.max(textFloor, 21 * scale), color: look.ink }}
         >
           {surname}
         </div>

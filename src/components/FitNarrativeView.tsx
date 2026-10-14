@@ -4,13 +4,13 @@ import { Chip } from '../design/components/primitives'
 
 /**
  * Rol uyumu anlatımı (E3-8): öneri satırı, oyuncu sayfası ve analiz aynı bileşeni kullanır. Cümleler sunucuda yalnız katkı ve kanıt sayılarından üretilir;
- * "Biçilmiş kaftan" rozetini sunucu belirler (web eşik bilmez).
+ * "Biçilmiş kaftan" rozetini sunucu belirler (web eşik bilmez). Çipi satırda kendisi gösteren ekran (UT Roller) `showTailored={false}` verir.
  */
-export function FitNarrativeView({ narrative }: { narrative: FitNarrative }) {
+export function FitNarrativeView({ narrative, showTailored = true }: { narrative: FitNarrative; showTailored?: boolean }) {
   return (
     <div className="space-y-2 text-sm">
       <p className="flex flex-wrap items-center gap-2">
-        {narrative.tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
+        {showTailored && narrative.tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
         <span>{narrative.headline}</span>
       </p>
       {narrative.strengths.length > 0 && (

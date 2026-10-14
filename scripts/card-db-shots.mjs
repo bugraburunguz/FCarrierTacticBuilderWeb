@@ -1,4 +1,5 @@
-// V3-05a ekran kapıları: UT kart veritabanı (ızgara, filtreli, tablo, mobil sheet, boş durum) 375/1280 × koyu/açık; axe + taşma + konsol/ağ.
+// V3-05a ekran kapıları: UT kart veritabanı (ızgara, kaydırılmış ızgara, filtreli, tablo, mobil sheet, boş durum) 375/768/1280 × koyu/açık; axe + taşma + konsol/ağ.
+// V3-05b-b ölçümleri: ızgara kartlarında en küçük yazı / OVR / soyad (Q18); 1.200px kaydırılmış ızgarada yapışkan filtre çubuğu örtmesi (Q5, ≥820px).
 // Kullanım: node scripts/card-db-shots.mjs [--base http://localhost:8081]   (oturum gerekmez: /players herkese açık)
 // Çıktı: docs/review/v2/screens/V3-05a/*.png ve gates-report.json
 import { AxeBuilder } from '@axe-core/playwright'
@@ -6,6 +7,7 @@ import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
+import { cardMinFont, stickyCover } from './lib/readability.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -22,17 +24,17 @@ const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'ex
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
 
-async function record(page, problems, name) {
+async function record(page, problems, name, extra = {}) {
   await page.waitForTimeout(500)
   await page.screenshot({ path: file(name) })
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
   const axe = await new AxeBuilder({ page }).analyze()
   const serious = axe.violations.filter((a) => a.impact === 'serious' || a.impact === 'critical')
-  report.push({ shot: name, overflow, axeSeriousCritical: serious.length, axeAll: axe.violations.map((v) => `${v.id}:${v.impact}:${v.nodes.length}`), problems: [...problems] })
+  report.push({ shot: name, overflow, axeSeriousCritical: serious.length, axeAll: axe.violations.map((v) => `${v.id}:${v.impact}:${v.nodes.length}`), problems: [...problems], ...extra })
   problems.length = 0
 }
 
-for (const { w, h } of [{ w: 375, h: 812 }, { w: 1280, h: 900 }]) {
+for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
     resetRateLimits()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
@@ -46,7 +48,11 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 1280, h: 900 }]) {
       await ready(page)
     }
     await open('/players?ui=v3', (p) => p.getByRole('status').filter({ hasText: 'kart' }).first().waitFor())
-    await record(page, problems, `izgara-${theme}-${w}.png`)
+    await record(page, problems, `izgara-${theme}-${w}.png`, { card: await page.evaluate(cardMinFont, 'main') })
+    // Kaydırılmış ızgara: kartlar yapışkan filtre çubuğunun (≥820px) altından geçer.
+    await page.evaluate(() => window.scrollTo(0, 1200))
+    await page.waitForTimeout(400)
+    await record(page, problems, `izgara-kaydirilmis-${theme}-${w}.png`, { card: await page.evaluate(cardMinFont, 'main'), sticky: await page.evaluate(stickyCover, 'section[aria-label="Süzgeçler"]') })
     await open('/players?mevki=ST&ovrmin=88&ui=v3', (p) => p.getByRole('status').filter({ hasText: 'kart' }).first().waitFor())
     await record(page, problems, `izgara-filtreli-${theme}-${w}.png`)
     await open('/players?gorunum=table&ui=v3', (p) => p.getByRole('table').waitFor())
@@ -90,6 +96,11 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 1280, h: 900 }]) {
 }
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
-const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.overlap || r.fabSmall === false || r.trayBeforeCount > 0)
+// Q5 yalnız yüzey gerçekten yapışkanken (≥820px) ve yapışık konumdayken; mobilde filtre çubuğu akışta kalır.
+const stuck = (s) => s && s.found && s.position === 'sticky' && s.top <= 80
+const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.overlap || r.fabSmall === false || r.trayBeforeCount > 0
+  || (r.card && r.card.cards > 0 && (r.card.minFontPx < 11 || r.card.ovrMinPx < 14 || r.card.surnamesVisible < r.card.cards))
+  || (stuck(r.sticky) && !r.sticky.ok))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r)))
+report.filter((r) => r.card || r.sticky).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ card: r.card, sticky: r.sticky })))

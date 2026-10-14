@@ -28,6 +28,12 @@ export const FIT_HELP = {
   ovrGap: 'Oyuncunun OVR\'si ile senin ilk 11 ortalaman arasındaki fark; yüksekse bu seviyeye inmesi zordur.',
 } as const
 
+/** UT oyuncu sayfası Roller sekmesinin tek yardımı: satırda yüzde yalnız rozette, açıklama burada. */
+export const ROLES_HELP = {
+  badge: 'Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.',
+  rolePoints: 'Rol puanı: rol vektörüne göre ham uygunluk.',
+} as const
+
 export interface FitInput {
   levelFit?: number | null
   currentFit?: number | null
