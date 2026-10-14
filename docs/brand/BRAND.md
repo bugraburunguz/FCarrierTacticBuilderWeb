@@ -34,3 +34,7 @@ Marka rengi mod vurgusundan (UT mavi / Kariyer turuncu) bağımsızdır; lockup 
 
 ## Yasal not (EA markası)
 "FC Assist, EA SPORTS veya Electronic Arts ile bağlantılı değildir. EA SPORTS FC, Electronic Arts Inc.'in ticari markasıdır." — footer'da ve `/about` sayfasında (`src/design/brand/legal.ts`).
+
+## Küçük boyut varyantı (≤ 16 px)
+16 px'te X ve O okunmaz: **yalnız altıgen + kalın ok** (çizgi 7, ok başı dolu). Aynı gradyan çerçeve ve dolgu. Kaynak: `tools/brand/render-icons.mjs` içindeki `small()`; vektörler `docs/brand/out/mark-small-dark.svg` / `mark-small-light.svg`. Kullanım: `favicon.ico`'nun 16 px katmanı, `favicon-16.png`, `favicon-light-16.png`, uzantı `icon-16.png`. 24 px ve üstü tam işaret. `favicon.svg` ölçeklenebilir olduğu için tam işareti taşır (tarayıcı 16 px'e indirir; 16 px'te ICO katmanı devreye girer).
+Tüm favicon / uzantı PNG'leri **saydam zeminlidir** (RGBA); beyaz ya da koyu kare zemin yok. `favicon.svg`'de zemin öğesi yoktur.

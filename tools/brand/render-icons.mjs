@@ -42,7 +42,19 @@ const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" 
 `
 writeFileSync(pub('favicon.svg'), faviconSvg)
 
-const markSvg = (px) => `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="0 0 64 64">${inner(dark)}</svg>`
+const light = readFileSync(root('docs/brand/source/mark-light.svg'), 'utf8')
+// Küçük boyut varyantı (≤16 px): yalnız altıgen + kalın ok (X ve O yok). Aynı gradyan çerçeve ve dolgu.
+const small = (svg, ink) => {
+  const body = inner(svg)
+  return body.slice(0, body.indexOf('<g fill="none"')) + `<path d="M20 44 41 23" fill="none" stroke="${ink}" stroke-width="7" stroke-linecap="round"/><path d="M47 15 48 33 29 16Z" fill="${ink}" stroke="${ink}" stroke-width="2" stroke-linejoin="round"/>`
+}
+const markSvg = (px, { variant = 'full', theme = 'dark' } = {}) => {
+  const src = theme === 'dark' ? dark : light
+  const body = variant === 'small' ? small(src, theme === 'dark' ? '#ffffff' : '#312e81') : inner(src)
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="0 0 64 64">${body}</svg>`
+}
+writeFileSync(root('docs/brand/out/mark-small-dark.svg'), markSvg(64, { variant: 'small' }).replace(' width="64" height="64"', ''))
+writeFileSync(root('docs/brand/out/mark-small-light.svg'), markSvg(64, { variant: 'small', theme: 'light' }).replace(' width="64" height="64"', ''))
 
 const fonts = (file) => pathToFileURL(root(`node_modules/${file}`)).href
 const FONT_CSS = `
@@ -75,10 +87,10 @@ await shot(iconHtml(512, 0.8, 112), 512, 512, pub('icons/icon-512.png'), { trans
 // maskable: tam zemin, işaret güvenli bölgede (%80 daire): altıgen tuvalin %56'sı
 await shot(iconHtml(512, 0.56, 0), 512, 512, pub('icons/maskable-512.png'))
 
-// favicon.ico: 16/32/48 PNG yüklü ICO; koyu işaret, saydam zemin (ICO tema bilmez)
+// favicon.ico: 16 px katmanı küçük varyant, 32/48 tam işaret; saydam zemin (ICO tema bilmez: koyu işaret)
 const frames = []
 for (const px of [16, 32, 48]) {
-  const png = await shot(`<div style="width:${px}px;height:${px}px">${markSvg(px)}</div>`, px, px, root(`docs/brand/out/favicon-${px}.png`), { transparent: true })
+  const png = await shot(`<div style="width:${px}px;height:${px}px">${markSvg(px, { variant: px <= 16 ? 'small' : 'full' })}</div>`, px, px, root(`docs/brand/out/favicon-${px}.png`), { transparent: true })
   frames.push({ px, png })
 }
 const header = Buffer.alloc(6)
@@ -101,10 +113,15 @@ const dir = Buffer.concat(
 )
 writeFileSync(pub('favicon.ico'), Buffer.concat([header, dir, ...frames.map((f) => f.png)]))
 
-// açık tema sekme ikonu (16/32) rapor için
-const light = readFileSync(root('docs/brand/source/mark-light.svg'), 'utf8')
-for (const px of [16, 32]) {
-  await shot(`<div style="width:${px}px;height:${px}px;background:#ffffff">${`<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="0 0 64 64">${inner(light)}</svg>`}</div>`, px, px, root(`docs/brand/out/favicon-light-${px}.png`))
+// açık tema sekme ikonu (16/32/48): saydam zemin
+for (const px of [16, 32, 48]) {
+  await shot(`<div style="width:${px}px;height:${px}px">${markSvg(px, { variant: px <= 16 ? 'small' : 'full', theme: 'light' })}</div>`, px, px, root(`docs/brand/out/favicon-light-${px}.png`), { transparent: true })
+}
+
+// Chrome uzantısı ikonları (repo dışı uzantı klasörüne kopyalanır; bkz. docs/brand/out/extension/README.md)
+mkdirSync(root('docs/brand/out/extension'), { recursive: true })
+for (const px of [16, 48, 128]) {
+  await shot(`<div style="width:${px}px;height:${px}px">${markSvg(px, { variant: px <= 16 ? 'small' : 'full' })}</div>`, px, px, root(`docs/brand/out/extension/icon-${px}.png`), { transparent: true })
 }
 
 // og-image 1200×630
