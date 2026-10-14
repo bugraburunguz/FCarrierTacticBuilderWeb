@@ -1,4 +1,17 @@
-import type { CareerPlayer, SlotAssignment } from '../api/types'
+import type { CareerPlayer } from '../api/types'
+import { isWeakFit, levelText, type FitLabel } from './fitLabels'
+
+/** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
+export interface DeskSlot {
+  slotId: string
+  position: string
+  roleId: string
+  playerId?: number
+  playerName?: string
+  /** Seviyesine göre % (levelFit); yoksa rol puanı. */
+  pct: number
+  fitLabel?: FitLabel | null
+}
 
 /** Kariyer "Menajer Masası" kuralları (13 §3.1, §5): saf fonksiyonlar, sunucuya gitmeden masada gösterilir; her öneri gerekçelidir. */
 
@@ -20,7 +33,6 @@ export const TRANSFER_ROLE_BY_GROUP: Record<PositionGroup, { position: string; r
   ST: { position: 'ST', roleId: 'poacher_attack' },
 }
 
-const WEAK_FIT = 70
 const SELL_AGE = 29
 const LOAN_MAX_AGE = 21
 const LOAN_MIN_GAP = 6
@@ -66,13 +78,14 @@ export interface WeakSlot {
   roleId: string
   playerName?: string
   fit: number
+  label?: FitLabel | null
 }
 
-/** Düşük RoleFit'li ilk 11 slotları (zayıf halkalar), en zayıf başta. */
-export function weakSlots(slots: SlotAssignment[]): WeakSlot[] {
+/** Zayıf halkalar: rozeti sarı (WEAK) ya da kırmızı (WRONG_ROLE) olan slotlar, seviyesine göre en zayıf başta. */
+export function weakSlots(slots: DeskSlot[]): WeakSlot[] {
   return slots
-    .filter((s) => (s.roleFit?.score ?? 0) < WEAK_FIT)
-    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: Math.round(s.roleFit?.score ?? 0) }))
+    .filter((s) => isWeakFit(s.fitLabel))
+    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel }))
     .sort((a, b) => a.fit - b.fit)
 }
 
@@ -88,7 +101,7 @@ export interface DeskAction {
 
 interface ActionInput {
   squad: CareerPlayer[]
-  slots: SlotAssignment[]
+  slots: DeskSlot[]
   tags: Record<number, string>
 }
 
@@ -102,8 +115,8 @@ export function suggestActions({ squad, slots, tags }: ActionInput): DeskAction[
   weakSlots(slots).slice(0, 2).forEach((w, index) => {
     actions.push({
       kind: 'FILL',
-      title: `${w.position}: zayıf halka (RoleFit %${w.fit})`,
-      reason: `${w.playerName ?? 'Slot'} bu rolü ${w.fit < 55 ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
+      title: `${w.position}: zayıf halka (${levelText(w.fit)})`,
+      reason: `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
       to: `/career/transfer?pos=${w.position}&role=${w.roleId}`,
       priority: 100 - w.fit - index,
     })

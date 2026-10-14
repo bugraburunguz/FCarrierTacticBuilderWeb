@@ -8,8 +8,12 @@ import { DeleteCareerButton } from '../components/DeleteCareerButton'
 import { MoneyInput } from '../components/MoneyInput'
 import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Input, Pill, Select, Skeleton, Stat } from '../components/ui'
 import { ageProfile, alerts, depthRows, GROUP_LABEL, suggestActions, weakSlots } from '../lib/deskRules'
+import { useAutoLineup } from '../features/squad/useAutoLineup'
+import { useCareerBinding } from '../features/squad/useCareerBinding'
+import { toDeskSlots, useSlotFits } from '../features/squad/useSlotFits'
+import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
+import { levelText } from '../lib/fitLabels'
 import { formatEur } from '../lib/format'
-import { toTacticRequest, useTactic } from '../state/tacticStore'
 import { useActiveCareerId } from '../state/careerStore'
 
 const KIND_LABEL = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik' } as const
@@ -24,23 +28,21 @@ export function CareerDeskPage() {
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
   const id = career?.id
-  const tactic = useTactic()
-  const request = toTacticRequest(tactic)
 
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
-  const lineup = useQuery({
-    queryKey: ['lineup', id, squad.data?.length, JSON.stringify(request)],
-    queryFn: () => endpoints.lineup(id!, request),
-    enabled: id !== undefined && (squad.data?.length ?? 0) >= 11,
-    retry: false,
-  })
+  // Masa, saha ve İhtiyaçlar AYNI kaynaktan okur (v3 levelFit + rozet): aynı oyuncu her ekranda aynı sayı.
+  const { binding, playerById } = useCareerBinding(id, squad.data)
+  const ws = useSquadWorkspace('career', binding)
+  useAutoLineup(ws, id, squad.data?.length ?? 0)
+  const { rows: fitRows, pending: fitsPending } = useSlotFits(ws, playerById)
   const diff = useQuery({ queryKey: ['snapshot-diff', id], queryFn: () => endpoints.snapshotDiff(id!), enabled: id !== undefined, retry: false })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
   const tagList = useQuery({ queryKey: ['tags', id], queryFn: () => endpoints.playerTags(id!), enabled: id !== undefined, retry: false })
   const events = useQuery({ queryKey: ['events', id], queryFn: () => endpoints.events(id!), enabled: id !== undefined, retry: false })
 
   const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
-  const slots = lineup.data?.slots ?? []
+  const slots = useMemo(() => toDeskSlots(fitRows), [fitRows])
+  const teamFit = fitRows.length > 0 ? Math.round(fitRows.reduce((sum, r) => sum + r.display.pct, 0) / fitRows.length) : undefined
   const players = squad.data ?? []
   const actions = useMemo(() => suggestActions({ squad: players, slots, tags }), [players, slots, tags])
   const notes = useMemo(() => alerts({ squad: players, slots, tags, diffRows: diff.data?.rows ?? [], windowEndsOn: career?.windowEndsOn }), [players, slots, tags, diff.data, career?.windowEndsOn])
@@ -71,7 +73,7 @@ export function CareerDeskPage() {
       </div>
 
       <div className="flex flex-wrap items-stretch gap-px overflow-hidden rounded-md border border-line bg-line">
-        <Stat label="Taktik uyumu" value={lineup.data ? `%${Math.round(lineup.data.squadFit)}` : '—'} />
+        <Stat label="Taktik uyumu" value={teamFit !== undefined ? `%${teamFit}` : '—'} />
         <Stat label="Transfer bütçesi" value={formatEur(career.budgetEur)} />
         <Stat label="Maaş bütçesi" value={career.wageBudgetEur !== undefined ? formatEur(career.wageBudgetEur) : '—'} />
         <Stat label="Dönem" value={window === undefined ? '—' : window < 0 ? 'kapalı' : `${window} gün`} tone={window !== undefined && window >= 0 && window <= 7 ? 'bad' : undefined} />
@@ -80,7 +82,7 @@ export function CareerDeskPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Bu dönemin 3 işi" actions={<HelpPopover>Zayıf halkalar, satış değeri ve genç gelişimi kurallarından; her öneri gerekçesiyle birlikte gelir.</HelpPopover>}>
-          {lineup.isLoading || squad.isLoading ? (
+          {fitsPending || squad.isLoading ? (
             <div className="space-y-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-14" />)}</div>
           ) : actions.length === 0 ? (
             <EmptyState>{players.length < 11 ? 'Öneri için kadroda en az 11 oyuncu olmalı.' : 'Şu an acil bir iş yok: ilk 11 taktiğe uyumlu, derinlik yeterli.'}</EmptyState>
@@ -98,7 +100,6 @@ export function CareerDeskPage() {
               ))}
             </ol>
           )}
-          <ErrorBox error={lineup.error} />
         </Card>
 
         <Card title="Zayıf halkalar ve uyarılar">
@@ -106,12 +107,12 @@ export function CareerDeskPage() {
             <ul className="mb-3 grid gap-1.5 text-sm">
               {weak.slice(0, 5).map((w) => (
                 <li key={w.slotId} className="flex items-center justify-between rounded-md bg-danger-soft px-2.5 py-1 text-danger">
-                  <span>{w.position} · {w.playerName ?? 'boş'}</span><span className="num font-semibold">%{w.fit}</span>
+                  <span>{w.position} · {w.playerName ?? 'boş'}</span><span className="num font-semibold">{levelText(w.fit)}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            lineup.data && <p className="mb-3 text-sm text-muted">Zayıf halka yok: ilk 11'in hepsi rolüne %70 üstünde uyumlu.</p>
+            !fitsPending && slots.length > 0 && <p className="mb-3 text-sm text-muted">Zayıf halka yok: dizilimdeki herkes seviyesinde ya da üstünde.</p>
           )}
           {notes.length === 0 ? <p className="text-sm text-muted">Uyarı yok.</p> : (
             <ul className="space-y-1 text-sm">

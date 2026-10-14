@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import type { CareerPlayer, SlotAssignment } from '../api/types'
+import type { CareerPlayer } from '../api/types'
 import roleIds from './roleIds.fixture.json'
-import { ageProfile, alerts, depthRows, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots } from './deskRules'
+import { ageProfile, alerts, depthRows, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, type DeskSlot } from './deskRules'
 
 function player(id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer['player']> = {}, loanedOut = false): CareerPlayer {
   return { player: { id, name: `P${id}`, overall, age, positions: [position], potential: overall + 2, valueEur: 2_000_000, ...extra } as CareerPlayer['player'], onLoan: false, loanedOut }
 }
 
-const slot = (slotId: string, position: string, fit: number, playerId: number): SlotAssignment =>
-  ({ slotId, position, roleId: 'r', roleName: 'Rol', tags: [], playerId, playerName: `P${playerId}`, roleFit: { score: fit } } as unknown as SlotAssignment)
+const slot = (slotId: string, position: string, pct: number, playerId: number, fitLabel: DeskSlot['fitLabel'] = pct < 20 ? 'WRONG_ROLE' : pct < 40 ? 'WEAK' : 'AT_LEVEL'): DeskSlot => ({ slotId, position, roleId: 'r', playerId, playerName: `P${playerId}`, pct, fitLabel })
 
 describe('deskRules', () => {
   const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000 }), player(4, 'CM', 60, 19, { potential: 78 })]
@@ -25,13 +24,13 @@ describe('deskRules', () => {
     expect(rows.find((r) => r.group === 'CB')?.short).toBe(2)
   })
 
-  it('zayıf halkalar en zayıftan başlar', () => {
-    const weak = weakSlots([slot('a', 'ST', 66, 3), slot('b', 'CB', 90, 2), slot('c', 'GK', 40, 1)])
+  it('zayıf halka yalnız sarı/kırmızı bant (seviyesine göre), en zayıf başta; seviyesinde olan değil', () => {
+    const weak = weakSlots([slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2), slot('c', 'GK', 10, 1), slot('d', 'CM', 55, 4)])
     expect(weak.map((w) => w.slotId)).toEqual(['c', 'a'])
   })
 
   it('3 iş: zayıf halka önde, sonra satış ve genç', () => {
-    const actions = suggestActions({ squad, slots: [slot('a', 'ST', 50, 3), slot('b', 'CB', 90, 2)], tags: {} })
+    const actions = suggestActions({ squad, slots: [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)], tags: {} })
     expect(actions).toHaveLength(3)
     expect(actions[0].kind).toBe('FILL')
     expect(actions[0].to).toContain('pos=ST')

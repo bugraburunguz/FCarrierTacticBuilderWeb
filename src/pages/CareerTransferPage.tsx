@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Star } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { CareerRecommendationItem } from '../api/types'
@@ -11,6 +11,7 @@ import { RecommendationPanel } from '../features/recommend/RecommendationPanel'
 import { FitBadge } from '../components/card/FitBadge'
 import { Chip } from '../design/components/primitives'
 import { useCareerBinding } from '../features/squad/useCareerBinding'
+import { useAutoLineup } from '../features/squad/useAutoLineup'
 import { needsFromFits, useSlotFits } from '../features/squad/useSlotFits'
 import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
 import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP } from '../lib/deskRules'
@@ -41,15 +42,7 @@ export function CareerTransferPage() {
   const ws = useSquadWorkspace('career', binding)
   const { rows: fitRows, pending: fitsPending } = useSlotFits(ws, playerById)
   const [allSquad, setAllSquad] = useState(false)
-  // Dizilim henüz kurulmamışsa (Kadro kurucu açılmadıysa) sahadaki ile aynı otomatik dizilimle doldurulur.
-  const autoFilled = useRef('')
-  useEffect(() => {
-    const key = `${id}|${ws.formation?.id}`
-    if (id !== undefined && ws.formation && !ws.stale && (squad.data?.length ?? 0) >= 11 && Object.keys(ws.state.assigned).length === 0 && autoFilled.current !== key) {
-      autoFilled.current = key
-      endpoints.lineup(id, ws.tactic).then((result) => ws.patch({ assigned: Object.fromEntries(result.slots.flatMap((s) => (s.playerId !== undefined ? [[s.slotId, s.playerId]] : []))) })).catch(() => undefined)
-    }
-  }, [id, ws, squad.data])
+  useAutoLineup(ws, id, squad.data?.length ?? 0)
   const shortlist = useQuery({ queryKey: ['shortlist', id], queryFn: () => endpoints.shortlist(id!), enabled: id !== undefined, retry: false })
   const tagList = useQuery({ queryKey: ['tags', id], queryFn: () => endpoints.playerTags(id!), enabled: id !== undefined, retry: false })
   const [selected, setSelected] = useState<string>()

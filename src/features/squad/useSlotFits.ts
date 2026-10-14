@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { PlayerSummary, RoleFit } from '../../api/types'
 import { fitDisplay, isWeakFit, type FitDisplay } from '../../lib/fitLabels'
+import type { DeskSlot } from '../../lib/deskRules'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
 
 export interface SlotFitRow {
@@ -50,3 +51,7 @@ export function useSlotFits(ws: SquadWorkspaceApi<number>, playerById: Map<numbe
 export function needsFromFits(rows: SlotFitRow[], all = false): SlotFitRow[] {
   return rows.filter((r) => all || isWeakFit(r.fit.fitLabel)).sort((a, b) => a.display.pct - b.display.pct || a.slotId.localeCompare(b.slotId))
 }
+
+/** Masa kuralları için aynı satırlar (aynı yüzde, aynı etiket). */
+export const toDeskSlots = (rows: SlotFitRow[]): DeskSlot[] =>
+  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel }))
