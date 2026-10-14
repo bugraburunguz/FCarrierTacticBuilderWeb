@@ -169,7 +169,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
       {result && !run.isPending && (
         <section aria-label="Öneriler" className="space-y-2">
           <p className="text-xs text-muted">
-            {result.roleName ? `Rol: ${result.roleName}${result.focus ? ` (${result.focus})` : ''}` : 'Tüm roller'}
+            {result.roleName ? `Rol: ${result.roleName}` : 'Tüm roller'}
             {result.userClubStrength !== undefined ? ` · kulüp gücün ${result.userClubStrength}` : ''}
             {result.userFirstElevenAverage !== undefined ? ` · ilk 11 ort. ${result.userFirstElevenAverage}` : ''}
           </p>

@@ -1,0 +1,188 @@
+{
+  "shots": [
+    {
+      "file": "slot-oneriler-bos-dark-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-onay-dark-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-sonuc-dark-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "h4"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "transfer-dark-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "page-has-heading-one",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "html"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-bos-light-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-onay-light-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-sonuc-light-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "h4"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "transfer-light-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "page-has-heading-one",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "html"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-bos-dark-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-onay-dark-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-sonuc-dark-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "h4"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "transfer-dark-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "page-has-heading-one",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "html"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-bos-light-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-onay-light-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "slot-oneriler-sonuc-light-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "heading-order",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "h4"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "transfer-light-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "page-has-heading-one",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            "html"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    }
+  ]
+}
