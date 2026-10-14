@@ -39,9 +39,9 @@ Alanlar: dxIn · dyFwd (birim) | w · r · d · p · s | cross · cutIn · runBe
 | Ball-Playing Defender · Defend | CB | 0 | 1 | 0.1 | 0.05 | 0.93 | 0.35 | 0.35 | 0 | 0 | 0 | 0 |
 | Ball-Playing Defender · Build-Up | CB | 0 | 4 | 0.1 | 0.08 | 0.88 | 0.4 | 0.4 | 0.02 | 0 | 0 | 0.02 |
 | Ball-Playing Defender · Aggressive | CB | 0 | 5 | 0.1 | 0.1 | 0.82 | 0.65 | 0.5 | 0 | 0 | 0 | 0.02 |
-| Wide Back · Defend | CB | 0 | 1 | 0.45 | 0.08 | 0.92 | 0.4 | 0.45 | 0.05 | 0 | 0 | 0 |
-| Wide Back · Support | CB | 0 | 5 | 0.55 | 0.2 | 0.8 | 0.45 | 0.55 | 0.2 | 0 | 0.05 | 0 |
-| Wide Back · Aggressive | CB | 0 | 7 | 0.5 | 0.25 | 0.75 | 0.65 | 0.6 | 0.1 | 0 | 0.05 | 0 |
+| Wide Back · Defend | CB | -2 | 1 | 0.45 | 0.08 | 0.92 | 0.4 | 0.45 | 0.05 | 0 | 0 | 0 |
+| Wide Back · Support | CB | -6 | 5 | 0.55 | 0.2 | 0.8 | 0.45 | 0.55 | 0.2 | 0 | 0.05 | 0 |
+| Wide Back · Aggressive | CB | -5 | 7 | 0.5 | 0.25 | 0.75 | 0.65 | 0.6 | 0.1 | 0 | 0.05 | 0 |
 
 ## Defansif orta saha (10)
 
@@ -52,10 +52,10 @@ Alanlar: dxIn · dyFwd (birim) | w · r · d · p · s | cross · cutIn · runBe
 | Holding · Ball-Winning | CDM/CM | 0 | 2 | 0.15 | 0.1 | 0.9 | 0.7 | 0.55 | 0 | 0 | 0 | 0.02 |
 | Deep-Lying Playmaker · Defend | CDM/CM | 0 | 1 | 0.1 | 0.1 | 0.8 | 0.3 | 0.4 | 0 | 0 | 0.02 | 0.08 |
 | Deep-Lying Playmaker · Roaming | CDM/CM | 0 | 5 | 0.15 | 0.2 | 0.7 | 0.4 | 0.55 | 0.05 | 0 | 0.05 | 0.12 |
-| Deep-Lying Playmaker · Build-Up | CDM/CM | 0 | 3 | 0.1 | 0.12 | 0.75 | 0.3 | 0.45 | 0.02 | 0 | 0.03 | 0.1 |
+| Deep-Lying Playmaker · Build-Up | CDM/CM | 0 | -4 | 0.1 | 0.12 | 0.75 | 0.3 | 0.45 | 0.02 | 0 | 0.03 | 0.1 |
 | Centre Half · Defend | CDM | 0 | 0 | 0.05 | 0.02 | 0.98 | 0.25 | 0.35 | 0 | 0 | 0 | 0 |
-| Wide Half · Defend | CDM | 0 | 1 | 0.45 | 0.1 | 0.85 | 0.4 | 0.5 | 0.15 | 0 | 0.03 | 0 |
-| Wide Half · Build-Up | CDM | 0 | 3 | 0.5 | 0.15 | 0.75 | 0.35 | 0.5 | 0.2 | 0 | 0.05 | 0.03 |
+| Wide Half · Defend | CDM | -6 | 1 | 0.45 | 0.1 | 0.85 | 0.4 | 0.5 | 0.15 | 0 | 0.03 | 0 |
+| Wide Half · Build-Up | CDM | -8 | 3 | 0.5 | 0.15 | 0.75 | 0.35 | 0.5 | 0.2 | 0 | 0.05 | 0.03 |
 | Box Crasher · Balanced | CDM | 0 | 12 | 0.2 | 0.7 | 0.3 | 0.5 | 0.75 | 0.05 | 0 | 0.4 | 0.35 |
 
 ## Orta saha (10)
@@ -110,11 +110,11 @@ Alanlar: dxIn · dyFwd (birim) | w · r · d · p · s | cross · cutIn · runBe
 | Poacher · Versatile | ST | 0 | 3 | 0.18 | 0.7 | 0.08 | 0.28 | 0.45 | 0 | 0 | 0.45 | 0.1 |
 | Target Forward · Attack | ST | 0 | 2 | 0.25 | 0.6 | 0.1 | 0.4 | 0.55 | 0 | 0 | 0.2 | 0.08 |
 | Target Forward · Balanced | ST | 0 | 1 | 0.25 | 0.5 | 0.12 | 0.4 | 0.55 | 0 | 0 | 0.1 | 0.06 |
-| Target Forward · Wide | ST | 0 | 2 | 0.6 | 0.45 | 0.12 | 0.4 | 0.6 | 0 | 0 | 0.1 | 0.04 |
-| False 9 · Build-Up | ST | 0 | 0 | 0.2 | 0.35 | 0.25 | 0.35 | 0.5 | 0 | 0.1 | 0.15 | 0.15 |
-| False 9 · Attack | ST | 0 | 2 | 0.2 | 0.45 | 0.2 | 0.35 | 0.55 | 0 | 0.1 | 0.3 | 0.18 |
+| Target Forward · Wide | ST | -12 | 2 | 0.6 | 0.45 | 0.12 | 0.4 | 0.6 | 0 | 0 | 0.1 | 0.04 |
+| False 9 · Build-Up | ST | 0 | -8 | 0.2 | 0.35 | 0.25 | 0.35 | 0.5 | 0 | 0.1 | 0.15 | 0.15 |
+| False 9 · Attack | ST | 0 | -5 | 0.2 | 0.45 | 0.2 | 0.35 | 0.55 | 0 | 0.1 | 0.3 | 0.18 |
 
-## Değişmezler (`RoleMovementInvariantsTest`, 12 test, yeşil)
+## Değişmezler (`RoleMovementInvariantsTest`, 15 test, yeşil)
 
 Sıra değişmezleri (kalibrasyon değişse de bozulamaz):
 - dyFwd: AWB Attack (28) > Wingback Balanced (18) > Fullback Balanced (8) > Fullback Defend (2)
@@ -126,13 +126,12 @@ Sıra değişmezleri (kalibrasyon değişse de bozulamaz):
 - p: Stopper'ın (en düşük 0,60) > Defender'ın (en yüksek 0,40)
 - Aynı rolde: Attack.r ≥ Balanced.r ≥ Defend.r ve dyFwd aynı yönde; Defend.d ≥ Balanced.d ≥ Attack.d (tüm roller)
 - Fırsat kanalları: Winger.cross > Inside Forward.cross; Inside Forward.cutIn > Winger.cutIn; AF.runBehind > Target Forward.runBehind; Shadow Striker.runBehind > Holding.runBehind; Box Crasher.longShot > Centre Half.longShot; AWB.cross > Fullback Defend.cross
-- Düzeltmeler sabit: Fullback Defend dxIn 1; Holding Defend p 0,35; AWB Attack d 0,30
-- Şema: 72 satırın hepsinde 11 alan aralıkta, `verified:false`, `_basis` dolu; satırlar `roles.json` rol × focus ile birebir
+- **İşaretli hareket (yeni):** dyFwd: False 9 Build-Up (−8) < False 9 Attack (−5) < 0 < Advanced Forward Attack (+10); DLP Build-Up (−4) < Holding Defend (0); dxIn: Target Forward Wide (−12) < 0, Wide Back Support (−6) < 0, Wide Half Build-Up (−8) < 0
+- Düzeltmeler sabit: Fullback Defend dxIn 1; Holding Defend p 0,35; AWB Attack d 0,30; işaretli düzeltmeler (9 satır) `_basis`'te "işaretli hareket düzeltmesi, Buğra/Claude incelemesi"
+- Şema: 72 satırın hepsinde 11 alan aralıkta (dxIn −15…30, dyFwd −12…35, diğerleri 0-1), `verified:false`, `_basis` dolu; satırlar `roles.json` rol × focus ile birebir
 
 ## Notlar
-- **Bir sapma:** AWB Attack `s` taslakta 1,00 idi; "B2B ≥ AWB" değişmezi için **0,95**'e çekildi (B2B 0,95 ile eşit). Başka sayıya dokunulmadı.
-- **Satır sayısı** ~50 değil **72**: `roles.json`'da 30 rol × focus = 72 kombinasyon; her biri ayrı satır (motor kimliği `rol_focus`). Elle yazılan tüm değerler tek üretici betikte (`tools/fit-seeds/gen-role-movement.mjs`).
-- **Box-to-Box yalnız CM** (EA kuralı; CDM karşılığı Box Crasher): işlem yok, bu not olarak kalır.
-- **Topsuz hat kayması** (seed'de `lineShiftByBand`, `verified:false`): DEEP −6, BALANCED 0, HIGH +8, AGGRESSIVE +14 birim ileri (eski 0,2 katsayısı kalktı).
-- Yardımcı 4 rol (Defender, Playmaker, Winger, Advanced Forward) bu tabloda aynı biçimde yer alır.
-- **Motor koduna bağlanmadı**: seed yalnız testle okunur.
+- AWB Attack `s` 1,00 → 0,95 sapması kabul edildi ("B2B ≥ AWB").
+- 72 satır: `roles.json`'da 30 rol × focus = 72; motor kimliği `rol_focus`. Tüm değerler tek üretici betikte (`tools/fit-seeds/gen-role-movement.mjs`).
+- Box-to-Box yalnız CM (EA kuralı, CDM karşılığı Box Crasher): işlem yok.
+- Topsuz hat kayması (`lineShiftByBand`, `verified:false`): DEEP −6, BALANCED 0, HIGH +8, AGGRESSIVE +14 birim ileri.
