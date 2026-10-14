@@ -142,7 +142,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     const first = envelope.error?.[0]
     if (res.status === 404 && first?.code === ErrorCodes.notFound && options.query?.career !== undefined) {
       // Eski/yabancı kariyer kimliği (sunucu 404 döner): kimliği bırak ve kariyersiz (model verisiyle) bir kez yeniden dene.
-      console.warn('[FCareer] kariyer bulunamadı, careerId temizlendi:', options.query.career)
+      console.warn('[FC Assist] kariyer bulunamadı, careerId temizlendi:', options.query.career)
       careerStore.set(undefined)
       const { career: _dropped, ...rest } = options.query
       return request<T>(path, { ...options, query: rest })

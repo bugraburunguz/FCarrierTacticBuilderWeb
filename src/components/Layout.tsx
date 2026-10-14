@@ -34,7 +34,7 @@ export function Layout() {
       <header className="sticky top-0 z-10 border-b border-line bg-surface/90">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2">
           <NavLink to="/" className="shrink-0 text-lg font-bold text-accent">
-            FC Kariyer
+            FC Assist
           </NavLink>
           <div role="group" aria-label="Mod" className="flex shrink-0 rounded-md border border-line p-0.5">
             {MODES.map((m) => (

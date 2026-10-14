@@ -1,4 +1,4 @@
-# FC Kariyer — Web
+# FC Assist — Web
 
 React + TypeScript + Vite + Tailwind. Backend: `FCarrierTacticBuilderBackend` (`/api/v1`).
 

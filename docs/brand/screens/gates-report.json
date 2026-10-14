@@ -1,0 +1,94 @@
+[
+  {
+    "shot": "ust-bar-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "giris-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "hakkinda-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "ust-bar-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "giris-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "hakkinda-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "ust-bar-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "giris-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "hakkinda-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "ust-bar-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "giris-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "hakkinda-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  }
+]

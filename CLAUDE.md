@@ -1,4 +1,4 @@
-# CLAUDE.md — FCareer Web (FCarrierTacticBuilderWeb)
+# CLAUDE.md — FC Assist Web (FCarrierTacticBuilderWeb)
 
 React 19 + TypeScript + Vite + Tailwind v4 + TanStack Query. Backend: `/api/v1` (FCarrierTacticBuilderBackend).
 Tasarım sistemi kuralları: `docs/review/02_DESIGN_SYSTEM_REDESIGN.md` (varsa önce oku).

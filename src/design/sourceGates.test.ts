@@ -35,7 +35,7 @@ function scan(pattern: RegExp, allow: (path: string) => boolean = () => false) {
 
 describe('v3 kaynak kapıları', () => {
   it('sabit hex renk yok (token dışı)', () => {
-    expect(scan(/#[0-9a-fA-F]{3,8}\b(?![0-9a-fA-F])/g, (p) => p.endsWith('contrast.ts'))).toEqual([])
+    expect(scan(/#[0-9a-fA-F]{3,8}\b(?![0-9a-fA-F])/g, (p) => p.endsWith('contrast.ts') || p.endsWith('LogoMark.tsx'))).toEqual([]) // LogoMark: marka işareti (BRAND.md) sabit logo renkleridir, UI rengi değil
   })
 
   it('Tailwind palet sınıfı yok (emerald/teal/slate/sky/...)', () => {

@@ -35,6 +35,7 @@ const UtSbcPage = lazy(() => import('./pages/UtSbcPage').then((m) => ({ default:
 const UtSbcChallengePage = lazy(() => import('./pages/UtSbcChallengePage').then((m) => ({ default: m.UtSbcChallengePage })))
 const ReplicasPage = lazy(() => import('./features/replicas/ReplicasPage').then((m) => ({ default: m.ReplicasPage })))
 const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPage').then((m) => ({ default: m.ReplicaDetailPage })))
+const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -55,6 +56,7 @@ export function App() {
     <Routes>
       <Route element={isV3() ? <AppShell /> : <Layout />}>
         <Route index element={<HomePage />} />
+        <Route path="about" element={<AboutPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="verify-email" element={<VerifyEmailPage />} />

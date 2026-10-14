@@ -8,6 +8,8 @@ import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
 import { MODES, NAV, UT_NAV, type NavGroup } from '../../lib/navConfig'
 import { useStorageError } from '../../state/bigStore'
 import { modeStore, useMode } from '../../state/modeStore'
+import { LogoLockup } from '../brand/LogoLockup'
+import { LEGAL_NOTE } from '../brand/legal'
 import { Chip, Segmented } from './primitives'
 import { MobileMenu, ThemeToggle } from './ThemeToggle'
 import { UserMenu } from './UserMenu'
@@ -64,7 +66,7 @@ export function AppShell() {
   return (
     <div className="min-h-screen text-ink">
       <header className="glass sticky top-0 z-20 flex h-12 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4">
-        <NavLink to="/" className="shrink-0 font-display text-xl font-bold text-accent"><span className="max-[479px]:hidden">FC Kariyer</span><span className="min-[480px]:hidden">FC</span></NavLink>
+        <LogoLockup size={32} collapse />
         <Segmented
           label="Mod"
           value={mode}
@@ -139,6 +141,10 @@ export function AppShell() {
             </nav>
           )}
           <Outlet />
+          <footer className="mt-10 flex flex-col gap-1 border-t border-line pt-4 text-xs text-muted">
+            <p>{LEGAL_NOTE}</p>
+            <NavLink to="/about" className="inline-flex min-h-8 items-center self-start font-semibold text-accent max-sm:min-h-11">Hakkında</NavLink>
+          </footer>
         </main>
       </div>
 

@@ -63,7 +63,7 @@ export function Button({ variant = 'secondary', className, disabled, disabledRea
 /** Chip: yazı ≥12px; etkileşimliyse dokunma hedefi ≥32px (mobilde 44px, Q13). */
 export function Chip({ children, tone, onClick, pressed, className, title }: { children: ReactNode; tone?: 'good' | 'warn' | 'bad' | 'info'; onClick?: () => void; pressed?: boolean; className?: string; title?: string }) {
   const toneClass = tone === 'good' ? 'bg-[var(--good-soft)] text-good' : tone === 'warn' ? 'bg-[var(--warn-soft)] text-warn' : tone === 'bad' ? 'bg-[var(--bad-soft)] text-bad' : tone === 'info' ? 'bg-[var(--info-soft)] text-info' : 'glass-3 text-ink-2'
-  const base = cx('inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] px-3 text-xs font-medium', toneClass, className)
+  const base = cx('inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-[var(--glass-border)] px-3 text-xs font-medium', toneClass, className)
   if (!onClick) {
     return <span className={cx(base, 'min-h-6')} title={title}>{children}</span>
   }

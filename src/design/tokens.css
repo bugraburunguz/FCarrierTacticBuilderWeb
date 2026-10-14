@@ -21,6 +21,10 @@
 
   --accent: #8f9bff; --accent-ink: #0b0f1d; --accent-soft: rgba(143, 155, 255, 0.16);
 
+  /* Marka (FC Assist): --brand-2 ve --brand-3 koyuda istenen #6366f1 / #a855f7 yerine #818cf8 / #c084fc (istenenler koyu zeminde 3,6:1 ve 4,1:1 verdi); mod vurgusundan bağımsız; "Assist" gradyanı. Açık temada koyulaştırılır (kontrast). */
+  --brand-1: #38bdf8; --brand-2: #818cf8; --brand-3: #c084fc;
+  --mark-f1: #1e293b; --mark-f2: #312e81; --mark-ink: #ffffff;
+
   --good: #4ade80; --good-soft: rgba(74, 222, 128, 0.14);
   --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, 0.14);
   --bad: #f87171; --bad-soft: rgba(248, 113, 113, 0.14);
@@ -75,6 +79,8 @@
   --glass-shadow: 0 8px 28px rgba(20, 30, 60, 0.12);
   --ink: #0d1424; --ink-2: #2b3547; --muted: #5b6577; --faint: #8b94a5;
   --accent: #4353ff; --accent-ink: #ffffff; --accent-soft: rgba(67, 83, 255, 0.12);
+  --brand-1: #0369a1; --brand-2: #4338ca; --brand-3: #7e22ce;
+  --mark-f1: #e0f2fe; --mark-f2: #ede9fe; --mark-ink: #312e81;
   --good: #14733c; --warn: #8a5a00; --bad: #a82227; --info: #1d5fc4;
   --sheet-bg: rgba(255, 255, 255, 0.97);
   --pitch-1: #1f6a45; --pitch-2: #1a5c3c; --pitch-line: rgba(255, 255, 255, 0.55); /* saha tema bağımsız içerik yüzeyi: açık temada da koyu çim (F4) */

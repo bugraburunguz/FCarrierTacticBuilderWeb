@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { LogoLockup } from '../design/brand/LogoLockup'
 import { useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
@@ -21,6 +22,7 @@ export function VerifyEmailPage() {
 
   return (
     <div className="mx-auto max-w-md">
+      <div className="mb-4 flex justify-center"><LogoLockup size={56} /></div>
       <Card title="E-posta doğrulama">
         {!token && <p className="text-sm text-muted">Doğrulama bağlantısı eksik. E-postandaki bağlantıyı aç.</p>}
         {verify.isPending && <Spinner />}
