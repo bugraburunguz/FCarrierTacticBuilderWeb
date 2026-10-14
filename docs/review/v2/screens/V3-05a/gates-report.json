@@ -1,0 +1,178 @@
+[
+  {
+    "shot": "izgara-dark-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "izgara-filtreli-dark-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "tablo-dark-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "bos-dark-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "mobil-sheet-dark-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "izgara-light-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "izgara-filtreli-light-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "tablo-light-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "bos-light-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "mobil-sheet-light-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "izgara-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "izgara-filtreli-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "tablo-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "bos-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "gelismis-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "izgara-light-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "izgara-filtreli-light-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "tablo-light-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "bos-light-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  },
+  {
+    "shot": "gelismis-light-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "region:moderate:2"
+    ],
+    "problems": []
+  }
+]
