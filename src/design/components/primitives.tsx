@@ -195,3 +195,53 @@ export function SidePanel({ title, onClose, children, open = true, sheet = false
     </aside>
   )
 }
+
+/**
+ * Tabs: `role=tablist` + `tabpanel` (WEB-DS-10). Ok tuşlarıyla gezinme, seçili sekme dolu cam + vurgu alt çizgisi.
+ * `idPrefix` sekme ve panel kimliklerini bağlar: panel `${idPrefix}-panel-${id}`, sekme `${idPrefix}-tab-${id}`.
+ */
+export function Tabs<T extends string>({ label, idPrefix, value, tabs, onChange }: { label: string; idPrefix: string; value: T; tabs: { id: T; label: ReactNode }[]; onChange: (id: T) => void }) {
+  function onKey(e: KeyboardEvent<HTMLDivElement>) {
+    const index = tabs.findIndex((t) => t.id === value)
+    const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+    if (e.key === 'Home' || e.key === 'End') {
+      e.preventDefault()
+      onChange(tabs[e.key === 'Home' ? 0 : tabs.length - 1].id)
+    } else if (step !== 0) {
+      e.preventDefault()
+      onChange(tabs[(index + step + tabs.length) % tabs.length].id)
+    }
+  }
+  return (
+    <div role="tablist" aria-label={label} onKeyDown={onKey} className="glass-3 flex gap-0.5 overflow-x-auto p-0.5">
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          id={`${idPrefix}-tab-${t.id}`}
+          type="button"
+          role="tab"
+          aria-selected={value === t.id}
+          aria-controls={`${idPrefix}-panel-${t.id}`}
+          tabIndex={value === t.id ? 0 : -1}
+          onClick={() => onChange(t.id)}
+          ref={(el) => {
+            if (el && value === t.id && document.activeElement?.getAttribute('role') === 'tab' && document.activeElement !== el && document.activeElement.id.startsWith(`${idPrefix}-tab-`)) {
+              el.focus()
+            }
+          }}
+          className={cx('min-h-9 flex-1 whitespace-nowrap rounded-[var(--radius-sm)] px-3 text-sm font-semibold max-sm:min-h-11', value === t.id ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]')}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function TabPanel({ idPrefix, id, active, children }: { idPrefix: string; id: string; active: boolean; children: ReactNode }) {
+  return (
+    <div role="tabpanel" id={`${idPrefix}-panel-${id}`} aria-labelledby={`${idPrefix}-tab-${id}`} hidden={!active} tabIndex={0} className="outline-none focus-visible:ring-2 focus-visible:ring-accent">
+      {active ? children : null}
+    </div>
+  )
+}

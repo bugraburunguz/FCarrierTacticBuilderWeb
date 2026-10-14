@@ -25,6 +25,8 @@ interface Props {
   onRemove?: (slotId: string) => void
   /** Sürükle-bırak ya da klavye taşıma modu: iki slotun oyuncuları yer değiştirir (hedef boşsa taşınır). */
   onSwap?: (fromSlotId: string, toSlotId: string) => void
+  /** Salt okunur (replika önizlemesi): slotlar etkileşimsiz, boş slot mevki yazar, rol etiketi düğme değildir. */
+  readOnly?: boolean
 }
 
 interface Drag {
@@ -61,7 +63,7 @@ const STRIPES = Array.from({ length: 12 }, (_, i) => i)
  * aynı kulüp/lig/ülkeyi paylaşan kartlar vurgulanır, diğerleri sönükleşir.
  * Klavye: Tab ile slot, Enter seç, M taşıma modu (oklarla hedef, Enter bırak, Esc iptal).
  */
-export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Props) {
+export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readOnly = false }: Props) {
   const boxRef = useRef<HTMLDivElement>(null)
   const [fieldWidth, setFieldWidth] = useState(560)
   const [available, setAvailable] = useState<number>()
@@ -228,17 +230,17 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
           <div key={slot.slotId} data-slot-group={slot.slotId} className="absolute flex flex-col items-center text-center" style={{ left: box.cx - box.width / 2, top: box.top, width: box.width, height: box.height, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
             <div className="group relative inline-block">
             <div
-              role="button"
-              tabIndex={0}
+              role={readOnly ? 'group' : 'button'}
+              tabIndex={readOnly ? undefined : 0}
               data-pitch-slot={slot.slotId}
-              aria-label={`${slot.position} — ${slot.player ? `${slot.player.name}, ${slot.player.rating}` : 'boş'}. ${moving === slot.slotId ? 'Taşınıyor.' : 'Oyuncu seç, M ile taşı.'}`}
-              aria-pressed={moving === slot.slotId}
-              onClick={() => {
+              aria-label={`${slot.position} — ${slot.player ? `${slot.player.name}, ${slot.player.rating}` : 'boş'}.${readOnly ? '' : moving === slot.slotId ? ' Taşınıyor.' : ' Oyuncu seç, M ile taşı.'}`}
+              aria-pressed={readOnly ? undefined : moving === slot.slotId}
+              onClick={readOnly ? undefined : () => {
                 if (!moved.current) {
                   onPickPlayer(slot.slotId)
                 }
               }}
-              onKeyDown={(e) => onKey(e, slot.slotId)}
+              onKeyDown={readOnly ? undefined : (e) => onKey(e, slot.slotId)}
               onPointerDown={slot.player && onSwap ? (e) => {
                 if (e.button !== 0) {
                   return
@@ -250,14 +252,14 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
               onMouseLeave={() => setHover(undefined)}
               onFocus={() => setHover(slot.slotId)}
               onBlur={() => setHover(undefined)}
-              className={`relative inline-block cursor-pointer rounded-md outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-flood-400 ${isOver || slot.selected || moving === slot.slotId ? 'ring-2 ring-flood-400' : linked ? 'ring-2 ring-flood-400/70' : ''}`}
+              className={`relative inline-block ${readOnly ? '' : 'cursor-pointer'} rounded-md outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-flood-400 ${isOver || slot.selected || moving === slot.slotId ? 'ring-2 ring-flood-400' : linked ? 'ring-2 ring-flood-400/70' : ''}`}
               style={{ touchAction: slot.player && onSwap ? 'pan-y' : undefined }}
             >
               {slot.player ? (
                 <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} minText={11} minRating={14} />
               ) : (
                 <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
-                  <span className="text-xl leading-none">+</span>
+                  {readOnly ? <span className="font-mono text-xs">{slot.position}</span> : <span className="text-xl leading-none">+</span>}
                 </span>
               )}
             </div>
@@ -276,7 +278,15 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
               </button>
             )}
             </div>
-            {slot.roleLabel && (
+            {slot.roleLabel && (readOnly ? (
+              <span title={slot.roleLabel} style={{ width: labelWidth, marginTop: 12 }} className="mx-auto block rounded-sm bg-ink-950/80 px-1.5 py-0.5 text-center text-xs font-semibold leading-tight text-paper-50">
+                  {labelMode === 'one' ? (
+                    <span className="block whitespace-nowrap">{shortRoleLabel(slot.roleLabel)}</span>
+                  ) : (
+                    <span className="block break-words">{slot.roleLabel}</span>
+                  )}
+              </span>
+            ) : (
               <button
                 type="button"
                 aria-label={slot.roleLabel}
@@ -293,7 +303,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap }: Pro
                   <span className="block break-words">{slot.roleLabel}</span>
                 )}
               </button>
-            )}
+            ))}
             <span data-slot-pill className="mt-0.5 block rounded-sm bg-ink-950/80 px-1.5 font-mono text-xs leading-[18px] text-paper-50">{slot.position}</span>
           </div>
         )

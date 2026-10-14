@@ -33,6 +33,8 @@ const UtImportPage = lazy(() => import('./pages/UtImportPage').then((m) => ({ de
 const UtObjectivesPage = lazy(() => import('./pages/UtObjectivesPage').then((m) => ({ default: m.UtObjectivesPage })))
 const UtSbcPage = lazy(() => import('./pages/UtSbcPage').then((m) => ({ default: m.UtSbcPage })))
 const UtSbcChallengePage = lazy(() => import('./pages/UtSbcChallengePage').then((m) => ({ default: m.UtSbcChallengePage })))
+const ReplicasPage = lazy(() => import('./features/replicas/ReplicasPage').then((m) => ({ default: m.ReplicasPage })))
+const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPage').then((m) => ({ default: m.ReplicaDetailPage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -64,6 +66,8 @@ export function App() {
         <Route path="tactics/wizard" element={<WizardPage />} />
         <Route path="squad" element={<RequireAuth><SquadPage /></RequireAuth>} />
         <Route path="squad/builder" element={<SquadBuilderPage />} />
+        <Route path="replicas" element={<ReplicasPage />} />
+        <Route path="replicas/:id" element={<ReplicaDetailPage />} />
         <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />

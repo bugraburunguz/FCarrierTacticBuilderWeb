@@ -1157,3 +1157,140 @@ export interface CreditCosts {
   squadFit: number
   advisor: number
 }
+
+// ── Replikalar (E3-9 / REP-04, REP-07) ────────────────────────────────────────────────────────────────────────────────
+
+export type ReplicaCategory = 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaBuildUp = 'SHORT_PASSING' | 'BALANCED' | 'COUNTER'
+export type ReplicaApproach = 'DEEP' | 'BALANCED' | 'HIGH' | 'AGGRESSIVE'
+
+export interface ReplicaRoleSlot {
+  slotId: string
+  position: string
+  role: string
+  focus: string
+  roleId: string
+}
+
+export interface ReplicaSummary {
+  id: string
+  category: ReplicaCategory
+  club: string
+  coach: string
+  season: string
+  formationId: string
+  eaFormation: string
+  buildUp: ReplicaBuildUp
+  defensiveApproach: ReplicaApproach
+  lineHeight: number
+  fidelity: number | null
+  tacticCode: string
+  slots: ReplicaRoleSlot[]
+  eaOrderedSlots: ReplicaRoleSlot[]
+  /** Uyarı + risk bulgusu sayısı (bilgi sayılmaz). */
+  attentionCount: number
+}
+
+export interface TacticEvidence {
+  metric: string
+  params: Record<string, unknown>
+  value: number
+  op: string
+  threshold: number
+  reference?: number | null
+  margin?: number | null
+}
+
+export interface TacticFinding {
+  code: string
+  title: string
+  severity: 'INFO' | 'WARN' | 'RISK'
+  instance: { side?: string; sideTr?: string }
+  evidence: TacticEvidence[]
+  recommendation?: { code: string; text: string }
+  text: string
+}
+
+export interface TacticAnalysis {
+  metrics: { band: string; depth: number }
+  findings: TacticFinding[]
+  notEvaluated: { code: string; reason: string }[]
+  levelLabel?: string | null
+}
+
+export interface ReplicaDetailSlot {
+  slot: string
+  position: string
+  role: string
+  focus: string
+  profile?: string
+  keyAttributes?: string[]
+  keyPlayStyles?: string[]
+}
+
+export interface ReplicaDetail {
+  id: string
+  category: ReplicaCategory
+  club: string
+  coach: string
+  season: string
+  honours?: string[]
+  whyIconic?: string
+  realShape?: { inPossession?: string; outOfPossession?: string; keyMechanisms?: string[] }
+  fc27: {
+    formation: string
+    buildUp: ReplicaBuildUp
+    defensiveApproach: ReplicaApproach
+    lineHeight: number
+    slots: ReplicaDetailSlot[]
+    planB?: { label: string; formation: string; buildUp: string; defensiveApproach: string; lineHeight: number; changes: string[] }
+    smartTactics?: string[]
+  }
+  replicaFidelity?: { score: number; cannotReplicate?: string[] }
+  sources?: string[]
+  verify?: string[]
+  tacticCode: string
+  analysis: TacticAnalysis
+}
+
+export type ReplicaSlotState = 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE' | 'EMPTY'
+
+export interface ReplicaApplySlot {
+  slotId: string
+  position: string
+  roleId: string
+  roleName: string
+  focus: string
+  player: PlayerSummary | null
+  currentFit: number | null
+  levelFit: number | null
+  state: ReplicaSlotState
+  badgeText: string | null
+  suggest: boolean
+}
+
+export interface ReplicaApplyResult {
+  replicaId: string
+  source: 'CAREER' | 'UT' | 'SAMPLE'
+  squadFit: number
+  slots: ReplicaApplySlot[]
+  analysis: TacticAnalysis
+}
+
+export interface ReplicaApplyBody {
+  careerId?: number
+  playerIds?: number[]
+}
+
+export interface UserTactic {
+  slot: number
+  careerId: number | null
+  name: string
+  formation: string
+  buildUp: string | null
+  defensiveApproach: string | null
+  lineHeight: number | null
+  slots: { slot: string; position: string; roleId: string; focus: string }[]
+  eaCode: string | null
+  sourceReplicaId: string | null
+}

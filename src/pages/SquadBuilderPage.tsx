@@ -62,11 +62,6 @@ export function SquadBuilderPage() {
 
   const preset = presets.data?.find((p) => p.id === state.presetId)
   const roleById = useMemo(() => new Map((roles.data ?? []).map((r) => [r.id, r])), [roles.data])
-  const replicaGroups = useMemo(() => {
-    const groups = new Map<string, Preset[]>()
-    ;(presets.data ?? []).filter((p) => p.kind === 'REPLICA').forEach((p) => groups.set(p.club ?? 'Diğer', [...(groups.get(p.club ?? 'Diğer') ?? []), p]))
-    return [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0], 'tr')).map(([club, items]) => [club, [...items].sort((a, b) => (a.season ?? '').localeCompare(b.season ?? ''))] as [string, Preset[]])
-  }, [presets.data])
 
   const slotRole = (slotId: string, fallback: string) => roleBySlot.get(slotId)?.roleId ?? state.roleOverride[slotId] ?? fallback
   const slotTags = (slotId: string) => state.tags[slotId] ?? []
@@ -262,7 +257,7 @@ export function SquadBuilderPage() {
           <SquadSummaryCard formations={ws.formations.data ?? []} formationId={formation?.id ?? ''} onFormation={changeFormation} views={views} weakReasons={weakReasons} />
           <section className="rounded-md border border-line bg-surface p-3.5 text-ink">
             <h2 className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[1.5px] text-accent">Taktik felsefesi</h2>
-            <Field label="Preset / replika">
+            <Field label="Oyun felsefesi">
               <Select
                 value={autoFit ? AUTO_FIT : state.presetId ?? ''}
                 onChange={(e) => {
@@ -289,15 +284,9 @@ export function SquadBuilderPage() {
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </optgroup>
-                {replicaGroups.map(([club, items]) => (
-                  <optgroup key={club} label={club}>
-                    {items.map((p) => (
-                      <option key={p.id} value={p.id}>{p.season ? `${p.season} · ` : ''}{p.coach ?? p.name}</option>
-                    ))}
-                  </optgroup>
-                ))}
               </Select>
             </Field>
+            <Link to="/replicas" className="mt-2 inline-block text-xs font-semibold text-accent underline underline-offset-2">106 gerçek takım replikası →</Link>
             <FormationStyleChips formationId={formation?.id} />
             {preset?.signature && <p className="mt-2 text-sm text-ink/80">{preset.signature}</p>}
             <SetupChips settings={preset?.settings} />

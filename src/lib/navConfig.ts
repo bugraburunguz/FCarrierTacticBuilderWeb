@@ -33,10 +33,11 @@ export const NAV: NavGroup[] = [
   {
     to: '/squad/builder',
     label: 'Taktik & Kadro',
-    match: ['/tactics', '/squad', '/recommend', '/scouting'],
+    match: ['/tactics', '/squad', '/recommend', '/scouting', '/replicas'],
     tabs: [
       { to: '/squad/builder', label: 'Kadro kurucu' },
       { to: '/tactics/wizard', label: 'Taktik sihirbazı' },
+      { to: '/replicas', label: 'Replikalar' },
       { to: '/squad', label: 'Kadro' },
     ],
   },
@@ -49,6 +50,7 @@ export const UT_NAV: NavGroup[] = [
   { to: '/ut/squad', label: 'Kadro kurucu', match: ['/ut/squad'] },
   { to: '/ut/club', label: 'Kadrom', match: ['/ut/club'] },
   { to: '/ut/meta', label: 'Meta', match: ['/ut/meta'] },
+  { to: '/replicas', label: 'Replikalar', match: ['/replicas'] },
   { to: '/ut/sbc', label: 'SBC çözücü', match: ['/ut/sbc'] },
   { to: '/ut/objectives', label: 'Objective planı', match: ['/ut/objectives'] },
   { to: '/ut/evo', label: 'Evolution', match: ['/ut/evo'] },
