@@ -223,6 +223,7 @@ export interface RoleFit {
   levelFit?: number
   fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
   contributions?: { term: string; key: string; points: number }[]
+  narrative?: FitNarrative
   outOfPosition: boolean
   reasons: string[]
   weaponChecks: WeaponCheck[]
@@ -604,6 +605,9 @@ export interface PlayerRoleFit {
   badgeText: string
   reasons: string[]
   gaps: { attr: string; value: number; needed: number }[]
+  levelFit?: number
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  narrative?: FitNarrative
 }
 
 export interface SetupCheck {
@@ -1064,6 +1068,14 @@ export interface ScoutingQuery {
   limit?: number
 }
 
+/** E3-8: rol uyumu anlatımı. Cümleler sunucuda yalnız katkı/kanıt sayılarından üretilir; tailored ("Biçilmiş kaftan") kararını sunucu verir (levelFit eşiği), web eşik bilmez. */
+export interface FitNarrative {
+  headline: string
+  tailored: boolean
+  strengths: { text: string; term: string; key: string; points: number }[]
+  weaknesses: { text: string; term: string; key: string; points: number }[]
+}
+
 /** E3-6b/6c/10: kariyer öneri hattı (`POST /careers/{id}/recommendations`). */
 export type RecommendBucket = 'ALINABILIR' | 'ZOR' | 'HAYAL'
 export type RecommendProfile = 'BALANCED' | 'NOW' | 'FUTURE'
@@ -1102,6 +1114,7 @@ export interface CareerRecommendationItem {
   bucketLabel: string
   bucketPoints: number
   bucketFactors: RecommendBucketFactor[]
+  narrative?: FitNarrative
   pros: RecommendContribution[]
   cons: RecommendContribution[]
   tags: ('FREE' | 'YOUNG' | 'READY')[]

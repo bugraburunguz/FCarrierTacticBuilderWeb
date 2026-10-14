@@ -50,3 +50,15 @@ export function fitDisplay(fit: FitInput): FitDisplay {
   const state: FitState = fit.fitLabel ? { GOOD: 'good', AT_LEVEL: 'neutral', WEAK: 'ok', WRONG_ROLE: 'bad' }[fit.fitLabel] as FitState : FIT_STATE_OF[toneOf(fit.badge)]
   return { pct, state, rolePoints }
 }
+
+/** Rozet metinleri (kısa metin + erişilebilir ad): FitBadge dahil her yer buradan okur. */
+export const FIT_STATE_TEXT: Record<FitState, { text: string; label: string }> = {
+  good: { text: 'UYGUN', label: 'Rol için uygun' },
+  ok: { text: 'SINIRDA', label: 'Rol için sınırda' },
+  bad: { text: 'EKSİK', label: 'Rol için eksik' },
+  neutral: { text: 'SEVİYESİNDE', label: 'Rol için seviyesinde' },
+}
+
+/** "Biçilmiş kaftan": yalnız sunucu `tailored` derse (levelFit eşiği sunucuda). */
+export const TAILORED_TEXT = 'Biçilmiş kaftan'
+export const TAILORED_BADGE = { text: 'BİÇİLMİŞ KAFTAN', label: 'Rol için biçilmiş kaftan' } as const

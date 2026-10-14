@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { CareerRecommendationItem, RecommendBucket } from '../../api/types'
 import { FitBadge } from '../../components/card/FitBadge'
+import { FitNarrativeView } from '../../components/FitNarrativeView'
 import { PlayerCard } from '../../components/card/PlayerCard'
 import { HelpPopover } from '../../components/ui'
 import { Chip } from '../../design/components/primitives'
@@ -45,7 +46,7 @@ export function RecommendationRow({ item, showRole = false, action }: { item: Ca
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
-          <FitBadge state={fit.state} compact />
+          <FitBadge state={fit.state} compact tailored={item.narrative?.tailored} />
           {item.levelFit !== undefined && <span title={FIT_HELP.level} className="text-xs font-semibold tabular-nums">{levelText(item.levelFit)}</span>}
           <span title={FIT_HELP.rolePoints} className="text-xs tabular-nums text-ink-2">{rolePointsText(item.currentFit)}</span>
         </div>
@@ -77,6 +78,14 @@ export function RecommendationRow({ item, showRole = false, action }: { item: Ca
         {item.futureFit !== undefined && <span title={FIT_HELP.future} className="tabular-nums text-ink-2">{futureText(item.futureFit)}</span>}
         <span className="ml-auto">{action}</span>
       </div>
+      {item.narrative && (
+        <details className="text-xs">
+          <summary className="cursor-pointer font-medium text-ink-2">Neden?</summary>
+          <div className="pt-1">
+            <FitNarrativeView narrative={item.narrative} />
+          </div>
+        </details>
+      )}
     </li>
   )
 }
