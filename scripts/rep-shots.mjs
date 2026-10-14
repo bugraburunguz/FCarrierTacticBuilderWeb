@@ -106,7 +106,7 @@ async function listReady(page, problems) {
 
 async function record(page, problems, name) {
   await page.waitForTimeout(350)
-  await page.screenshot({ path: file(name), fullPage: false })
+  await page.screenshot({ path: file(name), fullPage: false, mask: [page.locator('[data-private]')] })
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
   const axe = await new AxeBuilder({ page }).analyze()
   const serious = axe.violations.filter((a) => a.impact === 'serious' || a.impact === 'critical')

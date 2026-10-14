@@ -62,3 +62,6 @@ export const FIT_STATE_TEXT: Record<FitState, { text: string; label: string }> =
 /** "Biçilmiş kaftan": yalnız sunucu `tailored` derse (levelFit eşiği sunucuda). */
 export const TAILORED_TEXT = 'Biçilmiş kaftan'
 export const TAILORED_BADGE = { text: 'BİÇİLMİŞ KAFTAN', label: 'Rol için biçilmiş kaftan' } as const
+
+/** Kadro düzeyi uyum etiketi (replika uygulama, kadro özeti): tek yerde yazılır. */
+export const SQUAD_FIT_TEXT = 'Kadro uyumu'

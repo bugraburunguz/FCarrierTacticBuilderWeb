@@ -1,12 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
-import type { ReplicaApplyResult, ReplicaApplySlot, ReplicaSummary, TacticAnalysis } from '../../api/types'
+import type { ReplicaApplyResult, ReplicaApplySlot, ReplicaDetail, ReplicaSummary, TacticAnalysis } from '../../api/types'
 import { ApplyTab } from './ApplyTab'
 import { AttentionPoints } from './AttentionPoints'
 import { ReplicasPage } from './ReplicasPage'
+import { StoryTab } from './ReplicaTabs'
 import type { useReplicaApply } from './useReplicaApply'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true }) }))
@@ -96,6 +97,38 @@ describe('replika listesi', () => {
   })
 })
 
+describe('mobil replika listesi', () => {
+  const original = window.matchMedia
+  beforeEach(() => {
+    window.matchMedia = ((query: string) => ({ matches: query.includes('max-width: 819px'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined }) as unknown as MediaQueryList) as typeof window.matchMedia
+  })
+  afterEach(() => {
+    window.matchMedia = original
+  })
+
+  it('formasyon, build-up ve dönem tek "Filtreler" düğmesiyle alttan sheet olarak açılır; liste çubuğun altında görünür', async () => {
+    renderPage()
+    await screen.findByText(/AC Milan/)
+    expect(screen.queryByLabelText('Formasyon')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: /Filtreler/ }))
+    const sheet = await screen.findByRole('dialog', { name: 'Filtreler' })
+    fireEvent.change(within(sheet).getByLabelText('Formasyon'), { target: { value: '4-4-2' } })
+    expect(within(sheet).getByRole('button', { name: '1 replikayı göster' })).toBeInTheDocument()
+    fireEvent.click(within(sheet).getByRole('button', { name: '1 replikayı göster' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Filtreler (1)' })).toBeInTheDocument()
+    expect(screen.queryByText(/FC Barcelona/)).toBeNull()
+  })
+
+  it('kategori çipleri yatay kaydırılan tek satırdır', async () => {
+    renderPage()
+    await screen.findByText(/AC Milan/)
+    const row = screen.getByRole('group', { name: 'Kategori' })
+    expect(row.className).toContain('max-[819px]:flex-nowrap')
+    expect(row.className).toContain('max-[819px]:overflow-x-auto')
+  })
+})
+
 const analysis: TacticAnalysis = {
   metrics: { band: 'HIGH', depth: 70 },
   notEvaluated: [{ code: 'x', reason: 'oyuncu' }],
@@ -130,7 +163,7 @@ describe('dikkat noktaları', () => {
 
 const player = (id: number, name: string) => ({ id, name, overall: 80, positions: ['ST'], valuationEstimated: false })
 const slot = (over: Partial<ReplicaApplySlot>): ReplicaApplySlot => ({
-  slotId: 'ST', position: 'ST', roleId: 'false_9_build_up', roleName: 'False 9', focus: 'Build-Up', player: player(1, 'Ada Santrfor'), currentFit: 82, levelFit: 74, state: 'GOOD', badgeText: null, suggest: false, ...over,
+  slotId: 'ST', position: 'ST', roleId: 'false_9_build_up', roleName: 'False 9', focus: 'Build-Up', player: player(1, 'Ada Santrfor'), currentFit: 82, levelFit: 74, state: 'GOOD', badgeText: null, suggest: false, outOfPosition: false, playerPosition: 'ST', ...over,
 })
 
 function applyOf(source: ReplicaApplyResult['source'], slots: ReplicaApplySlot[], mode: 'career' | 'ut' = 'career'): ReturnType<typeof useReplicaApply> {
@@ -163,6 +196,13 @@ describe('kadromla uygula', () => {
     expect(screen.getByText('Boş')).toBeInTheDocument()
   })
 
+  it('mevki dışı atama listede "ST→LW" etiketiyle işaretlenir; doğal atamada etiket yok', () => {
+    renderApply(applyOf('CAREER', [slot({ slotId: 'LW', position: 'LW', outOfPosition: true, playerPosition: 'ST' }), slot({ slotId: 'ST', position: 'ST' })]))
+    expect(screen.getByText('ST→LW')).toBeInTheDocument()
+    expect(screen.getByLabelText('Mevki dışı: ST oyuncusu LW mevkisinde')).toBeInTheDocument()
+    expect(screen.queryByText('ST→ST')).toBeNull()
+  })
+
   it('UT kartlarında rol puanı gösterilir ve "Öner" kart seçimini açar', () => {
     renderApply(applyOf('UT', [slot({ levelFit: null, state: 'WEAK', suggest: true })], 'ut'))
     expect(screen.getByText('Kulüp kartların')).toBeInTheDocument()
@@ -192,5 +232,22 @@ describe('kadromla uygula', () => {
     renderApply(applyOf('CAREER', [slot({})]))
     expect(await screen.findByText('Önce bir slot seç.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Kaydet' })).toBeDisabled()
+  })
+})
+
+describe('hikâye sekmesi', () => {
+  const base = { id: 'a', category: 'UCL_WINNER', club: 'x', coach: 'y', season: '2010-11', fc27: { formation: '4-3-3', buildUp: 'SHORT_PASSING', defensiveApproach: 'HIGH', lineHeight: 70, slots: [] }, tacticCode: 'A', analysis }
+  it('iç notlar kullanıcıya görünmez; yalnız kısa dipnot', () => {
+    render(<StoryTab detail={{ ...base, whyIconic: 'Neden.', verified: false } as unknown as ReplicaDetail} />)
+    const text = document.body.textContent ?? ''
+    expect(text).toContain('Kaynak: doğrulanmadı')
+    expect(text).not.toMatch(/VERIFY|Doğrulanması gerekenler|model bilgisi/)
+    expect(screen.queryByText('Yönetici notları')).toBeNull()
+  })
+
+  it('yönetici görünümünde ayrıntı açılır bölümde durur', () => {
+    render(<StoryTab detail={{ ...base, verified: false, sources: ['model bilgisi — VERIFY'], verify: ['Final XI doğrulanmalı'] } as unknown as ReplicaDetail} />)
+    expect(screen.getByText('Yönetici notları')).toBeInTheDocument()
+    expect(screen.getByText('Final XI doğrulanmalı')).toBeInTheDocument()
   })
 })

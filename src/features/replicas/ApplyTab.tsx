@@ -9,6 +9,7 @@ import { PickBody } from '../squad/ut/PickBody'
 import { AttentionPoints } from './AttentionPoints'
 import { SaveToSlot } from './SaveToSlot'
 import { SOURCE_TEXT } from './labels'
+import { SQUAD_FIT_TEXT } from '../../lib/fitLabels'
 import { slotFit } from './slotFit'
 import { useReplicaApply } from './useReplicaApply'
 
@@ -21,6 +22,11 @@ function SlotRow({ slot, mode, onSuggest }: { slot: ReplicaApplySlot; mode: 'car
         <p className="truncate text-sm font-medium">{slot.player ? slot.player.name : 'Boş'}</p>
         <p className="truncate text-xs text-muted" title={`${slot.roleName} · ${slot.focus}`}>{slot.roleName} · {slot.focus}</p>
       </div>
+      {slot.outOfPosition && slot.playerPosition && (
+        <span className="glass-3 inline-flex min-h-6 items-center px-2 font-[var(--font-num)] text-xs tabular-nums text-ink" title="Mevki dışı" aria-label={`Mevki dışı: ${slot.playerPosition} oyuncusu ${slot.position} mevkisinde`}>
+          {slot.playerPosition}→{slot.position}
+        </span>
+      )}
       {slot.player && <span className="font-[var(--font-num)] text-sm tabular-nums">{slot.player.overall}</span>}
       {fit && (
         <span className="flex flex-col items-end gap-0.5">
@@ -83,7 +89,7 @@ export function ApplyTab({ replicaId, apply }: { replicaId: string; apply: Retur
       </div>
       <div className="flex gap-2">
         <StatTile label="Dolu slot" value={`${filled}/11`} />
-        <StatTile label="Kadro uyumu" value={Math.round(data.squadFit)} suffix="/100" />
+        <StatTile label={SQUAD_FIT_TEXT} value={Math.round(data.squadFit)} suffix="/100" />
       </div>
       <ol className="flex flex-col gap-1.5" aria-label="Slot atamaları">
         {data.slots.map((s) => (

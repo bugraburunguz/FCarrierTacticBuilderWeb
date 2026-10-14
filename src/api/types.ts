@@ -1247,8 +1247,11 @@ export interface ReplicaDetail {
     smartTactics?: string[]
   }
   replicaFidelity?: { score: number; cannotReplicate?: string[] }
+  /** Yalnız yönetici görünümünde gelir. */
   sources?: string[]
   verify?: string[]
+  /** false: kaynaklar doğrulanmadı (iç notlar yalnız yönetici görünümünde). */
+  verified?: boolean
   tacticCode: string
   analysis: TacticAnalysis
 }
@@ -1267,6 +1270,9 @@ export interface ReplicaApplySlot {
   state: ReplicaSlotState
   badgeText: string | null
   suggest: boolean
+  /** Oyuncu bu mevkide doğal değil; playerPosition asıl mevkisi ("ST→LW" etiketi). */
+  outOfPosition: boolean
+  playerPosition: string | null
 }
 
 export interface ReplicaApplyResult {

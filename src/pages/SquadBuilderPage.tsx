@@ -286,7 +286,7 @@ export function SquadBuilderPage() {
                 </optgroup>
               </Select>
             </Field>
-            <Link to="/replicas" className="mt-2 inline-block text-xs font-semibold text-accent underline underline-offset-2">106 gerçek takım replikası →</Link>
+            <Link to="/replicas" className="mt-2 inline-block text-xs font-semibold text-accent underline underline-offset-2">112 gerçek takım replikası →</Link>
             <FormationStyleChips formationId={formation?.id} />
             {preset?.signature && <p className="mt-2 text-sm text-ink/80">{preset.signature}</p>}
             <SetupChips settings={preset?.settings} />

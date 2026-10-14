@@ -10,6 +10,7 @@ import { useStorageError } from '../../state/bigStore'
 import { modeStore, useMode } from '../../state/modeStore'
 import { Chip, Segmented } from './primitives'
 import { MobileMenu, ThemeToggle } from './ThemeToggle'
+import { UserMenu } from './UserMenu'
 
 const ICONS: Record<string, LucideIcon> = {
   '/career/desk': LayoutDashboard,
@@ -93,10 +94,7 @@ export function AppShell() {
           {authenticated && me ? (
             <>
               <span className="hidden sm:block">{me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
-              <NavLink to="/profile" data-private className="hidden max-w-[180px] truncate text-sm text-ink-2 hover:underline lg:block">{me.email}</NavLink>
-              <button type="button" onClick={async () => { await logout(); navigate('/login') }} className="min-h-10 rounded-[var(--radius-sm)] px-3 text-sm font-semibold text-ink-2 hover:bg-[var(--glass-hover)] max-sm:min-h-11">
-                Çıkış
-              </button>
+              <UserMenu email={me.email} onLogout={async () => { await logout(); navigate('/login') }} />
             </>
           ) : (
             <>

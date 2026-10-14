@@ -111,27 +111,16 @@ export function StoryTab({ detail }: { detail: ReplicaDetail }) {
           )}
         </section>
       )}
+      {detail.verified === false && <p className="text-xs text-muted">Kaynak: doğrulanmadı</p>}
       {((detail.sources && detail.sources.length > 0) || (detail.verify && detail.verify.length > 0)) && (
-        <section aria-label="Kaynak notları" className="flex flex-col gap-1.5">
-          <h3 className="font-display text-xl font-semibold leading-6">Kaynak notları</h3>
-          {detail.sources && detail.sources.length > 0 && (
-            <ul className="list-disc space-y-0.5 pl-5 text-sm text-ink-2">
-              {detail.sources.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          )}
-          {detail.verify && detail.verify.length > 0 && (
-            <>
-              <p className="text-xs font-medium text-muted">Doğrulanması gerekenler</p>
-              <ul className="list-disc space-y-0.5 pl-5 text-sm text-ink-2">
-                {detail.verify.map((v) => (
-                  <li key={v}>{v}</li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
+        <details className="text-sm" aria-label="Yönetici notları">
+          <summary className="min-h-8 cursor-pointer text-xs font-semibold text-accent">Yönetici notları</summary>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs text-ink-2">
+            {[...(detail.sources ?? []), ...(detail.verify ?? [])].map((n) => (
+              <li key={n}>{n}</li>
+            ))}
+          </ul>
+        </details>
       )}
     </div>
   )

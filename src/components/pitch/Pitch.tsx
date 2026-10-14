@@ -14,6 +14,8 @@ export interface PitchSlot {
   chem?: 0 | 1 | 2 | 3
   fit?: { pct: number; state: FitState }
   price?: string
+  /** Oyuncu bu mevkide doğal değil: kartın üstünde küçük "Mevki dışı" işareti. */
+  outOfPosition?: boolean
   roleLabel?: string
   selected?: boolean
 }
@@ -263,6 +265,9 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
                 </span>
               )}
             </div>
+            {slot.player && slot.outOfPosition && (
+              <span className="pointer-events-none absolute -top-2 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-ink-950 px-1 text-[11px] font-semibold leading-4 text-paper-50 ring-1 ring-paper-50/60">Mevki dışı</span>
+            )}
             {slot.player && onRemove && (
               <button
                 type="button"

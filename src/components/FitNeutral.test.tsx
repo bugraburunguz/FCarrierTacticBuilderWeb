@@ -21,10 +21,11 @@ describe('AT_LEVEL: rozet boş gelir → renk yok + "seviyesinde" etiketi (E3-5c
     expect(screen.getByRole('img', { name: 'Seviyesinde' })).toBeInTheDocument()
   })
 
-  it('FitBadge neutral: metin SEVİYESİNDE, dolgu rengi yok', () => {
+  it('FitBadge neutral: metin SEVİYESİNDE, koyu cam çip + açık yazı (gümüş kart üstünde okunur, REP-b)', () => {
     render(<FitBadge state="neutral" pct={55} />)
     const badge = screen.getByRole('img', { name: 'Rol için seviyesinde, yüzde 55' })
     expect(badge).toHaveTextContent('SEVİYESİNDE')
-    expect(badge.style.background).toBe('transparent')
+    expect(badge.style.background).not.toBe('transparent')
+    expect(badge.style.color).not.toBe('inherit')
   })
 })

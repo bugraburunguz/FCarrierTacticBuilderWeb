@@ -40,6 +40,7 @@ function pitchSlots(summary: ReplicaSummary, formation: { slots: { slotId: strin
       roleLabel: role ? `${role.role} · ${role.focus}` : undefined,
       player: slot?.player ? cardPlayerOfSummary(slot.player, s.position) : undefined,
       fit: fit ? { pct: fit.pct, state: fit.state } : undefined,
+      outOfPosition: slot?.outOfPosition,
     }
   })
 }

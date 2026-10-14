@@ -55,3 +55,17 @@ Hat bacağı "hat ≥ HIGH VE geri savunma < 5", çapa = d ≥ 0,8 roller + tüm
 - Dar ekranda filtre çubuğu yapışkan değil (bilinçli).
 - Üretim DB'sinde dry-run bu oturumda yapılamadı (yalnız yerel).
 - Tam 29 formasyonluk `q17.mjs` ve Lighthouse bu turda koşulmadı.
+
+## 7. REP-b (onay sonrası düzeltmeler)
+1. **Nötr rozet:** koyu cam çip + açık yazı; tüm rozet durumları opak yüzey. `FitBadge.contrast.test`: 4 durum × bronz/gümüş/altın × 3 çerçeve rengi × koyu/açık tema, metin ≥ 4,5:1 (kırmızı rozet beyaz yazıyla 3,9'du: `#c62d33` yapıldı).
+2. **Mevki dışı:** `SquadFitService.solve(..., naturalFirst)`: her doğal atamaya çözücü matrisinde büyük sabit eklenir (raporlanan uyum değişmez), yani önce doğal mevkiler dolar. Test: 8 replika × 60 oyunculu havuzda doğal atama sayısı = slot-oyuncu doğal mevki eşleşmesinin en büyük eşleşmesi. Slotlarda `outOfPosition` + `playerPosition`; listede "ST→LW", sahada kartın üstünde "Mevki dışı". Golden güncellendi (LW artık doğal oyuncu).
+3. **İç notlar:** `GET /replicas/{id}` `verify` ve `sources` alanlarını yalnız ADMIN'e verir; herkese `verified` bayrağı; Hikâye'de yalnız "Kaynak: doğrulanmadı", ayrıntı yönetici görünümünde açılır bölüm.
+4. **striker_line_no_runner:** forvet hattı ST, CF, LW, RW, LF, RF. Barcelona 2010-11'de artık tetiklenmiyor. Replika raporu (112): striker_line_no_runner **23 → 13** (yeni 6 kayıttan 1'i dahil; eski 106'da 12); uyarı/risk üreten replika sayısı değişmedi (17), diğer kural sayıları aynı. Negatif set (8 meta formasyon) yeşil.
+5. **Üst bar:** baş harf avatarı + ad (e-postanın yerel kısmı); e-posta ve Çıkış menüde (Radix Popover); ekran görüntülerinde `data-private` maskesi geri.
+6. **Mobil liste:** "Filtreler (n)" düğmesi → `MobileSheet` (Radix Dialog); kategori çipleri yatay kaydırılan tek satır; liste ilk ekranda başlıyor.
+7. "Kadro uyumu" etiketi `fitLabels.SQUAD_FIT_TEXT`.
+8. **Replikalar (karar: 4 ekle, Pulis çıkar):** `docs/replicas_v2_ek_2026-10-14.fc27.json`'daki 6 kayıt içerik değiştirilmeden seed'e eklendi (113 kayıt, 112 replika). Şema farkı yalnız Plan B değişiklik satırı biçimiydi (`SLOT (POZ): …` → `SLOT: …`), `normalize-planb.mjs` ile tek biçime çekildi (29 satır). tacticCode round-trip **112/112** birebir. Eşleme: `galacticos_real_2003→delbosque_real_2003`, `mancini_city_2012`, `daum_fenerbahce_2005`, `denizli_besiktas_2009` aynı id; `pulis_stoke_2011` kaldırıldı (33 eşleşti). Yeni 6'nın analizi: Daum 2005 yalnız bilgi `striker_line_no_runner`; Denizli 2009, Gerets 2006, Çimşir 2020, del Bosque 2003, Mancini 2012 bulgusuz. `verify` alanları kullanıcıya gösterilmez (madde 3).
+9. **Menü yolu** "Takım Yönetimi → Taktikler → Kod Kullan": doğru, değişmedi.
+10. Yeniden çekim: 28 çekim, 375/1280, koyu/açık; 0 taşma, 0 axe ihlali.
+
+Testler: backend 520 (0 hata, 4 atlanan), web 595, lint + build yeşil. Not: tam pakette bir kez `FitEngineV3PropertyTest` (rastgele özellik testi, `GK_POSITIONING`, 1,618 > 1,61 sınır) düştü; bu işte motora dokunulmadı, tekrar koşuda 3/3 geçti; ayrı inceleme gerekir.
