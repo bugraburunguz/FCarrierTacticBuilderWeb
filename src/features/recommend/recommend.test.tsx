@@ -79,18 +79,19 @@ describe('RecommendationRow (E3-10)', () => {
     expect(screen.getByText('Alınabilir')).toBeInTheDocument()
     expect(screen.getByText(/24 yaş/)).toBeInTheDocument()
     expect(screen.getByText(/Arsenal \(Premier League\)/)).toBeInTheDocument()
-    expect(screen.getByText(/OVR farkı \+2\.1/)).toBeInTheDocument()
+    expect(screen.getByText(/İlk 11 ortalamasına göre [+]2/)).toBeInTheDocument()
+    expect(screen.getByText("Seviyesine göre %75")).toBeInTheDocument()
+    expect(screen.getByText("Rol puanı 91")).toBeInTheDocument()
+    expect(screen.getByText("Mevcut oyuncuya göre +5")).toBeInTheDocument()
+    expect(screen.getByText("Gelecek sezon 93")).toBeInTheDocument()
     expect(screen.getByText(/€25,00 Mn/)).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /Rol için uygun/ })).toBeInTheDocument()
-    expect(screen.getByText(/91\.2/)).toBeInTheDocument()
-    expect(screen.getByText(/Δ mevcut \+4\.5/)).toBeInTheDocument()
-    expect(screen.getByText(/futureFit 93\.4/)).toBeInTheDocument()
     expect(screen.getByRole('note')).toHaveTextContent('değer bütçenin %40 kadarı')
   })
 
   it('SCOUT_RANGE: futureFit ve projectedRating gelmediyse hiç gösterilmez; AT_LEVEL renksiz', () => {
     renderRow(<RecommendationRow item={item({ futureFit: undefined, projectedRating: undefined, fitLabel: 'AT_LEVEL' })} />)
-    expect(screen.queryByText(/futureFit/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Gelecek sezon/)).not.toBeInTheDocument()
     expect(screen.getByRole('img', { name: /seviyesinde/ })).toBeInTheDocument()
   })
 
@@ -98,7 +99,7 @@ describe('RecommendationRow (E3-10)', () => {
     renderRow(<RecommendationRow item={item({ positionLabel: 'Mevki dışı (CDM→CB)', deltaVsCurrent: undefined })} showRole />)
     expect(screen.getByText('Mevki dışı (CDM→CB)')).toBeInTheDocument()
     expect(screen.getByText(/Advanced Forward/)).toBeInTheDocument()
-    expect(screen.queryByText(/Δ mevcut/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Mevcut oyuncuya göre/)).not.toBeInTheDocument()
   })
 })
 

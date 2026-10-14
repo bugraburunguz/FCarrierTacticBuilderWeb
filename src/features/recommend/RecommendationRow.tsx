@@ -1,20 +1,18 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { CareerRecommendationItem, RecommendBucket } from '../../api/types'
-import { FitBadge, type FitState } from '../../components/card/FitBadge'
+import { FitBadge } from '../../components/card/FitBadge'
 import { PlayerCard } from '../../components/card/PlayerCard'
 import { HelpPopover } from '../../components/ui'
 import { Chip } from '../../design/components/primitives'
 import { cardPlayerOfSummary } from '../../lib/cardPlayer'
+import { deltaText, FIT_HELP, fitDisplay, futureText, levelText, ovrGapText, rolePointsText } from '../../lib/fitLabels'
 import { formatEur } from '../../lib/format'
 
 const THUMB = 44
 
 const BUCKET_TONE: Record<RecommendBucket, 'good' | 'warn' | 'bad'> = { ALINABILIR: 'good', ZOR: 'warn', HAYAL: 'bad' }
-const FIT_STATE_OF_LABEL: Record<NonNullable<CareerRecommendationItem['fitLabel']>, FitState> = { GOOD: 'good', AT_LEVEL: 'neutral', WEAK: 'ok', WRONG_ROLE: 'bad' }
 const TAG_LABEL = { FREE: 'Serbest', YOUNG: 'Genç', READY: 'Hazır' } as const
-
-const signed = (value: number) => `${value > 0 ? '+' : ''}${value.toFixed(1)}`
 
 /**
  * Öneri satırı (PickList ailesi, 08 §15): küçük kart + isim/OVR; kova rozeti ve gerekçesi (açılır not); yaş · kulüp (lig) · OVR farkı · değer;
@@ -22,7 +20,7 @@ const signed = (value: number) => `${value > 0 ? '+' : ''}${value.toFixed(1)}`
  */
 export function RecommendationRow({ item, showRole = false, action }: { item: CareerRecommendationItem; showRole?: boolean; action?: ReactNode }) {
   const { player } = item
-  const fitState = item.fitLabel ? FIT_STATE_OF_LABEL[item.fitLabel] : 'neutral'
+  const fit = fitDisplay({ levelFit: item.levelFit, currentFit: item.currentFit, fitLabel: item.fitLabel })
   const club = player.club ? `${player.club}${player.league ? ` (${player.league})` : ''}` : 'Kulüpsüz'
   return (
     <li className="glass-3 flex flex-col gap-2 px-2 py-2 text-ink">
@@ -42,13 +40,14 @@ export function RecommendationRow({ item, showRole = false, action }: { item: Ca
             {player.age !== undefined ? ` · ${player.age} yaş` : ''} · {club}
           </p>
           <p className="text-xs text-ink-2">
-            {item.ovrGap !== undefined && <span>OVR farkı {signed(item.ovrGap)} · </span>}
+            {item.ovrGap !== undefined && <span title={FIT_HELP.ovrGap}>{ovrGapText(item.ovrGap)} · </span>}
             {player.valueEur !== undefined ? formatEur(player.valueEur) : 'Değer bilinmiyor'}
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
-          <FitBadge state={fitState} pct={item.levelFit !== undefined ? Math.round(item.levelFit) : undefined} />
-          <span className="font-[var(--font-num)] text-xs tabular-nums text-ink-2">uyum {item.currentFit.toFixed(1)}</span>
+          <FitBadge state={fit.state} compact />
+          {item.levelFit !== undefined && <span title={FIT_HELP.level} className="text-xs font-semibold tabular-nums">{levelText(item.levelFit)}</span>}
+          <span title={FIT_HELP.rolePoints} className="text-xs tabular-nums text-ink-2">{rolePointsText(item.currentFit)}</span>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-1.5 text-xs">
@@ -73,9 +72,9 @@ export function RecommendationRow({ item, showRole = false, action }: { item: Ca
           </span>
         )}
         {item.deltaVsCurrent !== undefined && (
-          <span className={`font-semibold tabular-nums ${item.deltaVsCurrent >= 0 ? 'text-good' : 'text-bad'}`}>{`Δ mevcut ${signed(item.deltaVsCurrent)}`}</span>
+          <span title={FIT_HELP.delta} className={`font-semibold tabular-nums ${item.deltaVsCurrent >= 0 ? 'text-good' : 'text-bad'}`}>{deltaText(item.deltaVsCurrent)}</span>
         )}
-        {item.futureFit !== undefined && <span className="tabular-nums text-ink-2">{`futureFit ${item.futureFit.toFixed(1)}`}</span>}
+        {item.futureFit !== undefined && <span title={FIT_HELP.future} className="tabular-nums text-ink-2">{futureText(item.futureFit)}</span>}
         <span className="ml-auto">{action}</span>
       </div>
     </li>

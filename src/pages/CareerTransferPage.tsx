@@ -8,9 +8,14 @@ import { MoneyInput } from '../components/MoneyInput'
 import { ShortlistLabel } from '../components/ShortlistLabel'
 import { Button, Card, EmptyState, Field, HelpPopover, Skeleton, Stat } from '../components/ui'
 import { RecommendationPanel } from '../features/recommend/RecommendationPanel'
-import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP, weakSlots } from '../lib/deskRules'
+import { FitBadge } from '../components/card/FitBadge'
+import { Chip } from '../design/components/primitives'
+import { useCareerBinding } from '../features/squad/useCareerBinding'
+import { needsFromFits, useSlotFits } from '../features/squad/useSlotFits'
+import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
+import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP } from '../lib/deskRules'
+import { levelText } from '../lib/fitLabels'
 import { formatEur } from '../lib/format'
-import { toTacticRequest, useTactic } from '../state/tacticStore'
 import { useActiveCareerId } from '../state/careerStore'
 
 interface Need {
@@ -19,6 +24,7 @@ interface Need {
   roleId: string
   label: string
   detail: string
+  state?: import('../components/card/FitBadge').FitState
 }
 
 /** Transfer Merkezi (CAR-23): ihtiyaçlar → adaylar → kısa liste ve bütçe simülatörü; satış planı etiketlenen/yaşlı yedeklerden gelir. */
@@ -29,19 +35,21 @@ export function CareerTransferPage() {
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
   const id = career?.id
-  const tactic = useTactic()
-  const request = toTacticRequest(tactic)
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
-  const lineup = useQuery({ queryKey: ['lineup', id, squad.data?.length, JSON.stringify(request)], queryFn: () => endpoints.lineup(id!, request), enabled: id !== undefined && (squad.data?.length ?? 0) >= 11, retry: false })
+  // İhtiyaçlar sahadaki rozetle AYNI kaynaktan (v3 levelFit + rozet bandı) okur: aynı oyuncu, aynı sayı.
+  const { binding, playerById } = useCareerBinding(id, squad.data)
+  const ws = useSquadWorkspace('career', binding)
+  const { rows: fitRows, pending: fitsPending } = useSlotFits(ws, playerById)
+  const [allSquad, setAllSquad] = useState(false)
   const shortlist = useQuery({ queryKey: ['shortlist', id], queryFn: () => endpoints.shortlist(id!), enabled: id !== undefined, retry: false })
   const tagList = useQuery({ queryKey: ['tags', id], queryFn: () => endpoints.playerTags(id!), enabled: id !== undefined, retry: false })
   const [selected, setSelected] = useState<string>()
 
   const needs = useMemo<Need[]>(() => {
-    const weak = weakSlots(lineup.data?.slots ?? []).map((w) => ({ key: `slot-${w.slotId}`, position: w.position, roleId: w.roleId, label: `${w.position} · zayıf halka`, detail: `${w.playerName ?? 'boş'} · RoleFit %${w.fit}` }))
+    const weak = needsFromFits(fitRows, allSquad).map((r) => ({ key: `slot-${r.slotId}`, position: r.position, roleId: r.roleId, label: `${r.position} · ${r.roleName}`, detail: `${r.playerName} · ${levelText(r.display.pct)}`, state: r.display.state }))
     const gaps = depthRows(squad.data ?? []).filter((d) => d.short > 0).map((d) => ({ key: `depth-${d.group}`, ...TRANSFER_ROLE_BY_GROUP[d.group], label: `${GROUP_LABEL[d.group]} · derinlik`, detail: `${d.have}/${d.need} oyuncu` }))
     return [...weak, ...gaps]
-  }, [lineup.data, squad.data])
+  }, [fitRows, allSquad, squad.data])
 
   const wanted = params.get('pos')
   const need = needs.find((n) => n.key === selected) ?? needs.find((n) => n.position === wanted) ?? needs[0]
@@ -51,7 +59,7 @@ export function CareerTransferPage() {
   const setFee = useMutation({ mutationFn: ({ playerId, fee, note }: { playerId: number; fee?: number; note?: string }) => endpoints.shortlistAdd(id!, playerId, { maxFeeEur: fee, note }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
 
   const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
-  const starters = useMemo(() => new Set((lineup.data?.slots ?? []).flatMap((s) => (s.playerId ? [s.playerId] : []))), [lineup.data])
+  const starters = useMemo(() => new Set(fitRows.map((r) => r.playerId)), [fitRows])
   const sellPlan = useMemo(
     () => (squad.data ?? []).filter((c) => !c.loanedOut && !starters.has(c.player.id) && (tags[c.player.id] === 'FOR_SALE' || (c.player.age ?? 0) >= 29) && (c.player.valueEur ?? 0) > 0)
       .sort((a, b) => (b.player.valueEur ?? 0) - (a.player.valueEur ?? 0)).slice(0, 6),
@@ -76,20 +84,20 @@ export function CareerTransferPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-stretch gap-px overflow-hidden rounded-md border border-line bg-line">
         <Stat label="Bütçe" value={formatEur(budget)} />
-        <Stat label="Satış planı (tahmini)" value={formatEur(Math.round(income))} />
-        <Stat label="Kısa liste tavanı" value={formatEur(spend)} />
+        <Stat label="Satış planı (tahmini)" value={income > 0 ? formatEur(Math.round(income)) : '—'} />
+        <Stat label="Kısa liste tavanı" value={spend > 0 ? formatEur(spend) : '—'} />
         <Stat label="Dönem sonu bütçe" value={after === undefined ? '—' : formatEur(Math.round(after))} tone={after === undefined ? undefined : after < 0 ? 'bad' : 'good'} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
-        <Card title="İhtiyaçlar" actions={<HelpPopover>Zayıf halkalar (RoleFit %70 altı) ve derinlik açıkları otomatik gelir.</HelpPopover>}>
-          {needs.length === 0 ? <EmptyState>{lineup.isLoading ? 'Hesaplanıyor…' : 'Acil ihtiyaç yok.'}</EmptyState> : (
+        <Card title="İhtiyaçlar" actions={<span className="flex items-center gap-2"><Chip pressed={allSquad} onClick={() => setAllSquad((v) => !v)}>Tüm kadro</Chip><HelpPopover>Zayıf halka: sahadaki rozeti sarı ya da kırmızı olan oyuncular (seviyesine göre), en zayıf başta. Derinlik açıkları da gelir.</HelpPopover></span>}>
+          {needs.length === 0 ? <EmptyState>{fitsPending ? 'Hesaplanıyor…' : allSquad ? 'Dizilimde oyuncu yok.' : 'Zayıf halka yok: dizilimdeki herkes seviyesinde ya da üstünde.'}</EmptyState> : (
             <ul className="space-y-1.5">
               {needs.map((n) => (
                 <li key={n.key}>
                   <button type="button" aria-pressed={need?.key === n.key} onClick={() => setSelected(n.key)}
                     className={`w-full rounded-md border px-2.5 py-1.5 text-left text-sm ${need?.key === n.key ? 'border-accent bg-accent-soft' : 'border-line hover:bg-surface-2'}`}>
-                    <b className="block">{n.label}</b><span className="text-xs text-muted">{n.detail}</span>
+                    <span className="flex items-center justify-between gap-2"><b>{n.label}</b>{n.state && <FitBadge state={n.state} compact />}</span><span className="text-xs text-muted">{n.detail}</span>
                   </button>
                 </li>
               ))}

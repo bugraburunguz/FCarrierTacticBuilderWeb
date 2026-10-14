@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { endpoints } from '../../../api/endpoints'
 import type { CareerPlayer } from '../../../api/types'
 import { cardPlayerOfSummary } from '../../../lib/cardPlayer'
-import { toneOf } from '../../../lib/fitTone'
-import { FIT_STATE, PickList, type PickRow } from './PickList'
+import { fitDisplay } from '../../../lib/fitLabels'
+import { PickList, type PickRow } from './PickList'
 
 const MAX_FIT_QUERIES = 40
 const SEARCH_DEBOUNCE_MS = 150
@@ -49,8 +49,8 @@ export function CareerPickList({ position, roleId, tags, candidates, currentPlay
       ovr: c.player.overall,
       positions: c.player.positions,
       sub: c.player.club,
-      fitPct: fit ? Math.round(fit.score) : undefined,
-      fitState: fit ? FIT_STATE[toneOf(fit.badge)] : undefined,
+      fitPct: fit ? fitDisplay(fit).pct : undefined,
+      fitState: fit ? fitDisplay(fit).state : undefined,
       note: c.form !== undefined ? `form ${c.form}` : undefined,
       current: c.player.id === currentPlayerId,
       card: cardPlayerOfSummary(c.player, position),

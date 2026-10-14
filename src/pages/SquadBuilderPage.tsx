@@ -1,4 +1,4 @@
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError, ErrorCodes } from '../api/client'
@@ -24,6 +24,8 @@ import { TacticCodeCard } from '../features/squad/TacticCodeCard'
 import type { SlotPanel } from '../features/squad/types'
 import { careerSlotTabs } from '../features/squad/careerSlotTabs'
 import { useCareerBinding } from '../features/squad/useCareerBinding'
+import { useSlotFits } from '../features/squad/useSlotFits'
+import { fitDisplay } from '../lib/fitLabels'
 import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
 import { canPlaySlot, formationName } from '../lib/positions'
 import { roleBaseName } from '../lib/squadBuilder'
@@ -69,19 +71,7 @@ export function SquadBuilderPage() {
   const slotRole = (slotId: string, fallback: string) => roleBySlot.get(slotId)?.roleId ?? state.roleOverride[slotId] ?? fallback
   const slotTags = (slotId: string) => state.tags[slotId] ?? []
 
-  const fitSlots = ws.slots.filter((s) => assignments[s.slotId] !== undefined && playerById.has(assignments[s.slotId]))
-  const fits = useQueries({
-    queries: fitSlots.map((s) => {
-      const roleId = slotRole(s.slotId, s.defaultRole)
-      return {
-        queryKey: ['slot-fit', assignments[s.slotId], roleId, s.position, slotTags(s.slotId).join(',')],
-        queryFn: () => endpoints.fitRole({ playerId: assignments[s.slotId], roleId, position: s.position, tags: slotTags(s.slotId) }),
-        staleTime: 300_000,
-        retry: false,
-      }
-    }),
-  })
-  const fitBySlot = new Map(fitSlots.map((s, i) => [s.slotId, fits[i]?.data?.roleFit]))
+  const { fitBySlot } = useSlotFits(ws, playerById)
 
   const views: SlotView[] = ws.slots.map((slot) => {
     const player = playerById.get(assignments[slot.slotId])
@@ -94,7 +84,7 @@ export function SquadBuilderPage() {
       y: slot.y,
       player: player && { id: player.id, name: player.name, overall: player.overall, faceUrl: player.faceUrl, club: player.club, league: player.league, nationality: player.nationality, faceStats: player.faceStats, faceLabels: player.faceLabels, faceStatsApproximate: player.faceStatsApproximate },
       roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : '…',
-      fit: fit && { pct: Math.round(fit.score), band: fit.badge },
+      fit: fit && { pct: fitDisplay(fit).pct, band: fit.badge },
       selected: selection?.slotId === slot.slotId,
     }
   })
