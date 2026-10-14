@@ -15,6 +15,16 @@ Tasarım sistemi kuralları: `docs/review/02_DESIGN_SYSTEM_REDESIGN.md` (varsa �
 - Her PR: `npm test`, `npm run lint`, `npm run build` yeşil; UI değişikliğinde Playwright görsel snapshot.
 - Kullanıcıya görünen metin Türkçe, kısa; açıklama paragrafı yerine `HelpPopover`.
 
+## Çalışma kuralları
+- Dosya düzenlemeleri Edit aracıyla yapılır; `sed` veya heredoc ile kaynak dosya düzenlenmez.
+- Önce kırmızı test, sonra kod.
+- Her task sonunda: testler yeşil + push + progress güncellemesi.
+- Secret'lar commit'e, loga, rapora, dokümana girmez; `.env` okunmaz.
+- Veri silme protokolü: dry-run → git dışında yedek (`../backups`) → tek transaction → kullanıcı onayı.
+- Ortam: macOS (Apple Silicon, arm64). Proje kökü `/Users/user/Desktop/Projects/FCarrierTacticBuilder`
+  (backend `main`, web `v3`, yedekler `backups/` git dışı). Node 22 gerekir (CI ve Dockerfile ile aynı);
+  Node 20'de vitest başlamaz (`markAsUncloneable is not a function`).
+
 ## Tasarım araçları
 Kurulu: Playwright MCP (`.mcp.json`, `@playwright/mcp@0.0.83`, yalnız `localhost:8081`/`127.0.0.1:8081`) ve Emil Kowalski'nin `emil-design-eng` skill'i (`.claude/skills/emil-design-eng/`, `emilkowalski/skills@2d22863`, MIT). Impeccable, Taste ve Figma MCP **kurulu değil** (Impeccable: yerel ikili çalıştıran/hook yazan/yerel sunucu açan bir skill; kurulum kuralına takıldı).
 
