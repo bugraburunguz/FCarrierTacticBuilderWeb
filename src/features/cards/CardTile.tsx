@@ -3,11 +3,10 @@ import type { PlayerSummary } from '../../api/types'
 import { PlayerCard } from '../../components/card/PlayerCard'
 import { CompareButton } from '../../components/CompareButton'
 import { cardPlayerOfSummary } from '../../lib/cardPlayer'
+import { utPlayerHref } from './utPlayer'
 
-/** Oyuncu sayfası bağlantısı (V3-05b'de /ut/players/:assetId'ye geçer). */
-export function playerHref(p: PlayerSummary): string {
-  return `/players/${p.id}`
-}
+/** Kart bağlantısı: UT oyuncu sayfası (/ut/players/:assetId). */
+export const playerHref = utPlayerHref
 
 /** Izgara kartı (blur yok): kendi çerçeveli PlayerCard (md), altında mevki · yaş ve karşılaştır. Tıklayınca oyuncu sayfası. */
 export function CardTile({ player }: { player: PlayerSummary }) {

@@ -606,6 +606,8 @@ export interface PlayerRoleFit {
   reasons: string[]
   gaps: { attr: string; value: number; needed: number }[]
   levelFit?: number
+  currentFit?: number
+  engineVersion?: string
   fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
   narrative?: FitNarrative
 }

@@ -38,6 +38,7 @@ const ReplicasPage = lazy(() => import('./features/replicas/ReplicasPage').then(
 const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPage').then((m) => ({ default: m.ReplicaDetailPage })))
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
+const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
 
 /** /players: UT modunda kart veritabanı (V3-05a), kariyer modunda mevcut oyuncu araması. */
@@ -86,6 +87,7 @@ export function App() {
         <Route path="career/transfer" element={<RequireAuth><CareerTransferPage /></RequireAuth>} />
         <Route path="career/growth" element={<RequireAuth><CareerGrowthPage /></RequireAuth>} />
         <Route path="teams" element={<RequireAuth><TeamsPage /></RequireAuth>} />
+        <Route path="ut/players/:assetId" element={<UtPlayerPage />} />
         <Route path="ut/squad" element={<UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />
         <Route path="ut/sbc" element={<UtSbcPage />} />
