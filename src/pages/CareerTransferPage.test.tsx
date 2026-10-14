@@ -1,9 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../api/endpoints'
 import { CareerTransferPage } from './CareerTransferPage'
+
+vi.mock('../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE', creditBalance: 17, dailyCreditLimit: 20 } }) }))
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -12,22 +14,23 @@ vi.mock('../api/endpoints', () => ({
     lineup: vi.fn(() => Promise.resolve({ slots: [] })),
     shortlist: vi.fn(() => Promise.resolve([])),
     playerTags: vi.fn(() => Promise.resolve([])),
-    transferTargets: vi.fn(() => Promise.resolve({ positions: [{ targets: [] }] })),
+    careerRecommendations: vi.fn(),
+    creditCosts: vi.fn(() => Promise.resolve({ recommend: 3, squadFit: 5, advisor: 8 })),
+    me: vi.fn(() => Promise.resolve({ subscriptionType: 'FREE' })),
   },
 }))
 
 describe('CareerTransferPage', () => {
-  it('aday sorgusu sunucunun position başına üst sınırını (4) aşmaz', async () => {
+  it('ücretli öneri açılışta çağrılmaz; ihtiyaç seçilince kredi bedeli düğmede yazar', async () => {
+    vi.mocked(endpoints.lineup).mockResolvedValueOnce({ slots: [{ slotId: 'ST', position: 'ST', roleId: 'poacher_attack', roleName: 'Poacher', playerName: 'X', roleFit: { score: 40 } }] } as never)
+    vi.mocked(endpoints.squad).mockResolvedValueOnce(Array.from({ length: 11 }, (_, i) => ({ player: { id: i, name: `P${i}`, positions: ['ST'], overall: 60 } })) as never)
     render(
       <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
         <MemoryRouter><CareerTransferPage /></MemoryRouter>
       </QueryClientProvider>,
     )
-
-    await waitFor(() => expect(endpoints.transferTargets).toHaveBeenCalled())
-    const body = vi.mocked(endpoints.transferTargets).mock.calls[0][0]
-    expect(body.perPosition).toBeLessThanOrEqual(4)
-    expect(await screen.findByText('Bu ihtiyaç için aday bulunamadı.')).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Önerileri getir/ })).toBeInTheDocument()
+    expect(endpoints.careerRecommendations).not.toHaveBeenCalled()
   })
 
   it('bütçesi girilmemiş kariyerde dönem sonu bütçe uydurma bir sayı değil "—" gösterir (ENG-02)', async () => {

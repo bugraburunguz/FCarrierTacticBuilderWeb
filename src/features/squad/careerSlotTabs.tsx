@@ -1,32 +1,30 @@
 import type { BehaviorTag, CareerPlayer, FormationSlot, Preset, Role } from '../../api/types'
-import { SlotSuggestions } from '../../components/SlotSuggestions'
 import { BehaviorsPanel } from '../../components/squadBuilder/BehaviorsPanel'
 import { RoleFocusPanel } from '../../components/squadBuilder/RoleFocusModal'
 import type { SlotTab } from '../../components/squadBuilder/SlotModal'
 import { roleGroups } from '../../lib/squadBuilder'
+import { RecommendationPanel } from '../recommend/RecommendationPanel'
 import { CareerPickList } from './pick/CareerPickList'
-import type { TacticSetup } from './types'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
 
 interface Args {
   ws: SquadWorkspaceApi<number>
   slot: FormationSlot
   hasCareer: boolean
+  careerId?: number
   candidates: CareerPlayer[]
   roleId: string
   slotTags: string[]
   dialogTags: BehaviorTag[]
   dialogRoles: Role[]
   preset?: Preset
-  gender?: number
-  setup: TacticSetup
 }
 
 /**
  * Kariyere özgü slot sekmeleri (Oyuncu · Rol & odak · Davranışlar · Öneriler): klasik modalda sekme, v3'te yan panel gövdesi.
  * Davranışlar ve Öneriler kariyer motoruna bağlıdır; UT'de karşılığı yoktur (UT'de rol seçimi çekirdekteki rol penceresinden gelir).
  */
-export function careerSlotTabs({ ws, slot, hasCareer, candidates, roleId, slotTags, dialogTags, dialogRoles, preset, gender, setup }: Args): SlotTab[] {
+export function careerSlotTabs({ ws, slot, hasCareer, careerId, candidates, roleId, slotTags, dialogTags, dialogRoles, preset }: Args): SlotTab[] {
   return [
     {
       id: 'card',
@@ -87,7 +85,7 @@ export function careerSlotTabs({ ws, slot, hasCareer, candidates, roleId, slotTa
     {
       id: 'suggest',
       label: 'Öneriler',
-      node: <SlotSuggestions roleId={ws.roleBySlot.get(slot.slotId)?.roleId} position={slot.position} tags={slotTags} gender={gender} setup={setup} />,
+      node: <RecommendationPanel key={slot.slotId} careerId={careerId} position={slot.position} slotId={slot.slotId} roleId={ws.roleBySlot.get(slot.slotId)?.roleId ?? roleId} />,
     },
   ]
 }

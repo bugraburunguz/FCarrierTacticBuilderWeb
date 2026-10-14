@@ -1061,3 +1061,84 @@ export interface ScoutingQuery {
   sort?: 'fit' | 'opportunity' | 'potential'
   limit?: number
 }
+
+/** E3-6b/6c/10: kariyer öneri hattı (`POST /careers/{id}/recommendations`). */
+export type RecommendBucket = 'ALINABILIR' | 'ZOR' | 'HAYAL'
+export type RecommendProfile = 'BALANCED' | 'NOW' | 'FUTURE'
+export type RecommendRoleSource = 'TACTIC' | 'SQUAD' | 'REQUEST' | 'DEFAULT' | 'ALTERNATIVES'
+
+export interface RecommendBucketFactor {
+  name: string
+  value: string
+  points: number
+  note: string
+}
+
+export interface RecommendContribution {
+  term: string
+  key: string
+  points: number
+}
+
+export interface CareerRecommendationItem {
+  player: PlayerSummary
+  roleId: string
+  roleName: string
+  focus?: string
+  currentFit: number
+  levelFit?: number
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  /** SCOUT_RANGE modunda sunucu göndermez. */
+  futureFit?: number
+  projectedRating?: number
+  deltaVsCurrent?: number
+  positionLabel?: string
+  clubStrength?: number
+  clubStrengthGap?: number
+  ovrGap?: number
+  bucket: RecommendBucket
+  bucketLabel: string
+  bucketPoints: number
+  bucketFactors: RecommendBucketFactor[]
+  pros: RecommendContribution[]
+  cons: RecommendContribution[]
+  tags: ('FREE' | 'YOUNG' | 'READY')[]
+  rankScore: number
+}
+
+export interface CareerRecommendation {
+  position: string
+  roleId?: string
+  roleName?: string
+  focus?: string
+  roleSource: RecommendRoleSource
+  profile: RecommendProfile
+  poolSize: number
+  scored: number
+  userClubStrength?: number
+  userFirstElevenAverage?: number
+  current?: { playerId: number; playerName: string; roleId: string; currentFit: number }
+  items: CareerRecommendationItem[]
+  longShots?: CareerRecommendationItem[]
+}
+
+export interface CareerRecommendationRequest {
+  position: string
+  slotId?: string
+  roleId?: string
+  focus?: string
+  forceRole?: boolean
+  alternativeRoles?: boolean
+  profile?: RecommendProfile
+  limit?: number
+  ageMax?: number
+  budgetEur?: number
+  budgetUnknown?: boolean
+  includeLongShots?: boolean
+}
+
+export interface CreditCosts {
+  recommend: number
+  squadFit: number
+  advisor: number
+}

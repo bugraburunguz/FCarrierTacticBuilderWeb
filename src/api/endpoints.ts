@@ -1,6 +1,9 @@
 import { api, request } from './client'
 import type {
   BehaviorTag,
+  CareerRecommendation,
+  CareerRecommendationRequest,
+  CreditCosts,
   Career,
   CareerPlayer,
   Club,
@@ -18,8 +21,6 @@ import type {
   Role,
   RosterEvent,
   RosterEventType,
-  ScoutingQuery,
-  ScoutingResult,
   SquadFit,
   Subscription,
   TacticRequest,
@@ -29,7 +30,6 @@ import type {
   TacticRecommendation,
   TeamProfile,
   TeamSummary,
-  TransferTargetsResult,
   SimilarPlayer,
   TacticCodeExport,
   TacticCodeImport,
@@ -169,27 +169,11 @@ export const endpoints = {
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number; setup?: SetupBody }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
-  transferTargets: (body: { careerId: number; perPosition?: number; setup?: SetupBody; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
-    api.post<TransferTargetsResult>('/recommend/transfer-targets', body),
-  scoutingSearch: (careerId: number, body: ScoutingQuery) => api.post<ScoutingResult>(`/scouting/${careerId}/search`, body),
   setupCheck: (body: { careerId: number; buildUp: string; depth: number }) => api.post<SetupCheck[]>('/fit/setup-check', body),
   exportTacticCode: (tactic: TacticRequest) => api.post<TacticCodeExport>('/tactics/export-code', tactic, false),
   importTacticCode: (code: string) => api.post<TacticCodeImport>('/tactics/import-code', { code }, false),
-  slotView: (body: {
-    careerId: number
-    scope: 'SQUAD' | 'LEAGUE' | 'MARKET'
-    slot: { roleId: string; position: string; tags?: string[]; leagueId?: number; limit?: number; setup?: SetupBody }
-  }) => api.post<Recommendation>('/recommend/slot-view', body),
-  recommendSlot: (body: {
-    careerId?: number
-    roleId: string
-    position: string
-    tags?: string[]
-    budgetMax?: number
-    setup?: SetupBody
-    currentPlayerId?: number
-    limit?: number
-  }) => api.post<Credited<Recommendation>>('/recommend/slot', body),
+  careerRecommendations: (careerId: number, body: CareerRecommendationRequest) => api.post<Credited<CareerRecommendation>>(`/careers/${careerId}/recommendations`, body),
+  creditCosts: () => api.get<CreditCosts>('/billing/costs'),
 
   careers: () => api.get<Career[]>('/careers'),
   createCareer: (body: { clubId: number; budgetEur?: number; name?: string }) => api.post<Career>('/careers', body),

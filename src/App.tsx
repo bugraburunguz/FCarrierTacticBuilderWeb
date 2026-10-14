@@ -22,9 +22,7 @@ const RegisterPage = lazy(() => import('./pages/AuthPages').then((m) => ({ defau
 const PlayerDetailPage = lazy(() => import('./pages/PlayerDetailPage').then((m) => ({ default: m.PlayerDetailPage })))
 const PlayersPage = lazy(() => import('./pages/PlayersPage').then((m) => ({ default: m.PlayersPage })))
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
-const RecommendPage = lazy(() => import('./pages/RecommendPage').then((m) => ({ default: m.RecommendPage })))
 const SquadBuilderPage = lazy(() => import('./pages/SquadBuilderPage').then((m) => ({ default: m.SquadBuilderPage })))
-const ScoutingPage = lazy(() => import('./pages/ScoutingPage').then((m) => ({ default: m.ScoutingPage })))
 const SquadPage = lazy(() => import('./pages/SquadPage').then((m) => ({ default: m.SquadPage })))
 const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default: m.TeamsPage })))
 const UtMetaPage = lazy(() => import('./pages/UtMetaPage').then((m) => ({ default: m.UtMetaPage })))
@@ -66,9 +64,9 @@ export function App() {
         <Route path="tactics/wizard" element={<WizardPage />} />
         <Route path="squad" element={<RequireAuth><SquadPage /></RequireAuth>} />
         <Route path="squad/builder" element={<SquadBuilderPage />} />
-        <Route path="scouting" element={<RequireAuth><ScoutingPage /></RequireAuth>} />
+        <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
-        <Route path="recommend" element={<RequireAuth><RecommendPage /></RequireAuth>} />
+        <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
         <Route path="career/import" element={<RequireAuth><ImportPage /></RequireAuth>} />
         <Route path="career/desk" element={<RequireAuth><CareerDeskPage /></RequireAuth>} />
         <Route path="career/new" element={<RequireAuth><CareerNewPage /></RequireAuth>} />

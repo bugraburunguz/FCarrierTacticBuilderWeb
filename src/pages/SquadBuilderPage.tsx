@@ -154,14 +154,13 @@ export function SquadBuilderPage() {
         ws,
         slot: dialogSlot,
         hasCareer,
+        careerId: career?.id,
         candidates,
         roleId: dialogRoleId,
         slotTags: slotTags(dialogSlot.slotId),
         dialogTags,
         dialogRoles,
         preset,
-        gender: career?.gender,
-        setup,
       })
     : []
   const tacticCode = <TacticCodeCard mode="career" tactic={ws.tactic} resolved={ws.resolved.data} onLoaded={(r) => { setAutoFit(false); ws.applyImportedCode(r) }} />

@@ -1,0 +1,202 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useId, useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
+import { ApiError, ErrorCodes } from '../../api/client'
+import { endpoints } from '../../api/endpoints'
+import type { CareerRecommendationItem, CareerRecommendationRequest, RecommendProfile } from '../../api/types'
+import { useAuth } from '../../auth/AuthContext'
+import { MoneyInput } from '../../components/MoneyInput'
+import { ErrorBox, Select } from '../../components/ui'
+import { Button, EmptyState, Segmented, Skeleton } from '../../design/components/primitives'
+import { RecommendationRow } from './RecommendationRow'
+
+const PROFILES: { id: RecommendProfile; label: string }[] = [
+  { id: 'BALANCED', label: 'Dengeli' },
+  { id: 'NOW', label: 'Hemen şimdi' },
+  { id: 'FUTURE', label: 'Gelecek' },
+]
+const AGE_CHOICES = [28, 30, 32, 34, 36]
+const LIMIT = 10
+const MAX_LONG_SHOTS = 3
+
+type BudgetMode = 'career' | 'unknown' | 'custom'
+
+interface Props {
+  careerId?: number
+  position: string
+  slotId?: string
+  /** Verilirse yalnız bu rol/focus için puanlanır (slotun rolü); verilmezse sunucu taktik → kadro → varsayılan sırasını izler. */
+  roleId?: string
+  /** Satır sonu eylemi (örn. kısa liste). */
+  rowAction?: (item: CareerRecommendationItem) => ReactNode
+}
+
+// Oturum içi "tekrar sorma" tercihi (kalıcı değil; kredi harcamasını açık tutar).
+let skipConfirm = false
+
+/**
+ * Kariyer öneri paneli (E3-10): `POST /careers/{id}/recommendations`. Ücretli olduğu için açılışta istek atmaz; düğme kaç kredi düşeceğini yazar,
+ * ücretsiz üyelerde bir onay adımı vardır, PREMIUM'da yoktur. Filtre değişince sonuç bayatlar ve yeniden getirmek gerekir.
+ */
+export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction }: Props) {
+  const { me } = useAuth()
+  const queryClient = useQueryClient()
+  const ids = { age: useId(), budget: useId() }
+  const [profile, setProfile] = useState<RecommendProfile>('BALANCED')
+  const [ageMax, setAgeMax] = useState<number | undefined>()
+  const [budgetMode, setBudgetMode] = useState<BudgetMode>('career')
+  const [customBudget, setCustomBudget] = useState<number | undefined>()
+  const [alternatives, setAlternatives] = useState(false)
+  const [longShots, setLongShots] = useState(false)
+  const [confirming, setConfirming] = useState(false)
+  const [dontAsk, setDontAsk] = useState(false)
+  const [stale, setStale] = useState(false)
+
+  const costs = useQuery({ queryKey: ['credit-costs'], queryFn: endpoints.creditCosts, staleTime: 600_000, retry: false })
+  const premium = me?.subscriptionType === 'PREMIUM'
+  const cost = costs.data?.recommend
+
+  const run = useMutation({
+    mutationFn: (body: CareerRecommendationRequest) => endpoints.careerRecommendations(careerId!, body),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
+  })
+
+  if (careerId === undefined) {
+    return <EmptyState>Öneri almak için bir kariyer seç.</EmptyState>
+  }
+
+  const body = (): CareerRecommendationRequest => ({
+    position,
+    slotId,
+    roleId,
+    forceRole: roleId !== undefined,
+    alternativeRoles: alternatives,
+    profile,
+    limit: LIMIT,
+    ageMax,
+    budgetUnknown: budgetMode === 'unknown',
+    budgetEur: budgetMode === 'custom' ? customBudget : undefined,
+    includeLongShots: longShots,
+  })
+  const fetchNow = () => {
+    setConfirming(false)
+    setStale(false)
+    skipConfirm = skipConfirm || dontAsk
+    run.mutate(body())
+  }
+  const onStart = () => (premium || skipConfirm ? fetchNow() : setConfirming(true))
+  const changed = <T,>(set: (v: T) => void) => (v: T) => {
+    set(v)
+    setStale(run.data !== undefined)
+  }
+
+  const result = run.data?.result
+  const outOfCredit = run.error instanceof ApiError && run.error.code === ErrorCodes.insufficientCredit
+  const priceLabel = premium ? "PREMIUM'da ücretsiz" : cost !== undefined ? `${cost} kredi` : 'kredi'
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-2">
+        <Segmented label="Profil" value={profile} options={PROFILES} onChange={changed(setProfile)} />
+        <div className="grid grid-cols-2 gap-2">
+          <label htmlFor={ids.age} className="flex flex-col gap-1 text-xs font-medium text-muted">
+            Maks. yaş
+            <Select id={ids.age} value={ageMax ?? ''} onChange={(e) => changed(setAgeMax)(e.target.value ? Number(e.target.value) : undefined)}>
+              <option value="">Otomatik (34)</option>
+              {AGE_CHOICES.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label htmlFor={ids.budget} className="flex flex-col gap-1 text-xs font-medium text-muted">
+            Bütçe
+            <Select id={ids.budget} value={budgetMode} onChange={(e) => changed(setBudgetMode)(e.target.value as BudgetMode)}>
+              <option value="career">Kariyer bütçem</option>
+              <option value="unknown">Bilinmiyor</option>
+              <option value="custom">Elle gir…</option>
+            </Select>
+          </label>
+        </div>
+        {budgetMode === 'custom' && <MoneyInput ariaLabel="Bütçe tutarı" value={customBudget} onChange={changed(setCustomBudget)} />}
+        <div className="flex flex-col gap-1 text-sm">
+          <label className="flex min-h-8 items-center gap-2 max-sm:min-h-11">
+            <input type="checkbox" checked={alternatives} onChange={(e) => changed(setAlternatives)(e.target.checked)} />
+            Alternatif roller
+          </label>
+          <label className="flex min-h-8 items-center gap-2 max-sm:min-h-11">
+            <input type="checkbox" checked={longShots} onChange={(e) => changed(setLongShots)(e.target.checked)} />
+            Hayal transferlerini göster
+          </label>
+        </div>
+      </div>
+
+      {confirming ? (
+        <div role="alertdialog" aria-label="Kredi onayı" className="glass-3 space-y-2 p-3 text-sm">
+          <p>
+            Bu öneri <b>{cost} kredi düşecek</b>. Bakiye {me?.creditBalance ?? '—'}, günlük {me?.dailyCreditLimit ?? '—'}. PREMIUM'da sınırsız.
+          </p>
+          <label className="flex items-center gap-2 text-xs">
+            <input type="checkbox" checked={dontAsk} onChange={(e) => setDontAsk(e.target.checked)} />
+            Bu oturumda tekrar sorma
+          </label>
+          <div className="flex gap-2">
+            <Button variant="primary" onClick={fetchNow}>{`Onayla (${cost} kredi)`}</Button>
+            <Button onClick={() => setConfirming(false)}>Vazgeç</Button>
+          </div>
+        </div>
+      ) : (
+        <Button variant="primary" disabled={run.isPending} onClick={onStart}>
+          {run.isPending ? 'Aranıyor…' : `Önerileri getir · ${priceLabel}`}
+        </Button>
+      )}
+      {stale && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
+      <ErrorBox error={outOfCredit ? undefined : run.error} />
+      {outOfCredit && (
+        <p className="text-sm">
+          Günlük krediler yarın yenilenir ya da <Link to="/profile" className="text-accent underline">PREMIUM</Link> ile sınırsız kullanabilirsin.
+        </p>
+      )}
+
+      {run.isPending && (
+        <div className="space-y-2" aria-busy="true">
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
+        </div>
+      )}
+      {result && !run.isPending && (
+        <section aria-label="Öneriler" className="space-y-2">
+          <p className="text-xs text-muted">
+            {result.roleName ? `Rol: ${result.roleName}${result.focus ? ` (${result.focus})` : ''}` : 'Tüm roller'}
+            {result.userClubStrength !== undefined ? ` · kulüp gücün ${result.userClubStrength}` : ''}
+            {result.userFirstElevenAverage !== undefined ? ` · ilk 11 ort. ${result.userFirstElevenAverage}` : ''}
+          </p>
+          {result.items.length === 0 ? (
+            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi gevşetmeyi dene.</EmptyState>
+          ) : (
+            <ul className="space-y-1.5">
+              {result.items.map((item) => (
+                <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} />
+              ))}
+            </ul>
+          )}
+          {result.longShots && result.longShots.length > 0 && (
+            <section aria-label="Hayal transferler" className="space-y-1.5 pt-2">
+              <h4 className="text-xs font-semibold text-ink-2">Hayal transferler (ana listede değil)</h4>
+              <ul className="space-y-1.5">
+                {result.longShots.slice(0, MAX_LONG_SHOTS).map((item) => (
+                  <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} />
+                ))}
+              </ul>
+            </section>
+          )}
+          {run.data && run.data.charged > 0 && (
+            <p className="text-xs text-muted">{run.data.charged} kredi harcandı{run.data.balance !== undefined ? ` · kalan ${run.data.balance}` : ''}.</p>
+          )}
+        </section>
+      )}
+    </div>
+  )
+}

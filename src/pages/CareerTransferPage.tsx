@@ -3,24 +3,15 @@ import { Star } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
-import type { Acquisition, TransferTarget } from '../api/types'
-import { CompareButton } from '../components/CompareButton'
+import type { CareerRecommendationItem } from '../api/types'
 import { MoneyInput } from '../components/MoneyInput'
 import { ShortlistLabel } from '../components/ShortlistLabel'
-import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Pill, Skeleton, Stat } from '../components/ui'
+import { Button, Card, EmptyState, Field, HelpPopover, Skeleton, Stat } from '../components/ui'
+import { RecommendationPanel } from '../features/recommend/RecommendationPanel'
 import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP, weakSlots } from '../lib/deskRules'
 import { formatEur } from '../lib/format'
 import { toTacticRequest, useTactic } from '../state/tacticStore'
 import { useActiveCareerId } from '../state/careerStore'
-
-/** Sunucu `@Max(4)`: position başına en fazla 4 aday (aşılırsa 400 ve liste hep boş kalır). */
-const MAX_TARGETS_PER_POSITION = 4
-
-const ACQ: Record<Acquisition, { label: string; tone: 'emerald' | 'sky' | 'amber' }> = {
-  FREE: { label: 'Bedava', tone: 'emerald' },
-  LOAN: { label: 'Kiralık', tone: 'sky' },
-  BUY: { label: 'Satın al', tone: 'amber' },
-}
 
 interface Need {
   key: string
@@ -55,15 +46,7 @@ export function CareerTransferPage() {
   const wanted = params.get('pos')
   const need = needs.find((n) => n.key === selected) ?? needs.find((n) => n.position === wanted) ?? needs[0]
 
-  const targets = useQuery({
-    queryKey: ['transfer-targets', id, need?.position, need?.roleId],
-    queryFn: () => endpoints.transferTargets({ careerId: id!, perPosition: MAX_TARGETS_PER_POSITION, slots: [{ position: need!.position, roleId: need!.roleId }] }),
-    enabled: id !== undefined && need !== undefined,
-    retry: false,
-  })
-  const candidates: TransferTarget[] = targets.data?.positions[0]?.targets ?? []
-
-  const add = useMutation({ mutationFn: (t: TransferTarget) => endpoints.shortlistAdd(id!, t.player.id, { note: need?.label }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
+  const add = useMutation({ mutationFn: (item: CareerRecommendationItem) => endpoints.shortlistAdd(id!, item.player.id, { note: need?.label }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
   const remove = useMutation({ mutationFn: (playerId: number) => endpoints.shortlistRemove(id!, playerId), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
   const setFee = useMutation({ mutationFn: ({ playerId, fee, note }: { playerId: number; fee?: number; note?: string }) => endpoints.shortlistAdd(id!, playerId, { maxFeeEur: fee, note }), onSuccess: () => client.invalidateQueries({ queryKey: ['shortlist', id] }) })
 
@@ -114,33 +97,22 @@ export function CareerTransferPage() {
           )}
         </Card>
 
-        <Card title={need ? `Adaylar · ${need.position}` : 'Adaylar'}>
-          {targets.isLoading && <div className="space-y-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-14" />)}</div>}
-          <ErrorBox error={targets.error} />
-          {!targets.isLoading && candidates.length === 0 && <EmptyState>{need ? 'Bu ihtiyaç için aday bulunamadı.' : 'Soldan bir ihtiyaç seç.'}</EmptyState>}
-          <ul className="divide-y divide-line">
-            {candidates.map((t) => (
-              <li key={t.player.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                <div className="min-w-0">
-                  <Link to={`/players/${t.player.id}`} className="font-semibold underline decoration-dotted underline-offset-2">{t.player.name}</Link>
-                  <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                    <span className="num">{t.player.overall}</span><span>{t.player.positions.slice(0, 3).join(', ')}</span>
-                    {t.player.age && <span>{t.player.age} yaş</span>}<span>{t.player.club}</span>
-                    <Pill tone={ACQ[t.acquisition].tone}>{ACQ[t.acquisition].label}</Pill>
-                    <span className="num">RoleFit %{Math.round(t.roleFit.score)}</span>
-                    {t.player.valueEur !== undefined && <span>{formatEur(t.player.valueEur)}</span>}
-                  </div>
-                  <p className="text-xs text-muted">{t.reason}</p>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CompareButton compact entry={{ id: t.player.id, name: t.player.name, overall: t.player.overall, position: t.player.positions[0] ?? '' }} />
-                  <Button variant={inList.has(t.player.id) ? 'secondary' : 'primary'} onClick={() => (inList.has(t.player.id) ? remove.mutate(t.player.id) : add.mutate(t))} aria-pressed={inList.has(t.player.id)}>
-                    <Star size={14} aria-hidden="true" fill={inList.has(t.player.id) ? 'currentColor' : 'none'} /> {inList.has(t.player.id) ? 'Listede' : 'Kısa liste'}
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
+        <Card title={need ? `Öneriler · ${need.position}` : "Öneriler"}>
+          {need ? (
+            <RecommendationPanel
+              key={need.key}
+              careerId={id}
+              position={need.position}
+              roleId={need.roleId}
+              rowAction={(item) => (
+                <Button variant={inList.has(item.player.id) ? "secondary" : "primary"} onClick={() => (inList.has(item.player.id) ? remove.mutate(item.player.id) : add.mutate(item))} aria-pressed={inList.has(item.player.id)}>
+                  <Star size={14} aria-hidden="true" fill={inList.has(item.player.id) ? "currentColor" : "none"} /> {inList.has(item.player.id) ? "Listede" : "Kısa liste"}
+                </Button>
+              )}
+            />
+          ) : (
+            <EmptyState>Soldan bir ihtiyaç seç.</EmptyState>
+          )}
         </Card>
       </div>
 
