@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.10"
+  },
   "scripts": {
     "sync:rules": "node scripts/sync-rules.mjs",
     "sync:le-script": "node scripts/sync-le-script.mjs",
