@@ -4,7 +4,39 @@
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "card": {
+      "cards": 4,
+      "minFontPx": 13.1,
+      "minFontText": "ST",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 4
+    }
+  },
+  {
+    "shot": "izgara-kaydirilmis-dark-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 6,
+      "minFontPx": 13.1,
+      "minFontText": "RM",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 6
+    },
+    "sticky": {
+      "found": true,
+      "top": -1086,
+      "height": 202,
+      "position": "relative",
+      "alpha": 0.97,
+      "pointsChecked": 0,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    }
   },
   {
     "shot": "izgara-filtreli-dark-375.png",
@@ -39,9 +71,9 @@
     "trayBeforeCount": 0,
     "fabSmall": true,
     "geo": {
-      "width": 144.265625,
+      "width": 144.28125,
       "height": 44,
-      "left": 214.734375,
+      "left": 214.71875,
       "viewport": 375
     },
     "overflow": false,
@@ -60,7 +92,39 @@
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "card": {
+      "cards": 4,
+      "minFontPx": 13.1,
+      "minFontText": "ST",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 4
+    }
+  },
+  {
+    "shot": "izgara-kaydirilmis-light-375.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 6,
+      "minFontPx": 13.1,
+      "minFontText": "RM",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 6
+    },
+    "sticky": {
+      "found": true,
+      "top": -1086,
+      "height": 202,
+      "position": "relative",
+      "alpha": 0.97,
+      "pointsChecked": 0,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    }
   },
   {
     "shot": "izgara-filtreli-light-375.png",
@@ -95,9 +159,9 @@
     "trayBeforeCount": 0,
     "fabSmall": true,
     "geo": {
-      "width": 144.265625,
+      "width": 144.28125,
       "height": 44,
-      "left": 214.734375,
+      "left": 214.71875,
       "viewport": 375
     },
     "overflow": false,
@@ -112,11 +176,219 @@
     "problems": []
   },
   {
-    "shot": "izgara-dark-1280.png",
+    "shot": "izgara-dark-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 9,
+      "minFontPx": 13.1,
+      "minFontText": "ST",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 9
+    }
+  },
+  {
+    "shot": "izgara-kaydirilmis-dark-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 12,
+      "minFontPx": 13.1,
+      "minFontText": "CM",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 12
+    },
+    "sticky": {
+      "found": true,
+      "top": -1080,
+      "height": 128,
+      "position": "relative",
+      "alpha": 0.97,
+      "pointsChecked": 0,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "izgara-filtreli-dark-768.png",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
     "problems": []
+  },
+  {
+    "shot": "tablo-dark-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "bos-dark-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "mobil-sheet-dark-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "tepsi-geometri-dark-768",
+    "trayBeforeCount": 0,
+    "fabSmall": true,
+    "geo": {
+      "width": 144.28125,
+      "height": 44,
+      "left": 607.71875,
+      "viewport": 768
+    },
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "problems": []
+  },
+  {
+    "shot": "tepsi-dark-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "izgara-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 9,
+      "minFontPx": 13.1,
+      "minFontText": "ST",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 9
+    }
+  },
+  {
+    "shot": "izgara-kaydirilmis-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 12,
+      "minFontPx": 13.1,
+      "minFontText": "CM",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 12
+    },
+    "sticky": {
+      "found": true,
+      "top": -1080,
+      "height": 128,
+      "position": "relative",
+      "alpha": 0.97,
+      "pointsChecked": 0,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "izgara-filtreli-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "tablo-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "bos-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "mobil-sheet-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "tepsi-geometri-light-768",
+    "trayBeforeCount": 0,
+    "fabSmall": true,
+    "geo": {
+      "width": 144.28125,
+      "height": 44,
+      "left": 607.71875,
+      "viewport": 768
+    },
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "problems": []
+  },
+  {
+    "shot": "tepsi-light-768.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": []
+  },
+  {
+    "shot": "izgara-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 12,
+      "minFontPx": 13.1,
+      "minFontText": "ST",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 12
+    }
+  },
+  {
+    "shot": "izgara-kaydirilmis-dark-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 24,
+      "minFontPx": 13.1,
+      "minFontText": "GK",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 24
+    },
+    "sticky": {
+      "found": true,
+      "top": 64,
+      "height": 168,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 15,
+      "ok": true
+    }
   },
   {
     "shot": "izgara-filtreli-dark-1280.png",
@@ -170,7 +442,39 @@
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "card": {
+      "cards": 12,
+      "minFontPx": 13.1,
+      "minFontText": "ST",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 12
+    }
+  },
+  {
+    "shot": "izgara-kaydirilmis-light-1280.png",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "card": {
+      "cards": 24,
+      "minFontPx": 13.1,
+      "minFontText": "GK",
+      "ovrMinPx": 31.7,
+      "surnamesVisible": 24
+    },
+    "sticky": {
+      "found": true,
+      "top": 64,
+      "height": 168,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 15,
+      "ok": true
+    }
   },
   {
     "shot": "izgara-filtreli-light-1280.png",

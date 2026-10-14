@@ -4,111 +4,641 @@
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sticky": {
+      "found": true,
+      "top": 54,
+      "height": 54,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 2,
+      "ok": true
+    }
   },
   {
     "shot": "roller-dark-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
   },
   {
     "shot": "fiyat-dark-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
   },
   {
     "shot": "alinis-dark-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
   },
   {
     "shot": "statlar-light-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sticky": {
+      "found": true,
+      "top": 54,
+      "height": 54,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 2,
+      "ok": true
+    }
   },
   {
     "shot": "roller-light-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
   },
   {
     "shot": "fiyat-light-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
   },
   {
     "shot": "alinis-light-375",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 636,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
+  },
+  {
+    "shot": "statlar-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sticky": {
+      "found": true,
+      "top": 54,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 4,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "fiyat-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "alinis-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "statlar-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sticky": {
+      "found": true,
+      "top": 54,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 4,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "fiyat-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "alinis-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 19,
+      "minFontText": "ST",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
   },
   {
     "shot": "statlar-dark-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    },
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sticky": {
+      "found": true,
+      "top": 381,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    }
   },
   {
     "shot": "roller-dark-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    }
   },
   {
     "shot": "fiyat-dark-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    }
   },
   {
     "shot": "alinis-dark-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    }
   },
   {
     "shot": "statlar-light-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    },
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sticky": {
+      "found": true,
+      "top": 381,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 0.97,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    }
   },
   {
     "shot": "roller-light-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    }
   },
   {
     "shot": "fiyat-light-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    }
   },
   {
     "shot": "alinis-light-1280",
     "overflow": false,
     "axeSeriousCritical": 0,
     "axeAll": [],
-    "problems": []
+    "problems": [],
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 23.3,
+      "surnamesVisible": 1
+    }
   }
 ]
