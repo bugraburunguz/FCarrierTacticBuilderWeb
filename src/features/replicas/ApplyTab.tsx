@@ -19,7 +19,7 @@ function SlotRow({ slot, mode, onSuggest }: { slot: ReplicaApplySlot; mode: 'car
       <span className="w-12 shrink-0 font-[var(--font-num)] text-xs tabular-nums text-ink-2">{slot.position}</span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{slot.player ? slot.player.name : 'Boş'}</p>
-        <p className="truncate text-xs text-muted">{slot.roleName} · {slot.focus}</p>
+        <p className="truncate text-xs text-muted" title={`${slot.roleName} · ${slot.focus}`}>{slot.roleName} · {slot.focus}</p>
       </div>
       {slot.player && <span className="font-[var(--font-num)] text-sm tabular-nums">{slot.player.overall}</span>}
       {fit && (

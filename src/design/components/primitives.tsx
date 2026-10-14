@@ -213,7 +213,7 @@ export function Tabs<T extends string>({ label, idPrefix, value, tabs, onChange 
     }
   }
   return (
-    <div role="tablist" aria-label={label} onKeyDown={onKey} className="glass-3 flex gap-0.5 overflow-x-auto p-0.5">
+    <div role="tablist" aria-label={label} onKeyDown={onKey} className="glass-3 flex gap-0.5 p-0.5">
       {tabs.map((t) => (
         <button
           key={t.id}
@@ -229,7 +229,7 @@ export function Tabs<T extends string>({ label, idPrefix, value, tabs, onChange 
               el.focus()
             }
           }}
-          className={cx('min-h-9 flex-1 whitespace-nowrap rounded-[var(--radius-sm)] px-3 text-sm font-semibold max-sm:min-h-11', value === t.id ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]')}
+          className={cx('min-h-9 flex-1 rounded-[var(--radius-sm)] px-2 text-center text-sm font-semibold leading-tight max-sm:min-h-11', value === t.id ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]')}
         >
           {t.label}
         </button>

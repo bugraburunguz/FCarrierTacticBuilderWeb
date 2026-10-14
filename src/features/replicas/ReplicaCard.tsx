@@ -18,11 +18,11 @@ export function ReplicaCard({ replica, formation }: { replica: ReplicaSummary; f
       )}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="min-w-0">
-          <h3 className="font-display text-lg font-semibold leading-6">
+          <h2 className="font-display text-lg font-semibold leading-6">
             <Link to={`/replicas/${replica.id}`} className="text-ink after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent">
               {replica.club} <span className="font-[var(--font-num)] text-sm font-medium text-ink-2">{replica.season}</span>
             </Link>
-          </h3>
+          </h2>
           <p className="truncate text-sm text-ink-2">{replica.coach}</p>
           <p className="text-xs text-muted">{CATEGORY_LABEL[replica.category]}</p>
         </div>
