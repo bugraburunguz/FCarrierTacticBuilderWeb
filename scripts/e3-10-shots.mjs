@@ -30,7 +30,9 @@ const SIZES = [
   { w: 375, h: 812 },
   { w: 1280, h: 900 },
 ]
-const THEMES = ['dark', 'light']
+// --changed: yalnız değişen ekranlar (E3-10b): koyu tema, slot sonucu + Transfer Merkezi.
+const CHANGED = args.includes('--changed')
+const THEMES = CHANGED ? ['dark'] : ['dark', 'light']
 
 async function setup(w, h, theme) {
   const context = await browser.newContext({ viewport: { width: w, height: h } })
@@ -75,10 +77,10 @@ for (const { w, h } of SIZES) {
       await page.locator('[data-pitch-slot="ST"]').first().click()
       await page.getByRole('radio', { name: 'Öneriler' }).click()
       await page.waitForTimeout(300)
-      await record(page, problems, `slot-oneriler-bos-${theme}-${w}.png`)
+      if (!CHANGED) await record(page, problems, `slot-oneriler-bos-${theme}-${w}.png`)
       await page.getByRole('button', { name: /Önerileri getir/ }).click()
       await page.getByRole('alertdialog').waitFor()
-      await record(page, problems, `slot-oneriler-onay-${theme}-${w}.png`)
+      if (!CHANGED) await record(page, problems, `slot-oneriler-onay-${theme}-${w}.png`)
       await page.getByRole('checkbox', { name: 'Hayal transferlerini göster' }).check()
       await page.getByRole('button', { name: /Onayla/ }).click()
       await page.getByRole('region', { name: 'Öneriler' }).waitFor({ timeout: 60000 })

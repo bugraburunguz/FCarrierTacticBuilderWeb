@@ -64,6 +64,7 @@ describe('CareerTransferPage', () => {
     const order = screen.getAllByRole('button').map((b) => b.textContent ?? '').filter((t) => t.includes('Seviyesine göre'))
     expect(order[0]).toContain('%12')
     expect(order[1]).toContain('%38')
+    expect(vi.mocked(endpoints.fitRole).mock.calls.every(([b]) => b.engineVersion === 'v3')).toBe(true)
     fireEvent.click(screen.getByRole('button', { name: 'Tüm kadro' }))
     expect(await screen.findByText(/Oyuncu 3 · Seviyesine göre %80/)).toBeInTheDocument()
   })

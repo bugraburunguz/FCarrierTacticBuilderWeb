@@ -33,8 +33,8 @@ export function CareerPickList({ position, roleId, tags, candidates, currentPlay
   const scored = filtered.slice(0, MAX_FIT_QUERIES)
   const fits = useQueries({
     queries: scored.map((c) => ({
-      queryKey: ['slot-fit', c.player.id, roleId, position, tags.join(',')],
-      queryFn: () => endpoints.fitRole({ playerId: c.player.id, roleId, position, tags }),
+      queryKey: ['slot-fit', 'v3', c.player.id, roleId, position, tags.join(',')],
+      queryFn: () => endpoints.fitRole({ playerId: c.player.id, roleId, position, tags, engineVersion: 'v3' }),
       staleTime: 300_000,
       retry: false,
     })),

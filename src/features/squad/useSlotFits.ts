@@ -27,8 +27,8 @@ export function useSlotFits(ws: SquadWorkspaceApi<number>, playerById: Map<numbe
   const tagsOf = (slotId: string) => state.tags[slotId] ?? []
   const queries = useQueries({
     queries: filled.map((s) => ({
-      queryKey: ['slot-fit', state.assigned[s.slotId], roleOf(s.slotId, s.defaultRole), s.position, tagsOf(s.slotId).join(',')],
-      queryFn: () => endpoints.fitRole({ playerId: state.assigned[s.slotId], roleId: roleOf(s.slotId, s.defaultRole), position: s.position, tags: tagsOf(s.slotId) }),
+      queryKey: ['slot-fit', 'v3', state.assigned[s.slotId], roleOf(s.slotId, s.defaultRole), s.position, tagsOf(s.slotId).join(',')],
+      queryFn: () => endpoints.fitRole({ playerId: state.assigned[s.slotId], roleId: roleOf(s.slotId, s.defaultRole), position: s.position, tags: tagsOf(s.slotId), engineVersion: 'v3' }),
       staleTime: 300_000,
       retry: false,
     })),

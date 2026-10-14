@@ -158,7 +158,7 @@ export const endpoints = {
   presets: (kind?: string) => api.get<Preset[]>('/presets', { kind }),
   resolveTactic: (tactic: TacticRequest) => api.post<ResolvedTactic>('/tactics/resolve', tactic, false),
 
-  fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[] }) =>
+  fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[]; engineVersion?: 'v1' | 'v3' }) =>
     api.post<FitRoleResult>('/fit/role', body, false),
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
