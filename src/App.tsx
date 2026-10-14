@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { useMode } from './state/modeStore'
 import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
@@ -36,7 +37,13 @@ const UtSbcChallengePage = lazy(() => import('./pages/UtSbcChallengePage').then(
 const ReplicasPage = lazy(() => import('./features/replicas/ReplicasPage').then((m) => ({ default: m.ReplicasPage })))
 const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPage').then((m) => ({ default: m.ReplicaDetailPage })))
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
+const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
+
+/** /players: UT modunda kart veritabanı (V3-05a), kariyer modunda mevcut oyuncu araması. */
+function PlayersRoute() {
+  return useMode() === 'ut' ? <CardDatabasePage /> : <PlayersPage />
+}
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { authenticated, loading } = useAuth()
@@ -60,7 +67,7 @@ export function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="verify-email" element={<VerifyEmailPage />} />
-        <Route path="players" element={<PlayersPage />} />
+        <Route path="players" element={<PlayersRoute />} />
         <Route path="players/:id" element={<PlayerDetailPage />} />
         <Route path="compare" element={<ComparePage />} />
         <Route path="wonderkids" element={<WonderkidsPage />} />
