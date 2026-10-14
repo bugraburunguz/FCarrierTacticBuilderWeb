@@ -103,7 +103,7 @@ export function ReplicaDetailPage() {
         }
         hero={loading ? <Skeleton className="h-[480px]" /> : <Pitch slots={slots} onPickPlayer={() => undefined} readOnly />}
         side={
-          <aside aria-label="Replika bilgisi" className="glass-2 flex flex-col gap-3 p-4 text-ink min-[820px]:sticky min-[820px]:top-14 min-[820px]:w-[420px] min-[820px]:shrink-0 min-[820px]:self-start">
+          <aside aria-label="Replika bilgisi" className="glass-2 flex flex-col gap-3 p-4 text-ink min-[820px]:sticky min-[820px]:top-[var(--header-h)] min-[820px]:w-[420px] min-[820px]:shrink-0 min-[820px]:self-start">
             <Tabs label="Replika sekmeleri" idPrefix={PREFIX} value={tab} tabs={TABS} onChange={(next) => setParams({ sekme: next }, { replace: true })} />
             {loading ? (
               <Skeleton className="h-64" />

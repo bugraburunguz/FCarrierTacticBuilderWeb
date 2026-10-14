@@ -53,6 +53,8 @@ export function cardMinFont(rootSelector) {
     const layer = card.querySelector('[style*="scale("]')
     const scale = layer ? layer.getBoundingClientRect().width / layer.offsetWidth : 1
     const ovr = parseInt(card.getAttribute('aria-label').split(', ')[1], 10)
+    // Bir stat değeri OVR ile aynı sayı olabilir: kartın OVR'si eşleşen en büyük yazıdır.
+    let ovrPx = 0
     const surname = card.getAttribute('aria-label').split(', ')[0].split(' ').slice(-1)[0]
     for (const el of card.querySelectorAll('div, span')) {
       const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent.trim()).join('')
@@ -65,15 +67,114 @@ export function cardMinFont(rootSelector) {
         minText = own
       }
       if (own === String(ovr)) {
-        ovrMin = Math.min(ovrMin, px)
+        ovrPx = Math.max(ovrPx, px)
       }
       if (own.toLocaleUpperCase('tr') === surname.toLocaleUpperCase('tr') || own === surname) {
         surnames++
       }
     }
+    if (ovrPx > 0) {
+      ovrMin = Math.min(ovrMin, ovrPx)
+    }
   }
   const round = (v) => (Number.isFinite(v) ? Math.round(v * 10) / 10 : null)
   return { cards: cards.length, minFontPx: round(min), minFontText: minText, ovrMinPx: round(ovrMin), surnamesVisible: surnames }
+}
+
+/**
+ * Sayfa geneli en küçük görünür yazı (V3-05b-c): görünür her metin düğümünün ekrandaki px'i = computed font-size × atalardaki `scale()`.
+ * Hariç: aria-hidden alt ağaçları (dekoratif) ve görsel olarak gizli (sr-only: 1px kırpılmış) metin; ikisi ayrıca listelenir.
+ * Sayfadaki çizilen tüm metin ölçülür (görünüm alanı dışı dahil; gizli sekme/display:none hariç).
+ */
+export function pageMinFont(threshold) {
+  const below = []
+  const excluded = new Map()
+  let min = Infinity
+  let minText = ''
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.textContent.trim()
+    const el = node.parentElement
+    if (!text || !el || el.closest('script, style, noscript')) {
+      continue
+    }
+    const range = document.createRange()
+    range.selectNodeContents(node)
+    const rect = range.getBoundingClientRect()
+    if (rect.width === 0 || rect.height === 0) {
+      continue
+    }
+    const style = getComputedStyle(el)
+    if (style.visibility === 'hidden' || Number(style.opacity) === 0) {
+      continue
+    }
+    const hidden = el.closest('[aria-hidden="true"]')
+    const srOnly = rect.width <= 1.5 && rect.height <= 1.5
+    if (hidden || srOnly) {
+      const key = `${hidden ? 'aria-hidden' : 'sr-only'}: ${text.slice(0, 24)}`
+      excluded.set(key, (excluded.get(key) ?? 0) + 1)
+      continue
+    }
+    let scale = 1
+    for (let a = el; a; a = a.parentElement) {
+      const m = /scale\(([\d.]+)\)/.exec(a.style?.transform ?? '')
+      if (m) {
+        scale *= Number(m[1])
+      }
+    }
+    const px = parseFloat(style.fontSize) * scale
+    if (px < min) {
+      min = px
+      minText = text.slice(0, 30)
+    }
+    if (px < threshold - 0.01) {
+      below.push({ text: text.slice(0, 30), px: Math.round(px * 10) / 10, tag: el.tagName.toLowerCase() })
+    }
+  }
+  return { minFontPx: Number.isFinite(min) ? Math.round(min * 10) / 10 : null, minFontText: minText, below: below.slice(0, 15), belowCount: below.length, excluded: [...excluded.keys()].slice(0, 20) }
+}
+
+/**
+ * Yapışkan başlık + sayfa içi yapışkanlar (V3-05b-c, Q5): başlık ve yapışkanların kapladığı üst bant [0, bandBottom] içinde
+ * 3 sütun × her 6px'te bir satır noktasında elementFromPoint başlığa ya da yapışkan yüzeylerden birine düşmeli; içerik (kart, metin) görünmemeli.
+ * Başlık ve yapışkanlar arası boşluk = bant içinde hiçbir yüzeye düşmeyen nokta.
+ */
+export function stickyBand(surfaceSelectors) {
+  const surfaces = surfaceSelectors.flatMap((s) => [...document.querySelectorAll(s)]).filter((el) => {
+    const r = el.getBoundingClientRect()
+    return r.height > 0 && r.top < innerHeight && r.bottom > 0 && getComputedStyle(el).position !== 'static'
+  })
+  const stuck = surfaces.filter((el) => ['sticky', 'fixed'].includes(getComputedStyle(el).position) || getComputedStyle(el.parentElement).position === 'sticky')
+  // Bant: en üstten başlayıp birbirine (≤ 24px boşlukla) eklenen yapışık yüzeyler; boşluk varsa aşağıdaki noktalar onu sızıntı olarak yakalar.
+  // Yan sütunda aşağıda duran yapışkanlar (masaüstü kart sütunu içindeki şerit, yan panel) bandı oluşturmaz.
+  const band = []
+  let bandBottom = 0
+  for (const el of [...stuck].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)) {
+    const r = el.getBoundingClientRect()
+    if (r.top <= bandBottom + 24 && r.bottom < innerHeight * 0.6) {
+      band.push(el)
+      bandBottom = Math.max(bandBottom, r.bottom)
+    }
+  }
+  const bg = (el) => {
+    const parts = getComputedStyle(el).backgroundColor.match(/[\d.]+/g)?.map(Number) ?? []
+    return parts.length === 4 ? parts[3] : parts.length === 3 ? 1 : 0
+  }
+  const leaks = []
+  for (let y = 1; y < bandBottom; y += 6) {
+    for (const x of [innerWidth * 0.2, innerWidth * 0.5, innerWidth * 0.8]) {
+      const hit = document.elementFromPoint(x, y)
+      if (!hit || !stuck.some((s) => s === hit || s.contains(hit))) {
+        leaks.push({ x: Math.round(x), y, hit: hit ? `${hit.tagName}.${String(hit.className?.baseVal ?? hit.className).slice(0, 30)}` : null })
+      }
+    }
+  }
+  return {
+    bandBottom: Math.round(bandBottom),
+    surfaces: band.map((el) => ({ el: `${el.tagName.toLowerCase()}${el.getAttribute('aria-label') ? `[${el.getAttribute('aria-label')}]` : ''}`, top: Math.round(el.getBoundingClientRect().top), bottom: Math.round(el.getBoundingClientRect().bottom), alpha: bg(el) })),
+    leaks: leaks.slice(0, 8), leakCount: leaks.length,
+    ok: leaks.length === 0 && band.every((el) => bg(el) >= 0.92 || bg(el.parentElement) >= 0.92),
+  }
 }
 
 /** Stat etiketleri: kesilen (scrollWidth > clientWidth) ya da ellipsis taşıyan etiketler. */

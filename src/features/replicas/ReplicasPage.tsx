@@ -66,8 +66,8 @@ export function ReplicasPage() {
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-4 py-4">
       <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Replikalar</h1>
 
-      <div className="z-20 min-[820px]:sticky min-[820px]:top-16">
-      <section aria-label="Süzgeçler" className="glass flex flex-col gap-3 p-3 sm:px-4">
+      <div className="z-20 min-[820px]:sticky min-[820px]:top-[var(--header-h)]">
+      <section aria-label="Süzgeçler" className="glass glass-sticky flex flex-col gap-3 p-3 sm:px-4">
         <div className="flex flex-wrap items-end gap-3">
           <label className="relative flex min-w-[200px] flex-1 flex-col gap-1 text-xs font-medium text-muted">
             Ara

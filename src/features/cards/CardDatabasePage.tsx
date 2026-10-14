@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import { Input, Select } from '../../components/ui'
@@ -10,6 +10,7 @@ import { Button, Chip, EmptyState, ErrorState, Segmented, Skeleton } from '../..
 import { POSITIONS } from '../../lib/format'
 import { activeFilterCount, CARD_PAGE_SIZE, filtersFromParams, filtersToParams, toPlayerQuery, type CardFilters, type CardSort } from './cardFilters'
 import { CardFilterFields } from './CardFilterFields'
+import { cardGridLayout, useElementSize } from './cardGrid'
 import { CardTable } from './CardTable'
 import { CardTile } from './CardTile'
 
@@ -49,6 +50,13 @@ export function CardDatabasePage() {
   const mobile = useIsMobile()
   const [sheet, setSheet] = useState(false)
   const extra = activeFilterCount(filters)
+  // Kart hücreyi doldurur; sütun sayısı kartın ölçülmüş eşiğin (çip + 6 stat ≥ 11px) altına düşmeyeceği kadar.
+  const gridBox = useRef<HTMLDivElement>(null)
+  const layout = cardGridLayout(useElementSize(gridBox).width)
+  const gridStyle = { gridTemplateColumns: `repeat(${layout.cols}, minmax(0, 1fr))`, gap: layout.gap }
+  // Tablo başlığı (≥820px) yapışkan filtre çubuğunun hemen altına yapışır: --filters-h ölçülür.
+  const filterBox = useRef<HTMLDivElement>(null)
+  const filtersHeight = useElementSize(filterBox).height
 
   const query = useInfiniteQuery({
     queryKey: ['card-db', params.toString()],
@@ -65,10 +73,10 @@ export function CardDatabasePage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 py-2">
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 py-2" style={{ '--filters-h': `${filtersHeight}px` } as CSSProperties}>
       <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kart veritabanı</h1>
 
-      <div className="z-20 min-[820px]:sticky min-[820px]:top-16">
+      <div ref={filterBox} className="z-20 min-[820px]:sticky min-[820px]:top-[var(--header-h)]">
         <section aria-label="Süzgeçler" className="glass glass-sticky flex flex-col gap-3 p-3 sm:px-4">
           <div className="flex flex-wrap items-end gap-3">
             <label className="relative flex min-w-[200px] flex-1 flex-col gap-1 text-xs font-medium text-muted">
@@ -112,8 +120,9 @@ export function CardDatabasePage() {
         </MobileSheet>
       )}
 
+      <div ref={gridBox} className="flex flex-col gap-4">
       {query.isLoading ? (
-        <ul aria-busy="true" aria-label="Yükleniyor" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+        <ul aria-busy="true" aria-label="Yükleniyor" className="grid" style={gridStyle}>
           {Array.from({ length: SKELETONS }, (_, i) => (
             <li key={i}><Skeleton className="h-[260px]" /></li>
           ))}
@@ -133,9 +142,9 @@ export function CardDatabasePage() {
             <div className="flex flex-col gap-3">
               {chunked(players).map((group) => (
                 <VirtualChunk key={group[0].id} estimate={CHUNK_ESTIMATE}>
-                  <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+                  <ul className="grid" style={gridStyle}>
                     {group.map((p) => (
-                      <CardTile key={p.id} player={p} />
+                      <CardTile key={p.id} player={p} cardWidth={layout.cardWidth} />
                     ))}
                   </ul>
                 </VirtualChunk>
@@ -151,6 +160,7 @@ export function CardDatabasePage() {
           )}
         </>
       )}
+      </div>
     </div>
   )
 }

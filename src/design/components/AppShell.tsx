@@ -65,7 +65,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen text-ink">
-      <header className="glass sticky top-0 z-20 flex h-12 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4">
+      <header className="glass glass-sticky sticky top-0 z-30 flex h-[var(--header-h)] min-w-0 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4 max-[359px]:gap-1.5 max-[359px]:px-3">
         <LogoLockup size={32} collapse />
         <Segmented
           label="Mod"
@@ -90,7 +90,7 @@ export function AppShell() {
             ))}
           </nav>
         )}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2 max-[359px]:gap-1.5">
           <ThemeToggle className="max-sm:hidden" />
           <MobileMenu loginLink={!(authenticated && me)} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
           {authenticated && me ? (
@@ -101,7 +101,7 @@ export function AppShell() {
           ) : (
             <>
               <NavLink to="/login" className="glass-3 inline-flex max-[479px]:hidden min-h-10 items-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold text-ink hover:bg-[var(--glass-hover)] max-sm:min-h-11">Giriş</NavLink>
-              <NavLink to="/register" className="inline-flex min-h-10 whitespace-nowrap items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11">Kayıt ol</NavLink>
+              <NavLink to="/register" className="inline-flex min-h-10 whitespace-nowrap items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11 max-[359px]:px-3">Kayıt ol</NavLink>
             </>
           )}
         </div>
@@ -115,7 +115,7 @@ export function AppShell() {
       {authenticated && <VerifyEmailBanner />}
 
       <div className="flex">
-        <nav aria-label="Ana menü" className="glass sticky top-12 hidden h-[calc(100vh-3rem)] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
+        <nav aria-label="Ana menü" className="glass sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
           {nav.map((g) => (
             <RailLink key={g.to} group={g} active={g === active} />
           ))}
@@ -148,7 +148,7 @@ export function AppShell() {
         </main>
       </div>
 
-      <nav aria-label="Mobil menü" className="glass fixed inset-x-0 bottom-0 z-20 grid h-16 grid-flow-col auto-cols-fr items-stretch gap-0.5 rounded-none border-x-0 border-b-0 px-1 min-[820px]:hidden">
+      <nav aria-label="Mobil menü" className="glass glass-sticky fixed inset-x-0 bottom-0 z-20 grid h-16 grid-flow-col auto-cols-fr items-stretch gap-0.5 rounded-none border-x-0 border-b-0 px-1 min-[820px]:hidden">
         {nav.slice(0, 5).map((g) => (
           <RailLink key={g.to} group={g} active={g === active} />
         ))}

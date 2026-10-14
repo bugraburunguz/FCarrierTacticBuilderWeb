@@ -9,6 +9,7 @@ import { FitResultCard } from '../components/FitResultCard'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
 import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
+import { playStyleName } from '../lib/playstyles'
 import { compareStore, MAX_COMPARE, useCompareList } from '../state/compareStore'
 
 export function ComparePage() {
@@ -113,7 +114,7 @@ export function ComparePage() {
                     <td key={d.summary.id} className="px-2 py-2 text-center">
                       <div className="flex flex-wrap justify-center gap-1">
                         {Object.entries(d.playstyles).map(([ps, lvl]) => (
-                          <Pill key={ps} tone={lvl >= 2 ? 'amber' : 'slate'}>{ps}{lvl >= 2 ? '+' : ''}</Pill>
+                          <Pill key={ps} tone={lvl >= 2 ? 'amber' : 'slate'}>{playStyleName(ps, lvl)}</Pill>
                         ))}
                       </div>
                     </td>

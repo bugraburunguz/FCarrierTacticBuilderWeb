@@ -8,6 +8,7 @@ import { Button, Chip, EmptyState, ErrorState, Segmented, Skeleton, StatTile } f
 import { HelpPopover } from '../../components/ui'
 import { fitDisplay, ROLES_HELP, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
 import { ATTR_GROUPS, ATTR_LABELS } from '../../lib/format'
+import { playStyleName } from '../../lib/playstyles'
 import { TONE_VAR, ratingTone } from '../../lib/ratingTone'
 import { formatPrice } from './formatPrice'
 import { sortRoles, type CardVersion } from './utPlayer'
@@ -47,7 +48,7 @@ export function StatsTab({ detail, version }: { detail: PlayerDetail; version: C
           <h2 className="mb-1 font-display text-lg font-semibold leading-6">PlayStyle</h2>
           <div className="flex flex-wrap gap-1.5">
             {Object.entries(playstyles).map(([ps, level]) => (
-              <Chip key={ps} tone={level >= 2 ? 'warn' : undefined}>{ps}{level >= 2 ? '+' : ''}</Chip>
+              <Chip key={ps} tone={level >= 2 ? 'warn' : undefined}>{playStyleName(ps, level)}</Chip>
             ))}
           </div>
         </section>

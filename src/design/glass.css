@@ -1,4 +1,9 @@
 /* Cam yüzeyler, aurora ve grain (docs/review/v2/11 §2, §4, §7). Yalnız `data-ui="v3"` iken etkin. */
+
+/* Sabit üst başlığın yüksekliği: başlık ve sayfa içi yapışkanlar (filtre çubuğu, şerit, yan panel, tablo başlığı) bunu kullanır. */
+:root { --header-h: 3rem; }
+
+/* Genel kurallar katmansız kalır: index.css'teki katmansız v2 `body` kuralını (özgüllükle) yenmeleri gerekir. */
 :root[data-ui="v3"] body {
   background: var(--bg-base);
   color: var(--ink);
@@ -29,49 +34,59 @@
 }
 :root:not([data-ui="v3"]) .v3-aurora, :root:not([data-ui="v3"]) .v3-grain { display: none; }
 
-.glass {
-  background: var(--glass-1);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  backdrop-filter: blur(var(--glass-blur-1)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur-1)) saturate(var(--glass-saturate));
-  box-shadow: var(--glass-shadow);
-  position: relative;
-}
-.glass::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(180deg, var(--glass-highlight), transparent 28%);
-  opacity: 0.35;
-  mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
-  mask-composite: exclude;
-  padding: 1px;
-}
-.glass-2 {
-  background: var(--glass-2);
-  backdrop-filter: blur(var(--glass-blur-2)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur-2)) saturate(var(--glass-saturate));
-  border-radius: var(--radius-xl);
-}
-/* Panel içi alt bölümler: blur yok */
-.glass-3 {
-  background: var(--glass-3);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-}
-/* Yapışkan yüzey (Q5): içerik altından kayarken görünmez; mobil sheet ile aynı opak zemin (alpha ≥ 0,92). .glass/.glass-3'ten sonra gelir. */
-.glass-sticky {
-  background: var(--sheet-bg, var(--glass-1));
-}
+/*
+ * Cam bileşen sınıfları `@layer components` içinde (V3-05b-c). Katmansız CSS, özgüllükten bağımsız her katmanlı kuralı yener;
+ * bu yüzden `.glass { position: relative }` Tailwind'in `sticky` utility'sini eziyordu (başlık ve sol menü yapışmıyordu).
+ * `:where(.glass)` yalnız özgüllüğü sıfırlar ama katmansız kalır ve yine kazanır; katman ise utility'lerin
+ * (`sticky`, `rounded-none`, `hover:bg-…`) kazanmasını sağlar. Sıra (theme, base, components, utilities)
+ * index.css'teki `@import "tailwindcss"` ile bu dosyadan önce kurulur.
+ */
+@layer components {
+  .glass {
+    background: var(--glass-1);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(var(--glass-blur-1)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur-1)) saturate(var(--glass-saturate));
+    box-shadow: var(--glass-shadow);
+    position: relative;
+  }
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--glass-highlight), transparent 28%);
+    opacity: 0.35;
+    mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
+    mask-composite: exclude;
+    padding: 1px;
+  }
+  .glass-2 {
+    background: var(--glass-2);
+    backdrop-filter: blur(var(--glass-blur-2)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur-2)) saturate(var(--glass-saturate));
+    border-radius: var(--radius-xl);
+  }
+  /* Panel içi alt bölümler: blur yok */
+  .glass-3 {
+    background: var(--glass-3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+  }
+  /* Yapışkan yüzey (Q5): içerik altından kayarken görünmez. Mobil sheet rengi (--sheet-bg, alfa 0,97) opak sayfa zemininin (--bg-base)
+     üstüne boyanır: görünüm aynı, sonuç tam opak (0,97'de koyu zeminde beyaz kalın yazı %3 sızarak seçilebiliyordu). .glass/.glass-3'ten sonra gelir. */
+  .glass-sticky {
+    background: linear-gradient(var(--sheet-bg, var(--glass-1)), var(--sheet-bg, var(--glass-1))), var(--bg-base);
+  }
 
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .glass, .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    .glass, .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  }
+  :root[data-ui="v3"][data-transparency="reduced"] .glass,
+  :root[data-ui="v3"][data-transparency="reduced"] .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 }
-:root[data-ui="v3"][data-transparency="reduced"] .glass,
-:root[data-ui="v3"][data-transparency="reduced"] .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 
 /* Hareket: v3'te animasyon yalnız transform/opacity, ≤240ms; azaltılmış harekette hiç (11 §3.4, CLAUDE.md) */
 @media (prefers-reduced-motion: reduce) {

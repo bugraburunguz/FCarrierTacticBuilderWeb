@@ -7,7 +7,12 @@ import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
-import { cardMinFont, stickyCover } from './lib/readability.mjs'
+import { cardMinFont, pageMinFont, stickyBand, stickyCover } from './lib/readability.mjs'
+
+// V3-05b-c: sayfa geneli en küçük görünür yazı (≥ 11px) her çekimde; kaydırılmış ızgara/tabloda yapışkan üst başlık + filtre çubuğu
+// (+ ≥820px tablo başlığı) bandında içerik görünmez (elementFromPoint).
+const MIN_FONT = 11
+const BAND = ['header', 'section[aria-label="Süzgeçler"]', 'thead']
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -30,7 +35,7 @@ async function record(page, problems, name, extra = {}) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
   const axe = await new AxeBuilder({ page }).analyze()
   const serious = axe.violations.filter((a) => a.impact === 'serious' || a.impact === 'critical')
-  report.push({ shot: name, overflow, axeSeriousCritical: serious.length, axeAll: axe.violations.map((v) => `${v.id}:${v.impact}:${v.nodes.length}`), problems: [...problems], ...extra })
+  report.push({ shot: name, overflow, axeSeriousCritical: serious.length, axeAll: axe.violations.map((v) => `${v.id}:${v.impact}:${v.nodes.length}`), problems: [...problems], text: await page.evaluate(pageMinFont, MIN_FONT), ...extra })
   problems.length = 0
 }
 
@@ -52,11 +57,14 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     // Kaydırılmış ızgara: kartlar yapışkan filtre çubuğunun (≥820px) altından geçer.
     await page.evaluate(() => window.scrollTo(0, 1200))
     await page.waitForTimeout(400)
-    await record(page, problems, `izgara-kaydirilmis-${theme}-${w}.png`, { card: await page.evaluate(cardMinFont, 'main'), sticky: await page.evaluate(stickyCover, 'section[aria-label="Süzgeçler"]') })
+    await record(page, problems, `izgara-kaydirilmis-${theme}-${w}.png`, { card: await page.evaluate(cardMinFont, 'main'), sticky: await page.evaluate(stickyCover, 'section[aria-label="Süzgeçler"]'), band: await page.evaluate(stickyBand, BAND), bottomNav: w < 820 ? await page.evaluate(stickyCover, 'nav[aria-label="Mobil menü"]') : undefined, grid: await page.evaluate(() => ({ cols: getComputedStyle(document.querySelector('main ul.grid')).gridTemplateColumns.split(' ').length, cardWidth: Math.round(document.querySelector('main ul.grid [role="img"]').getBoundingClientRect().width) })) })
     await open('/players?mevki=ST&ovrmin=88&ui=v3', (p) => p.getByRole('status').filter({ hasText: 'kart' }).first().waitFor())
     await record(page, problems, `izgara-filtreli-${theme}-${w}.png`)
     await open('/players?gorunum=table&ui=v3', (p) => p.getByRole('table').waitFor())
     await record(page, problems, `tablo-${theme}-${w}.png`)
+    await page.evaluate(() => window.scrollTo(0, 1200))
+    await page.waitForTimeout(400)
+    await record(page, problems, `tablo-kaydirilmis-${theme}-${w}.png`, { band: await page.evaluate(stickyBand, BAND) })
     await open('/players?ara=zzzzqqq&ui=v3', (p) => p.getByText('Bu süzgeçlere uyan kart yok.').waitFor())
     await record(page, problems, `bos-${theme}-${w}.png`)
     if (w < 820) {
@@ -100,7 +108,9 @@ writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
 const stuck = (s) => s && s.found && s.position === 'sticky' && s.top <= 80
 const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.overlap || r.fabSmall === false || r.trayBeforeCount > 0
   || (r.card && r.card.cards > 0 && (r.card.minFontPx < 11 || r.card.ovrMinPx < 14 || r.card.surnamesVisible < r.card.cards))
-  || (stuck(r.sticky) && !r.sticky.ok))
+  || (stuck(r.sticky) && !r.sticky.ok) || (r.band && !r.band.ok) || (r.text && r.text.belowCount > 0) || (r.bottomNav && !r.bottomNav.ok))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r)))
-report.filter((r) => r.card || r.sticky).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ card: r.card, sticky: r.sticky })))
+const mins = report.map((r) => r.text?.minFontPx).filter((v) => v !== null && v !== undefined)
+console.log(` · sayfa minFont: en küçük ${Math.min(...mins)}px; hariç tutulan: ${JSON.stringify([...new Set(report.flatMap((r) => r.text?.excluded ?? []))])}`)
+report.filter((r) => /-dark-/.test(r.shot) && (r.grid || r.band)).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ grid: r.grid, card: r.card, bottomNav: r.bottomNav && { position: r.bottomNav.position, alpha: r.bottomNav.alpha, contentUnderneath: r.bottomNav.contentUnderneath }, band: r.band && { bandBottom: r.band.bandBottom, leakCount: r.band.leakCount, surfaces: r.band.surfaces } })))

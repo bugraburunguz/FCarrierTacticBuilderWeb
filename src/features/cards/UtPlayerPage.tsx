@@ -38,7 +38,7 @@ function VersionStrip({ versions, current, onPick }: { versions: CardVersion[]; 
     }
   }
   return (
-    <div className="glass-3 glass-sticky sticky top-14 z-10 flex w-full items-center gap-2 p-1">
+    <div className="glass-3 glass-sticky sticky top-[var(--header-h)] z-10 flex w-full items-center gap-2 p-1">
       <div role="radiogroup" aria-label="Kart versiyonları" onKeyDown={onKey} className={`flex gap-1 overflow-x-auto ${versions.length > 1 ? 'min-w-0 flex-1' : 'shrink-0'}`}>
         {versions.map((v) => (
           <button key={v.key} type="button" role="radio" aria-checked={v.key === current.key} tabIndex={v.key === current.key ? 0 : -1} onClick={() => onPick(v.key)}
@@ -94,19 +94,20 @@ export function UtPlayerPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-2">
-      {back}
+      {/* Mobilde Karşılaştır geri bağlantısının satırında: sekme çubuğu en uzun meta satırıyla da ilk ekranda kalsın (375×812, ≤ 640px). */}
+      <div className="flex items-center justify-between gap-2">
+        {back}
+        {mobile && compare}
+      </div>
       <header className="flex flex-col gap-1">
-        <div className="flex items-start justify-between gap-2">
-          <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{summary.name}</h1>
-          {mobile && compare}
-        </div>
-        <p className="flex flex-wrap items-center gap-2 text-sm text-ink-2">
+        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{summary.name}</h1>
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-2 sm:text-sm">
           {summary.positions.map((p) => <Chip key={p}>{p}</Chip>)}
           {meta}
         </p>
       </header>
       <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start min-[820px]:gap-4">
-        <section aria-label="Kart" className="glass flex flex-col items-center gap-2 p-3 min-[820px]:sticky min-[820px]:top-16 min-[820px]:w-[340px] min-[820px]:shrink-0 min-[820px]:gap-3 min-[820px]:p-4">
+        <section aria-label="Kart" className="glass flex flex-col items-center gap-2 p-3 min-[820px]:sticky min-[820px]:top-[var(--header-h)] min-[820px]:w-[340px] min-[820px]:shrink-0 min-[820px]:gap-3 min-[820px]:p-4">
           <PlayerCard player={player} width={mobile ? MOBILE_CARD_WIDTH : CARD_WIDTH} />
           <VersionStrip versions={versions} current={version} onPick={(key) => set({ v: key === versions[0].key ? undefined : key })} />
           <dl className="grid w-full grid-cols-3 gap-1.5 text-center text-xs min-[820px]:gap-2">

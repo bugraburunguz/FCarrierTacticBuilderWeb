@@ -16,15 +16,19 @@ const COLUMNS: { key: CardSort; label: string; className?: string }[] = [
   { key: 'skillmoves', label: 'HR', className: 'text-right' },
 ]
 
-/** Tablo görünümü: başlık satırı yapışkan, ilk iki sütun (OVR, Oyuncu) yatay kaydırmada sabit, satırlar blur'suz, pencereli parçalar, sıralanabilir başlıklar `aria-sort` (11 §6 DataTable). */
-const STICKY = ['sticky left-0 z-10 w-14 min-w-14 bg-[var(--sheet-bg)]', 'sticky left-14 z-10 bg-[var(--sheet-bg)]']
+/**
+ * Tablo görünümü: başlık satırı yapışkan, ilk iki sütun (OVR, Oyuncu) yatay kaydırmada sabit, satırlar blur'suz, pencereli parçalar, sıralanabilir başlıklar `aria-sort` (11 §6 DataTable).
+ * ≥820px: yatay kaydırma kabı yok, başlık satırı sayfada üst başlık + yapışkan filtre çubuğunun hemen altına yapışır (`--header-h` + `--filters-h`).
+ * <820px: tablo yatay kaydırılır; kaydırma kabı içinde başlık sayfaya yapışamaz (kap dikey kaymaz), ilk iki sütun sabit kalır.
+ */
+const STICKY = ['glass-sticky sticky left-0 z-10 w-14 min-w-14', 'glass-sticky sticky left-14 z-10']
 const ROW_ESTIMATE = 37
 export function CardTable({ groups, filters, onSort }: { groups: PlayerSummary[][]; filters: CardFilters; onSort: (key: CardSort) => void }) {
   return (
-    <div className="glass-3 overflow-x-auto">
-      <table className="w-full min-w-[720px] text-sm">
+    <div className="glass-3 max-[819px]:overflow-x-auto">
+      <table className="w-full text-sm max-[819px]:min-w-[720px]">
         <caption className="sr-only">Kart veritabanı (ZA: zayıf ayak, HR: hareket)</caption>
-        <thead className="sticky top-0 z-20 bg-[var(--sheet-bg)] text-xs text-muted">
+        <thead className="glass-sticky sticky top-0 z-20 text-xs text-muted min-[820px]:top-[calc(var(--header-h)+var(--filters-h,0px))]">
           <tr>
             {COLUMNS.map((c) => {
               const active = filters.sort === c.key
