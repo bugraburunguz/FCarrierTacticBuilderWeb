@@ -1,4 +1,5 @@
 import { api, request } from './client'
+import type { CaptureRules } from '../lib/har/harCapture'
 import type {
   BehaviorTag,
   CareerRecommendation,
@@ -51,6 +52,7 @@ import type {
   CareerBackup,
   CareerSnapshot,
   CaptureResult,
+  ContributionResult,
   HistoryPoint,
   PlayerTagKind,
   SeasonRecord,
@@ -154,6 +156,10 @@ export const endpoints = {
   sbcVotes: () => api.get<{ sets: SbcSetVotes[] }>('/ut/sbc/votes'),
   sbcVote: (setId: number, vote: number) => request<SbcSetVotes>(`/ut/sbc/votes/${setId}`, { method: 'PUT', body: { vote } }),
   utCapture: (captures: unknown[]) => api.post<CaptureResult>('/ut/capture', { captures }),
+  /** Yakalama kuralları (uzantı ve HAR ayrıştırıcısının tek kaynağı). */
+  captureRules: () => api.get<Partial<CaptureRules>>('/ut/capture/rules'),
+  /** Bilgi tabanına katkı: uzantının CONTRIB yoluyla aynı uç; web oturumu (JWT) ile — sunucu katkıcı yetkisini ve kişisel uç süzmesini aynen uygular. */
+  contribCapture: (captures: unknown[]) => api.post<ContributionResult>('/ut/contrib/capture', { captures }),
   keyAttributes: () => api.get<{ source: string; positions: Record<string, string[]> }>('/config/key-attributes'),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),

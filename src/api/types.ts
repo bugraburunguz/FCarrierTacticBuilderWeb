@@ -1002,6 +1002,16 @@ export interface SbcChallenge {
   requirements: SbcRequirement[]
 }
 
+/** POST /ut/contrib/capture sonucu. */
+export interface ContributionResult {
+  created: number
+  updated: number
+  unchanged: number
+  queued: number
+  pricesRecorded: number
+  pricesSkipped: number
+}
+
 export interface CaptureResult {
   stats: {
     received: number

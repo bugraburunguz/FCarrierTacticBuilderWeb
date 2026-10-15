@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints'
 import type { CaptureResult } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import { ExtensionSync } from '../components/ExtensionSync'
+import { HarImport } from '../features/import/HarImport'
 import { Button, Card, EmptyState, ErrorBox, Pill } from '../components/ui'
 import { toPlannerObjectives, toSbcPool } from '../lib/capture'
 import { objectiveStore } from '../state/objectiveStore'
@@ -79,6 +80,10 @@ export function UtImportPage() {
 
   return (
     <div className="space-y-4">
+      {/* HAR-01: varsayılan yöntem HAR dosyası; uzantı yüklüyken EA Web App girişi engellediği için uzantı yolları ikincil. */}
+      <HarImport busy={upload.isPending} onPersonal={(captures) => { setFileError(undefined); setNotice(undefined); upload.mutate(captures) }} />
+      <details className="space-y-4">
+        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-accent">Uzantı ve yakalama dosyası (eski yöntem)</summary>
       <ExtensionSync busy={upload.isPending} onCaptures={(captures) => { setFileError(undefined); setNotice(undefined); upload.mutate(captures) }} />
       <Card title="Dosyadan içe aktar (yedek yol)">
         <p className="mb-3 text-sm text-muted">
@@ -102,6 +107,7 @@ export function UtImportPage() {
         {!fileError && <ErrorBox error={upload.error} />}
         <p className="mt-2 text-xs text-muted">Dosya hesap bilgisi ve coin bakiyen gibi hassas veri içerebilir; paylaşma, işin bitince sil.</p>
       </Card>
+      </details>
 
       {notice && <p role="status" className="text-sm text-accent">{notice}</p>}
       {result && (
