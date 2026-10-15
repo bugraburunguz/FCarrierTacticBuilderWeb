@@ -12,13 +12,14 @@
       "belowCount": 0,
       "excluded": []
     },
+    "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
       "cards": 1,
-      "minFontPx": 15.8,
-      "minFontText": "ST",
-      "ovrMinPx": 38.3,
-      "surnamesVisible": 1
+      "minFontPx": 22,
+      "minFontText": "93",
+      "ovrMinPx": 22,
+      "surnamesVisible": 0
     },
     "votesShown": 6
   },
@@ -141,13 +142,14 @@
       "belowCount": 0,
       "excluded": []
     },
+    "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
       "cards": 1,
-      "minFontPx": 15.8,
-      "minFontText": "ST",
-      "ovrMinPx": 38.3,
-      "surnamesVisible": 1
+      "minFontPx": 22,
+      "minFontText": "93",
+      "ovrMinPx": 22,
+      "surnamesVisible": 0
     },
     "votesShown": 6
   },
@@ -274,13 +276,14 @@
         "aria-hidden: K"
       ]
     },
+    "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
       "cards": 1,
-      "minFontPx": 15.8,
-      "minFontText": "ST",
-      "ovrMinPx": 38.3,
-      "surnamesVisible": 1
+      "minFontPx": 22,
+      "minFontText": "93",
+      "ovrMinPx": 22,
+      "surnamesVisible": 0
     },
     "votesShown": 6
   },
@@ -423,13 +426,14 @@
         "aria-hidden: K"
       ]
     },
+    "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
       "cards": 1,
-      "minFontPx": 15.8,
-      "minFontText": "ST",
-      "ovrMinPx": 38.3,
-      "surnamesVisible": 1
+      "minFontPx": 22,
+      "minFontText": "93",
+      "ovrMinPx": 22,
+      "surnamesVisible": 0
     },
     "votesShown": 6
   },
@@ -562,8 +566,8 @@
     "axeAll": [],
     "problems": [],
     "text": {
-      "minFontPx": 12,
-      "minFontText": "Kariyer",
+      "minFontPx": 11.5,
+      "minFontText": "ST",
       "below": [],
       "belowCount": 0,
       "excluded": [
@@ -572,12 +576,13 @@
         "aria-hidden: K"
       ]
     },
+    "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
       "cards": 1,
-      "minFontPx": 15.8,
+      "minFontPx": 11.5,
       "minFontText": "ST",
-      "ovrMinPx": 38.3,
+      "ovrMinPx": 27.9,
       "surnamesVisible": 1
     },
     "votesShown": 6
@@ -589,8 +594,8 @@
     "axeAll": [],
     "problems": [],
     "text": {
-      "minFontPx": 12,
-      "minFontText": "Kariyer",
+      "minFontPx": 11.5,
+      "minFontText": "ST",
       "below": [],
       "belowCount": 0,
       "excluded": [
@@ -682,8 +687,8 @@
     "axeAll": [],
     "problems": [],
     "text": {
-      "minFontPx": 12,
-      "minFontText": "Kariyer",
+      "minFontPx": 11.5,
+      "minFontText": "ST",
       "below": [],
       "belowCount": 0,
       "excluded": [
@@ -692,12 +697,13 @@
         "aria-hidden: K"
       ]
     },
+    "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
       "cards": 1,
-      "minFontPx": 15.8,
+      "minFontPx": 11.5,
       "minFontText": "ST",
-      "ovrMinPx": 38.3,
+      "ovrMinPx": 27.9,
       "surnamesVisible": 1
     },
     "votesShown": 6
@@ -709,8 +715,8 @@
     "axeAll": [],
     "problems": [],
     "text": {
-      "minFontPx": 12,
-      "minFontText": "Kariyer",
+      "minFontPx": 11.5,
+      "minFontText": "ST",
       "below": [],
       "belowCount": 0,
       "excluded": [
