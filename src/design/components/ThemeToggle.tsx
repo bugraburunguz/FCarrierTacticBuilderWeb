@@ -25,7 +25,7 @@ export function MobileMenu({ email, onLogout, loginLink }: { email?: string; onL
         <Menu size={18} aria-hidden="true" />
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content align="end" sideOffset={8} className="z-50 w-56 rounded-[var(--radius-sm)] border border-[var(--glass-border)] bg-[var(--sheet-bg)] p-2 text-ink outline-none">
+        <Popover.Content aria-label="Menü" align="end" sideOffset={8} className="z-50 w-56 rounded-[var(--radius-sm)] border border-[var(--glass-border)] bg-[var(--sheet-bg)] p-2 text-ink outline-none">
           <div className="flex items-center justify-between gap-2 px-2 py-1 text-sm">
             <span className="text-ink-2">Tema</span>
             <ThemeToggle />

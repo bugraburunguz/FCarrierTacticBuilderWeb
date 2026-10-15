@@ -7,6 +7,7 @@ import type {
   CreditCosts,
   Career,
   CareerPlayer,
+  CareerPlayerFacets,
   Club,
   Credited,
   Formation,
@@ -84,6 +85,13 @@ export interface PlayerFilters {
   pot_max?: number
   age_min?: number
   age_max?: number
+  /** V3-06a, kariyer havuzu: değer aralığı, kiralık, oyun tarihine göre sözleşme (ay), ulaşılabilirlik kovası, rol sıralaması. */
+  value_min?: number
+  value_max?: number
+  on_loan?: boolean
+  contract_months?: number
+  bucket?: string[]
+  role?: string
   wf_min?: number
   sm_min?: number
   foot?: string
@@ -120,6 +128,7 @@ export const endpoints = {
   subscribe: () => api.post<Subscription>('/billing/subscribe'),
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),
+  playerFacets: (careerId: number) => api.get<CareerPlayerFacets>('/players/facets', { career: careerId }),
   player: (id: number, careerId?: number) => api.get<PlayerDetail>(`/players/${id}`, { career: careerId }),
   playerRoles: (id: number, careerId?: number, engine?: 'v1' | 'v3') => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId, engine }),
   playerByAsset: (assetId: number) => api.get<PlayerDetail>(`/players/asset/${assetId}`),

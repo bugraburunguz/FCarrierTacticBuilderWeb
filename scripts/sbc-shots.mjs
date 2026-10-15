@@ -86,7 +86,7 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     await open('kategori=Foundations&ara=zzz', () => page.getByText('Bu kategoride aktif SBC yok.').waitFor())
     await record('bos')
     empty = true
-    await open('', () => page.getByText(/EA, FC 27 Web App'te uzantıları ve geliştirici araçlarını engelliyor/).waitFor())
+    await open('', () => page.getByText(/Uzantı açıkken Web App'te SBC sekmesini aç/).waitFor())
     await record('kb-bos')
     empty = false
     if (w < 820) {

@@ -49,6 +49,21 @@ export interface PlayerSummary {
   faceStatsApproximate?: boolean
   changed?: boolean
   changeSummary?: ChangeSummary
+  /** V3-06a, yalnız kariyer havuzu: sözleşme bitişi (kayıtta varsa), kiralık, ulaşılabilirlik kovası, seçili rol uyumu (FitEngineV3). */
+  contractUntil?: string
+  onLoan?: boolean
+  feasibility?: FeasibilityBucket
+  roleFit?: number
+}
+
+export type FeasibilityBucket = 'ALINABILIR' | 'ZOR' | 'HAYAL'
+
+/** V3-06a: kariyer listesinde hangi süzgeçlerin verisi var. Bütçe/oyun tarihi yoksa alan gelmez (0 değil, ENG-02). */
+export interface CareerPlayerFacets {
+  gameDate?: string
+  budgetEur?: number
+  contractData: boolean
+  loanData: boolean
 }
 
 export type ChangeType = 'UPGRADE' | 'DOWNGRADE' | 'MIXED' | 'NEW' | 'REMOVED' | 'TRANSFER'

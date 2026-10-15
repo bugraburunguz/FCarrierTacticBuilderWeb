@@ -1,0 +1,270 @@
+[
+  {
+    "shot": "menu-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "navText": "Kart veritabanıKadro kurucuMetaReplikalar | Kart veritabanı\nKadro kurucu\nMeta\nReplikalar",
+    "captureItemsVisible": []
+  },
+  {
+    "shot": "sbc-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "kadrom-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "ice-aktar-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "menu-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "navText": "Kart veritabanıKadro kurucuMetaReplikalar | Kart veritabanı\nKadro kurucu\nMeta\nReplikalar",
+    "captureItemsVisible": []
+  },
+  {
+    "shot": "sbc-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "kadrom-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "ice-aktar-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "menu-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "navText": "Kart veritabanı\nKadro kurucu\nMeta\nReplikalar | Kart veritabanıKadro kurucuMetaReplikalar",
+    "captureItemsVisible": []
+  },
+  {
+    "shot": "sbc-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "kadrom-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "ice-aktar-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "menu-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "navText": "Kart veritabanı\nKadro kurucu\nMeta\nReplikalar | Kart veritabanıKadro kurucuMetaReplikalar",
+    "captureItemsVisible": []
+  },
+  {
+    "shot": "sbc-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "kadrom-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "captureOffNote": 1
+  },
+  {
+    "shot": "ice-aktar-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeNodes": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "captureOffNote": 1
+  }
+]

@@ -179,7 +179,8 @@ export function HelpPopover({ children, label = 'Yardım' }: { children: ReactNo
   return (
     <details className="group relative inline-block align-middle">
       <summary aria-label={label} className="flex h-5 w-5 cursor-pointer list-none items-center justify-center rounded-full border border-line text-xs font-bold text-muted hover:text-ink [&::-webkit-details-marker]:hidden">?</summary>
-      <div role="note" className="absolute left-0 top-6 z-30 w-64 rounded-md border border-line bg-surface p-3 text-xs font-normal normal-case leading-snug tracking-normal text-ink">
+      {/* Dar ekranda sağ kenara yakın "?" paneli sayfayı yatay taşırıyordu: <640px sabit, kenarlardan 16px, tetikleyicinin hemen altında (top-auto = akıştaki yeri). */}
+      <div role="note" className="absolute left-0 top-6 z-30 w-64 max-sm:fixed max-sm:inset-x-4 max-sm:top-auto max-sm:w-auto rounded-md border border-line bg-surface p-3 text-xs font-normal normal-case leading-snug tracking-normal text-ink">
         {children}
       </div>
     </details>

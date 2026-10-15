@@ -1,7 +1,8 @@
 import type { PlayerFilters } from '../../api/endpoints'
 import { POSITIONS } from '../../lib/format'
+import { CATALOG_PAGE_SIZE } from '../catalog/catalogChunks'
 
-export const CARD_PAGE_SIZE = 48
+export const CARD_PAGE_SIZE = CATALOG_PAGE_SIZE
 export const CARD_SORTS = ['overall', 'name', 'age', 'weakfoot', 'skillmoves', 'club', 'league', 'position'] as const
 export type CardSort = (typeof CARD_SORTS)[number]
 

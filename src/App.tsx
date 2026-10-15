@@ -7,6 +7,8 @@ import { CaptureOnly } from './components/CaptureOnly'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
+import { useActiveCareerId } from './state/careerStore'
+import { playersView } from './features/careerPlayers/playersView'
 
 // Rota başına lazy chunk (11 §8 Q10): ilk JS yalnız kabuk + açılan sayfa.
 const CareerDeskPage = lazy(() => import('./pages/CareerDeskPage').then((m) => ({ default: m.CareerDeskPage })))
@@ -39,13 +41,21 @@ const ReplicasPage = lazy(() => import('./features/replicas/ReplicasPage').then(
 const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPage').then((m) => ({ default: m.ReplicaDetailPage })))
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
+const CareerPlayersPage = lazy(() => import('./features/careerPlayers/CareerPlayersPage').then((m) => ({ default: m.CareerPlayersPage })))
 const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
 const SbcListPage = lazy(() => import('./features/sbc/SbcListPage').then((m) => ({ default: m.SbcListPage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
 
-/** /players: UT modunda kart veritabanı (V3-05a), kariyer modunda mevcut oyuncu araması. */
+/** /players: UT modunda kart veritabanı (V3-05a); kariyer modunda seçili kariyerin listesi (V3-06a) ya da mevcut oyuncu araması. */
 function PlayersRoute() {
-  return useMode() === 'ut' ? <CardDatabasePage /> : <PlayersPage />
+  const mode = useMode()
+  const { authenticated } = useAuth()
+  const careerId = useActiveCareerId()
+  const view = playersView({ mode, v3: isV3(), authenticated, careerId })
+  if (view === 'cards') {
+    return <CardDatabasePage />
+  }
+  return view === 'career' && careerId !== undefined ? <CareerPlayersPage key={careerId} careerId={careerId} /> : <PlayersPage />
 }
 
 function RequireAuth({ children }: { children: ReactNode }) {

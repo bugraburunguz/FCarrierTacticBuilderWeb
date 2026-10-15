@@ -97,6 +97,7 @@ export function UtImportPage() {
           type="file"
           accept="application/json,.json"
           aria-label="Yakalama dosyası"
+          className="max-w-full text-sm"
           onChange={(e) => {
             const file = e.target.files?.[0]
             if (file) {
