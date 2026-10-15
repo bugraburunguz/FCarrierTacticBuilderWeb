@@ -1,4 +1,4 @@
-import type { PlayerSummary } from '../api/types'
+import type { KbItem, PlayerSummary } from '../api/types'
 import type { CardPlayer } from '../components/card/PlayerCard'
 import type { SbcCandidate } from './sbcTraditional'
 import type { UtCard } from './utCard'
@@ -22,6 +22,12 @@ export function cardPlayerOf(card: UtCard | SbcCandidate, position?: string): Ca
     weakFoot: isUt ? card.weakFoot : undefined,
     skillMoves: isUt ? card.skillMoves : undefined,
   }
+}
+
+/** Bilgi tabanı kartı (ut_item) → kart bileşeni: promo kartı kendi renginde, ICON/HERO kendi tasarımında. */
+export function cardPlayerOfKbItem(item: KbItem): CardPlayer {
+  const special = item.cardType === 'ICON' || item.cardType === 'HERO' ? item.cardType : undefined
+  return { name: item.name, rating: item.rating, position: item.position, cardType: special, rarity: item.promo ?? (special ? undefined : item.cardType) }
 }
 
 /** Katalog/kariyer oyuncusu → kart bileşeninin beklediği biçim (yüz değerleri dahil). */

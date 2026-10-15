@@ -892,6 +892,10 @@ export interface KbSbcSet {
   status: 'PENDING' | 'CONFIRMED' | 'RETIRED'
   challengeCount: number
   challenges?: KbSbcChallenge[]
+  /** Set ilk görüldüğünde (V35); eski kayıtlarda ilk güncelleme anı. */
+  firstSeenAt?: string
+  /** İçerik özeti son değiştiğinde; değişmediyse yok. */
+  contentChangedAt?: string
 }
 
 export interface KbObjectiveGroup {

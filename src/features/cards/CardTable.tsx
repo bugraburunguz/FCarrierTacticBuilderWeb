@@ -21,7 +21,8 @@ const COLUMNS: { key: CardSort; label: string; className?: string }[] = [
  * ≥820px: yatay kaydırma kabı yok, başlık satırı sayfada üst başlık + yapışkan filtre çubuğunun hemen altına yapışır (`--header-h` + `--filters-h`).
  * <820px: tablo yatay kaydırılır; kaydırma kabı içinde başlık sayfaya yapışamaz (kap dikey kaymaz), ilk iki sütun sabit kalır.
  */
-const STICKY = ['glass-sticky sticky left-0 z-10 w-14 min-w-14', 'glass-sticky sticky left-14 z-10']
+/** OVR ve Oyuncu sütunları: yalnız <820px yapışkan ve opak (glass.css `.table-sticky-col`); masaüstünde satırla aynı ton. */
+const STICKY = ['table-sticky-col left-0 w-14 min-w-14', 'table-sticky-col left-14']
 const ROW_ESTIMATE = 37
 export function CardTable({ groups, filters, onSort }: { groups: PlayerSummary[][]; filters: CardFilters; onSort: (key: CardSort) => void }) {
   return (

@@ -59,6 +59,17 @@ describe('kart veritabanı', () => {
     expect(vi.mocked(endpoints.players).mock.calls[0][0]).toMatchObject({ ovr_min: 85 })
   })
 
+  it('tabloda OVR/Oyuncu sütunları yalnız mobilde (<820px) yapışkan ve opak; masaüstünde satır tek tonlu', async () => {
+    renderPage('/players?gorunum=table')
+    const cell = (await screen.findByRole('link', { name: 'Ada Santrfor' })).closest('td')!
+    const ovr = cell.previousElementSibling as HTMLElement
+    for (const el of [ovr, cell, screen.getByRole('columnheader', { name: /OVR/ })]) {
+      expect(el.className.split(' ')).toContain('table-sticky-col')
+      expect(el.className.split(' ')).not.toContain('sticky')
+      expect(el.className.split(' ')).not.toContain('glass-sticky')
+    }
+  })
+
   it('tabloda başlığa tıklayınca sıralama değişir ve aria-sort güncellenir', async () => {
     renderPage('/players?gorunum=table')
     const header = (await screen.findByRole('columnheader', { name: /Yaş/ }))

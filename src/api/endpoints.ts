@@ -144,7 +144,9 @@ export const endpoints = {
   kbObjectives: () => api.get<KbObjectiveGroup[]>('/ut/kb/objectives'),
   kbEvolutions: () => api.get<KbEvolution[]>('/ut/kb/evolutions'),
   kbPromos: () => api.get<KbPromo[]>('/ut/kb/promos'),
-  kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; limit?: number; offset?: number }) => api.get<KbItem[]>('/ut/kb/items', params),
+  /** `resource`: EA kaynak kimlikleri (ör. SBC ödül oyuncuları); yalnız bunlar döner. */
+  kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; resource?: number[]; limit?: number; offset?: number }) =>
+    api.get<KbItem[]>('/ut/kb/items', { ...params, resource: params.resource?.map(String) }),
   kbItem: (id: number) => api.get<{ item: KbItem; versions: KbItem[] }>(`/ut/kb/items/${id}`),
   kbPrices: (id: number, platform: string, range: string) => api.get<KbPricePoint[]>(`/ut/kb/items/${id}/prices`, { platform, range }),
   eaRoles: () => api.get<EaRoleOption[]>('/tactics/ea-roles'),

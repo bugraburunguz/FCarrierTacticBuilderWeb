@@ -2,9 +2,16 @@
 // Kullanım: node scripts/q17.mjs [--auto-account] [--formations 4-3-3,3-5-2] [--mode ut|career|both] [--out dosya.json] [--base http://localhost:8081]
 // Matris: 29 formasyon × 375/768/1280×800 × boş/dolu × UT/kariyer. Rol etiketi metni en uzun adlarla değiştirilir (taşma da ölçülür).
 // Dolu kariyer için GATE_EMAIL/GATE_PASSWORD (yerel test hesabı, en az bir kariyeri olmalı). Yalnız localhost/127.0.0.1.
+import { spawnSync } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+
+// Dolu kariyerde oturumlu istekler önbelleğe alınmaz; yerel hız sınırı sayaçları (Redis, geçici) her boyutta ve yeniden denemede sıfırlanır
+// (V3-05c: 348 kombinasyonda 389 "Rate limit exceeded" → "sayfa yüklenmedi"). Diğer kapı betikleriyle aynı yöntem.
+const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
+const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 const args = process.argv.slice(2)
 const flag = (name, fallback) => (args.includes(`--${name}`) ? args[args.indexOf(`--${name}`) + 1] : fallback)
@@ -72,6 +79,7 @@ for (const mode of modes) {
       continue
     }
     for (const size of SIZES) {
+      resetRateLimits()
       const context = await browser.newContext({ viewport: { width: size.width, height: size.height } })
       // Anonim GET'ler bir kez alınır (hız sınırına takılmamak için); oturumlu istekler her seferinde gerçek.
       await context.route('**/api/v1/**', async (route) => {
@@ -117,6 +125,7 @@ for (const mode of modes) {
             await page.waitForSelector('[data-slot-group]', { timeout: 15000 })
             loaded = true
           } catch {
+            resetRateLimits()
             await page.waitForTimeout(4000)
           }
         }

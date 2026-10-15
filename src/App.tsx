@@ -39,6 +39,7 @@ const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPa
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
+const SbcListPage = lazy(() => import('./features/sbc/SbcListPage').then((m) => ({ default: m.SbcListPage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
 
 /** /players: UT modunda kart veritabanı (V3-05a), kariyer modunda mevcut oyuncu araması. */
@@ -90,7 +91,8 @@ export function App() {
         <Route path="ut/players/:assetId" element={<UtPlayerPage />} />
         <Route path="ut/squad" element={<UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />
-        <Route path="ut/sbc" element={<UtSbcPage />} />
+        {/* v3: Katalog şablonlu SBC listesi; v2 sayfası (UtSbcPage/KbSbcList) dokunulmadan kalır. */}
+        <Route path="ut/sbc" element={isV3() ? <SbcListPage /> : <UtSbcPage />} />
         <Route path="ut/sbc/:setId/:challengeId" element={<UtSbcChallengePage />} />
         <Route path="ut/sbc/:setId" element={<UtSbcChallengePage />} />
         <Route path="ut/objectives" element={<UtObjectivesPage />} />

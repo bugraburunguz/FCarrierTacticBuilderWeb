@@ -1,5 +1,6 @@
 // Gate/Q17 betikleri için geçici test hesabı: koşu sonunda yerel docker DB'den teardown SQL'iyle silinir.
-// Yalnız localhost/127.0.0.1; e-posta öneki `gate-` / `q17-` ile eşleşir (teardown yalnız bu önekleri siler; eski f11-gate-* hesapları onaylı silme maddesiyle, yedekle silinir).
+// Yalnız localhost/127.0.0.1. createGateAccount'un teardown'ı yalnız bu koşunun açtığı tek hesabı (tam e-posta, ^…$) siler (V3-05c);
+// önek deseni (`gate-` / `q17-`) yalnız açıkça çağrılan toplu temizlik içindir.
 import { randomBytes } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
@@ -15,9 +16,17 @@ function assertLocal(base) {
   }
 }
 
-export function teardownGateAccounts(base) {
+/** Tek hesabın tam eşleşme deseni: e-posta yalnız harf, rakam, '-', '@', '.' içerir (createGateAccount üretir); '.' kaçışlanır. */
+export function exactEmailPattern(email) {
+  if (!/^[a-z0-9-]+@[a-z0-9.-]+$/.test(email)) {
+    throw new Error('Beklenmeyen test e-postası biçimi.')
+  }
+  return `^${email.replace(/\./g, '\\.')}$`
+}
+
+export function teardownGateAccounts(base, pattern = GATE_PATTERN) {
   assertLocal(base)
-  const run = spawnSync('docker', ['compose', '-f', BACKEND, 'exec', '-T', 'postgres', 'sh', '-c', `psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v pattern='${GATE_PATTERN}' -f -`], { input: SQL, encoding: 'utf8' })
+  const run = spawnSync('docker', ['compose', '-f', BACKEND, 'exec', '-T', 'postgres', 'sh', '-c', `psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v pattern='${pattern}' -f -`], { input: SQL, encoding: 'utf8' })
   if (run.status !== 0) {
     console.error('Test hesabı teardown başarısız:', run.stderr.trim().split('\n').slice(-2).join(' '))
     return false
@@ -37,7 +46,8 @@ export async function createGateAccount(base, prefix) {
     const res = await fetch(`${base}/api/v1${path}`, { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) })
     return { status: res.status, body: await res.json().catch(() => ({})) }
   }
-  process.on('exit', () => teardownGateAccounts(base))
+  const own = exactEmailPattern(email)
+  process.on('exit', () => teardownGateAccounts(base, own))
   const reg = await post('/auth/register', { email, password })
   if (reg.status >= 300) throw new Error(`register ${reg.status}`)
   const token = (await post('/auth/login', { email, password })).body.data.accessToken

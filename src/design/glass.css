@@ -81,6 +81,16 @@
     background: linear-gradient(var(--sheet-bg, var(--glass-1)), var(--sheet-bg, var(--glass-1))), var(--bg-base);
   }
 
+  /* Tablonun sabit ilk sütunları (OVR, Oyuncu) yalnız mobilde: yatay kaydırmada yapışkan ve opak. ≥820px'te yatay kaydırma yok;
+     sütun akışta kalır ve zemin almaz (satır tek tonlu). Yatay ofset hücrede `left-*` ile verilir. */
+  @media (max-width: 819px) {
+    .table-sticky-col {
+      position: sticky;
+      z-index: 10;
+      background: linear-gradient(var(--sheet-bg, var(--glass-1)), var(--sheet-bg, var(--glass-1))), var(--bg-base);
+    }
+  }
+
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
     .glass, .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   }

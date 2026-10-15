@@ -1,0 +1,122 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { endpoints } from '../../api/endpoints'
+import { REWARD_ITEM, sbcFixture, sbcRewardItemsFixture, sbcVotesFixture } from '../../../tests/fixtures/sbcFixture'
+import { SbcListPage } from './SbcListPage'
+
+const auth = vi.hoisted(() => ({ authenticated: true }))
+vi.mock('../../auth/AuthContext', () => ({ useAuth: () => auth }))
+vi.mock('../../api/endpoints', () => ({
+  endpoints: { kbSbc: vi.fn(), kbItems: vi.fn(), sbcVotes: vi.fn() },
+}))
+
+function Where() {
+  return <p data-testid="where">{useLocation().search}</p>
+}
+
+function renderPage(path = '/ut/sbc') {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  return render(
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[path]}>
+        <Routes><Route path="/ut/sbc" element={<><SbcListPage /><Where /></>} /></Routes>
+      </MemoryRouter>
+    </QueryClientProvider>,
+  )
+}
+
+const grid = () => screen.getByRole('list', { name: 'SBC setleri' })
+const cardOf = (name: string) => within(grid()).getAllByRole('listitem').find((li) => li.querySelector('h2')?.textContent === name)!
+
+beforeEach(() => {
+  auth.authenticated = true
+  vi.mocked(endpoints.kbSbc).mockReset().mockResolvedValue(sbcFixture(Date.now()))
+  vi.mocked(endpoints.kbItems).mockReset().mockImplementation(async (p: { resource?: number[] }) => sbcRewardItemsFixture(p.resource ?? []))
+  vi.mocked(endpoints.sbcVotes).mockReset().mockResolvedValue(sbcVotesFixture())
+})
+
+describe('SBC listesi (v3)', () => {
+  it('ızgara: her set kartında ad, görev sayısı, Çöz bağlantısı; aktif setler veriden', async () => {
+    renderPage()
+    expect(await screen.findByRole('heading', { name: 'TOTW Haaland' })).toBeInTheDocument()
+    expect(within(grid()).getAllByRole('listitem')).toHaveLength(14)
+    const card = cardOf('TOTW Haaland')
+    expect(within(card).getByText('3 görev')).toBeInTheDocument()
+    expect(within(card).getByRole('link', { name: 'Çöz: TOTW Haaland' })).toHaveAttribute('href', '/ut/sbc/9302')
+    expect(endpoints.kbSbc).toHaveBeenCalledWith({ active: true })
+  })
+
+  it('ödül: ut_item\'daki oyuncu kendi kartımızla, bilinmeyen oyuncu ve paket rozetle', async () => {
+    renderPage()
+    expect(await screen.findByRole('img', { name: new RegExp(`^${REWARD_ITEM.name}, ${REWARD_ITEM.rating}`) })).toBeInTheDocument()
+    await waitFor(() => expect(endpoints.kbItems).toHaveBeenCalled())
+    expect(vi.mocked(endpoints.kbItems).mock.calls[0][0].resource).toEqual(expect.arrayContaining([REWARD_ITEM.eaResourceId]))
+    expect(within(cardOf('POTM Saka')).getByText('Oyuncu ödülü')).toBeInTheDocument()
+    expect(within(cardOf('Marquee Matchups')).getByText('Paket')).toBeInTheDocument()
+    expect(within(cardOf('Daily Bronze Upgrade')).getByText('2 paket')).toBeInTheDocument()
+  })
+
+  it('tekrar ∞ / N, geri sayım (title yerel tarih), oy yüzdesi yalnız oy varsa, Yeni / Değişti rozetleri', async () => {
+    renderPage()
+    await screen.findByRole('heading', { name: 'TOTW Haaland' })
+    expect(within(cardOf('84+ Player Pick')).getByText('Tekrar ∞')).toBeInTheDocument()
+    expect(within(cardOf('Daily Bronze Upgrade')).getByText('Tekrar 5')).toBeInTheDocument()
+    expect(within(cardOf('TOTW Haaland')).queryByText(/^Tekrar/)).toBeNull()
+    const timer = within(cardOf('Marquee Matchups')).getByText(/^(1 sa 5\d dk|2 sa)$/)
+    expect(timer.closest('[title]')?.getAttribute('title')).toMatch(/\d{4}/)
+    expect(within(cardOf('Foundations: First XI')).queryByText(/sa|gün|dk/)).toBeNull()
+    await waitFor(() => expect(within(cardOf('Marquee Matchups')).getByText('%82')).toBeInTheDocument())
+    expect(within(cardOf('Puzzle Master')).queryByText(/^%/)).toBeNull()
+    expect(within(cardOf('TOTW Haaland')).getByText('Yeni')).toBeInTheDocument()
+    expect(within(cardOf('84+ Player Pick')).getByText('Değişti')).toBeInTheDocument()
+    expect(within(cardOf('Foundations: First XI')).queryByText(/Yeni|Değişti/)).toBeNull()
+  })
+
+  it('oturum yokken oy ucu çağrılmaz ve yüzde gösterilmez', async () => {
+    auth.authenticated = false
+    renderPage()
+    await screen.findByRole('heading', { name: 'TOTW Haaland' })
+    expect(endpoints.sbcVotes).not.toHaveBeenCalled()
+    expect(screen.queryByText('%82')).toBeNull()
+  })
+
+  it('sekmeler: Bitiyor (≤ 24 saat) ve veriden gelen kategoriler (bilinmeyen ham adla); adres çubuğuna yazılır', async () => {
+    renderPage()
+    await screen.findByRole('heading', { name: 'TOTW Haaland' })
+    fireEvent.click(screen.getByRole('tab', { name: 'Bitiyor' }))
+    await waitFor(() => expect(within(grid()).getAllByRole('listitem')).toHaveLength(4))
+    expect(screen.getByTestId('where').textContent).toBe('?sekme=bitiyor')
+    fireEvent.click(screen.getByRole('tab', { name: 'Yükseltmeler' }))
+    await waitFor(() => expect(within(grid()).getAllByRole('listitem')).toHaveLength(4))
+    expect(screen.getByTestId('where').textContent).toBe('?kategori=Upgrades')
+    expect(screen.getByRole('tab', { name: 'Seasonal Exchange' })).toBeInTheDocument()
+  })
+
+  it('arama set adında; sonuç yoksa boş durum', async () => {
+    renderPage('/ut/sbc?kategori=Foundations')
+    await screen.findByRole('heading', { name: 'Foundations: First XI' })
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Ara' }), { target: { value: 'zzz' } })
+    expect(await screen.findByText('Bu kategoride aktif SBC yok.')).toBeInTheDocument()
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Ara' }), { target: { value: 'pick' } })
+    fireEvent.click(screen.getByRole('tab', { name: 'Tümü' }))
+    await waitFor(() => expect(within(grid()).getAllByRole('listitem')).toHaveLength(3))
+  })
+
+  it('bilgi tabanı tamamen boş: uzantı yakalamalarını anlatan metin ve içe aktarma bağlantısı', async () => {
+    vi.mocked(endpoints.kbSbc).mockResolvedValue([])
+    renderPage()
+    expect(await screen.findByText(/SBC'ler tarayıcı uzantısının yakalamalarıyla gelir/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Kulüp içe aktar' })).toHaveAttribute('href', '/ut/import')
+  })
+
+  it('yükleniyor iskeleti ve hata durumu (Tekrar dene)', async () => {
+    vi.mocked(endpoints.kbSbc).mockRejectedValueOnce(new Error('500'))
+    renderPage()
+    expect(screen.getByLabelText('Yükleniyor')).toBeInTheDocument()
+    expect(await screen.findByText("SBC'ler yüklenemedi.")).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Tekrar dene' }))
+    expect(await screen.findByRole('heading', { name: 'TOTW Haaland' })).toBeInTheDocument()
+  })
+})
