@@ -18,7 +18,12 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
 }
 // V3-05c-b: yakalama bayrağı (VITE_CAPTURE_IMPORT) build'de kapalıysa sayfa yalnız durum notunu gösterir; betik bunu algılar,
 // notu ve DevTools/HAR talimatının görünmediğini ölçer, çekimleri screens/V3-05c-b/import/ altına yazar.
-const OUT_ON = new URL('../docs/review/v2/screens/HAR-01/', import.meta.url)
+// V3-05c-c: --source capture → uzantının "Dışa aktar" dosyası aynı akışta (varsayılan build'de; HAR bayrağı gerekmez), çekimler screens/V3-05c-c/import/.
+const SOURCE = args.includes('--source') ? args[args.indexOf('--source') + 1] : 'har'
+const SRC = SOURCE === 'capture'
+  ? { heading: 'Yakalama dosyasından içe aktar', input: 'Yakalama dosyası', fixture: '../tests/fixtures/captures/sample-captures.json', broken: 'bozuk.json', error: 'geçerli bir JSON değil', out: '../docs/review/v2/screens/V3-05c-c/import/' }
+  : { heading: 'HAR dosyasından içe aktar', input: 'HAR dosyası', fixture: '../tests/fixtures/har/sample.har', broken: 'bozuk.har', error: 'geçerli bir HAR', out: '../docs/review/v2/screens/HAR-01/' }
+const OUT_ON = new URL(SRC.out, import.meta.url)
 const OUT_OFF = new URL('../docs/review/v2/screens/V3-05c-b/import/', import.meta.url)
 let out = OUT_ON
 const file = (n) => {
@@ -26,7 +31,7 @@ const file = (n) => {
   return fileURLToPath(new URL(n, out))
 }
 const BLOCKED = "EA, FC 27 Web App'te uzantıları ve geliştirici araçlarını engelliyor; kulüp ve SBC yakalama şu an kullanılamıyor."
-const HAR = fileURLToPath(new URL('../tests/fixtures/har/sample.har', import.meta.url))
+const FIXTURE = fileURLToPath(new URL(SRC.fixture, import.meta.url))
 const MIN_FONT = 11
 const ME = { id: 990_000, email: 'kapi@example.test', subscriptionType: 'FREE', creditBalance: 0, dailyCreditLimit: 0, showAds: false, role: 'USER', emailVerified: true }
 const ok = (data) => ({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data }) })
@@ -59,7 +64,7 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
       problems.length = 0
     }
     await page.goto(`${base}/ut/import?ui=v3`, { waitUntil: 'networkidle' })
-    await page.getByRole('heading', { name: /HAR dosyasından içe aktar|Kulüp içe aktar/ }).first().waitFor()
+    await page.getByRole('heading', { name: new RegExp(`${SRC.heading}|Kulüp içe aktar`) }).first().waitFor()
     if (await page.getByText(BLOCKED).count() > 0) {
       out = OUT_OFF
       const leaked = await page.evaluate(() => /DevTools|Preserve log|Export HAR|Uzantı kimliği|HAR dosyası/.test(document.body.innerText))
@@ -69,15 +74,25 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     }
     out = OUT_ON
     await record('bos')
-    await page.setInputFiles('input[aria-label="HAR dosyası"]', HAR)
-    const summary = page.getByRole('region', { name: 'Gönderilmeden önce özet' })
+    const section = page.locator('section', { has: page.getByRole('heading', { name: SRC.heading }) })
+    const input = `input[aria-label="${SRC.input}"]`
+    await page.setInputFiles(input, FIXTURE)
+    const summary = section.getByRole('region', { name: 'Gönderilmeden önce özet' })
+    const countsOf = () => summary.locator('dl > div').evaluateAll((rows) => Object.fromEntries(rows.map((r) => [r.querySelector('dt').textContent, Number(r.querySelector('dd').textContent)])))
     await summary.waitFor()
     await summary.scrollIntoViewIfNeeded()
-    const counts = await summary.locator('dl > div').evaluateAll((rows) => Object.fromEntries(rows.map((r) => [r.querySelector('dt').textContent, Number(r.querySelector('dd').textContent)])))
+    const counts = await countsOf()
     await page.evaluate(() => window.scrollTo(0, 0))
     await record('ozet', { counts })
-    await page.setInputFiles('input[aria-label="HAR dosyası"]', { name: 'bozuk.har', mimeType: 'application/json', buffer: Buffer.from('{bozuk') })
-    await page.getByRole('alert').filter({ hasText: 'geçerli bir HAR' }).waitFor()
+    if (SOURCE === 'capture') {
+      // Katkı hedefi: kişisel uçlar (kulüp) düşer, satıcı alanları silinir; özet yeniden hesaplanır.
+      await section.getByRole('radio', { name: 'Bilgi tabanına katkı' }).click()
+      await summary.waitFor()
+      await summary.scrollIntoViewIfNeeded()
+      await record('katki', { counts: await countsOf() })
+    }
+    await page.setInputFiles(input, { name: SRC.broken, mimeType: 'application/json', buffer: Buffer.from('{bozuk') })
+    await section.getByRole('alert').filter({ hasText: SRC.error }).waitFor()
     await record('hata')
     await context.close()
   }
@@ -90,3 +105,5 @@ bad.forEach((r) => console.log(' -', JSON.stringify(r)))
 const mins = report.map((r) => r.text?.minFontPx).filter((v) => v !== null && v !== undefined)
 console.log(` · sayfa minFont: en küçük ${Math.min(...mins)}px; hariç tutulan: ${JSON.stringify([...new Set(report.flatMap((r) => r.text?.excluded ?? []))])}`)
 console.log(' · özet sayıları:', JSON.stringify(report.find((r) => r.counts)?.counts))
+const contrib = report.find((r) => r.shot.startsWith('katki'))
+if (contrib) console.log(' · katkı özeti:', JSON.stringify(contrib.counts))

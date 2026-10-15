@@ -12,6 +12,8 @@ import { SbcCard } from './SbcCard'
 import { categoriesOf, categoryLabel, filterSets, parseReward, sbcFiltersFromParams, sbcFiltersToParams, type SbcFilters, type SbcSort, type SbcTab } from './sbcList'
 
 const STALE_MS = 120_000
+/** /players/assets üst sınırı (backend MAX_ASSET_IDS). */
+const MAX_ASSET_NAMES = 100
 const MINUTE = 60_000
 const SKELETONS = 8
 const PREFIX = 'sbc'
@@ -67,6 +69,15 @@ export function SbcListPage() {
     staleTime: STALE_MS,
   })
   const itemMap = useMemo(() => new Map<number, KbItem>((items.data ?? []).map((i) => [i.eaResourceId, i])), [items.data])
+  // V3-05c-c: EA verisi gelen ödül kartlarının adı katalogdan (assetId), tek istekte.
+  const assets = useMemo(() => [...new Set(all.flatMap((s) => parseReward(s.reward).eaItems.map((i) => i.assetId)).filter((a): a is number => a !== undefined))].sort((a, b) => a - b), [all])
+  const names = useQuery({
+    queryKey: ['player-asset-names', assets],
+    queryFn: () => endpoints.playerAssetNames(assets.slice(0, MAX_ASSET_NAMES)),
+    enabled: assets.length > 0,
+    staleTime: STALE_MS,
+  })
+  const nameMap = useMemo(() => new Map<number, string>((names.data ?? []).map((n) => [n.assetId, n.name])), [names.data])
   const votes = useQuery({ queryKey: ['sbc-votes'], queryFn: endpoints.sbcVotes, enabled: authenticated, staleTime: STALE_MS })
   const voteMap = useMemo(() => new Map((votes.data?.sets ?? []).map((v) => [v.setId, v])), [votes.data])
 
@@ -143,7 +154,7 @@ export function SbcListPage() {
             <div className="flex flex-col gap-3">
               <p role="status" className="text-xs text-muted">{shown.length} aktif set</p>
               <ul aria-label="SBC setleri" className="grid gap-3" style={GRID_STYLE}>
-                {shown.map((s) => <SbcCard key={s.id} set={s} items={itemMap} votes={voteMap.get(s.id)} now={now} />)}
+                {shown.map((s) => <SbcCard key={s.id} set={s} items={itemMap} names={nameMap} votes={voteMap.get(s.id)} now={now} />)}
               </ul>
             </div>
           )}

@@ -1,0 +1,570 @@
+[
+  {
+    "shot": "bos-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    }
+  },
+  {
+    "shot": "ozet-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 3,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 2
+    }
+  },
+  {
+    "shot": "katki-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 0,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 3
+    }
+  },
+  {
+    "shot": "hata-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    }
+  },
+  {
+    "shot": "bos-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    }
+  },
+  {
+    "shot": "ozet-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 3,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 2
+    }
+  },
+  {
+    "shot": "katki-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 0,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 3
+    }
+  },
+  {
+    "shot": "hata-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    }
+  },
+  {
+    "shot": "bos-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "ozet-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 3,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 2
+    }
+  },
+  {
+    "shot": "katki-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 0,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 3
+    }
+  },
+  {
+    "shot": "hata-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "bos-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "ozet-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 3,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 2
+    }
+  },
+  {
+    "shot": "katki-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 0,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 3
+    }
+  },
+  {
+    "shot": "hata-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "bos-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "ozet-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 3,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 2
+    }
+  },
+  {
+    "shot": "katki-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 0,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 3
+    }
+  },
+  {
+    "shot": "hata-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "bos-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  },
+  {
+    "shot": "ozet-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 3,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 2
+    }
+  },
+  {
+    "shot": "katki-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "counts": {
+      "SBC seti": 2,
+      "SBC görevi": 2,
+      "Kulüp kartı": 0,
+      "Fiyat gözlemi": 2,
+      "Objective": 2,
+      "Atlanan istek": 3
+    }
+  },
+  {
+    "shot": "hata-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [
+      "page-has-heading-one:moderate:1"
+    ],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    }
+  }
+]

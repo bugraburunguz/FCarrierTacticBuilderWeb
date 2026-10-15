@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
-import { sbcFixture, sbcRewardItemsFixture, sbcVotesFixture } from '../tests/fixtures/sbcFixture.ts'
+import { EA_REWARD, EA_REWARD_NAME, sbcAssetNamesFixture, sbcFixture, sbcRewardItemsFixture, sbcVotesFixture } from '../tests/fixtures/sbcFixture.ts'
 import { cardMinFont, pageMinFont, stickyBand } from './lib/readability.mjs'
 
 const args = process.argv.slice(2)
@@ -42,6 +42,8 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     await context.route(/\/api\/v1\/ut\/sbc\/votes(\?|$)/, (r) => r.fulfill(ok(sbcVotesFixture())))
     await context.route(/\/api\/v1\/ut\/kb\/sbc(\?|$)/, (r) => r.fulfill(ok(empty ? [] : sbcFixture(Date.now()))))
     await context.route(/\/api\/v1\/ut\/kb\/items\?/, (r) => r.fulfill(ok(sbcRewardItemsFixture(new URL(r.request().url()).searchParams.getAll('resource').map(Number)))))
+    // V3-05c-c: EA verisinden çizilen ödül kartının adı (assetId → katalog)
+    await context.route(/\/api\/v1\/players\/assets\?/, (r) => r.fulfill(ok(sbcAssetNamesFixture(new URL(r.request().url()).searchParams.getAll('id').map(Number)))))
     const page = await context.newPage()
     const problems = []
     page.on('console', (m) => m.type() === 'error' && !/classList/.test(m.text()) && problems.push(`console: ${m.text().slice(0, 160)}`))
@@ -78,7 +80,8 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
       }
       return [...byRow.values()].map((hs) => Math.round(Math.max(...hs) - Math.min(...hs)))
     })
-    await record('izgara', { rowContentDiffMax: Math.max(0, ...rows), cards: await page.evaluate(() => document.querySelectorAll('ul[aria-label="SBC setleri"] > li').length), card, votesShown: await page.getByText(/^%\d+$/).count() })
+    const eaCard = await page.getByRole('img', { name: new RegExp(`^${EA_REWARD_NAME}, ${EA_REWARD.rating}, ${EA_REWARD.preferredPosition}`) }).count()
+    await record('izgara', { eaRewardCard: eaCard, rowContentDiffMax: Math.max(0, ...rows), cards: await page.evaluate(() => document.querySelectorAll('ul[aria-label="SBC setleri"] > li').length), card, votesShown: await page.getByText(/^%\d+$/).count() })
     await page.evaluate(() => window.scrollTo(0, 1200))
     await record('izgara-kaydirilmis', { band: await page.evaluate(stickyBand, BAND) })
     await open('sekme=bitiyor', gridReady)
@@ -100,7 +103,7 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
 }
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
-const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0)
+const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0) || r.eaRewardCard === 0
   || (r.card && r.card.cards > 0 && (r.card.minFontPx < 11 || r.card.ovrMinPx < 14)) || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1)))
   || (r.shot.endsWith('-1280') && r.rowContentDiffMax > 24))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)

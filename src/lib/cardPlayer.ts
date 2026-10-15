@@ -1,4 +1,4 @@
-import type { KbItem, PlayerSummary } from '../api/types'
+import type { KbItem, PlayerSummary, RewardItem } from '../api/types'
 import type { CardPlayer } from '../components/card/PlayerCard'
 import type { SbcCandidate } from './sbcTraditional'
 import type { UtCard } from './utCard'
@@ -28,6 +28,14 @@ export function cardPlayerOf(card: UtCard | SbcCandidate, position?: string): Ca
 export function cardPlayerOfKbItem(item: KbItem): CardPlayer {
   const special = item.cardType === 'ICON' || item.cardType === 'HERO' ? item.cardType : undefined
   return { name: item.name, rating: item.rating, position: item.position, cardType: special, rarity: item.promo ?? (special ? undefined : item.cardType) }
+}
+
+/**
+ * V3-05c-c: EA ödül kartı verisi (allowlist) → kart bileşeni. Reyting ve mevki ödül kartının kendisinden (özel sürüm olabilir); ad katalogdan
+ * (assetId), yoksa ut_item'dan, o da yoksa genel ad. Katalog yüz statları ödül sürümüne ait olmayabileceği için kullanılmaz.
+ */
+export function cardPlayerOfRewardItem(item: RewardItem, name?: string): CardPlayer {
+  return { name: name ?? 'Ödül oyuncusu', rating: item.rating ?? 0, position: item.preferredPosition }
 }
 
 /** Katalog/kariyer oyuncusu → kart bileşeninin beklediği biçim (yüz değerleri dahil). */

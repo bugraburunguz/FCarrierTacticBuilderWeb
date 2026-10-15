@@ -12,10 +12,11 @@
       "belowCount": 0,
       "excluded": []
     },
+    "eaRewardCard": 1,
     "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
-      "cards": 1,
+      "cards": 2,
       "minFontPx": 22,
       "minFontText": "93",
       "ovrMinPx": 22,
@@ -142,10 +143,11 @@
       "belowCount": 0,
       "excluded": []
     },
+    "eaRewardCard": 1,
     "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
-      "cards": 1,
+      "cards": 2,
       "minFontPx": 22,
       "minFontText": "93",
       "ovrMinPx": 22,
@@ -276,10 +278,11 @@
         "aria-hidden: K"
       ]
     },
+    "eaRewardCard": 1,
     "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
-      "cards": 1,
+      "cards": 2,
       "minFontPx": 22,
       "minFontText": "93",
       "ovrMinPx": 22,
@@ -426,10 +429,11 @@
         "aria-hidden: K"
       ]
     },
+    "eaRewardCard": 1,
     "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
-      "cards": 1,
+      "cards": 2,
       "minFontPx": 22,
       "minFontText": "93",
       "ovrMinPx": 22,
@@ -576,14 +580,15 @@
         "aria-hidden: K"
       ]
     },
+    "eaRewardCard": 1,
     "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
-      "cards": 1,
+      "cards": 2,
       "minFontPx": 11.5,
       "minFontText": "ST",
       "ovrMinPx": 27.9,
-      "surnamesVisible": 1
+      "surnamesVisible": 2
     },
     "votesShown": 6
   },
@@ -697,14 +702,15 @@
         "aria-hidden: K"
       ]
     },
+    "eaRewardCard": 1,
     "rowContentDiffMax": 0,
     "cards": 14,
     "card": {
-      "cards": 1,
+      "cards": 2,
       "minFontPx": 11.5,
       "minFontText": "ST",
       "ovrMinPx": 27.9,
-      "surnamesVisible": 1
+      "surnamesVisible": 2
     },
     "votesShown": 6
   },

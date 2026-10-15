@@ -29,6 +29,9 @@ describe('Kulüp içe aktar (bayraklar)', () => {
     renderPage()
     expect(screen.getByLabelText(/Uzantı kimliği/)).toBeInTheDocument()
     expect(screen.getByLabelText('Yakalama dosyası')).toBeInTheDocument()
+    // V3-05c-c: yakalama dosyası HAR-01 ile aynı akışta (hedef seçimi + özet + onay), ham dosya doğrudan yüklenmez
+    expect(screen.getByRole('heading', { name: 'Yakalama dosyasından içe aktar' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Bilgi tabanına katkı' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'HAR dosyasından içe aktar' })).toBeNull()
     expect(document.body.textContent).not.toMatch(/engelliyor|DevTools|Preserve log|Export HAR/)
   })

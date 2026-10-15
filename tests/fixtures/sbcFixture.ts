@@ -14,9 +14,16 @@ interface RawSet {
   endsInHours?: number
   firstSeenHoursAgo: number
   changedHoursAgo?: number
-  reward: { type: string; value?: number; count: number }[]
+  reward: { type: string; value?: number; count: number; item?: Record<string, unknown> }[]
   votes?: { up: number; down: number }
 }
+
+/**
+ * V3-05c-c: EA ödül kartı verisi (allowlist'teki 9 alan) — SENTETİK, gerçek yakalamadan türetilmedi. ut_item'da yok; kart bu veriden çizilir,
+ * ad katalogdan (assetId → /players/assets).
+ */
+export const EA_REWARD = { resourceId: 50_999_998, assetId: 990_123, rating: 87, preferredPosition: 'RW', possiblePositions: ['RW', 'RM'], rareflag: 3, nation: 901, leagueId: 902, teamid: 903 } as const
+export const EA_REWARD_NAME = 'Kapı Kanat'
 
 /** Ödül oyuncusu: ut_item'da var (kart çizilir). */
 export const REWARD_ITEM = { id: 990_001, eaAssetId: 239_085, eaResourceId: 50_570_000, name: 'Erling Haaland', rating: 93, position: 'ST', altPositions: [], cardType: 'TOTW', rare: true, untradeableOnly: true, status: 'ACTIVE', promo: 'TOTW', quality: 'GOLD' } as const
@@ -32,7 +39,7 @@ const RAW: RawSet[] = [
   { id: 9306, name: 'Foundations: First XI', category: 'Foundations', challengeCount: 5, firstSeenHoursAgo: 900, reward: [{ type: 'pack', value: 702, count: 1 }] },
   { id: 9307, name: 'Hybrid Leagues', category: 'Challenges', challengeCount: 6, endsInHours: 96, firstSeenHoursAgo: 60, changedHoursAgo: 12, reward: [{ type: 'pack', value: 703, count: 1 }] },
   { id: 9308, name: 'League Upgrade: Premier League', category: 'Upgrades', challengeCount: 1, repeatable: 10, endsInHours: 48, firstSeenHoursAgo: 100, reward: [{ type: 'pack', value: 704, count: 1 }], votes: { up: 9, down: 1 } },
-  { id: 9309, name: 'POTM Saka', category: 'Players', challengeCount: 2, endsInHours: 120, firstSeenHoursAgo: 20, reward: [{ type: 'item', value: UNKNOWN_ITEM_RESOURCE + 1, count: 1 }] },
+  { id: 9309, name: 'POTM Saka', category: 'Players', challengeCount: 2, endsInHours: 120, firstSeenHoursAgo: 20, reward: [{ type: 'item', value: EA_REWARD.resourceId, count: 1, item: { ...EA_REWARD } }] },
   { id: 9310, name: 'Weekend Exchange', category: 'Seasonal Exchange', challengeCount: 1, repeatable: -1, endsInHours: 30, firstSeenHoursAgo: 70, reward: [{ type: 'pack', value: 705, count: 3 }] },
   { id: 9311, name: 'Puzzle Master', category: 'Challenges', challengeCount: 3, endsInHours: 12, firstSeenHoursAgo: 200, reward: [{ type: 'coins', value: 500, count: 1 }] },
   { id: 9312, name: 'Icon Pick', category: 'Icons', challengeCount: 2, endsInHours: 200, firstSeenHoursAgo: 1, reward: [{ type: 'pack', value: 706, count: 1 }], votes: { up: 50, down: 0 } },
@@ -56,6 +63,11 @@ export function sbcFixture(now: number) {
 /** GET /ut/sbc/votes yanıtı (oturumlu): oy olmayan setler listede yok. */
 export function sbcVotesFixture() {
   return { sets: RAW.filter((s) => s.votes).map((s) => ({ setId: s.id, up: s.votes!.up, down: s.votes!.down, mine: 0 })) }
+}
+
+/** GET /players/assets?id=… yanıtı: katalogda olan ödül kartlarının adı. */
+export function sbcAssetNamesFixture(ids: number[]) {
+  return ids.includes(EA_REWARD.assetId) ? [{ assetId: EA_REWARD.assetId, name: EA_REWARD_NAME }] : []
 }
 
 /** GET /ut/kb/items?resource=… yanıtı: yalnız ut_item'da olan ödül oyuncusu. */

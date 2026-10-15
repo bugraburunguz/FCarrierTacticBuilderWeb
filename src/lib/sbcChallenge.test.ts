@@ -63,7 +63,8 @@ describe('describeRequirement — parser v2 türleri (BE-BUG-05)', () => {
   })
 
   it('bilinmeyen şart ham tipini gösterir', () => {
-    expect(describeRequirement({ kind: 'UNKNOWN', op: 'MIN', value: 9, raw: [{ type: 'BRAND_NEW_KEY' }] })).toBe('Şart: BRAND_NEW_KEY en az 9')
+    // V3-05c-c: "Şart:" öneki yerine arayüzde "Bilinmeyen şart" çipi (RequirementItem); ham tip yine görünür
+    expect(describeRequirement({ kind: 'UNKNOWN', op: 'MIN', value: 9, raw: [{ type: 'BRAND_NEW_KEY' }] })).toBe('BRAND_NEW_KEY en az 9')
   })
 })
 

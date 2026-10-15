@@ -1,4 +1,4 @@
-import type { KbSbcSet, SbcSetVotes } from '../../api/types'
+import type { KbSbcSet, RewardItem, SbcSetVotes } from '../../api/types'
 
 /** "Yeni" / "Değişti" rozetlerinin penceresi (saat). Tek yer: bileşenler buradan okur. */
 export const BADGE_WINDOW_HOURS = 48
@@ -124,7 +124,9 @@ export function repeatText(repeatable: number | undefined | null): string | null
 // ---- ödül ve oy ----
 
 export interface SbcRewardSummary {
-  /** Oyuncu ödülleri (EA kaynak kimliği); `ut_item`'da varsa kart çizilir. */
+  /** EA kart verisi gelen oyuncu ödülleri (V3-05c-c): kart önce bundan çizilir. */
+  eaItems: RewardItem[]
+  /** EA verisi olmayan oyuncu ödülleri (EA kaynak kimliği); yedek: `ut_item`'da varsa kart çizilir. */
   itemResourceIds: number[]
   /** Paket ödülü adedi: paket adı veride yok, yalnız "Paket" rozeti. */
   packs: number
@@ -132,18 +134,21 @@ export interface SbcRewardSummary {
 
 /** Yakalanan ödül listesi: `type` "item" (değer = kaynak kimliği) ve "pack"; diğer türler (ör. coin) bu turda gösterilmez. */
 export function parseReward(reward: unknown): SbcRewardSummary {
-  const list = Array.isArray(reward) ? (reward as { type?: string; value?: number; count?: number }[]) : []
+  const list = Array.isArray(reward) ? (reward as { type?: string; value?: number; count?: number; item?: RewardItem }[]) : []
   const itemResourceIds: number[] = []
+  const eaItems: RewardItem[] = []
   let packs = 0
   for (const r of list) {
     const type = r?.type?.toLowerCase()
-    if (type === 'item' && typeof r.value === 'number') {
+    if (type === 'item' && r.item && typeof r.item.rating === 'number') {
+      eaItems.push(r.item)
+    } else if (type === 'item' && typeof r.value === 'number') {
       itemResourceIds.push(r.value)
     } else if (type === 'pack') {
       packs += Math.max(1, r.count ?? 1)
     }
   }
-  return { itemResourceIds, packs }
+  return { itemResourceIds, eaItems, packs }
 }
 
 /** Beğeni oranı (yüzde, yuvarlanmış); oy yoksa null (gösterilmez). */

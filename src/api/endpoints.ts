@@ -132,6 +132,8 @@ export const endpoints = {
   player: (id: number, careerId?: number) => api.get<PlayerDetail>(`/players/${id}`, { career: careerId }),
   playerRoles: (id: number, careerId?: number, engine?: 'v1' | 'v3') => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId, engine }),
   playerByAsset: (assetId: number) => api.get<PlayerDetail>(`/players/asset/${assetId}`),
+  /** V3-05c-c: ödül kartı adı için toplu assetId → katalog adı (bilinmeyen kimlik yanıtta yok). */
+  playerAssetNames: (assetIds: number[]) => api.get<{ assetId: number; name: string }[]>('/players/assets', { id: assetIds.map(String) }),
   similarPlayers: (id: number, options: { ageMax?: number; potentialMin?: number; limit?: number } = {}) =>
     api.get<SimilarPlayer[]>(`/players/${id}/similar`, { age_max: options.ageMax, pot_min: options.potentialMin, limit: options.limit }),
   development: (id: number, body: { targetRoles?: string[]; careerId?: number } = {}) =>

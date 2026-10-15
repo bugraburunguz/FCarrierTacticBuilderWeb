@@ -852,6 +852,21 @@ export interface CaptureReward {
   type?: string
   value?: number
   count: number
+  /** V3-05c-c: ödül kartıysa EA verisinin yalnız izinli 9 alanı (sunucu allowlist'i). */
+  item?: RewardItem
+}
+
+/** EA ödül kartı (allowlist): kart örneği kimliği, sahip, fiyat, sözleşme vb. hiç gelmez. */
+export interface RewardItem {
+  resourceId?: number
+  assetId?: number
+  rating?: number
+  preferredPosition?: string
+  possiblePositions?: string[]
+  rareflag?: number
+  nation?: number
+  leagueId?: number
+  teamid?: number
 }
 
 export interface CaptureObjective {
@@ -995,6 +1010,8 @@ export interface SbcRequirement {
   count?: number
   /** Ham elgReq girdileri; bilinmeyen şartın tipi buradadır. */
   raw?: { type?: string; eligibilityValue?: number }[]
+  /** V3-05c-c: kind UNKNOWN iken EA'nın tip adı (arayüz "Bilinmeyen şart" çipi). */
+  eaType?: string
 }
 
 export interface SbcChallenge {

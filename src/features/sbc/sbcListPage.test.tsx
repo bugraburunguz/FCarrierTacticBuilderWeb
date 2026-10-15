@@ -3,13 +3,13 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
-import { REWARD_ITEM, sbcFixture, sbcRewardItemsFixture, sbcVotesFixture } from '../../../tests/fixtures/sbcFixture'
+import { EA_REWARD, EA_REWARD_NAME, REWARD_ITEM, sbcAssetNamesFixture, sbcFixture, sbcRewardItemsFixture, sbcVotesFixture } from '../../../tests/fixtures/sbcFixture'
 import { SbcListPage } from './SbcListPage'
 
 const auth = vi.hoisted(() => ({ authenticated: true }))
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => auth }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { kbSbc: vi.fn(), kbItems: vi.fn(), sbcVotes: vi.fn() },
+  endpoints: { kbSbc: vi.fn(), kbItems: vi.fn(), sbcVotes: vi.fn(), playerAssetNames: vi.fn() },
 }))
 
 function Where() {
@@ -35,6 +35,7 @@ beforeEach(() => {
   vi.mocked(endpoints.kbSbc).mockReset().mockResolvedValue(sbcFixture(Date.now()))
   vi.mocked(endpoints.kbItems).mockReset().mockImplementation(async (p: { resource?: number[] }) => sbcRewardItemsFixture(p.resource ?? []))
   vi.mocked(endpoints.sbcVotes).mockReset().mockResolvedValue(sbcVotesFixture())
+  vi.mocked(endpoints.playerAssetNames).mockReset().mockImplementation(async (ids: number[]) => sbcAssetNamesFixture(ids))
 })
 
 describe('SBC listesi (v3)', () => {
@@ -54,12 +55,21 @@ describe('SBC listesi (v3)', () => {
     expect(endpoints.kbSbc).toHaveBeenCalledWith({ active: true })
   })
 
+  it('ödül kartı önce EA verisinden çizilir: reyting/mevki yakalamadan, ad katalogdan (assetId); ut_item sorulmaz', async () => {
+    renderPage()
+    const card = await screen.findByRole('img', { name: new RegExp(`^${EA_REWARD_NAME}, ${EA_REWARD.rating}`) })
+    expect(card).toHaveAccessibleName(new RegExp(EA_REWARD.preferredPosition))
+    await waitFor(() => expect(endpoints.playerAssetNames).toHaveBeenCalledWith([EA_REWARD.assetId]))
+    const asked = vi.mocked(endpoints.kbItems).mock.calls.flatMap((c) => c[0].resource ?? [])
+    expect(asked).not.toContain(EA_REWARD.resourceId)
+  })
+
   it('ödül: ut_item\'daki oyuncu kendi kartımızla, bilinmeyen oyuncu ve paket rozetle', async () => {
     renderPage()
     expect(await screen.findByRole('img', { name: new RegExp(`^${REWARD_ITEM.name}, ${REWARD_ITEM.rating}`) })).toBeInTheDocument()
     await waitFor(() => expect(endpoints.kbItems).toHaveBeenCalled())
     expect(vi.mocked(endpoints.kbItems).mock.calls[0][0].resource).toEqual(expect.arrayContaining([REWARD_ITEM.eaResourceId]))
-    expect(within(cardOf('POTM Saka')).getByText('Oyuncu ödülü')).toBeInTheDocument()
+    expect(within(cardOf('Icon Moments Zidane — Ultimate Edition Hybrid Leagues and Nations Mega Challenge Set')).getByText('Oyuncu ödülü')).toBeInTheDocument()
     expect(within(cardOf('Marquee Matchups')).getByText('Paket')).toBeInTheDocument()
     expect(within(cardOf('Daily Bronze Upgrade')).getByText('2 paket')).toBeInTheDocument()
   })

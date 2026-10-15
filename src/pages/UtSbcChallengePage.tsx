@@ -4,7 +4,8 @@ import { endpoints } from '../api/endpoints'
 import { TraditionalSbc } from '../components/TraditionalSbc'
 import { SbcVote, useSbcVotes } from '../components/SbcVote'
 import { Card, Skeleton } from '../components/ui'
-import { challengeSetup, describeRequirement } from '../lib/sbcChallenge'
+import { challengeSetup } from '../lib/sbcChallenge'
+import { RequirementItem } from '../components/RequirementItem'
 import { isItemScore, kbChallenges } from '../lib/kbSbc'
 import { StreamlinedSolver } from '../components/StreamlinedSolver'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -50,7 +51,7 @@ export function UtSbcChallengePage() {
       <Card title={`${challenge.setName ?? 'SBC'} · ${challenge.name}`}>
         <ul className="flex flex-wrap gap-1 text-xs">
           {challenge.requirements.map((r, i) => (
-            <li key={i} className="rounded border border-line bg-surface-2 px-1.5 py-0.5">{describeRequirement(r)}</li>
+            <RequirementItem key={i} requirement={r} />
           ))}
         </ul>
         {setup && setup.notes.length > 0 && (

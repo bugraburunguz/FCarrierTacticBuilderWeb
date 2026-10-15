@@ -158,43 +158,100 @@ export function parseHar(input: string | unknown, { mode, rules }: { mode: Captu
   if (!Array.isArray(entries)) {
     throw new HarError('Bu bir HAR dosyası değil: "log.entries" bulunamadı.')
   }
-  const skipped: HarSkipped = { total: entries.length, denied: 0, unmatched: 0, notOk: 0, notJson: 0, tooLarge: 0 }
+  return filterEntries(entries.map((e) => {
+    const p = pick(e)
+    const ts = p.started ? Date.parse(p.started) : NaN
+    return { url: p.url, status: p.status, ts: Number.isFinite(ts) ? ts : undefined, text: p.text === undefined ? undefined : p.base64 ? decodeBase64(p.text) : p.text }
+  }), mode, rules)
+}
+
+/** Kaynaktan (HAR girdisi ya da uzantı yakalaması) okunan dört alan; süzgeç yalnız bunları görür. */
+interface Candidate {
+  url: string
+  status: number
+  ts: number | undefined
+  text: string | undefined
+}
+
+/**
+ * HAR ve uzantı yakalama dosyasının ORTAK süzgeci: deny → eşleşme (kişisel / katkı: personalOnly hariç) → 200 → boyut → JSON → katkıda stripFields.
+ * Kurallar tek kaynaktan (GET /ut/capture/rules); ham girdi hiçbir yere gönderilmez, yalnız bu süzgeçten çıkan liste.
+ */
+function filterEntries(candidates: Candidate[], mode: CaptureMode, rules: CaptureRules): HarResult {
+  const skipped: HarSkipped = { total: candidates.length, denied: 0, unmatched: 0, notOk: 0, notJson: 0, tooLarge: 0 }
   const captures: Capture[] = []
-  for (const entry of entries) {
-    const p = pick(entry)
-    if (isDenied(p.url, rules)) {
+  for (const c of candidates) {
+    if (isDenied(c.url, rules)) {
       skipped.denied++
       continue
     }
-    if (!isMatched(p.url, rules, mode)) {
+    if (!isMatched(c.url, rules, mode)) {
       skipped.unmatched++
       continue
     }
-    if (p.status !== 200) {
+    if (c.status !== 200) {
       skipped.notOk++
       continue
     }
-    const text = p.text === undefined ? undefined : p.base64 ? decodeBase64(p.text) : p.text
-    if (text === undefined) {
+    if (c.text === undefined) {
       skipped.notJson++
       continue
     }
-    if (overLimit(text)) {
+    if (overLimit(c.text)) {
       skipped.tooLarge++
       continue
     }
     let json: unknown
     try {
-      json = JSON.parse(text)
+      json = JSON.parse(c.text)
     } catch {
       skipped.notJson++
       continue
     }
-    const body = mode === 'CONTRIB' ? JSON.stringify(stripFields(json, rules.contrib.stripFields)) : text
-    const ts = p.started ? Date.parse(p.started) : NaN
-    captures.push({ url: p.url, status: 200, ts: Number.isFinite(ts) ? ts : Date.now(), body })
+    const body = mode === 'CONTRIB' ? JSON.stringify(stripFields(json, rules.contrib.stripFields)) : c.text
+    captures.push({ url: c.url, status: 200, ts: c.ts ?? Date.now(), body })
   }
   return { captures, skipped }
+}
+
+export class CaptureFileError extends HarError {
+  constructor(message: string) {
+    super(message)
+    this.name = 'CaptureFileError'
+  }
+}
+
+/**
+ * V3-05c-c: uzantının dışa aktardığı yakalama dosyası (`fcareer-captures.json`: `{url, status, ts, body}[]` ya da `{captures: [...]}`).
+ * Her öğeden yalnız bu dört alan okunur; HAR ile aynı süzgeçten geçer (filterEntries).
+ */
+export function parseCaptureFile(input: string, { mode, rules }: { mode: CaptureMode; rules: CaptureRules }): HarResult {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(input)
+  } catch {
+    throw new CaptureFileError('Dosya geçerli bir JSON değil.')
+  }
+  const list = Array.isArray(parsed) ? parsed : (parsed as { captures?: unknown } | null)?.captures
+  if (!Array.isArray(list)) {
+    throw new CaptureFileError('Bu bir yakalama dosyası değil: uzantının "Dışa aktar" çıktısını seç.')
+  }
+  return filterEntries(list.map((item) => {
+    const i = (item ?? {}) as { url?: unknown; status?: unknown; ts?: unknown; body?: unknown }
+    return {
+      url: typeof i.url === 'string' ? i.url : '',
+      status: typeof i.status === 'number' ? i.status : 0,
+      ts: typeof i.ts === 'number' && Number.isFinite(i.ts) ? i.ts : undefined,
+      text: typeof i.body === 'string' ? i.body : undefined,
+    }
+  }), mode, rules)
+}
+
+export type ImportFileKind = 'har' | 'capture'
+
+/** İçe aktarma dosyası türüne göre ayrıştırıcı (Worker ve Worker'sız yol aynı fonksiyonu çağırır). */
+export function parseImportText(text: string, kind: ImportFileKind, mode: CaptureMode, rules: CaptureRules): HarResult {
+  return kind === 'har' ? parseHar(text, { mode, rules }) : parseCaptureFile(text, { mode, rules })
 }
 
 export interface CaptureSummary {

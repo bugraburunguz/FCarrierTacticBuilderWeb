@@ -4,18 +4,23 @@ import type { KbItem, KbSbcSet, SbcSetVotes } from '../../api/types'
 import { BASE_H, BASE_W, PlayerCard } from '../../components/card/PlayerCard'
 import { useIsMobile } from '../../design/components/MobileSheet'
 import { Chip } from '../../design/components/primitives'
-import { cardPlayerOfKbItem } from '../../lib/cardPlayer'
+import { cardPlayerOfKbItem, cardPlayerOfRewardItem } from '../../lib/cardPlayer'
 import { BADGE_TEXT, categoryLabel, countdownText, parseReward, repeatText, sbcBadge, votePct } from './sbcList'
 
 /** Sabit ödül alanı yüksekliği (px): aynı satırdaki kartlar hizalı kalsın. Masaüstü 152, mobil (<820px) 120. */
 const REWARD_H = { desktop: 152, mobile: 120 } as const
 const LOCAL_DATE = new Intl.DateTimeFormat('tr-TR', { dateStyle: 'long', timeStyle: 'short' })
 
-/** Ödül alanı: oyuncu → kendi PlayerCard'ımız (alan yüksekliğine sığan genişlik), paket → büyük simge, bilinmeyen oyuncu → siluet. */
-function Reward({ set, items, height }: { set: KbSbcSet; items: Map<number, KbItem>; height: number }) {
+/**
+ * Ödül alanı: oyuncu → kendi PlayerCard'ımız (alan yüksekliğine sığan genişlik). Önce EA ödül kartı verisi (reyting/mevki yakalamadan, ad katalogdan),
+ * yoksa yedek ut_item; paket → büyük simge, bilinmeyen oyuncu → siluet.
+ */
+function Reward({ set, items, names, height }: { set: KbSbcSet; items: Map<number, KbItem>; names: Map<number, string>; height: number }) {
   const reward = parseReward(set.reward)
-  const item = reward.itemResourceIds.map((id) => items.get(id)).find((i): i is KbItem => i !== undefined)
+  const ea = reward.eaItems[0]
+  const item = ea ? undefined : reward.itemResourceIds.map((id) => items.get(id)).find((i): i is KbItem => i !== undefined)
   const unknownPlayers = reward.itemResourceIds.length - (item ? 1 : 0)
+  const width = Math.floor((height * BASE_W) / BASE_H)
   const icon = Math.round(height * 0.38)
   const placeholder = (Icon: typeof Package, label: string) => (
     <span className="flex flex-col items-center gap-2 text-ink-2">
@@ -25,8 +30,10 @@ function Reward({ set, items, height }: { set: KbSbcSet; items: Map<number, KbIt
   )
   return (
     <div aria-label="Ödül" role="group" className="flex items-center justify-center gap-3 overflow-hidden" style={{ height }}>
-      {item ? (
-        <PlayerCard player={cardPlayerOfKbItem(item)} width={Math.floor((height * BASE_W) / BASE_H)} />
+      {ea ? (
+        <PlayerCard player={cardPlayerOfRewardItem(ea, (ea.assetId !== undefined ? names.get(ea.assetId) : undefined) ?? (ea.resourceId !== undefined ? items.get(ea.resourceId)?.name : undefined))} width={width} />
+      ) : item ? (
+        <PlayerCard player={cardPlayerOfKbItem(item)} width={width} />
       ) : unknownPlayers > 0 ? (
         placeholder(UserRound, unknownPlayers > 1 ? `${unknownPlayers} oyuncu ödülü` : 'Oyuncu ödülü')
       ) : reward.packs > 0 ? (
@@ -43,7 +50,7 @@ function Reward({ set, items, height }: { set: KbSbcSet; items: Map<number, KbIt
  * SBC set kartı (Katalog ızgarası): kartın tamamı tek tıklama hedefi (/ut/sbc/:setId; erişilebilir ad = set adı). Sabit ödül alanı,
  * ad (2 satır), görev sayısı, tekrar, geri sayım, oy yüzdesi, Yeni/Değişti ve ikincil "Çöz →" etiketi. Veri yoksa alan gösterilmez.
  */
-export function SbcCard({ set, items, votes, now }: { set: KbSbcSet; items: Map<number, KbItem>; votes?: SbcSetVotes; now: number }) {
+export function SbcCard({ set, items, names, votes, now }: { set: KbSbcSet; items: Map<number, KbItem>; names: Map<number, string>; votes?: SbcSetVotes; now: number }) {
   const mobile = useIsMobile()
   const badge = sbcBadge(set, now)
   const left = countdownText(set.endsAt, now)
@@ -63,7 +70,7 @@ export function SbcCard({ set, items, votes, now }: { set: KbSbcSet; items: Map<
             </Chip>
           )}
         </div>
-        <Reward set={set} items={items} height={mobile ? REWARD_H.mobile : REWARD_H.desktop} />
+        <Reward set={set} items={items} names={names} height={mobile ? REWARD_H.mobile : REWARD_H.desktop} />
         <h2 className="line-clamp-2 h-12 font-display text-lg font-semibold leading-6 [overflow-wrap:anywhere]" title={set.name}>{set.name}</h2>
         <p className="flex min-h-5 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-2">
           <span>{set.challengeCount} görev</span>
