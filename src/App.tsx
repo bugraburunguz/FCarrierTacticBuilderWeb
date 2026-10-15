@@ -3,6 +3,7 @@ import { useMode } from './state/modeStore'
 import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
+import { CaptureOnly } from './components/CaptureOnly'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
@@ -91,14 +92,15 @@ export function App() {
         <Route path="ut/players/:assetId" element={<UtPlayerPage />} />
         <Route path="ut/squad" element={<UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />
-        {/* v3: Katalog şablonlu SBC listesi; v2 sayfası (UtSbcPage/KbSbcList) dokunulmadan kalır. */}
-        <Route path="ut/sbc" element={isV3() ? <SbcListPage /> : <UtSbcPage />} />
-        <Route path="ut/sbc/:setId/:challengeId" element={<UtSbcChallengePage />} />
-        <Route path="ut/sbc/:setId" element={<UtSbcChallengePage />} />
-        <Route path="ut/objectives" element={<UtObjectivesPage />} />
-        <Route path="ut/club" element={<UtClubPage />} />
+        {/* V3-06a: tek veri kaynağı Web App yakalaması olan UT sayfaları; yakalama bayrağı kapalıyken tek kısa not (kod duruyor).
+            v3: Katalog şablonlu SBC listesi; v2 sayfası (UtSbcPage/KbSbcList) dokunulmadan kalır. */}
+        <Route path="ut/sbc" element={<CaptureOnly title="SBC çözücü">{isV3() ? <SbcListPage /> : <UtSbcPage />}</CaptureOnly>} />
+        <Route path="ut/sbc/:setId/:challengeId" element={<CaptureOnly title="SBC çözücü"><UtSbcChallengePage /></CaptureOnly>} />
+        <Route path="ut/sbc/:setId" element={<CaptureOnly title="SBC çözücü"><UtSbcChallengePage /></CaptureOnly>} />
+        <Route path="ut/objectives" element={<CaptureOnly title="Objective planı"><UtObjectivesPage /></CaptureOnly>} />
+        <Route path="ut/club" element={<CaptureOnly title="Kadrom"><UtClubPage /></CaptureOnly>} />
         <Route path="ut/import" element={<UtImportPage />} />
-        <Route path="ut/evo" element={<UtEvolutionsPage />} />
+        <Route path="ut/evo" element={<CaptureOnly title="Evolution"><UtEvolutionsPage /></CaptureOnly>} />
         <Route path="admin/ut" element={<AdminUtPage />} />
         <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />

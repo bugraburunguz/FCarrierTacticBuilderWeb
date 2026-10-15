@@ -23,6 +23,7 @@ import { teamRating } from '../lib/sbcTraditional'
 import { roleBaseName } from '../lib/squadBuilder'
 import { personKey, priceSummary, type UtCard } from '../lib/utCard'
 import { mapActiveSquad } from '../lib/activeSquad'
+import { extensionCaptureEnabled } from '../lib/features'
 import { useUtCapture } from '../state/utCaptureStore'
 import { utCardStore } from '../state/utCardStore'
 import { DEFAULT_UT_SETUP } from '../state/utSquadStore'
@@ -43,6 +44,8 @@ export function UtSquadPage() {
   const setup = state.setup ?? DEFAULT_UT_SETUP
   const setSetup = (change: Partial<TacticSetup>) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_UT_SETUP), ...change } }))
   const capture = useUtCapture()
+  // V3-06a: fiyat / kulüp aktif kadrosu / kulüp SBC'leri yalnız Web App yakalamasından gelir; VITE_EXTENSION_CAPTURE=off iken gösterilmez.
+  const captureOn = extensionCaptureEnabled()
   const loadNote = ws.note
 
   const pickedSlots = slots.filter((s) => picked[s.slotId] && roleBySlot.get(s.slotId))
@@ -179,23 +182,27 @@ export function UtSquadPage() {
               <section aria-label="Meta" className="space-y-2">
                 <Chip tone="info">Rol uyumu {roleFitAverage === undefined ? '–' : `%${roleFitAverage}`}</Chip>
               </section>
-              <section aria-label="Fiyat" className="space-y-2">
-                <h3 className="font-display text-lg font-semibold">Fiyat</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  <StatTile label="Toplam" value={price.known > 0 ? shortCoins(price.total) : undefined} />
-                  <StatTile label="Ortalama" value={price.average !== undefined ? shortCoins(price.average) : undefined} />
-                </div>
-                <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
-                <p className="text-xs text-muted">Fiyat grafiği: henüz veri yok.</p>
-              </section>
+              {captureOn && (
+                <section aria-label="Fiyat" className="space-y-2">
+                  <h3 className="font-display text-lg font-semibold">Fiyat</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <StatTile label="Toplam" value={price.known > 0 ? shortCoins(price.total) : undefined} />
+                    <StatTile label="Ortalama" value={price.average !== undefined ? shortCoins(price.average) : undefined} />
+                  </div>
+                  <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+                  <p className="text-xs text-muted">Fiyat grafiği: henüz veri yok.</p>
+                </section>
+              )}
             </>
           }
           tacticCode={tacticCode}
           onClear={ws.clearAssigned}
           clearDisabled={pickedSlots.length === 0}
           note={loadNote}
-          actions={capture?.activeSquad ? <Button onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button> : undefined}
-          notice={(utCardStore.get()?.cards ?? []).length === 0 && pickedSlots.length === 0 ? { id: 'ut-no-cards', text: <>Kulüp kartların yok: mevkiye tıkla, katalogdan seç ya da <Link to="/ut/import" className="text-accent underline">kulüp içe aktar</Link>.</> } : undefined}
+          actions={captureOn && capture?.activeSquad ? <Button onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button> : undefined}
+          notice={(utCardStore.get()?.cards ?? []).length === 0 && pickedSlots.length === 0 ? { id: 'ut-no-cards', text: captureOn
+            ? <>Kulüp kartların yok: mevkiye tıkla, katalogdan seç ya da <Link to="/ut/import" className="text-accent underline">kulüp içe aktar</Link>.</>
+            : <>Mevkiye tıkla ve katalogdan seç.</> } : undefined}
         />
         <SquadRoleDialog ws={ws} />
       </>
@@ -208,7 +215,7 @@ export function UtSquadPage() {
         <Kpi label="Rating" value={pickedSlots.length === 11 ? String(teamRating(Object.values(picked).map((c) => c.rating))) : '—'} />
         <Kpi label="Kimya" value={`${chem.total}`} suffix={`/ ${MAX_SQUAD_CHEM}`} />
         <Kpi label="Meta ort." value={evaluation.data ? String(evaluation.data.averageMeta) : '—'} />
-        <Kpi label="Toplam değer" value={shortCoins(price.known > 0 ? price.total : undefined)} suffix={price.count > price.known ? `${price.known}/${price.count} fiyat` : undefined} />
+        {captureOn && <Kpi label="Toplam değer" value={shortCoins(price.known > 0 ? price.total : undefined)} suffix={price.count > price.known ? `${price.known}/${price.count} fiyat` : undefined} />}
         <Kpi label="Dolu" value={`${pickedSlots.length}`} suffix="/ 11" />
       </div>
       <div className="grid items-start gap-4 min-[820px]:grid-cols-[360px_1fr]">
@@ -259,28 +266,33 @@ export function UtSquadPage() {
                   <Pill tone="slate">OVR ort. {evaluation.data ? evaluation.data.averageOverall : '—'}</Pill>
                   <Pill tone="slate">{pickedSlots.length}/11 dolu</Pill>
                 </div>
-                <div className="flex flex-wrap items-center gap-1.5 text-sm">
-                  <Pill tone="amber">ort. ücret {coins(price.average)}</Pill>
-                  <Pill tone="amber">toplam {coins(price.known > 0 ? price.total : undefined)}</Pill>
-                </div>
-                <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+                {captureOn && (
+                  <>
+                    <div className="flex flex-wrap items-center gap-1.5 text-sm">
+                      <Pill tone="amber">ort. ücret {coins(price.average)}</Pill>
+                      <Pill tone="amber">toplam {coins(price.known > 0 ? price.total : undefined)}</Pill>
+                    </div>
+                    <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
+                  </>
+                )}
                 <Summary evaluation={evaluation.data?.slots ?? []} />
                 <div className="flex flex-wrap gap-2">
                   <Button variant="ghost" onClick={ws.clearAssigned}>Kartları temizle</Button>
-                  {capture?.activeSquad && (
+                  {captureOn && capture?.activeSquad && (
                     <Button variant="secondary" onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button>
                   )}
                 </div>
                 {loadNote && <p role="status" className="text-xs text-accent">{loadNote}</p>}
-                {!capture?.activeSquad && <p className="text-xs text-muted">Aktif kadroyu yüklemek için Web App'te Kadro ekranını açıp yeniden yakalama dosyası içe aktar.</p>}
+                {captureOn && !capture?.activeSquad && <p className="text-xs text-muted">Aktif kadroyu yüklemek için Web App'te Kadro ekranını açıp yeniden yakalama dosyası içe aktar.</p>}
                 <p className="text-xs text-muted">
-                  Meta* platformun tahmin metriğidir; kendi kartlarında gerçek attribute'ları kullanılır. Fiyat: kulüp kartlarında pazar ortalaması (yoksa son satış), market ilanlarında satın alma fiyatı; katalog kartlarının fiyatı yoktur ve ortalamaya girmez.
+                  Meta* platformun tahmin metriğidir; kendi kartlarında gerçek attribute'ları kullanılır.
+                  {captureOn && ' Fiyat: kulüp kartlarında pazar ortalaması (yoksa son satış), market ilanlarında satın alma fiyatı; katalog kartlarının fiyatı yoktur ve ortalamaya girmez.'}
                 </p>
               </div>
             )}
           </section>
 
-          {(capture?.sbcSets ?? []).length > 0 && (
+          {captureOn && (capture?.sbcSets ?? []).length > 0 && (
             <section className={PANEL}>
               <h2 className={PANEL_TITLE}>Kulüp SBC'leri</h2>
               <ul className="space-y-1 text-[13px]">

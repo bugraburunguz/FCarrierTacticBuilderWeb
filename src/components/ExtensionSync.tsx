@@ -52,7 +52,6 @@ export function ExtensionSync({ onCaptures, busy }: { onCaptures: (captures: unk
 
   return (
     <Card title="Kulübümü senkronla (dosyasız)">
-      <p role="note" className="mb-3 text-sm text-warn">EA Web App şu an uzantı yüklüyken girişi engelliyor; HAR içe aktarmayı kullan.</p>
       <div className="grid items-end gap-3 sm:grid-cols-[1fr_auto_auto]">
         <Field label="Uzantı kimliği (uzantı penceresinde yazar, bir kez girilir)">
           <Input value={extId} onChange={(e) => setExtId(e.target.value)} placeholder="abcdefghijklmnopabcdefghijklmnop" className="font-mono" />

@@ -110,12 +110,12 @@ describe('SBC listesi (v3)', () => {
     await waitFor(() => expect(within(grid()).getAllByRole('listitem')).toHaveLength(3))
   })
 
-  it('bilgi tabanı tamamen boş: EA engelini söyler; uzantıya/HAR\'a yönlendirmez', async () => {
+  it('bilgi tabanı tamamen boş: uzantıyla senkrona yönlendirir (EXT-07 sonrası yakalama çalışıyor)', async () => {
     vi.mocked(endpoints.kbSbc).mockResolvedValue([])
     renderPage()
-    expect(await screen.findByText(/EA, FC 27 Web App'te uzantıları ve geliştirici araçlarını engelliyor/)).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /içe aktar/i })).toBeNull()
-    expect(document.body.textContent).not.toMatch(/uzantı(yı|nın) (bağla|kur)|HAR|DevTools|Preserve log/)
+    expect(await screen.findByText(/Uzantı açıkken Web App'te SBC sekmesini aç; sonra İçe aktar'dan senkronla\./)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'İçe aktar' })).toHaveAttribute('href', '/ut/import')
+    expect(document.body.textContent).not.toMatch(/engelliyor|HAR|DevTools/)
   })
 
   it('yükleniyor iskeleti ve hata durumu (Tekrar dene)', async () => {

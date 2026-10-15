@@ -1,12 +1,19 @@
 /**
- * Özellik bayrakları (build zamanı, Vite ortam değişkeni).
+ * Özellik bayrakları (build zamanı, Vite ortam değişkeni). V3-06a: tek yakalama bayrağı ikiye ayrıldı.
  *
- * Yakalama ile içe aktarma (HAR dosyası ve tarayıcı uzantısı): VARSAYILAN KAPALI (V3-05c-b). EA, FC 27 Web App'te uzantıları ve
- * geliştirici araçlarını engelliyor; bu korumaları aşmaya yönelik bir şey yapılmaz. Kod durur; yalnız `VITE_CAPTURE_IMPORT=on` ile açılır.
+ * - `VITE_EXTENSION_CAPTURE` (VARSAYILAN AÇIK, yalnız `off` kapatır): uzantı senkronu, yakalama dosyası içe aktarma ve yakalamaya bağlı
+ *   UT ekranları (SBC, Kadrom, Objective, Evolution, Kulüp içe aktar). EXT-07 sonrası uzantı yüklüyken giriş ve yakalama çalışıyor.
+ * - `VITE_HAR_IMPORT` (VARSAYILAN KAPALI, yalnız `on` açar): yalnız HAR dosyası bölümü (HAR-01).
+ *
+ * EA korumalarını aşmaya yönelik hiçbir yol yok; bayraklar yalnız arayüzde gösterip gizler, kod durur.
  */
-export function captureImportEnabled(): boolean {
-  return (import.meta.env.VITE_CAPTURE_IMPORT as string | undefined) === 'on'
+export function extensionCaptureEnabled(): boolean {
+  return (import.meta.env.VITE_EXTENSION_CAPTURE as string | undefined) !== 'off'
 }
 
-/** Yakalama kapalıyken kullanıcıya gösterilen tek durum metni (içe aktarma ve SBC listesi aynı gerçeği söyler). */
-export const CAPTURE_BLOCKED_TEXT = "EA, FC 27 Web App'te uzantıları ve geliştirici araçlarını engelliyor; kulüp ve SBC yakalama şu an kullanılamıyor."
+export function harImportEnabled(): boolean {
+  return (import.meta.env.VITE_HAR_IMPORT as string | undefined) === 'on'
+}
+
+/** Uzantı yakalaması bu sürümde kapalıyken (VITE_EXTENSION_CAPTURE=off) yakalamaya bağlı sayfalarda gösterilen tek kısa not. */
+export const CAPTURE_OFF_TEXT = 'Kulüp ve SBC yakalama bu sürümde kapalı.'

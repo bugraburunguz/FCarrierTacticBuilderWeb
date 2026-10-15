@@ -5,7 +5,8 @@ import { useAuth } from '../../auth/AuthContext'
 import { CompareTray } from '../../components/CompareTray'
 import { useShellEffects } from '../../components/useShellEffects'
 import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
-import { MODES, NAV, UT_NAV, type NavGroup } from '../../lib/navConfig'
+import { extensionCaptureEnabled } from '../../lib/features'
+import { MODES, navFor, type NavGroup } from '../../lib/navConfig'
 import { useStorageError } from '../../state/bigStore'
 import { modeStore, useMode } from '../../state/modeStore'
 import { LogoLockup } from '../brand/LogoLockup'
@@ -59,7 +60,8 @@ export function AppShell() {
   const storageError = useStorageError()
   const { authenticated, me, logout } = useAuth()
   useShellEffects(pathname)
-  const nav = mode === 'ut' ? UT_NAV : NAV
+  // Uzantı yakalaması kapalıyken (VITE_EXTENSION_CAPTURE=off) yakalamaya bağlı UT öğeleri yan menüden ve mobil alt menüden çıkar (V3-06a).
+  const nav = navFor(mode, extensionCaptureEnabled())
   const active = nav.find((g) => isActive(g, pathname))
   const showTabs = !/^\/players\/\d+/.test(pathname)
 

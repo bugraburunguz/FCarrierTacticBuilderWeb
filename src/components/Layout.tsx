@@ -9,7 +9,8 @@ import { useAuth } from '../auth/AuthContext'
 import { Button, Pill } from './ui'
 import { modeStore, useMode } from '../state/modeStore'
 import { themeStore, useTheme } from '../state/themeStore'
-import { MODES, NAV, UT_NAV } from '../lib/navConfig'
+import { extensionCaptureEnabled } from '../lib/features'
+import { MODES, navFor } from '../lib/navConfig'
 import { useShellEffects } from './useShellEffects'
 
 const THEME_LABEL = { dark: 'Koyu', light: 'Açık', system: 'Sistem' } as const
@@ -18,7 +19,7 @@ export function Layout() {
   const storageError = useStorageError()
   const mode = useMode()
   const theme = useTheme()
-  const nav = mode === 'ut' ? UT_NAV : NAV
+  const nav = navFor(mode, extensionCaptureEnabled())
   const { authenticated, me, logout } = useAuth()
   const navigate = useNavigate()
   const { pathname } = useLocation()
