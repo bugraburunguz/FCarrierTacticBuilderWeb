@@ -274,6 +274,9 @@ const len = (v: unknown) => (Array.isArray(v) ? v.length : 0)
 /** Göndermeden önceki özet: sunucunun yol ayrımıyla aynı (UtCaptureService.kindOf). */
 export function summarizeCaptures(captures: Capture[]): CaptureSummary {
   const s: CaptureSummary = { sbcSets: 0, sbcChallenges: 0, clubCards: 0, priceObservations: 0, objectives: 0 }
+  // Kulüp sayfaları aynı oturumda tekrar yakalanır: kart kimliği bir kez sayılır (kimliksiz öğe ayrı sayılır).
+  const clubIds = new Set<unknown>()
+  let clubWithoutId = 0
   for (const c of captures) {
     const path = pathOf(c.url)
     let body: Record<string, unknown>
@@ -287,12 +290,20 @@ export function summarizeCaptures(captures: Capture[]): CaptureSummary {
     } else if (path.includes('/sbs/')) {
       s.sbcChallenges += len(body.challenges)
     } else if (/\/game\/[^/]+\/club$/.test(path)) {
-      s.clubCards += len(body.itemData)
+      for (const item of Array.isArray(body.itemData) ? body.itemData : []) {
+        const id = (item as { id?: unknown } | null)?.id
+        if (id === undefined || id === null) {
+          clubWithoutId++
+        } else {
+          clubIds.add(id)
+        }
+      }
     } else if (path.endsWith('/transfermarket')) {
       s.priceObservations += len(body.auctionInfo)
     } else if (path.endsWith('/objective/list')) {
       s.objectives += (Array.isArray(body.objectiveGroups) ? body.objectiveGroups : []).reduce((n: number, g: { objectives?: unknown }) => n + len(g?.objectives), 0)
     }
   }
+  s.clubCards = clubIds.size + clubWithoutId
   return s
 }

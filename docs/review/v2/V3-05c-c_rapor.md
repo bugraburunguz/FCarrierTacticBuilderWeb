@@ -28,9 +28,21 @@ Listedeki 16 tipin hepsi tanınıyor, her biri için birim test (`SbcChallengePa
 
 Bilinmeyen tip: `kind: "UNKNOWN"` + `eaType` + `raw`; arayüzde **"Bilinmeyen şart"** çipi (`RequirementItem`, her iki SBC sayfasında), çözücü notlarında görünür.
 
-## 4. Doğrulama — Buğra dosyayı içe aktardıktan sonra (BEKLİYOR)
+## 4. Doğrulama — gerçek dosya iki hedefle içe aktarıldı
 
-Docker backend bu sürümle yeniden kuruldu (allowlist etkin). İçe aktarma yapılınca salt-okunur ölçülecek: `sbc_set`, `sbc_challenge`, `ut_item`, fiyat gözlemi ve evolution sayıları; `/ut/sbc` gerçek setlerle 375/1280 × koyu/açık; oyuncu ödüllü bir setin kartının EA verisinden çizildiği.
+Dosya (`fcareer-captures.json`, 7,6 MB) `/ut/import` → "Yakalama dosyasından içe aktar" akışından, yerel test hesaplarıyla (yalnız localhost) iki hedefle gönderildi; içerik yazdırılmadı, yalnız sayılar.
+
+| Hedef | Özet (gönderilmeden önce) | Sonuç |
+|---|---|---|
+| Kulübümü senkronla | 124 yanıt · SBC seti 27 · görev 26 · kulüp kartı 139 (düzeltme sonrası; ilk koşu 1246 gösterdi, bkz. aşağı) · fiyat 819 · objective 0 · atlanan 7 | 200: 160 kart, 825 fiyat, 27 set, 26 görev, 39 evolution, aktif kadro yok, 5 bilinmeyen yol. Kişisel sonuç sunucuda saklanmaz, içe aktaran tarayıcıda kalır → **kendi tarayıcında senin de bir kez çalıştırman gerekir** |
+| Bilgi tabanına katkı | 89 yanıt · kulüp kartı 0 (kişisel uçlar alınmadı) · atlanan 42 | ilk denemede 402 (yerelde katkıcı 0). Onayınla: yalnız `kb-import-…@example.test` (user 101) için tek INSERT (dry-run → yedek `backups/pre-v305cc-kb-import-20261015-123300.dump` → tek transaction). Sonra 200: **92 yeni**, 0 kuyruk, fiyat 0 kayıt / 819 atlandı |
+
+Salt-okunur sayılar (önce → sonra): `sbc_set` 1 → **28** (28 aktif; 13'ünde EA kart verili ödül), `sbc_challenge` 1 → **27**, `evolution` 0 → **39**, `objective_group` 0 → 0 (dosyada objective yok), `ut_item` 0 → **0**, fiyat gözlemi (`price_obs`) 0 → **0**.
+
+- **Fiyat 0'ın nedeni**: gözlem `ut_item`'a bağlanır; yerel `ut_item` boş (dolduran tek yol admin ucu `POST /ut/admin/items/sync`, `X-Admin-Key` ister; `.env` okunmadığı için ajan çalıştırmadı). 819 gözlemin hepsi "unknownItem" atlandı. Sen sync'i çalıştırıp katkıyı tekrarlarsan temel kartların fiyatları kaydolur (özel sürüm kartları ut_item'da yoksa yine atlanır).
+- **Test hesabı duruyor**: `contrib_event.contributor_id` NO ACTION → hesabı silmek katkı kaydını (kaynak bilgisini) silmeyi gerektirir; onay kapsamı dışında olduğu için silinmedi. Giriş bilgisi saklanmadı; temizlik ayrı karar.
+- `/ut/sbc` gerçek setlerle (`screens/V3-05c-c/sbc-real/`, 375/1280 × koyu/açık): 4 çekim 0 sorun; 28 set, **10 oyuncu ödülü kartı EA verisinden** (reyting/mevki yakalamadan; 10/10 ad katalogdan `/players/assets`), `ut_item` isteği 0.
+- Gerçek veride bulunan ve düzeltilen: (1) 3 "Pick" setinin ödülü oyuncu değil seçim jetonu (assetId 0, mevki yok, reyting 99) — "99 Ödül oyuncusu" kartı olarak çiziliyordu → artık "Oyuncu seçimi" rozeti (allowlist'e itemType eklenmedi; assetId > 0 + mevki koşulu); (2) içe aktarma özeti kulüp kartını tekrar yakalanan sayfalardan sayıyordu (22 yanıt / 1246 öğe / 139 tekil) → kart kimliği bir kez sayılır.
 
 ## 5. Kategori sözlüğü (değişmedi)
 

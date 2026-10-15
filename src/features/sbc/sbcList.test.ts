@@ -101,12 +101,16 @@ describe('tekrar', () => {
 
 describe('ödül ve oy', () => {
   it('ödül: öğe kaynak kimlikleri ve paket sayısı; tanınmayan tür yok sayılır', () => {
-    expect(parseReward([{ type: 'item', value: 50_331_000, count: 1 }, { type: 'pack', value: 519, count: 2 }, { type: 'coins', value: 500, count: 1 }, {}])).toEqual({ itemResourceIds: [50_331_000], eaItems: [], packs: 2 })
-    expect(parseReward(null)).toEqual({ itemResourceIds: [], eaItems: [], packs: 0 })
+    expect(parseReward([{ type: 'item', value: 50_331_000, count: 1 }, { type: 'pack', value: 519, count: 2 }, { type: 'coins', value: 500, count: 1 }, {}])).toEqual({ itemResourceIds: [50_331_000], eaItems: [], picks: 0, packs: 2 })
+    expect(parseReward(null)).toEqual({ itemResourceIds: [], eaItems: [], picks: 0, packs: 0 })
   })
   it('V3-05c-c: EA kart verisi olan ödül ayrı listede; ut_item yalnız verisi olmayanlar için sorulur', () => {
     const ea = { resourceId: 7, assetId: 70, rating: 88, preferredPosition: 'ST' }
-    expect(parseReward([{ type: 'item', value: 7, count: 1, item: ea }, { type: 'item', value: 8, count: 1 }])).toEqual({ itemResourceIds: [8], eaItems: [ea], packs: 0 })
+    expect(parseReward([{ type: 'item', value: 7, count: 1, item: ea }, { type: 'item', value: 8, count: 1 }])).toEqual({ itemResourceIds: [8], eaItems: [ea], picks: 0, packs: 0 })
+  })
+  it('V3-05c-c: oyuncu seçimi jetonu (assetId 0, mevki yok, gerçek yakalamada reyting 99) oyuncu kartı değil, "seçim" sayılır', () => {
+    const pick = { resourceId: 5_004_495, assetId: 0, rating: 99, rareflag: 1, teamid: 0, leagueId: 0 }
+    expect(parseReward([{ type: 'item', value: 5_004_495, count: 1, item: pick }])).toEqual({ itemResourceIds: [], eaItems: [], picks: 1, packs: 0 })
   })
   it('oy yüzdesi: oy yoksa null, varsa yuvarlanmış beğeni oranı', () => {
     expect(votePct(undefined)).toBeNull()

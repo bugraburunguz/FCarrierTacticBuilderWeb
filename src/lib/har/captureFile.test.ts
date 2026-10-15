@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CaptureFileError, DEFAULT_CAPTURE_RULES, parseCaptureFile } from './harCapture'
+import { CaptureFileError, DEFAULT_CAPTURE_RULES, parseCaptureFile, summarizeCaptures } from './harCapture'
 
 // V3-05c-c: uzantının dışa aktardığı yakalama dosyası ({url, status, ts, body}[]) HAR ile aynı süzgeçten geçer. Sentetik veri.
 const UT = 'https://utas.mob.v1.prd.futc-ext.gcp.ea.com/ut/game/fc27'
@@ -31,6 +31,11 @@ describe('yakalama dosyası ayrıştırıcı', () => {
     expect(body).not.toContain('SIZINTI-SATICI')
     expect(body).not.toContain('tradeId')
     expect(JSON.parse(body).auctionInfo[0].itemData.rating).toBe(80)
+  })
+
+  it('özet: kulüp sayfaları tekrar yakalandıysa kart kimliği bir kez sayılır (gerçek dosyada 22 yanıt / 1246 öğe / 139 kart)', () => {
+    const page = (ids: number[]) => ({ url: `${UT}/club`, status: 200, ts: 1, body: JSON.stringify({ itemData: ids.map((id) => ({ id })) }) })
+    expect(summarizeCaptures([page([1, 2, 3]), page([2, 3, 4]), page([1])]).clubCards).toBe(4)
   })
 
   it('{captures: [...]} sarmalı da kabul edilir; liste değilse anlaşılır hata', () => {

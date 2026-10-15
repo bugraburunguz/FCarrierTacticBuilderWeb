@@ -34,6 +34,8 @@ function Reward({ set, items, names, height }: { set: KbSbcSet; items: Map<numbe
         <PlayerCard player={cardPlayerOfRewardItem(ea, (ea.assetId !== undefined ? names.get(ea.assetId) : undefined) ?? (ea.resourceId !== undefined ? items.get(ea.resourceId)?.name : undefined))} width={width} />
       ) : item ? (
         <PlayerCard player={cardPlayerOfKbItem(item)} width={width} />
+      ) : reward.picks > 0 ? (
+        placeholder(UserRound, reward.picks > 1 ? `${reward.picks} oyuncu seçimi` : 'Oyuncu seçimi')
       ) : unknownPlayers > 0 ? (
         placeholder(UserRound, unknownPlayers > 1 ? `${unknownPlayers} oyuncu ödülü` : 'Oyuncu ödülü')
       ) : reward.packs > 0 ? (

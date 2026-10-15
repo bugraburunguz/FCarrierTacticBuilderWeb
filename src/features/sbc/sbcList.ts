@@ -128,6 +128,8 @@ export interface SbcRewardSummary {
   eaItems: RewardItem[]
   /** EA verisi olmayan oyuncu ödülleri (EA kaynak kimliği); yedek: `ut_item`'da varsa kart çizilir. */
   itemResourceIds: number[]
+  /** Oyuncu seçimi jetonu adedi (EA verisi var, oyuncu kartı değil): "Oyuncu seçimi" rozeti. */
+  picks: number
   /** Paket ödülü adedi: paket adı veride yok, yalnız "Paket" rozeti. */
   packs: number
 }
@@ -138,17 +140,26 @@ export function parseReward(reward: unknown): SbcRewardSummary {
   const itemResourceIds: number[] = []
   const eaItems: RewardItem[] = []
   let packs = 0
+  let picks = 0
   for (const r of list) {
     const type = r?.type?.toLowerCase()
-    if (type === 'item' && r.item && typeof r.item.rating === 'number') {
+    if (type === 'item' && r.item && isPlayerCard(r.item)) {
       eaItems.push(r.item)
+    } else if (type === 'item' && r.item) {
+      // EA verisi var ama oyuncu kartı değil: "oyuncu seçimi" jetonu (gerçek yakalamada assetId 0, mevki yok, reyting 99).
+      picks += Math.max(1, r.count ?? 1)
     } else if (type === 'item' && typeof r.value === 'number') {
       itemResourceIds.push(r.value)
     } else if (type === 'pack') {
       packs += Math.max(1, r.count ?? 1)
     }
   }
-  return { itemResourceIds, eaItems, packs }
+  return { itemResourceIds, eaItems, picks, packs }
+}
+
+/** Oyuncu kartı: gerçek assetId ve mevki var (allowlist alanlarıyla; itemType alınmadığı için bu iki alana bakılır). */
+function isPlayerCard(item: RewardItem): boolean {
+  return typeof item.rating === 'number' && (item.assetId ?? 0) > 0 && Boolean(item.preferredPosition)
 }
 
 /** Beğeni oranı (yüzde, yuvarlanmış); oy yoksa null (gösterilmez). */
