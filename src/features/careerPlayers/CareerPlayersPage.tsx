@@ -6,13 +6,14 @@ import type { CareerPlayerFacets, PlayerSummary } from '../../api/types'
 import { CompareButton } from '../../components/CompareButton'
 import { Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
-import { Button, Chip, Segmented } from '../../design/components/primitives'
+import { Button, Segmented } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
 import { CatalogResults } from '../catalog/CatalogResults'
 import { CatalogFiltersButton, CatalogSearch, CatalogShell, MoreFilters, PositionChips } from '../catalog/CatalogShell'
 import { CatalogTable, type CatalogColumn } from '../catalog/CatalogTable'
 import { CatalogTile } from '../catalog/CatalogTile'
-import { activeCareerFilterCount, BUCKETS, budgetKnown, careerFiltersFromParams, careerFiltersToParams, DEFAULT_CAREER_FILTERS, TEXT_SORTS, toCareerQuery, type CareerListFilters, type CareerSort } from './careerFilters'
+import { BucketChip } from './BucketChip'
+import { activeCareerFilterCount, budgetKnown, careerFiltersFromParams, careerFiltersToParams, DEFAULT_CAREER_FILTERS, TEXT_SORTS, toCareerQuery, type CareerListFilters, type CareerSort } from './careerFilters'
 import { CareerFilterFields } from './CareerFilterFields'
 
 const STALE_MS = 120_000
@@ -29,19 +30,6 @@ const NUM = 'font-[var(--font-num)] tabular-nums'
 const playerHref = (p: PlayerSummary) => `/players/${p.id}`
 const contractText = (date?: string) => (date ? new Date(`${date}T00:00:00`).toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' }) : '–')
 
-const DOT = { good: 'bg-good', warn: 'bg-warn', bad: 'bg-bad' } as const
-
-/** Kova çipi: nötr çip + renkli nokta (açık temada tonlu çip zemini cam üstünde 4.5:1'in altına düşüyor; anlam metinde). */
-function BucketChip({ player }: { player: PlayerSummary }) {
-  const bucket = BUCKETS.find((b) => b.id === player.feasibility)
-  return bucket ? (
-    <Chip>
-      <span aria-hidden="true" className={`size-2 rounded-full ${DOT[bucket.tone]}`} />
-      {bucket.label}
-    </Chip>
-  ) : <span className="text-ink-2">–</span>
-}
-
 function columns(facets: CareerPlayerFacets | undefined, role: boolean): CatalogColumn<PlayerSummary, CareerSort>[] {
   const cols: (CatalogColumn<PlayerSummary, CareerSort> | false)[] = [
     { sort: 'overall', label: 'OVR', align: 'right', cellClassName: NUM, cell: (p) => p.overall },
@@ -52,7 +40,7 @@ function columns(facets: CareerPlayerFacets | undefined, role: boolean): Catalog
     { sort: 'club', label: 'Kulüp', cellClassName: 'max-w-[160px] truncate text-ink-2', cell: (p) => p.club ?? '–' },
     { sort: 'value', label: 'Değer', align: 'right', cellClassName: `${NUM} whitespace-nowrap text-ink-2`, cell: (p) => (p.valueEur === undefined ? '–' : `${p.valuationEstimated ? '≈' : ''}${formatEur(p.valueEur)}`) },
     Boolean(facets?.contractData) && { label: 'Sözleşme', cellClassName: 'whitespace-nowrap text-ink-2', cell: (p) => contractText(p.contractUntil) },
-    { label: 'Ulaşılabilirlik', cell: (p) => <BucketChip player={p} /> },
+    { label: 'Ulaşılabilirlik', cell: (p) => <BucketChip bucket={p.feasibility} /> },
     role && { sort: 'role', label: 'Rol uyumu', align: 'right', cellClassName: NUM, cell: (p) => p.roleFit?.toFixed(1) ?? '–' },
     { label: <span className="sr-only">Karşılaştır</span>, align: 'right', cell: (p) => <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact /> },
   ]
@@ -165,7 +153,7 @@ export function CareerPlayersPage({ careerId }: { careerId: number }) {
         renderTile={(p, cardWidth) => (
           <CatalogTile key={p.id} player={p} cardWidth={cardWidth} href={playerHref(p)} extra={(
             <div className="flex w-full flex-wrap items-center justify-center gap-1.5 text-xs text-ink-2">
-              <BucketChip player={p} />
+              <BucketChip bucket={p.feasibility} />
               {p.valueEur !== undefined && <span className={NUM}>{p.valuationEstimated ? '≈' : ''}{formatEur(p.valueEur)}</span>}
               {roleSort && p.roleFit !== undefined && <span className="inline-flex gap-1">Rol <span className={`${NUM} text-ink`}>{p.roleFit.toFixed(1)}</span></span>}
             </div>

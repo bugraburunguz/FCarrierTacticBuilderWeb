@@ -12,8 +12,14 @@ export type Tier = 0 | 1 | 2 | 3
 
 /** Takas edilemez kart aynı reytingde bu oranda ucuz sayılır (mutlak öncelik değil). */
 export const UNTRADEABLE_DISCOUNT = 0.5
-/** "Özel kartları koru" açıkken özel kartın maliyet çarpanı: yalnız şart gerektirirse seçilir (şart cezası her zaman daha büyük). */
+/** "Toplam değeri en aza indir" modunda korunan kartın maliyet çarpanı: yalnız şart gerektirirse seçilir (şart cezası her zaman daha büyük). */
 const SPECIAL_PROTECTION = 1_000
+/**
+ * V3-06b/0 "Önce kulüp": satın alınan her kartın taban maliyeti; kulüpteki (korunmayan) kartların herhangi bir toplamı tek satın almadan ucuz
+ * (kulüp kartı değeri < 1e7 × 11). Korunan kartın tabanı 11 satın almadan da büyük: yalnız şart gerektirirse kullanılır.
+ */
+const PURCHASE_BASE = 1e9
+const PROTECTED_BASE = 1e11
 /** Kilitli kart her kadroya girsin diye maliyeti çok düşük. */
 const LOCKED_COST = -1_000_000_000_000
 /** Bilinen eğrinin üst ucundan sonra her reyting puanı için artış (yüksek reyting = yüksek maliyet, düzleşmez). */
@@ -55,36 +61,50 @@ export interface Customize {
   budget?: number
   /** "Özel kartları koru" (varsayılan açık): özel kulüp kartı yalnız şart gerektirirse kullanılır. */
   protectSpecial: boolean
+  /** Bu reytingden itibaren kulüp kartı korunur (yalnız şart gerektirirse); varsayılan 85. */
+  protectRatingFrom: number
+  /** V3-06b/0: "Önce kulüp" (varsayılan; harcanacak coin en aza, kulüp yetiyorsa satın alma yok) / "Toplam değeri en aza indir". */
+  mode: 'club-first' | 'min-value'
 }
 
-export const DEFAULT_CUSTOMIZE: Customize = { locked: [], excluded: [], onlyClub: false, protectSpecial: true }
+export const DEFAULT_CUSTOMIZE: Customize = { locked: [], excluded: [], onlyClub: false, protectSpecial: true, protectRatingFrom: 85, mode: 'club-first' }
+
+type CostOptions = Pick<Customize, 'protectSpecial' | 'protectRatingFrom' | 'mode'>
 
 /**
  * Kulüp kartı maliyeti = feda edilen değer: değer vekili × (1 − transfer vergisi) — kart satılsa elde edilecek olan (vergi kurallardan, GET /ut/rules).
  * Böylece aynı değerde pazardan almak yerine kulüp kartı kullanılır; korunan özel kart çok pahalı.
  */
-export function clubCandidates(cards: UtCard[], { protectSpecial }: Pick<Customize, 'protectSpecial'> = DEFAULT_CUSTOMIZE): PlanCandidate[] {
+export function clubCandidates(cards: UtCard[], options: Partial<CostOptions> = {}): PlanCandidate[] {
+  const { protectSpecial, protectRatingFrom, mode } = { ...DEFAULT_CUSTOMIZE, ...options }
   const afterTax = 1 - rulesStore.get().transferTax
   return cards.filter((c) => c.source === 'club').map((c) => {
     const special = isSpecial(c)
     const value = valueProxy({ rating: c.rating, untradeable: c.untradeable }) * afterTax
+    // Korunan: özel kart (koruma açıkken) ya da eşik üstü reyting — yalnız şart gerektirirse seçilir.
+    const protectedCard = (special && protectSpecial) || c.rating >= protectRatingFrom
+    const price = !protectedCard ? value : mode === 'club-first' ? PROTECTED_BASE + value : value * SPECIAL_PROTECTION
     return {
       id: c.instanceId ?? hash(c.key), cardKey: c.key, name: c.name, assetId: c.assetId, overall: c.rating, positions: c.positions, club: c.club, league: c.league, nationality: c.nationality,
       clubId: c.clubId, leagueId: c.leagueId, nationId: c.nationId, gender: c.gender, cardType: c.cardType, rarity: c.rarity, faceUrl: c.faceUrl,
       source: c.pile === 'storage' ? 'storage' : 'club', untradeable: c.untradeable, playerKey: `p:${personKey(c)}`, tier: c.untradeable ? 0 : 1, special,
-      price: special && protectSpecial ? value * SPECIAL_PROTECTION : value,
+      price,
     }
   })
 }
 
-/** Pazar/katalog kartı maliyeti = gözlenmiş fiyat, yoksa değer vekili (fiyatı bilinmeyen kart maliyetsiz sayılmaz). */
-export function marketCandidates(players: PlayerSummary[], prices: Map<number, number>): PlanCandidate[] {
+/**
+ * Pazar/katalog kartı maliyeti = gözlenmiş fiyat, yoksa değer vekili (fiyatı bilinmeyen kart maliyetsiz sayılmaz).
+ * "Önce kulüp" modunda satın alma tabanı eklenir: kulüp şartı karşılıyorsa satın alma yok, yetmiyorsa eksik kadar.
+ */
+export function marketCandidates(players: PlayerSummary[], prices: Map<number, number>, { mode }: Partial<CostOptions> = DEFAULT_CUSTOMIZE): PlanCandidate[] {
+  const base = (mode ?? DEFAULT_CUSTOMIZE.mode) === 'club-first' ? PURCHASE_BASE : 0
   return players.map((p) => {
     const knownPrice = p.faceAssetId !== undefined ? prices.get(p.faceAssetId) : undefined
     return {
       id: p.id, cardKey: `m:${p.id}`, name: p.name, assetId: p.faceAssetId, overall: p.overall, positions: p.positions, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender,
       faceUrl: p.faceUrl, source: 'market', playerKey: `p:${p.faceAssetId ?? p.id}`, resourceId: p.faceAssetId, knownPrice, tier: knownPrice !== undefined ? 2 : 3,
-      price: valueProxy({ rating: p.overall, knownPrice }),
+      price: base + valueProxy({ rating: p.overall, knownPrice }),
     }
   })
 }

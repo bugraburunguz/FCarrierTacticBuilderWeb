@@ -60,7 +60,7 @@ export function useSquadPlan(challenge: SbcChallenge | undefined, formations: Fo
       const resources = [...new Set(players.flatMap((p) => (p.faceAssetId !== undefined ? [p.faceAssetId] : [])))]
       const priceRows = (await Promise.all(Array.from({ length: Math.ceil(resources.length / PRICE_BATCH) }, (_, i) => endpoints.kbLatestPrices(resources.slice(i * PRICE_BATCH, (i + 1) * PRICE_BATCH))))).flat()
       const prices = new Map(priceRows.map((r) => [r.resourceId, r.price]))
-      const pool = buildPool(clubCandidates(club, customize), marketCandidates(players, prices), customize)
+      const pool = buildPool(clubCandidates(club, customize), marketCandidates(players, prices, customize), customize)
       const solution = await solveTraditionalAsync(request.slots, pool, request.constraints, solveOptions())
       return toPlanResult(solution, request, formation!, pool)
     },

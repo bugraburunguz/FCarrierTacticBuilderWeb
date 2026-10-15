@@ -8,7 +8,7 @@ import type { SbcChallenge } from '../../api/types'
 import { SbcVote, useSbcVotes } from '../../components/SbcVote'
 import { Input } from '../../components/ui'
 import { Workspace } from '../../design/components/Workspace'
-import { Button, EmptyState, ErrorState, SidePanel, Skeleton } from '../../design/components/primitives'
+import { Button, EmptyState, ErrorState, Segmented, SidePanel, Skeleton } from '../../design/components/primitives'
 import { describeRequirement } from '../../lib/sbcChallenge'
 import { isItemScore, isSingleItem } from '../../lib/kbSbc'
 import { CardName } from '../../components/card/CardName'
@@ -98,6 +98,14 @@ function CustomizePanel({ customize, set, picks }: { customize: Customize; set: 
     <details className="text-sm">
       <summary className="min-h-8 cursor-pointer text-xs font-semibold text-accent">Özelleştir</summary>
       <div className="flex flex-col gap-3 pt-2">
+        {/* V3-06b/0: varsayılan "Önce kulüp" — kulüp yetiyorsa satın alma yok; diğeri toplam değeri en aza indirir. */}
+        <Segmented label="Amaç" value={customize.mode} onChange={(mode) => set({ ...customize, mode })}
+          options={[{ id: 'club-first', label: 'Önce kulüp' }, { id: 'min-value', label: 'Toplam değeri en aza indir' }]} />
+        <label className="flex flex-col gap-1 text-xs font-medium text-muted">
+          Koruma eşiği (reyting)
+          <Input type="number" min={50} max={99} inputMode="numeric" value={customize.protectRatingFrom}
+            onChange={(e) => e.target.value !== '' && set({ ...customize, protectRatingFrom: Number(e.target.value) })} />
+        </label>
         <label className="inline-flex min-h-10 items-center gap-2">
           <input type="checkbox" className="size-4 accent-[var(--accent)]" checked={customize.onlyClub} onChange={(e) => set({ ...customize, onlyClub: e.target.checked })} />
           Yalnız kulüp

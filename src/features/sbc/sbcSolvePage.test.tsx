@@ -122,10 +122,13 @@ describe('SBC çözüm sayfası (V3-05d, 08 §5)', () => {
     expect(screen.getByText(/^Kulüpten kullanılan:/)).toHaveTextContent(/^Kulüpten kullanılan: 11 kart · En değerli: \d{2}$/)
   })
 
-  it('Özelleştir: "Özel kartları koru" varsayılan açık', async () => {
+  it('Özelleştir: "Özel kartları koru" varsayılan açık; mod "Önce kulüp" varsayılan; koruma eşiği 85', async () => {
     renderPage('/ut/sbc/7700/77001')
     const custom = (await screen.findByText('Özelleştir')).closest('details')!
     expect(within(custom).getByRole('checkbox', { name: 'Özel kartları koru' })).toBeChecked()
+    expect(within(custom).getByRole('radio', { name: 'Önce kulüp' })).toBeChecked()
+    expect(within(custom).getByRole('radio', { name: 'Toplam değeri en aza indir' })).not.toBeChecked()
+    expect(within(custom).getByLabelText('Koruma eşiği (reyting)')).toHaveValue(85)
   })
 
   it('Özelleştir kapalı başlar; yalnız kulüp seçilince yeniden çözülür', async () => {

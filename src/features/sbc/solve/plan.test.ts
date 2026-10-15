@@ -40,10 +40,62 @@ function goldClub(): UtCard[] {
   return cards
 }
 
+/** V3-06b/0: her 4-4-2 slotu için kulüpte 76 ve 78 altın; ayrıca 86 ve özel 80. Pazarda ucuz 75'ler (gözlenmiş fiyat). */
+function richGoldClub(drop?: string): UtCard[] {
+  const out: UtCard[] = []
+  FORMATION_442.slots.forEach((s, i) => {
+    if (s.slotId === drop) return
+    for (const rating of [76, 78]) {
+      out.push({ key: `r:${i}:${rating}`, source: 'club', name: `Kulüp ${s.position} ${rating} Oyuncu`, rating, positions: [s.position], club: `K${i}`, league: 'Lig', nationality: 'Ü', assetId: 95_000 + i * 10 + rating % 10, instanceId: 95_000 + i * 100 + rating, untradeable: false })
+    }
+  })
+  out.push({ key: 'r:86', source: 'club', name: 'Pahalı Oyuncu', rating: 86, positions: ['ST'], assetId: 96_001, instanceId: 96_001, untradeable: false })
+  out.push({ key: 'r:sp', source: 'club', name: 'Özel Oyuncu', rating: 80, positions: ['CM'], assetId: 96_002, instanceId: 96_002, untradeable: false, rarityId: 3 })
+  return out
+}
+const cheap75 = FORMATION_442.slots.map((s, i) => ({ id: 800_000 + i, name: `Pazar ${s.position}`, overall: 75, positions: [s.position], faceAssetId: 810_000 + i, valuationEstimated: false }))
+const cheapPrices = new Map(cheap75.map((p) => [p.faceAssetId, 300]))
+
+describe('çözücü varsayılanı "Önce kulüp" (V3-06b/0)', () => {
+  const exactGold = { ...SBC_CHALLENGES[0], challengeId: 3, name: 'Tam Altın', requirements: [{ kind: 'QUALITY', op: 'EXACT', value: 3 }] }
+  const plan = (club: UtCard[], customize = DEFAULT_CUSTOMIZE) => solvePlan({ challenge: exactGold, formation: FORMATION_442, customize,
+    pool: buildPool(clubCandidates(club, customize), marketCandidates(cheap75, cheapPrices, customize), customize) }).picks.filter((p): p is PlanCandidate => Boolean(p))
+
+  it('varsayılan mod önce kulüp; koruma eşiği 85', () => {
+    expect(DEFAULT_CUSTOMIZE.mode).toBe('club-first')
+    expect(DEFAULT_CUSTOMIZE.protectRatingFrom).toBe(85)
+  })
+
+  it('tam Altın 11: kulüpte 76/78 varken pazardan 75 alınmaz; 86 ve özel kart kullanılmaz; kulüp içinde düşük değerli (76) seçilir', () => {
+    const picks = plan(richGoldClub())
+    expect(picks).toHaveLength(11)
+    expect(picks.filter((p) => p.tier >= 2)).toHaveLength(0)
+    expect(picks.some((p) => p.cardKey === 'r:86' || p.special)).toBe(false)
+    expect(picks.every((p) => p.overall === 76)).toBe(true)
+  })
+
+  it('kulüp yetmiyorsa yalnız eksik kadar satın alınır', () => {
+    const picks = plan(richGoldClub('s0'))
+    expect(picks.filter((p) => p.tier >= 2)).toHaveLength(1)
+  })
+
+  it('"Toplam değeri en aza indir" modu mevcut davranış: daha ucuz pazar 75\'i kulüp 76\'sına tercih eder', () => {
+    const picks = plan(richGoldClub(), { ...DEFAULT_CUSTOMIZE, mode: 'min-value' })
+    expect(picks.filter((p) => p.tier >= 2).length).toBeGreaterThan(0)
+  })
+
+  it('koruma eşiği değiştirilebilir: 86 eşik 90 iken korunmaz (yine de gereksizse seçilmez)', () => {
+    const c = clubCandidates(richGoldClub(), { ...DEFAULT_CUSTOMIZE, protectRatingFrom: 90 }).find((x) => x.cardKey === 'r:86')!
+    const p = clubCandidates(richGoldClub()).find((x) => x.cardKey === 'r:86')!
+    expect(c.price!).toBeLessThan(p.price!)
+  })
+})
+
 describe('kulüp mü pazar mı (V3-05d-c)', () => {
   it('aynı reytingde kulüp kartı, satışındaki transfer vergisi (kurallardan) kadar ucuz sayılır: gereksiz satın alma yok', () => {
-    const own = clubCandidates([{ key: 'c:1', source: 'club', name: 'A', rating: 75, positions: ['ST'], untradeable: false }])[0]
-    const buy = marketCandidates([{ id: 1, name: 'B', overall: 75, positions: ['ST'], valuationEstimated: false }], new Map())[0]
+    // "Toplam değeri en aza indir" modunun maliyet modeli (V3-06b'de varsayılan "Önce kulüp" oldu)
+    const own = clubCandidates([{ key: 'c:1', source: 'club', name: 'A', rating: 75, positions: ['ST'], untradeable: false }], { mode: 'min-value' })[0]
+    const buy = marketCandidates([{ id: 1, name: 'B', overall: 75, positions: ['ST'], valuationEstimated: false }], new Map(), { mode: 'min-value' })[0]
     expect(own.price!).toBeLessThan(buy.price!)
     expect(own.price!).toBeCloseTo(buy.price! * (1 - rulesStore.get().transferTax), 5)
   })

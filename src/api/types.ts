@@ -625,6 +625,31 @@ export interface PlayerRoleFit {
   engineVersion?: string
   fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
   narrative?: FitNarrative
+  /** V3-06b: kariyerde levelFit'in ölçüldüğü düzey (kullanıcının ligi); kariyersiz çağrıda yok. */
+  levelReference?: LevelReference
+}
+
+/** LEAGUE: kullanıcının ligi (lig gücü OVR); OVR: lig gücü bilinmiyor, oyuncunun kendi OVR bandı. */
+export interface LevelReference {
+  kind: 'LEAGUE' | 'OVR'
+  league?: string
+  ovr?: number
+}
+
+/** V3-06b: kariyer oyuncu sayfası, Sözleşme ve değer. Veri yoksa alan gelmez (0 değil, ENG-02). */
+export interface CareerPlayerContract {
+  inSquad: boolean
+  valueEur?: number
+  valuationEstimated: boolean
+  wageEur?: number
+  releaseClauseEur?: number
+  contractUntil?: string
+  gameDate?: string
+  monthsLeft?: number
+  onLoan: boolean
+  feasibility?: FeasibilityBucket
+  budgetEur?: number
+  budgetAfterPurchaseEur?: number
 }
 
 export interface SetupCheck {

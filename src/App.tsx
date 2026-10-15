@@ -8,7 +8,7 @@ import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
 import { useActiveCareerId } from './state/careerStore'
-import { playersView } from './features/careerPlayers/playersView'
+import { playerDetailView, playersView } from './features/careerPlayers/playersView'
 
 // Rota başına lazy chunk (11 §8 Q10): ilk JS yalnız kabuk + açılan sayfa.
 const CareerDeskPage = lazy(() => import('./pages/CareerDeskPage').then((m) => ({ default: m.CareerDeskPage })))
@@ -43,6 +43,7 @@ const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPa
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const CareerPlayersPage = lazy(() => import('./features/careerPlayers/CareerPlayersPage').then((m) => ({ default: m.CareerPlayersPage })))
+const CareerPlayerPage = lazy(() => import('./features/player/CareerPlayerPage').then((m) => ({ default: m.CareerPlayerPage })))
 const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
 const SbcListPage = lazy(() => import('./features/sbc/SbcListPage').then((m) => ({ default: m.SbcListPage })))
 const UtSquadPage = lazy(() => import('./pages/UtSquadPage').then((m) => ({ default: m.UtSquadPage })))
@@ -57,6 +58,16 @@ function PlayersRoute() {
     return <CardDatabasePage />
   }
   return view === 'career' && careerId !== undefined ? <CareerPlayersPage key={careerId} careerId={careerId} /> : <PlayersPage />
+}
+
+/** /players/:id: kariyer modunda v3 + oturum + seçili kariyer → kariyer oyuncu sayfası (V3-06b); aksi halde mevcut sayfa (v2 dahil). */
+function PlayerDetailRoute() {
+  const mode = useMode()
+  const { authenticated } = useAuth()
+  const careerId = useActiveCareerId()
+  return playerDetailView({ mode, v3: isV3(), authenticated, careerId }) === 'career' && careerId !== undefined
+    ? <CareerPlayerPage key={careerId} careerId={careerId} />
+    : <PlayerDetailPage />
 }
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -82,7 +93,7 @@ export function App() {
         <Route path="register" element={<RegisterPage />} />
         <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="players" element={<PlayersRoute />} />
-        <Route path="players/:id" element={<PlayerDetailPage />} />
+        <Route path="players/:id" element={<PlayerDetailRoute />} />
         <Route path="compare" element={<ComparePage />} />
         <Route path="wonderkids" element={<WonderkidsPage />} />
         <Route path="tactics/builder" element={<Navigate to="/squad/builder" replace />} />

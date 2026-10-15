@@ -64,6 +64,8 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
       await page.goto(`${base}/ut/players/${asset}${query}${query ? '&' : '?'}ui=v3`, { waitUntil: 'networkidle' })
       await page.getByRole('heading', { level: 1 }).waitFor()
       if (name === 'statlar') await page.getByRole('tabpanel').getByText('Finishing', { exact: false }).first().or(page.getByRole('tabpanel').getByText('Bitiricilik').first()).waitFor()
+      // V3-06b: kart ut_item senkronundan (V3-05d-b) beri bilgi tabanında olabilir → fiyat sekmesi boş durum ya da platform anahtarı.
+      else if (name === 'fiyat') await page.getByText(ready, { exact: false }).first().or(page.getByRole('radiogroup', { name: 'Platform' })).first().waitFor({ timeout: 20000 })
       else await page.getByText(ready, { exact: false }).first().waitFor({ timeout: 20000 })
       await page.waitForTimeout(400)
       const layout = await layoutOf()

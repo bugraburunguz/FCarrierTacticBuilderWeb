@@ -6,10 +6,10 @@ import type { Customize, PlanCandidate } from './candidates'
 /** Çözücü zaman bütçesi (ms): aşılınca ışın daraltılır, çözüm yine döner. */
 export const SOLVE_DEADLINE_MS = 3000
 /**
- * Şart cezası katsayısı: en pahalı katmanın (fiyatı bilinmeyen) 11 kartlık toplamından büyük; böylece çözücü önce şartları sağlar,
- * maliyet (öncelik katmanı) yalnız eşit şartlı kadrolar arasında seçer.
+ * Şart cezası katsayısı: en pahalı 11 kartlık toplamdan (korunan kart tabanı 1e11 × 11) büyük; böylece çözücü önce şartları sağlar,
+ * maliyet yalnız eşit şartlı kadrolar arasında seçer.
  */
-export const PENALTY_SCALE = 1e12
+export const PENALTY_SCALE = 1e13
 
 export interface PlanRequest {
   slots: SbcSlot[]

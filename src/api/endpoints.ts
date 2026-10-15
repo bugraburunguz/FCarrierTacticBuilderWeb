@@ -7,6 +7,7 @@ import type {
   CreditCosts,
   Career,
   CareerPlayer,
+  CareerPlayerContract,
   CareerPlayerFacets,
   Club,
   Credited,
@@ -131,6 +132,7 @@ export const endpoints = {
   playerFacets: (careerId: number) => api.get<CareerPlayerFacets>('/players/facets', { career: careerId }),
   player: (id: number, careerId?: number) => api.get<PlayerDetail>(`/players/${id}`, { career: careerId }),
   playerRoles: (id: number, careerId?: number, engine?: 'v1' | 'v3') => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId, engine }),
+  playerContract: (id: number, careerId: number) => api.get<CareerPlayerContract>(`/players/${id}/contract`, { career: careerId }),
   playerByAsset: (assetId: number) => api.get<PlayerDetail>(`/players/asset/${assetId}`),
   /** V3-05c-c: ödül kartı adı için toplu assetId → katalog adı (bilinmeyen kimlik yanıtta yok). */
   playerAssetNames: (assetIds: number[]) => api.get<{ assetId: number; name: string }[]>('/players/assets', { id: assetIds.map(String) }),
