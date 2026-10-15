@@ -36,6 +36,7 @@ const UtEvolutionsPage = lazy(() => import('./pages/UtEvolutionsPage').then((m) 
 const UtImportPage = lazy(() => import('./pages/UtImportPage').then((m) => ({ default: m.UtImportPage })))
 const UtObjectivesPage = lazy(() => import('./pages/UtObjectivesPage').then((m) => ({ default: m.UtObjectivesPage })))
 const UtSbcPage = lazy(() => import('./pages/UtSbcPage').then((m) => ({ default: m.UtSbcPage })))
+const SbcSolvePage = lazy(() => import('./features/sbc/SbcSolvePage').then((m) => ({ default: m.SbcSolvePage })))
 const UtSbcChallengePage = lazy(() => import('./pages/UtSbcChallengePage').then((m) => ({ default: m.UtSbcChallengePage })))
 const ReplicasPage = lazy(() => import('./features/replicas/ReplicasPage').then((m) => ({ default: m.ReplicasPage })))
 const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPage').then((m) => ({ default: m.ReplicaDetailPage })))
@@ -105,8 +106,9 @@ export function App() {
         {/* V3-06a: tek veri kaynağı Web App yakalaması olan UT sayfaları; yakalama bayrağı kapalıyken tek kısa not (kod duruyor).
             v3: Katalog şablonlu SBC listesi; v2 sayfası (UtSbcPage/KbSbcList) dokunulmadan kalır. */}
         <Route path="ut/sbc" element={<CaptureOnly title="SBC çözücü">{isV3() ? <SbcListPage /> : <UtSbcPage />}</CaptureOnly>} />
-        <Route path="ut/sbc/:setId/:challengeId" element={<CaptureOnly title="SBC çözücü"><UtSbcChallengePage /></CaptureOnly>} />
-        <Route path="ut/sbc/:setId" element={<CaptureOnly title="SBC çözücü"><UtSbcChallengePage /></CaptureOnly>} />
+        {/* V3-05d: v3'te çözüm sayfası (Detay şablonu, plan); v2'de eski çözücü. */}
+        <Route path="ut/sbc/:setId/:challengeId" element={<CaptureOnly title="SBC çözücü">{isV3() ? <SbcSolvePage /> : <UtSbcChallengePage />}</CaptureOnly>} />
+        <Route path="ut/sbc/:setId" element={<CaptureOnly title="SBC çözücü">{isV3() ? <SbcSolvePage /> : <UtSbcChallengePage />}</CaptureOnly>} />
         <Route path="ut/objectives" element={<CaptureOnly title="Objective planı"><UtObjectivesPage /></CaptureOnly>} />
         <Route path="ut/club" element={<CaptureOnly title="Kadrom"><UtClubPage /></CaptureOnly>} />
         <Route path="ut/import" element={<UtImportPage />} />

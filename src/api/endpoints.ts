@@ -161,6 +161,9 @@ export const endpoints = {
   kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; resource?: number[]; limit?: number; offset?: number }) =>
     api.get<KbItem[]>('/ut/kb/items', { ...params, resource: params.resource?.map(String) }),
   kbItem: (id: number) => api.get<{ item: KbItem; versions: KbItem[] }>(`/ut/kb/items/${id}`),
+  /** V3-05d: toplu son gözlenen fiyat (yalnız katkı gözlemi; gözlemi olmayan kimlik yanıtta yok). */
+  kbLatestPrices: (resourceIds: number[], platform = 'CONSOLE') =>
+    api.get<{ resourceId: number; price: number; observedAt: string; lowConfidence: boolean }[]>('/ut/kb/prices', { resource: resourceIds.map(String), platform }),
   kbPrices: (id: number, platform: string, range: string) => api.get<KbPricePoint[]>(`/ut/kb/items/${id}/prices`, { platform, range }),
   eaRoles: () => api.get<EaRoleOption[]>('/tactics/ea-roles'),
   captureLink: (mode: 'PERSONAL' | 'CONTRIB') => request<{ token: string; mode: string; expiresInSeconds: number }>('/ut/capture/link', { method: 'POST', body: {}, query: { mode } }),

@@ -6,12 +6,13 @@ import { solveTraditionalAsync } from '../lib/solveAsync'
 import { type SbcCandidate, type SbcConstraints, type SbcSolution } from '../lib/sbcTraditional'
 import { squadChemistry } from '../lib/chemistry'
 import { parseXiText } from '../lib/objectives'
-import type { LookupItem, PageResponse, PlayerSummary, SbcChallenge } from '../api/types'
+import type { LookupItem, SbcChallenge } from '../api/types'
 import { challengeSetup } from '../lib/sbcChallenge'
 import { Pitch, type PitchSlot } from './pitch/Pitch'
 import { cardPlayerOf } from '../lib/cardPlayer'
 import { swapSlots } from '../lib/squadBuilder'
-import { marketWindow, teamRating } from '../lib/sbcTraditional'
+import { teamRating } from '../lib/sbcTraditional'
+import { fetchMarketPlayers } from '../features/sbc/solve/marketPool'
 import { estimateCoinPrice } from '../lib/coinPrice'
 import { ownedCost, ownedSource } from '../lib/sbcPriority'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -25,18 +26,6 @@ const MODE_LABEL: Record<PoolMode, string> = { auto: 'Önerilen: Storage → Kad
 
 function shortCoins(value: number): string {
   return value >= 1_000_000 ? `${(value / 1_000_000).toFixed(1)}M` : value >= 1000 ? `${Math.round(value / 1000)}K` : String(value)
-}
-
-async function fromAnyPages(r: NonNullable<SbcConstraints['fromAny']>[number], leagues: LookupItem[], nations: LookupItem[], positions: string[], ovrMin: number, ovrMax: number, order: 'asc' | 'desc'): Promise<PageResponse<PlayerSummary>[]> {
-  if (r.kind === 'club') {
-    const clubs = await Promise.all(r.names.map((name) => endpoints.clubs(name, { limit: 1, gender: 0 })))
-    return Promise.all(clubs.flatMap((hit) => hit.slice(0, 1)).map((club) => endpoints.players({ club: club.id, ovr_min: ovrMin, ovr_max: ovrMax, sort: 'overall', order, size: 60, gender: 0 })))
-  }
-  const list = r.kind === 'league' ? leagues : nations
-  const ids = r.names.flatMap((name) => list.filter((l) => l.name.toLowerCase() === name.toLowerCase()).map((l) => l.id))
-  return Promise.all(
-    ids.flatMap((id) => positions.map((pos) => endpoints.players({ pos: [pos], ...(r.kind === 'league' ? { league: id } : { nat: id }), ovr_min: ovrMin, ovr_max: ovrMax, sort: 'overall', order, size: 40, gender: 0 }))),
-  )
 }
 
 function resolveNames(wanted: Record<string, number>, list: LookupItem[]): { id: number; name: string; count: number }[] {
@@ -79,25 +68,17 @@ export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: Sbc
       const slots = formation!.slots.map((s) => ({ slotId: s.slotId, position: s.position }))
       const min = Number(rating) || 0
       const extra = setup?.extra ?? {}
-      const { ovrMin, ovrMax, order } = marketWindow(min, extra)
-      const positions = [...new Set(slots.map((s) => s.position))]
       const useMarket = mode !== 'owned'
-      const pages = useMarket
-        ? await Promise.all(
-            positions.map((pos) => endpoints.players({ pos: [pos], ovr_min: ovrMin, ovr_max: ovrMax, sort: 'overall', order, size: 100, gender: 0 })),
-          )
-        : []
       const xi = parseXiText(xiText)
       const [leagueList, nationList] = await Promise.all([endpoints.leagues(0), endpoints.nationalities()])
       const leagueRequired = resolveNames(xi.league, leagueList)
       const nationRequired = resolveNames(xi.nationality, nationList)
-      const extraPages = useMarket ? await Promise.all([
-        ...leagueRequired.flatMap((r) => positions.map((pos) => endpoints.players({ pos: [pos], league: r.id, ovr_min: ovrMin, ovr_max: ovrMax, sort: 'overall', order, size: 40, gender: 0 }))),
-        ...nationRequired.flatMap((r) => positions.map((pos) => endpoints.players({ pos: [pos], nat: r.id, ovr_min: ovrMin, ovr_max: ovrMax, sort: 'overall', order, size: 40, gender: 0 }))),
-      ]) : []
-      const fromPages = useMarket ? (await Promise.all((extra.fromAny ?? []).map((r) => fromAnyPages(r, leagueList, nationList, positions, ovrMin, ovrMax, order)))).flat() : []
+      // Katalog havuzu çekirdekten (src/features/sbc/solve/marketPool): v3 çözüm sayfasıyla aynı.
+      const marketPlayers = useMarket
+        ? await fetchMarketPlayers({ slots, constraints: { teamRatingMin: min, ...extra }, leagueIds: leagueRequired.map((r) => r.id), nationIds: nationRequired.map((r) => r.id), leagues: leagueList, nations: nationList })
+        : []
       const byId = new Map<number, SbcCandidate>()
-      pages.concat(extraPages, fromPages).flatMap((p) => p.items).forEach((p) =>
+      marketPlayers.forEach((p) =>
         byId.set(p.id, { id: p.id, name: p.name, overall: p.overall, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender, positions: p.positions, price: estimateCoinPrice(p.overall), source: 'market', faceUrl: p.faceUrl, playerKey: 'p:' + p.id }),
       )
       if (mode !== 'market') {

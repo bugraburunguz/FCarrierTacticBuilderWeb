@@ -7,6 +7,7 @@ import { writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { LONGEST, measurePitch, q18Problems } from './lib/pitchGate.mjs'
 
 // Dolu kariyerde oturumlu istekler önbelleğe alınmaz; yerel hız sınırı sayaçları (Redis, geçici) her boyutta ve yeniden denemede sıfırlanır
 // (V3-05c: 348 kombinasyonda 389 "Rate limit exceeded" → "sayfa yüklenmedi"). Diğer kapı betikleriyle aynı yöntem.
@@ -34,7 +35,6 @@ const SIZES = [
   { name: '1536x864', width: 1536, height: 864 },
   { name: '1440x900', width: 1440, height: 900 },
 ]
-const LONGEST = { one: 'Wide Mid · Vers', full: 'Ball-Playing Defender · Ball-Winning' }
 
 const cache = new Map()
 async function api(path) {
@@ -135,79 +135,8 @@ for (const mode of modes) {
           continue
         }
         await page.waitForTimeout(state === 'filled' ? 900 : 200)
-        const report = await page.evaluate(
-          ({ formationId, expected, longest }) => {
-            const groups = [...document.querySelectorAll('[data-slot-group]')]
-            groups.forEach((g) => {
-              const label = g.querySelector('button[title]')
-              const spans = label ? [...label.querySelectorAll('span')] : []
-              if (spans.length >= 1) {
-                spans[0].textContent = window.innerWidth < 480 ? longest.one : longest.full
-              }
-            })
-            const rect = (el) => el.getBoundingClientRect()
-            const field = rect(document.querySelector('.pitch-field'))
-            const boxes = groups.map((g) => ({ id: g.dataset.slotGroup, ...rect(g).toJSON() }))
-            const problems = []
-            if (groups.length !== expected) {
-              problems.push(`slot grubu sayısı ${groups.length} ≠ ${expected}`)
-            }
-            boxes.forEach((a, i) => {
-              boxes.slice(i + 1).forEach((b) => {
-                const hit = a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5
-                if (hit) problems.push(`${a.id} × ${b.id} kesişiyor`)
-              })
-              if (a.left < field.left - 0.5 || a.right > field.right + 0.5 || a.top < field.top - 0.5 || a.bottom > field.bottom + 0.5) problems.push(`${a.id} saha dışında`)
-            })
-            groups.forEach((g) => {
-              const gr = rect(g)
-              ;[...g.querySelectorAll('button[title], [data-slot-pill], [data-pitch-slot]')].forEach((child) => {
-                const cr = rect(child)
-                if (cr.width > 0 && (cr.bottom > gr.bottom + 1 || cr.right > gr.right + 1 || cr.left < gr.left - 1)) {
-                  problems.push(`${g.dataset.slotGroup}: içerik grup kutusundan taşıyor (${child.tagName.toLowerCase()})`)
-                }
-              })
-              const label = g.querySelector('button[title]')
-              if (label && label.scrollWidth > label.clientWidth + 1) problems.push(`${g.dataset.slotGroup}: rol etiketi kesiliyor`)
-            })
-            // Q18: kart genişliği ve kart içi en küçük yazı (ölçekli kapsayıcıdaki yazı genişlik/180 ile çarpılır)
-            const cards = groups.map((g) => g.querySelector('[role="img"]')).filter(Boolean)
-            let cardWidth = cards.length ? Infinity : null
-            let minFont = cards.length ? Infinity : null
-            let ovrFont = cards.length ? Infinity : null
-            cards.forEach((card) => {
-              const cw = card.getBoundingClientRect().width
-              cardWidth = Math.min(cardWidth, cw)
-              const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT)
-              for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-                if (!node.textContent.trim()) continue
-                const el = node.parentElement
-                const scaled = el.closest('[style*="scale("]') ? cw / 180 : 1
-                minFont = Math.min(minFont, parseFloat(getComputedStyle(el).fontSize) * scaled)
-              }
-              const ovr = card.querySelector('.font-display > div')
-              if (ovr) ovrFont = Math.min(ovrFont, parseFloat(getComputedStyle(ovr).fontSize) * (cw / 180))
-            })
-            // Q18 eki: her dolu kartta isim görünür ve ≥ 11px
-            let nameProblem = null
-            cards.forEach((card) => {
-              const el = card.parentElement?.querySelector('[data-card-name]') ?? card.closest('[data-pitch-slot]')?.querySelector('[data-card-name]')
-              const r = el?.getBoundingClientRect()
-              if (!el || !el.textContent.trim() || r.width < 4 || r.height < 4) nameProblem = 'Q18: kartta isim görünmüyor'
-              else if (parseFloat(getComputedStyle(el).fontSize) < 10.95) nameProblem = 'Q18: isim yazısı 11px altında'
-            })
-            if (nameProblem) problems.push(nameProblem)
-            const root = document.documentElement
-            return { formationId, problems: [...new Set(problems)], pageOverflowY: root.scrollHeight - window.innerHeight, fieldBottom: field.bottom, fieldWidth: field.width, innerHeight: window.innerHeight, cardWidth, minFont, ovrFont }
-          },
-          { formationId: formation.id, expected: formation.slots.length, longest: LONGEST },
-        )
-        const minCard = size.width < 480 ? 48 : size.width >= 1024 ? 56 : 0
-        if (report.cardWidth !== null) {
-          if (report.cardWidth < minCard - 0.5) report.problems.push(`Q18: kart ${Math.round(report.cardWidth)}px < ${minCard}px`)
-          if (report.minFont < 10.95) report.problems.push(`Q18: kart içi yazı ${report.minFont.toFixed(1)}px < 11px`)
-          if (report.ovrFont < 13.95) report.problems.push(`Q18: OVR ${report.ovrFont.toFixed(1)}px < 14px`)
-        }
+        // Ölçüm scripts/lib/pitchGate.mjs'te (SBC çözüm sahası kapısıyla ortak).
+        const report = q18Problems(await page.evaluate(measurePitch, { formationId: formation.id, expected: formation.slots.length, longest: LONGEST }), size.width)
         // Scroll'suz sığma artık kapı değil, hedef: yalnız raporlanır.
         results.push({ mode, state, size: size.name, formation: formation.id, fieldWidth: Math.round(report.fieldWidth), cardWidth: report.cardWidth && Math.round(report.cardWidth), minFont: report.minFont && Number(report.minFont.toFixed(1)), ovrFont: report.ovrFont && Number(report.ovrFont.toFixed(1)), fitsViewport: report.fieldBottom <= report.innerHeight + 1, problems: report.problems })
         await page.close()
