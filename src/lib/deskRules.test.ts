@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../api/types'
 import roleIds from './roleIds.fixture.json'
-import { ageProfile, alerts, depthRows, sellAdvice, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, type DeskSlot } from './deskRules'
+import { ageProfile, alerts, depthRows, EVENT_LABEL, sellAdvice, SNAPSHOT_LABEL, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, windowDaysLeft, type DeskSlot } from './deskRules'
 
 function player(id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer['player']> = {}, loanedOut = false): CareerPlayer {
   return { player: { id, name: `P${id}`, overall, age, positions: [position], potential: overall + 2, valueEur: 2_000_000, ...extra } as CareerPlayer['player'], onLoan: false, loanedOut }
@@ -50,6 +50,37 @@ describe('deskRules', () => {
       windowEndsOn: '2027-01-31', today: new Date('2027-01-25'),
     })
     expect(list.map((a) => a.text)).toEqual(expect.arrayContaining([expect.stringContaining('potansiyeline ulaştı'), expect.stringContaining('düşüşte'), expect.stringContaining('6 gün')]))
+  })
+})
+
+describe('Masa uyarı tipleri (V3-06d)', () => {
+  const base = { slots: [], tags: {}, diffRows: [] }
+  it('sözleşmesi oyun tarihine göre ≤ 6 ay içinde biten oyuncu; oyun tarihi ya da sözleşme yoksa bu tip yok', () => {
+    const squad = [player(8, 'CM', 70, 27, { contractUntil: '2027-05-01' }), player(9, 'CM', 70, 27, { contractUntil: '2028-06-30' })]
+    const list = alerts({ ...base, squad, gameDate: '2027-01-15' })
+    expect(list.filter((a) => a.kind === 'CONTRACT').map((a) => a.text)).toEqual(['P8: sözleşmesi 3 ay içinde bitiyor.'])
+    expect(alerts({ ...base, squad }).some((a) => a.kind === 'CONTRACT')).toBe(false)
+  })
+
+  it('plato (≤ 24 yaş, OVR ≥ POT) ve yaş (30+, düşüşte) tipleri işaretli', () => {
+    const list = alerts({ ...base, squad: [player(5, 'CM', 75, 21, { potential: 75 }), player(3, 'ST', 70, 32)], diffRows: [{ kind: 'CHANGED', playerId: 3, name: 'P3', overallFrom: 72, overallTo: 70 }] })
+    expect(list.find((a) => a.kind === 'PLATEAU')?.text).toContain('potansiyeline ulaştı')
+    expect(list.find((a) => a.kind === 'AGE')?.text).toContain('düşüşte')
+  })
+
+  it('dönem sonu oyun tarihine göre (ENG-04); oyun tarihi verilince bugünün tarihi kullanılmaz', () => {
+    const list = alerts({ ...base, squad: [], windowEndsOn: '2027-01-31', gameDate: '2027-01-25', today: new Date('2030-01-01') })
+    expect(list.find((a) => a.kind === 'WINDOW')?.text).toContain('6 gün')
+    expect(windowDaysLeft('2027-01-31', '2027-01-25')).toBe(6)
+    expect(windowDaysLeft(undefined, '2027-01-25')).toBeUndefined()
+    expect(windowDaysLeft('2027-01-31', undefined)).toBeUndefined()
+  })
+
+  it('zaman çizelgesi Türkçe etiketler (WEB-BUG-17): ham SELL/LOAN_OUT yok', () => {
+    expect(EVENT_LABEL.SELL).toBe('Satış')
+    expect(EVENT_LABEL.LOAN_OUT).toBe('Kiralık gönderildi')
+    expect(Object.values(EVENT_LABEL).every((t) => !/^[A-Z_]+$/.test(t))).toBe(true)
+    expect(SNAPSHOT_LABEL.IMPORT).toBe('İçe aktarma')
   })
 })
 

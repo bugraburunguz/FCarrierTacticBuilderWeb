@@ -24,7 +24,7 @@ import { TacticCodeCard } from '../features/squad/TacticCodeCard'
 import type { SlotPanel } from '../features/squad/types'
 import { careerSlotTabs } from '../features/squad/careerSlotTabs'
 import { useCareerBinding } from '../features/squad/useCareerBinding'
-import { useSlotFits } from '../features/squad/useSlotFits'
+import { teamFitPct, useSlotFits } from '../features/squad/useSlotFits'
 import { fitDisplay } from '../lib/fitLabels'
 import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
 import { canPlaySlot, formationName } from '../lib/positions'
@@ -34,6 +34,7 @@ import { useActiveCareerId } from '../state/careerStore'
 import { DEFAULT_SETUP } from '../state/tacticStore'
 
 const AUTO_FIT = '__auto_fit__'
+const pctText = (value?: number) => (value === undefined ? undefined : `%${value}`)
 
 export function SquadBuilderPage() {
   const careerId = useActiveCareerId()
@@ -197,7 +198,7 @@ export function SquadBuilderPage() {
           onSetup={(next) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_SETUP), ...next } }))}
           squadNameKey="fc.squadName.career"
           ratingStars={placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined}
-          allAverages={[{ label: 'Rol uyumu', value: fitted.length ? `%${Math.round(fitted.reduce((s, v) => s + (v.fit?.pct ?? 0), 0) / fitted.length)}` : undefined }, { label: 'Dolu', value: `${placed.length}/11` }]}
+          allAverages={[{ label: 'Rol uyumu', value: pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : [])))) }, { label: 'Dolu', value: `${placed.length}/11` }]}
           stats={[
             { label: 'Ort. OVR', value: placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined },
             { label: 'Dolu', value: placed.length, suffix: '/ 11' },
@@ -208,7 +209,7 @@ export function SquadBuilderPage() {
               <CareerSelect />
               <h3 className="font-display text-lg font-semibold">Rol uyumu</h3>
               <div className="grid grid-cols-2 gap-2">
-                <StatTile label="Kadro uyumu" value={fitted.length ? `%${Math.round(fitted.reduce((s, v) => s + (v.fit?.pct ?? 0), 0) / fitted.length)}` : undefined} />
+                <StatTile label="Kadro uyumu" value={pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : []))))} />
                 <StatTile label="En zayıf" value={weakest ? `${weakest.position} %${weakest.fit?.pct}` : undefined} />
               </div>
               {weakest && weakReasons[weakest.slotId] && <p className="text-xs text-muted">{weakReasons[weakest.slotId]}</p>}

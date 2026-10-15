@@ -15,9 +15,6 @@ export interface TransferNeed {
   state?: FitState
 }
 
-const DAYS_PER_MONTH = 30
-const DAY_MS = 86_400_000
-
 /** İhtiyaçlar: sahadaki rozetle aynı kaynak (zayıf halkalar, seviyesine göre artan; `all` ile tüm dizilim) + derinlik açıkları. */
 export function transferNeeds(fitRows: SlotFitRow[], all: boolean, squad: CareerPlayer[]): TransferNeed[] {
   const weak = needsFromFits(fitRows, all).map((r) => ({ key: `slot-${r.slotId}`, position: r.position, roleId: r.roleId, label: `${r.position} · ${r.roleName}`, detail: `${r.playerName} · ${levelText(r.display.pct)}`, state: r.display.state }))
@@ -39,11 +36,5 @@ export function shortlistCost(items: ShortlistItem[]): { total: number | undefin
   return { total: known.length === 0 ? undefined : known.reduce((a, b) => a + b, 0), unknown: items.length - known.length, count: items.length }
 }
 
-/** Sözleşmede kalan tam ay, oyun tarihine göre (30 günlük ay, sunucu FeasibilityInputs.monthsLeft ile aynı); tarih yoksa yok. */
-export function contractMonthsLeft(gameDate: string | undefined, contractUntil: string | undefined): number | undefined {
-  if (!gameDate || !contractUntil) {
-    return undefined
-  }
-  const days = Math.round((Date.parse(`${contractUntil}T00:00:00Z`) - Date.parse(`${gameDate}T00:00:00Z`)) / DAY_MS)
-  return Math.max(0, Math.floor(days / DAYS_PER_MONTH))
-}
+/** Tek kaynak lib/contract (Masa uyarısı ve liste süzgeciyle aynı hesap). */
+export { contractMonthsLeft } from '../../lib/contract'

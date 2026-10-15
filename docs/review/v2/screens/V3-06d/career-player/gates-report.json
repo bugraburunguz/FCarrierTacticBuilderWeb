@@ -1,0 +1,4246 @@
+{
+  "players": {
+    "kadroda": 12225,
+    "disarida": 1,
+    "kaleci": 15791,
+    "tam-veri": 1
+  },
+  "report": [
+    {
+      "shot": "kadroda-statlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kadroda-statlar-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kadroda-roller-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-gelisim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-sozlesme-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "disarida-statlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "disarida-statlar-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "disarida-roller-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-gelisim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-sozlesme-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kaleci-statlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 5,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": false,
+            "lines": 0
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kaleci-statlar-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kaleci-roller-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-gelisim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-sozlesme-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "tam-veri-statlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "tam-veri-roller-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-gelisim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-sozlesme-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Maaş",
+        "Sözleşme bitişi",
+        "Kiralık durumu",
+        "Serbest bırakma bedeli",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kadroda-statlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kadroda-statlar-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kadroda-roller-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-gelisim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-sozlesme-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "disarida-statlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "disarida-statlar-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "disarida-roller-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-gelisim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-sozlesme-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kaleci-statlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 5,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": false,
+            "lines": 0
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kaleci-statlar-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kaleci-roller-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-gelisim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-sozlesme-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 1,
+      "tabTopOk": true,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "tam-veri-statlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "tam-veri-roller-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-gelisim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-sozlesme-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 588,
+      "inSquadBadge": 0,
+      "tabTopOk": true,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Maaş",
+        "Sözleşme bitişi",
+        "Kiralık durumu",
+        "Serbest bırakma bedeli",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kadroda-statlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kadroda-statlar-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kadroda-roller-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-gelisim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-sozlesme-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "disarida-statlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "disarida-statlar-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "disarida-roller-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-gelisim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-sozlesme-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kaleci-statlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 5,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": false,
+            "lines": 0
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kaleci-statlar-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kaleci-roller-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-gelisim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-sozlesme-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "tam-veri-statlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "tam-veri-roller-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-gelisim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-sozlesme-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Maaş",
+        "Sözleşme bitişi",
+        "Kiralık durumu",
+        "Serbest bırakma bedeli",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kadroda-statlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kadroda-statlar-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kadroda-roller-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-gelisim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-sozlesme-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "disarida-statlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "disarida-statlar-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "disarida-roller-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-gelisim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-sozlesme-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kaleci-statlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 5,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": false,
+            "lines": 0
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kaleci-statlar-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kaleci-roller-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-gelisim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-sozlesme-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "REP",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "tam-veri-statlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "tam-veri-roller-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-gelisim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-sozlesme-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "ovrMinPx": 46,
+        "surnamesVisible": 1
+      },
+      "tabTop": 562,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Maaş",
+        "Sözleşme bitişi",
+        "Kiralık durumu",
+        "Serbest bırakma bedeli",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kadroda-statlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kadroda-statlar-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kadroda-roller-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-gelisim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-sozlesme-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "disarida-statlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "disarida-statlar-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "disarida-roller-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-gelisim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-sozlesme-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kaleci-statlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 5,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": false,
+            "lines": 0
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kaleci-statlar-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kaleci-roller-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-gelisim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-sozlesme-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "tam-veri-statlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "tam-veri-roller-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-gelisim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-sozlesme-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Maaş",
+        "Sözleşme bitişi",
+        "Kiralık durumu",
+        "Serbest bırakma bedeli",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kadroda-statlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kadroda-statlar-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kadroda-roller-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-gelisim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kadroda-sozlesme-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kadroda",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "disarida-statlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "disarida-statlar-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "disarida-roller-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-gelisim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "disarida-sozlesme-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "disarida",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    },
+    {
+      "shot": "kaleci-statlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 5,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": false,
+            "lines": 0
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": false,
+            "lines": 0
+          }
+        ]
+      }
+    },
+    {
+      "shot": "kaleci-statlar-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "kaleci-roller-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-gelisim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "kaleci-sozlesme-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "kaleci",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "DIV",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 1,
+      "inSquad": true,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini."
+      ]
+    },
+    {
+      "shot": "tam-veri-statlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "labels": {
+        "labels": 29,
+        "clipped": [],
+        "longest": [
+          {
+            "label": "Savunma farkındalığı",
+            "present": true,
+            "lines": 2
+          },
+          {
+            "label": "Kayarak müdahale",
+            "present": true,
+            "lines": 1
+          },
+          {
+            "label": "Ayakta müdahale",
+            "present": true,
+            "lines": 1
+          }
+        ]
+      }
+    },
+    {
+      "shot": "tam-veri-roller-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "reference": "Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.Rol puanı: rol vektörüne göre ham uygunluk.",
+      "roleNamesClipped": [],
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-gelisim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1
+    },
+    {
+      "shot": "tam-veri-sozlesme-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "player": "tam-veri",
+      "card": {
+        "cards": 1,
+        "minFontPx": 12.4,
+        "minFontText": "PAC",
+        "ovrMinPx": 71.6,
+        "surnamesVisible": 1
+      },
+      "tabTop": 204,
+      "inSquadBadge": 0,
+      "inSquad": false,
+      "badgeOk": true,
+      "leagueLevel": 1,
+      "contractRows": [
+        "Piyasa değeri?Kayıtta değer yok; işaretli değer modelin tahmini.",
+        "Maaş",
+        "Sözleşme bitişi",
+        "Kiralık durumu",
+        "Serbest bırakma bedeli",
+        "Ulaşılabilirlik?Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.",
+        "Alım sonrası bütçe"
+      ]
+    }
+  ]
+}

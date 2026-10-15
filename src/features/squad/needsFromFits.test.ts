@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { RoleFit } from '../../api/types'
 import { fitDisplay } from '../../lib/fitLabels'
-import { needsFromFits, type SlotFitRow } from './useSlotFits'
+import { readFileSync } from 'node:fs'
+import { needsFromFits, teamFitPct, type SlotFitRow } from './useSlotFits'
 
 const row = (slotId: string, levelFit: number, score: number, fitLabel: RoleFit['fitLabel']): SlotFitRow => {
   const fit = { playerId: 1, playerName: slotId, roleId: 'r', roleName: 'Rol', score, levelFit, fitLabel, outOfPosition: false, reasons: [], weaponChecks: [], projectedRating: 70 } as RoleFit
@@ -17,6 +18,14 @@ describe('İhtiyaçlar = yeni motor (E3-10b)', () => {
 
   it('"tüm kadro" görünümünde hepsi, yine artan', () => {
     expect(needsFromFits(rows, true).map((r) => r.slotId)).toEqual(['CM2', 'CM1', 'ST', 'GK'])
+  })
+
+  it('takım uyumu (V3-06d): Masa ve kadro kurucu "Kadro uyumu" aynı fonksiyon — dizilimdeki seviyesine göre % ortalaması; boşsa yok', () => {
+    expect(teamFitPct(rows.map((r) => r.display))).toBe(Math.round((38 + 12 + 55 + 80) / 4))
+    expect(teamFitPct([])).toBeUndefined()
+    const source = readFileSync('src/pages/SquadBuilderPage.tsx', 'utf8')
+    expect(source).toMatch(/label="Kadro uyumu" value=\{pctText\(teamFitPct\(/)
+    expect(source).not.toMatch(/reduce\(\(s, v\) => s \+ \(v\.fit\?\.pct/)
   })
 
   it('aynı oyuncunun sahadaki ve İhtiyaçlar\'daki değeri aynı: ikisi de fitDisplay(RoleFit).pct', () => {

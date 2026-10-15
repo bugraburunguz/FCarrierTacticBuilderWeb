@@ -48,7 +48,7 @@ export function MoneyInput({ value, onChange, onCommit, className = '', ariaLabe
   return (
     <div className={className}>
       <div className="flex gap-1.5">
-        <Input className="min-w-0 flex-1" type="text" inputMode="decimal" aria-label={ariaLabel ?? 'Tutar'} value={state.text} placeholder="0" onChange={(e) => update({ ...state, text: e.target.value })} onFocus={() => setFocused(true)} onBlur={() => { setFocused(false); onCommit?.(amount) }} />
+        <Input className="min-w-0 flex-1" type="text" inputMode="decimal" aria-label={ariaLabel ?? 'Tutar'} value={state.text} placeholder="Örn. 2,5" onChange={(e) => update({ ...state, text: e.target.value })} onFocus={() => setFocused(true)} onBlur={() => { setFocused(false); onCommit?.(amount) }} />
         <Select aria-label="Birim" value={state.unit} className="!w-28 shrink-0" onChange={(e) => update({ ...state, unit: e.target.value as UnitId })}>
           {UNITS.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
         </Select>

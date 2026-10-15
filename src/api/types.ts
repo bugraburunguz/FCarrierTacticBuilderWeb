@@ -67,6 +67,8 @@ export interface CareerPlayerFacets {
   /** V3-06c: kullanıcının ligi ve lig gücü (OVR) — yalnız "Lig seviyesi" göstergesi; bilinmiyorsa yok. */
   leagueName?: string
   leagueOvr?: number
+  /** V3-06d: kadrodaki herkesin maaşı kayıtta varsa haftalık toplam; eksikse yok (ENG-02). */
+  squadWageEur?: number
 }
 
 export type ChangeType = 'UPGRADE' | 'DOWNGRADE' | 'MIXED' | 'NEW' | 'REMOVED' | 'TRANSFER'

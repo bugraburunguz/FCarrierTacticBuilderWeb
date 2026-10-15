@@ -8,8 +8,9 @@ export const BUCKETS: { id: FeasibilityBucket; label: string; tone: 'good' | 'wa
   { id: 'ZOR', label: 'Zor', tone: 'warn' },
   { id: 'HAYAL', label: 'Hayal', tone: 'bad' },
 ]
-/** Sözleşme süzgeci: oyun tarihinden itibaren bu kadar ay içinde bitenler (E3-10b). */
-export const CONTRACT_MONTHS = 6
+/** Sözleşme süzgeci: oyun tarihinden itibaren bu kadar ay içinde bitenler (E3-10b); eşik tek yerde (Masa uyarısıyla aynı). */
+import { CONTRACT_MONTHS } from '../../lib/contract'
+export { CONTRACT_MONTHS }
 export const CAREER_SORTS = ['overall', 'potential', 'age', 'value', 'name', 'club', 'position', 'role'] as const
 export type CareerSort = (typeof CAREER_SORTS)[number]
 export const TEXT_SORTS: CareerSort[] = ['name', 'club', 'position']

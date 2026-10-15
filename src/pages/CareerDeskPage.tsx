@@ -1,16 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
-import type { Career, CareerBackup } from '../api/types'
 import { CareerSelect } from '../components/CareerSelect'
-import { DeleteCareerButton } from '../components/DeleteCareerButton'
-import { MoneyInput } from '../components/MoneyInput'
-import { Button, Card, EmptyState, ErrorBox, Field, HelpPopover, Input, Pill, Select, Skeleton, Stat } from '../components/ui'
+import { Card, EmptyState, HelpPopover, Pill, Skeleton, Stat } from '../components/ui'
+import { DeskSettings } from '../features/desk/DeskSettings'
+import { Timeline } from '../features/desk/Timeline'
 import { ageProfile, alerts, depthRows, GROUP_LABEL, suggestActions, weakSlots } from '../lib/deskRules'
 import { useAutoLineup } from '../features/squad/useAutoLineup'
 import { useCareerBinding } from '../features/squad/useCareerBinding'
-import { toDeskSlots, useSlotFits } from '../features/squad/useSlotFits'
+import { teamFitPct, toDeskSlots, useSlotFits } from '../features/squad/useSlotFits'
 import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
 import { levelText } from '../lib/fitLabels'
 import { formatEur } from '../lib/format'
@@ -42,7 +41,7 @@ export function CareerDeskPage() {
 
   const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
   const slots = useMemo(() => toDeskSlots(fitRows), [fitRows])
-  const teamFit = fitRows.length > 0 ? Math.round(fitRows.reduce((sum, r) => sum + r.display.pct, 0) / fitRows.length) : undefined
+  const teamFit = teamFitPct(fitRows.map((r) => r.display))
   const players = squad.data ?? []
   const actions = useMemo(() => suggestActions({ squad: players, slots, tags }), [players, slots, tags])
   const notes = useMemo(() => alerts({ squad: players, slots, tags, diffRows: diff.data?.rows ?? [], windowEndsOn: career?.windowEndsOn }), [players, slots, tags, diff.data, career?.windowEndsOn])
@@ -155,82 +154,3 @@ export function CareerDeskPage() {
   )
 }
 
-function Timeline({ events, snapshots }: { events: { id: number; type: string; playerName?: string; feeEur?: number; createdAt?: string }[]; snapshots: { id: number; takenAt: string; source: string; playerCount: number }[] }) {
-  const rows = [
-    ...snapshots.map((s) => ({ key: `s${s.id}`, at: s.takenAt, text: `${s.source === 'IMPORT' ? 'Import' : 'Elle güncelleme'} · ${s.playerCount} oyuncu` })),
-    ...events.map((e) => ({ key: `e${e.id}`, at: e.createdAt ?? '', text: `${e.type} · ${e.playerName ?? ''}${e.feeEur ? ` · ${formatEur(e.feeEur)}` : ''}` })),
-  ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8)
-  if (rows.length === 0) {
-    return <EmptyState>Henüz kayıt yok. İlk transferi ya da import'u yapınca burada görünür.</EmptyState>
-  }
-  return (
-    <ol className="space-y-1.5 border-l border-line pl-3 text-sm">
-      {rows.map((r) => (
-        <li key={r.key}><span className="num text-xs text-muted">{r.at ? new Date(r.at).toLocaleDateString('tr-TR') : '—'}</span> {r.text}</li>
-      ))}
-    </ol>
-  )
-}
-
-/** Kariyer ayarları (spoiler, bütçe, dönem, challenge) ve JSON yedek: telefonda tek elle erişilir, hiçbir şey kaybolmaz (13 İlke 3). */
-function DeskSettings({ career }: { career: Career }) {
-  const client = useQueryClient()
-  const [spoiler, setSpoiler] = useState(career.spoilerMode ?? 'SHOW')
-  const [wage, setWage] = useState<number | undefined>(career.wageBudgetEur ?? undefined)
-  const [windowEnds, setWindowEnds] = useState(career.windowEndsOn ?? '')
-  const [challenge, setChallenge] = useState(career.challengeId ?? '')
-  const [notice, setNotice] = useState<string>()
-  const save = useMutation({
-    mutationFn: () => endpoints.updateCareer(career.id, { spoilerMode: spoiler, wageBudgetEur: wage, windowEndsOn: windowEnds || undefined, challengeId: challenge }),
-    onSuccess: () => {
-      setNotice('Kaydedildi.')
-      ;['careers', 'squad', 'lineup'].forEach((k) => client.invalidateQueries({ queryKey: [k] }))
-    },
-  })
-  const backup = useMutation({
-    mutationFn: () => endpoints.careerBackup(career.id),
-    onSuccess: (data) => {
-      const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }))
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `fcareer-kariyer-${career.id}.json`
-      a.click()
-      setTimeout(() => URL.revokeObjectURL(url), 10_000)
-      setNotice('Yedek indirildi.')
-    },
-  })
-  const restore = useMutation({
-    mutationFn: async (file: File) => endpoints.careerRestore(career.id, JSON.parse(await file.text()) as CareerBackup),
-    onSuccess: (data) => {
-      setNotice(`Yedek yüklendi: ${data.tags.length} etiket, ${data.shortlist.length} kısa liste, ${data.seasons.length} sezon.`)
-      client.invalidateQueries()
-    },
-  })
-  return (
-    <Card title="Kariyer ayarları ve yedek">
-      <div className="grid gap-3 sm:grid-cols-4">
-        <Field label="Potansiyel gösterimi">
-          <Select value={spoiler} onChange={(e) => setSpoiler(e.target.value as 'SHOW' | 'SCOUT_RANGE')}>
-            <option value="SHOW">Tam sayı (spoiler açık)</option>
-            <option value="SCOUT_RANGE">Scout aralığı (ör. 80–84)</option>
-          </Select>
-        </Field>
-        <Field label="Maaş bütçesi (haftalık)"><MoneyInput key={career.id} value={wage} onChange={setWage} /></Field>
-        <Field label="Transfer dönemi bitişi"><Input type="date" value={windowEnds} onChange={(e) => setWindowEnds(e.target.value)} /></Field>
-        <Field label="Challenge (isteğe bağlı)"><Input value={challenge} onChange={(e) => setChallenge(e.target.value)} placeholder="Road to Glory" maxLength={40} /></Field>
-      </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>Kaydet</Button>
-        <DeleteCareerButton career={career} />
-        <Button variant="secondary" onClick={() => backup.mutate()} disabled={backup.isPending}>JSON yedeği indir</Button>
-        <label className="cursor-pointer rounded-md border border-line px-3 py-1.5 text-sm font-semibold hover:bg-surface-2">
-          Yedekten yükle
-          <input type="file" accept="application/json,.json" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) restore.mutate(f) }} />
-        </label>
-        {notice && <span role="status" className="text-xs text-muted">{notice}</span>}
-      </div>
-      <div className="mt-2"><ErrorBox error={save.error ?? backup.error ?? restore.error} /></div>
-      <p className="mt-2 text-xs text-muted">Yedek etiketlerini, kısa listeni ve sezon kayıtlarını içerir; oyuncu verisi Live Editor import'undan yeniden gelir.</p>
-    </Card>
-  )
-}

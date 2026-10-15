@@ -43,6 +43,7 @@ const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPa
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const CareerPlayersPage = lazy(() => import('./features/careerPlayers/CareerPlayersPage').then((m) => ({ default: m.CareerPlayersPage })))
+const DeskPage = lazy(() => import('./features/desk/DeskPage').then((m) => ({ default: m.DeskPage })))
 const TransferCenterPage = lazy(() => import('./features/transfer/TransferCenterPage').then((m) => ({ default: m.TransferCenterPage })))
 const CareerPlayerPage = lazy(() => import('./features/player/CareerPlayerPage').then((m) => ({ default: m.CareerPlayerPage })))
 const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
@@ -107,7 +108,8 @@ export function App() {
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
         <Route path="career/import" element={<RequireAuth><ImportPage /></RequireAuth>} />
-        <Route path="career/desk" element={<RequireAuth><CareerDeskPage /></RequireAuth>} />
+        {/* V3-06d: v3'te Kariyer Masası (yalnız v3, Ayarlar sekmesi); v2 sayfası v2 için kalır. */}
+        <Route path="career/desk" element={<RequireAuth>{isV3() ? <DeskPage /> : <CareerDeskPage />}</RequireAuth>} />
         <Route path="career/new" element={<RequireAuth><CareerNewPage /></RequireAuth>} />
         {/* V3-06c: v3'te Transfer Merkezi (yalnız v3 uçları); v2 sayfası v2 için kalır. */}
         <Route path="career/transfer" element={<RequireAuth>{isV3() ? <TransferCenterPage /> : <CareerTransferPage />}</RequireAuth>} />

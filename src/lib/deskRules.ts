@@ -1,4 +1,5 @@
-import type { CareerPlayer } from '../api/types'
+import type { CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
+import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
 import { isWeakFit, levelText, type FitLabel } from './fitLabels'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
@@ -183,30 +184,61 @@ export function suggestActions({ squad, slots, tags }: ActionInput): DeskAction[
   return actions.sort((a, b) => b.priority - a.priority).slice(0, 3)
 }
 
+export type AlertKind = 'CONTRACT' | 'PLATEAU' | 'AGE' | 'DEPTH' | 'WINDOW'
+
 export interface DeskAlert {
   tone: 'warn' | 'info'
   text: string
+  kind: AlertKind
 }
 
-/** Uyarı kuralları (13 §3.1): potansiyele ulaşan, düşüşte yaşlanan, derinlik açığı, dönem sonu. */
-export function alerts(input: ActionInput & { diffRows: { kind: string; playerId: number; name: string; overallFrom?: number; overallTo?: number }[]; windowEndsOn?: string; today?: Date }): DeskAlert[] {
+/** Zaman çizelgesi etiketleri (WEB-BUG-17): ham olay/kaynak kodu gösterilmez. */
+export const EVENT_LABEL: Record<RosterEventType, string> = {
+  BUY: 'Alım',
+  SELL: 'Satış',
+  LOAN_IN: 'Kiralık geldi',
+  LOAN_OUT: 'Kiralık gönderildi',
+  PROMOTE: 'Altyapıdan yükseldi',
+}
+export const SNAPSHOT_LABEL: Record<CareerSnapshot['source'], string> = { IMPORT: 'İçe aktarma', MANUAL: 'Elle güncelleme', OCR: 'Ekran görüntüsü' }
+
+const WINDOW_ALERT_DAYS = 14
+
+/** Transfer dönemi bitimine kalan gün, oyun tarihine göre (ENG-04); dönem sonu ya da oyun tarihi yoksa yok. */
+export function windowDaysLeft(windowEndsOn: string | undefined, gameDate: string | undefined): number | undefined {
+  return daysBetween(gameDate, windowEndsOn)
+}
+
+/**
+ * Uyarı kuralları (13 §3.1): sözleşmesi bitmek üzere (oyun tarihine göre ≤ CONTRACT_MONTHS ay; V3-06d), plato (≤ 24 yaş, OVR ≥ POT), yaş (30+, düşüşte),
+ * derinlik açığı, dönem sonu (oyun tarihi verilirse ona göre, ENG-04). Verisi olmayan tip hiç üretilmez.
+ */
+export function alerts(input: ActionInput & { diffRows: { kind: string; playerId: number; name: string; overallFrom?: number; overallTo?: number }[]; windowEndsOn?: string; today?: Date; gameDate?: string }): DeskAlert[] {
   const result: DeskAlert[] = []
+  if (input.gameDate) {
+    input.squad.filter((c) => !c.loanedOut).forEach((c) => {
+      const months = contractMonthsLeft(input.gameDate, c.player.contractUntil)
+      if (months !== undefined && months <= CONTRACT_MONTHS) {
+        result.push({ kind: 'CONTRACT', tone: 'warn', text: `${c.player.name}: sözleşmesi ${months} ay içinde bitiyor.` })
+      }
+    })
+  }
   input.squad.forEach((c) => {
     if (c.player.potential !== undefined && c.player.overall >= c.player.potential && (c.player.age ?? 99) <= 24) {
-      result.push({ tone: 'info', text: `${c.player.name} potansiyeline ulaştı (${c.player.overall}/${c.player.potential}).` })
+      result.push({ kind: 'PLATEAU', tone: 'info', text: `${c.player.name} potansiyeline ulaştı (${c.player.overall}/${c.player.potential}).` })
     }
   })
   input.diffRows.filter((r) => r.kind === 'CHANGED' && (r.overallTo ?? 0) < (r.overallFrom ?? 0)).forEach((r) => {
     const player = input.squad.find((c) => c.player.id === r.playerId)
     if (player && (player.player.age ?? 0) >= 30) {
-      result.push({ tone: 'warn', text: `${r.name} (${player.player.age}) düşüşte: ${r.overallFrom} → ${r.overallTo}.` })
+      result.push({ kind: 'AGE', tone: 'warn', text: `${r.name} (${player.player.age}) düşüşte: ${r.overallFrom} → ${r.overallTo}.` })
     }
   })
-  depthRows(input.squad).filter((d) => d.short > 0).forEach((d) => result.push({ tone: 'warn', text: `${GROUP_LABEL[d.group]} derinliği ${d.have}/${d.need}.` }))
+  depthRows(input.squad).filter((d) => d.short > 0).forEach((d) => result.push({ kind: 'DEPTH', tone: 'warn', text: `${GROUP_LABEL[d.group]} derinliği ${d.have}/${d.need}.` }))
   if (input.windowEndsOn) {
-    const left = Math.ceil((new Date(input.windowEndsOn).getTime() - (input.today ?? new Date()).getTime()) / 86_400_000)
-    if (left >= 0 && left <= 14) {
-      result.push({ tone: 'warn', text: `Transfer dönemi ${left} gün içinde kapanıyor.` })
+    const left = input.gameDate ? windowDaysLeft(input.windowEndsOn, input.gameDate)! : Math.ceil((new Date(input.windowEndsOn).getTime() - (input.today ?? new Date()).getTime()) / 86_400_000)
+    if (left >= 0 && left <= WINDOW_ALERT_DAYS) {
+      result.push({ kind: 'WINDOW', tone: 'warn', text: `Transfer dönemi ${left} gün içinde kapanıyor.` })
     }
   }
   return result

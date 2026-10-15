@@ -52,6 +52,11 @@ export function needsFromFits(rows: SlotFitRow[], all = false): SlotFitRow[] {
   return rows.filter((r) => all || isWeakFit(r.fit.fitLabel)).sort((a, b) => a.display.pct - b.display.pct || a.slotId.localeCompare(b.slotId))
 }
 
+/** Takım uyumu (V3-06d, tek tanım): dizilimdeki slotların seviyesine göre % ortalaması; Masa göstergesi ve kadro kurucu "Kadro uyumu" aynı fonksiyon. */
+export function teamFitPct(displays: { pct: number }[]): number | undefined {
+  return displays.length === 0 ? undefined : Math.round(displays.reduce((sum, d) => sum + d.pct, 0) / displays.length)
+}
+
 /** Masa kuralları için aynı satırlar (aynı yüzde, aynı etiket). */
 export const toDeskSlots = (rows: SlotFitRow[]): DeskSlot[] =>
   rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel }))
