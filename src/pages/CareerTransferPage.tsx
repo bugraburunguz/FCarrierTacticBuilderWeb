@@ -12,21 +12,13 @@ import { FitBadge } from '../components/card/FitBadge'
 import { Chip } from '../design/components/primitives'
 import { useCareerBinding } from '../features/squad/useCareerBinding'
 import { useAutoLineup } from '../features/squad/useAutoLineup'
-import { needsFromFits, useSlotFits } from '../features/squad/useSlotFits'
+import { useSlotFits } from '../features/squad/useSlotFits'
 import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
-import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP } from '../lib/deskRules'
-import { levelText } from '../lib/fitLabels'
+import { transferNeeds, type TransferNeed } from '../features/transfer/transferPlan'
 import { formatEur } from '../lib/format'
 import { useActiveCareerId } from '../state/careerStore'
 
-interface Need {
-  key: string
-  position: string
-  roleId: string
-  label: string
-  detail: string
-  state?: import('../components/card/FitBadge').FitState
-}
+type Need = TransferNeed
 
 /** Transfer Merkezi (CAR-23): ihtiyaçlar → adaylar → kısa liste ve bütçe simülatörü; satış planı etiketlenen/yaşlı yedeklerden gelir. */
 export function CareerTransferPage() {
@@ -47,11 +39,7 @@ export function CareerTransferPage() {
   const tagList = useQuery({ queryKey: ['tags', id], queryFn: () => endpoints.playerTags(id!), enabled: id !== undefined, retry: false })
   const [selected, setSelected] = useState<string>()
 
-  const needs = useMemo<Need[]>(() => {
-    const weak = needsFromFits(fitRows, allSquad).map((r) => ({ key: `slot-${r.slotId}`, position: r.position, roleId: r.roleId, label: `${r.position} · ${r.roleName}`, detail: `${r.playerName} · ${levelText(r.display.pct)}`, state: r.display.state }))
-    const gaps = depthRows(squad.data ?? []).filter((d) => d.short > 0).map((d) => ({ key: `depth-${d.group}`, ...TRANSFER_ROLE_BY_GROUP[d.group], label: `${GROUP_LABEL[d.group]} · derinlik`, detail: `${d.have}/${d.need} oyuncu` }))
-    return [...weak, ...gaps]
-  }, [fitRows, allSquad, squad.data])
+  const needs = useMemo<Need[]>(() => transferNeeds(fitRows, allSquad, squad.data ?? []), [fitRows, allSquad, squad.data])
 
   const wanted = params.get('pos')
   const need = needs.find((n) => n.key === selected) ?? needs.find((n) => n.position === wanted) ?? needs[0]

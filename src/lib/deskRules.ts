@@ -107,6 +107,33 @@ interface ActionInput {
 
 const money = (value?: number) => (value === undefined ? '—' : value >= 1_000_000 ? `€${(value / 1_000_000).toFixed(1)}M` : `€${Math.round(value / 1000)}K`)
 
+export interface SellAdvice {
+  kind: 'SELL' | 'LOAN' | 'KEEP'
+  reason: string
+}
+
+/**
+ * Oyuncu başına sat / kirala / tut (Masa "3 iş" ve Transfer Merkezi satış planı tek kural, V3-06c): ilk 11 dışı + (satılık etiketi ya da 29+ yaş ve değeri var) → sat;
+ * ilk 11 dışı + ≤ 21 yaş + potansiyel ≥ 6 puan üstünde + kilitli değil → kirala; diğerleri tut. Gerekçe kısa metin.
+ */
+export function sellAdvice(c: CareerPlayer, starters: Set<number>, tags: Record<number, string>): SellAdvice {
+  if (c.loanedOut) {
+    return { kind: 'KEEP', reason: 'Başka kulüpte kiralık' }
+  }
+  if (starters.has(c.player.id)) {
+    return { kind: 'KEEP', reason: "İlk 11'de" }
+  }
+  const age = c.player.age ?? 0
+  const gap = (c.player.potential ?? c.player.overall) - c.player.overall
+  if (tags[c.player.id] === 'FOR_SALE' || (age >= SELL_AGE && (c.player.valueEur ?? 0) > 0)) {
+    return { kind: 'SELL', reason: `${age} yaşında, ilk 11'de değil, tahmini değer ${money(c.player.valueEur)}${tags[c.player.id] === 'FOR_SALE' ? ' (satılık işaretli)' : ''}.` }
+  }
+  if (age > 0 && age <= LOAN_MAX_AGE && gap >= LOAN_MIN_GAP && tags[c.player.id] !== 'LOCKED') {
+    return { kind: 'LOAN', reason: `${age} yaşında, potansiyeli ${gap} puan üstünde ama ilk 11'de değil.` }
+  }
+  return { kind: 'KEEP', reason: 'Satış ya da kiralama kuralına girmiyor' }
+}
+
 /** "Bu dönemin 3 işi": SquadFit artışı, satış değeri ve genç gelişimi kurallarıyla en etkili üç eylem. */
 export function suggestActions({ squad, slots, tags }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))
@@ -122,29 +149,26 @@ export function suggestActions({ squad, slots, tags }: ActionInput): DeskAction[
     })
   })
 
-  squad
-    .filter((c) => !c.loanedOut && !starters.has(c.player.id))
-    .forEach((c) => {
-      const age = c.player.age ?? 0
-      const gap = (c.player.potential ?? c.player.overall) - c.player.overall
-      if (tags[c.player.id] === 'FOR_SALE' || (age >= SELL_AGE && (c.player.valueEur ?? 0) > 0)) {
-        actions.push({
-          kind: 'SELL',
-          title: `Sat: ${c.player.name}`,
-          reason: `${age} yaşında, ilk 11'de değil, tahmini değer ${money(c.player.valueEur)}${tags[c.player.id] === 'FOR_SALE' ? ' (satılık işaretli)' : ''}.`,
-          to: `/career/transfer?sell=${c.player.id}`,
-          priority: 40 + (tags[c.player.id] === 'FOR_SALE' ? 25 : 0) + Math.min(20, (c.player.valueEur ?? 0) / 1_000_000),
-        })
-      } else if (age > 0 && age <= LOAN_MAX_AGE && gap >= LOAN_MIN_GAP && tags[c.player.id] !== 'LOCKED') {
-        actions.push({
-          kind: 'LOAN',
-          title: `Süre ver ya da kirala: ${c.player.name}`,
-          reason: `${age} yaşında, potansiyeli ${gap} puan üstünde ama ilk 11'de değil.`,
-          to: `/career/growth?player=${c.player.id}`,
-          priority: 30 + gap,
-        })
-      }
-    })
+  squad.forEach((c) => {
+    const advice = sellAdvice(c, starters, tags)
+    if (advice.kind === 'SELL') {
+      actions.push({
+        kind: 'SELL',
+        title: `Sat: ${c.player.name}`,
+        reason: advice.reason,
+        to: `/career/transfer?sell=${c.player.id}`,
+        priority: 40 + (tags[c.player.id] === 'FOR_SALE' ? 25 : 0) + Math.min(20, (c.player.valueEur ?? 0) / 1_000_000),
+      })
+    } else if (advice.kind === 'LOAN') {
+      actions.push({
+        kind: 'LOAN',
+        title: `Süre ver ya da kirala: ${c.player.name}`,
+        reason: advice.reason,
+        to: `/career/growth?player=${c.player.id}`,
+        priority: 30 + ((c.player.potential ?? c.player.overall) - c.player.overall),
+      })
+    }
+  })
 
   depthRows(squad).filter((d) => d.short > 0).forEach((d) => {
     actions.push({

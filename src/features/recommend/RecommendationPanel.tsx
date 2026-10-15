@@ -29,6 +29,14 @@ interface Props {
   roleId?: string
   /** Satır sonu eylemi (örn. kısa liste). */
   rowAction?: (item: CareerRecommendationItem) => ReactNode
+  /** V3-06c: satır altı ek bilgi (alım sonrası bütçe, değer çubuğu, lig seviyesi). */
+  rowExtra?: (item: CareerRecommendationItem) => ReactNode
+  /** V3-06c: satır kartı genişliği (px); verilmezse küçük resim. */
+  cardWidth?: number
+  /** V3-06c: uzak ihtimaller (HAYAL) anahtarı dışarıdan (adres çubuğu); verilmezse panel içi durum. */
+  longShots?: boolean
+  onLongShotsChange?: (value: boolean) => void
+  longShotsLabel?: string
 }
 
 // Oturum içi "tekrar sorma" tercihi (kalıcı değil; kredi harcamasını açık tutar).
@@ -38,7 +46,7 @@ let skipConfirm = false
  * Kariyer öneri paneli (E3-10): `POST /careers/{id}/recommendations`. Ücretli olduğu için açılışta istek atmaz; düğme kaç kredi düşeceğini yazar,
  * ücretsiz üyelerde bir onay adımı vardır, PREMIUM'da yoktur. Filtre değişince sonuç bayatlar ve yeniden getirmek gerekir.
  */
-export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction }: Props) {
+export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster' }: Props) {
   const { me } = useAuth()
   const queryClient = useQueryClient()
   const ids = { age: useId(), budget: useId() }
@@ -47,7 +55,9 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
   const [budgetMode, setBudgetMode] = useState<BudgetMode>('career')
   const [customBudget, setCustomBudget] = useState<number | undefined>()
   const [alternatives, setAlternatives] = useState(false)
-  const [longShots, setLongShots] = useState(false)
+  const [ownLongShots, setOwnLongShots] = useState(false)
+  const longShots = controlledLongShots ?? ownLongShots
+  const setLongShots = (value: boolean) => (onLongShotsChange ? onLongShotsChange(value) : setOwnLongShots(value))
   const [confirming, setConfirming] = useState(false)
   const [dontAsk, setDontAsk] = useState(false)
   const [stale, setStale] = useState(false)
@@ -127,7 +137,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
           </label>
           <label className="flex min-h-8 items-center gap-2 max-sm:min-h-11">
             <input type="checkbox" checked={longShots} onChange={(e) => changed(setLongShots)(e.target.checked)} />
-            Hayal transferlerini göster
+            {longShotsLabel}
           </label>
         </div>
       </div>
@@ -178,16 +188,16 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
           ) : (
             <ul className="space-y-1.5">
               {result.items.map((item) => (
-                <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} />
+                <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} extra={rowExtra?.(item)} cardWidth={cardWidth} />
               ))}
             </ul>
           )}
           {result.longShots && result.longShots.length > 0 && (
             <section aria-label="Hayal transferler" className="space-y-1.5 pt-2">
-              <h4 className="text-xs font-semibold text-ink-2">Hayal transferler (ana listede değil)</h4>
+              <h3 className="text-xs font-semibold text-ink-2">Hayal transferler (ana listede değil)</h3>
               <ul className="space-y-1.5">
                 {result.longShots.slice(0, MAX_LONG_SHOTS).map((item) => (
-                  <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} />
+                  <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} extra={rowExtra?.(item)} cardWidth={cardWidth} />
                 ))}
               </ul>
             </section>
