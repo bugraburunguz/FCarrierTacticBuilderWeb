@@ -84,6 +84,10 @@ export function findChallengeFormation(label: string | undefined, formations: Fo
     return undefined
   }
   const key = FORMATION_ALIASES[label] ?? label
+  // V3-05d-b: EA ham kodu ("f41212") yalnız tek eşlemeden (eaFormationId) çözülür; tahmin yok, eşlemesi olmayan kod bulunmaz.
+  if (/^f\d+[a-z]?$/.test(key)) {
+    return formations.find((f) => f.eaFormationId === key)
+  }
   return formations.find((f) => f.id === key) ?? formations.find((f) => f.id.startsWith(`${key} `)) ?? formations.find((f) => (f.label ?? '').startsWith(key))
 }
 

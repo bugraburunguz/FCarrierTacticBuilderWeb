@@ -152,6 +152,26 @@ describe('SBC çözüm sayfası (V3-05d, 08 §5)', () => {
     expect(endpoints.sbcStreamlined).not.toHaveBeenCalled()
   })
 
+  it('tek kart teslimi (SINGLE_ITEM): saha yok, çipler var; şart değerlendirilemiyorsa "Elle kontrol et"', async () => {
+    renderPage('/ut/sbc/7700/77007')
+    expect(await screen.findByRole('heading', { name: 'Tek kart teslimi' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Saha' })).toBeNull()
+    const chips = screen.getByRole('list', { name: 'Gereksinimler' })
+    expect(within(chips).getAllByRole('listitem').every((li) => li.getAttribute('data-state') === 'unknown')).toBe(true)
+    expect(screen.getByText('Elle kontrol et')).toBeInTheDocument()
+  })
+
+  it('tek kart teslimi: değerlendirilebilen şartta uygun kulüp kartları listelenir', async () => {
+    renderPage('/ut/sbc/7700/77008')
+    const list = await screen.findByRole('list', { name: 'Uygun kulüp kartları' })
+    expect(within(list).getAllByRole('listitem').length).toBeGreaterThan(0)
+  })
+
+  it('eşlemesi olmayan formasyon kodu: "Formasyon tanınmadı (f999)"', async () => {
+    renderPage('/ut/sbc/7700/77009')
+    expect(await screen.findByText('Formasyon tanınmadı (f999)')).toBeInTheDocument()
+  })
+
   it('görev bilgisi yok: açıklama ve listeye dönüş', async () => {
     vi.mocked(endpoints.kbSbcSet).mockRejectedValue(new Error('404'))
     renderPage('/ut/sbc/1234/1')

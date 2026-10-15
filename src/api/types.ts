@@ -903,8 +903,12 @@ export interface KbSbcChallenge {
   id: number
   setId: number
   name: string
+  /** Bizim formasyon kimliği (EA kodu eşlenmişse). */
   formation?: string
-  kind: 'SQUAD' | 'ITEM_SCORE' | string
+  /** V3-05d-b: EA ham formasyon kodu (eşlenmese de saklı) ve EA görev tipi (ONE_CLICK_CHALLENGE, OPEN_CHALLENGE, BRICK_CHALLENGE). */
+  eaFormation?: string
+  eaType?: string
+  kind: 'SQUAD' | 'ITEM_SCORE' | 'SINGLE_ITEM' | string
   requirements: SbcRequirement[]
   itemScoreTarget?: number
   reward?: CaptureReward[] | null

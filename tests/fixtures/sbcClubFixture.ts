@@ -67,7 +67,12 @@ export function sbcSetFixture(now: number, formation = '4-4-2') {
   return {
     id: 7700, name: 'Kapı Çözüm Seti', category: 'Upgrades', status: 'CONFIRMED' as const, challengeCount: SBC_CHALLENGES.length, reward: [],
     endsAt: new Date(now + 50 * 3_600_000).toISOString(),
-    challenges: SBC_CHALLENGES.map((c) => ({ id: c.challengeId, setId: 7700, name: c.name, formation: c.kind === 'ITEM_SCORE' ? undefined : formation, kind: c.kind ?? 'SQUAD', requirements: c.requirements, itemScoreTarget: c.pointsRequired, reward: [] })),
+    challenges: SBC_CHALLENGES.map((c) => ({
+      id: c.challengeId, setId: 7700, name: c.name, kind: c.kind ?? 'SQUAD', eaType: c.type ?? 'OPEN_CHALLENGE', requirements: c.requirements, itemScoreTarget: c.pointsRequired, reward: [],
+      // KB biçimi: formation = bizim kimlik (eşlenmişse), eaFormation = EA ham kodu
+      formation: c.kind === 'ITEM_SCORE' || c.kind === 'SINGLE_ITEM' || c.formation === 'f999' ? undefined : formation,
+      eaFormation: c.formation === 'f999' ? 'f999' : undefined,
+    })),
   }
 }
 
@@ -79,4 +84,12 @@ export const SBC_CHALLENGES: SbcChallenge[] = [
   { ...base, challengeId: 77004, name: 'Skor', status: 'NOT_STARTED', kind: 'ITEM_SCORE', type: 'ONE_CLICK', pointsRequired: 4100, formation: undefined, formationLabel: undefined, requirements: [] },
   { ...base, challengeId: 77005, name: 'Çözümsüz', status: 'NOT_STARTED', requirements: [req('TEAM_RATING', 'MIN', 95)] },
   { ...base, challengeId: 77006, name: 'Doğrulanamayan', status: 'NOT_STARTED', requirements: [req('TEAM_RATING', 'MIN', 70), req('PLAYER_ATTRIBUTE', 'MIN', 80), req('UNKNOWN', 'MIN', 2, { eaType: 'SOMETHING_NEW' })] },
+  // V3-05d-b: tek kart teslimi (EA ONE_CLICK_CHALLENGE). Gerçek yakalamadaki biçim: PLAYER_ATTRIBUTE + ACADEMY_PLAYER_SLOTTING, formasyon yok → elle kontrol.
+  { ...base, challengeId: 77007, name: 'Tek kart (elle)', status: 'NOT_STARTED', kind: 'SINGLE_ITEM', type: 'ONE_CLICK_CHALLENGE', pointsRequired: 4000, formation: undefined, formationLabel: undefined,
+    requirements: [req('PLAYER_ATTRIBUTE', 'MIN', 1), req('ACADEMY_SLOTTING', 'MIN', 45)] },
+  // Değerlendirilebilir tek kart şartı: altın ve en az 84 OVR → uygun kulüp kartları listelenir.
+  { ...base, challengeId: 77008, name: 'Tek kart (uygun)', status: 'NOT_STARTED', kind: 'SINGLE_ITEM', type: 'ONE_CLICK_CHALLENGE', formation: undefined, formationLabel: undefined,
+    requirements: [req('QUALITY', 'MIN', 3), req('MIN_OVR', 'MIN', 84, { count: 1 })] },
+  // Eşlemesi olmayan EA formasyon kodu: ham kod saklı, arayüz "Formasyon tanınmadı (f999)".
+  { ...base, challengeId: 77009, name: 'Tanınmayan formasyon', status: 'NOT_STARTED', formation: 'f999', formationLabel: undefined, requirements: [req('TEAM_RATING', 'MIN', 70)] },
 ]

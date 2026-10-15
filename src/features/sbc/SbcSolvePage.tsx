@@ -10,7 +10,10 @@ import { Input } from '../../components/ui'
 import { Workspace } from '../../design/components/Workspace'
 import { Button, EmptyState, ErrorState, SidePanel, Skeleton } from '../../design/components/primitives'
 import { describeRequirement } from '../../lib/sbcChallenge'
-import { isItemScore } from '../../lib/kbSbc'
+import { isItemScore, isSingleItem } from '../../lib/kbSbc'
+import { singleItemCandidates, type SingleItemPlan } from './solve/singleItem'
+
+const SINGLE_ITEM_LIMIT = 30
 import { SolutionPitch } from '../squad/SolutionPitch'
 import { DEFAULT_CUSTOMIZE, type Customize, type PlanCandidate } from './solve/candidates'
 import { requirementStatuses, type RequirementStatus } from './solve/requirementStatus'
@@ -155,6 +158,46 @@ function ScoreView({ challenge }: { challenge: SbcChallenge }) {
 }
 
 /**
+ * V3-05d-b — tek kart teslimi (EA ONE_CLICK_CHALLENGE): saha yok. Şartlar tek kartın verisinden ölçülebiliyorsa uygun kulüp kartları,
+ * ölçülemiyorsa "Elle kontrol et" + kısa açıklama. EA'nın görevdeki puan değeri gösterilir, anlamı doğrulanmadı.
+ */
+function SingleItemView({ challenge, plan }: { challenge: SbcChallenge; plan: SingleItemPlan }) {
+  return (
+    <section aria-labelledby="single-title" className="glass flex flex-col gap-3 p-4">
+      <h2 id="single-title" className="font-display text-xl font-semibold">Tek kart teslimi</h2>
+      <p className="text-sm text-ink-2">Bu görevde kadro kurulmaz; şartlara uyan tek bir kartı oyunda teslim edersin.</p>
+      {challenge.pointsRequired !== undefined && (
+        <p className="text-xs text-ink-2">EA görev değeri: <span className="num">{coins(challenge.pointsRequired)}</span> (anlamı doğrulanmadı)</p>
+      )}
+      {!plan.evaluable ? (
+        <div className="flex flex-col gap-1 text-sm">
+          <p className="font-semibold">Elle kontrol et</p>
+          <p className="text-ink-2">Şartlar ({plan.unverified.map((r) => describeRequirement(r)).join(' · ') || 'şart yok'}) kart verisinden doğrulanamıyor; uygun kartı oyunda seç.</p>
+        </div>
+      ) : plan.cards.length === 0 ? (
+        <p className="text-sm text-ink-2">Kulübünde şartlara uyan kart yok.</p>
+      ) : (
+        <ul aria-label="Uygun kulüp kartları" className="flex flex-col gap-1 text-sm">
+          {plan.cards.slice(0, SINGLE_ITEM_LIMIT).map((c) => (
+            <li key={c.key} className="flex justify-between gap-2 border-b border-[var(--glass-border)] py-1">
+              <span className="min-w-0 truncate">{c.name} <span className="num text-xs text-ink-2">{c.rating} · {c.positions[0]}</span></span>
+              <span className="shrink-0 text-xs text-ink-2">{c.untradeable ? 'takas edilemez' : 'takas edilebilir'}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
+/** Tek kart görevinde çip durumu: ölçülemeyen ? ; ölçülebilen, uygun kart varsa ✓ yoksa ✗. */
+function singleStatuses(challenge: SbcChallenge, plan: SingleItemPlan): RequirementStatus[] {
+  return challenge.requirements.map((r) => plan.unverified.includes(r)
+    ? { requirement: r, state: 'unknown' as const, reason: 'Kart verisinden doğrulanamıyor' }
+    : plan.cards.length > 0 ? { requirement: r, state: 'ok' as const } : { requirement: r, state: 'fail' as const, reason: 'Uygun kulüp kartı yok' })
+}
+
+/**
  * SBC çözüm sayfası (/ut/sbc/:setId/:challengeId, 08 §5, Detay şablonu). Yalnız PLAN gösterir: EA'ya istek yok, gönderme/otomatik tamamlama yok;
  * kullanıcı oyunda kendisi yapar. Kahraman çözüm sahası (kadro çekirdeği), yanda alışveriş listesi, kulüp kullanımı ve Özelleştir.
  */
@@ -166,13 +209,17 @@ export function SbcSolvePage() {
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
   const [customize, setCustomize] = useState<Customize>(DEFAULT_CUSTOMIZE)
   const score = challenge ? isItemScore(challenge) : false
-  const plan = useSquadPlan(score ? undefined : challenge, formations.data, customize)
+  const single = challenge ? isSingleItem(challenge) : false
+  const plan = useSquadPlan(score || single ? undefined : challenge, formations.data, customize)
+  const club = useClubCards()
+  const singlePlan = useMemo(() => (challenge && single ? singleItemCandidates(challenge.requirements, club) : undefined), [challenge, single, club])
   const votes = useSbcVotes()
   const now = useMemo(() => Date.now(), [])
   const countdown = countdownText(set.endsAt, now)
   const title = `${set.name ?? 'SBC'} · ${challenge?.name ?? ''}`
-  const statuses = challenge && plan.data ? requirementStatuses(challenge.requirements, plan.data.picks, plan.data.slots) : undefined
-  const clubEmpty = useClubCards().length === 0
+  const statuses = challenge && singlePlan ? singleStatuses(challenge, singlePlan)
+    : challenge && plan.data ? requirementStatuses(challenge.requirements, plan.data.picks, plan.data.slots) : undefined
+  const clubEmpty = club.length === 0
 
   if (loading) {
     return <div className="flex flex-col gap-3 py-2"><Skeleton className="h-10" /><Skeleton className="h-[480px]" /></div>
@@ -215,7 +262,7 @@ export function SbcSolvePage() {
           {(statuses ?? challenge.requirements.map((r) => ({ requirement: r, state: 'unknown' as const }))).map((s, i) => <RequirementChip key={i} status={s} />)}
         </ul>
       )}
-      {clubEmpty && !score && (
+      {clubEmpty && !score && !single && (
         <p className="text-sm text-ink-2">Kulüp kartın yok; plan katalogdan. <Link to="/ut/import" className="font-semibold text-accent underline">Kulübünü senkronla</Link></p>
       )}
     </div>
@@ -223,6 +270,9 @@ export function SbcSolvePage() {
 
   if (score) {
     return <div className="flex flex-col gap-4 py-2">{header}<ScoreView challenge={challenge} /></div>
+  }
+  if (single && singlePlan) {
+    return <div className="flex flex-col gap-4 py-2">{header}<SingleItemView challenge={challenge} plan={singlePlan} /></div>
   }
 
   const result = plan.data
@@ -234,7 +284,7 @@ export function SbcSolvePage() {
         hero={plan.isLoading || formations.isLoading ? <Skeleton className="h-[480px]" />
           : plan.isError || formations.isError ? <ErrorState message="Çözüm hesaplanamadı." onRetry={() => plan.refetch()} />
           : result ? <SolutionPitch slots={result.slots} picks={result.picks} />
-          : <EmptyState>Bu görevin dizilişi bulunamadı.</EmptyState>}
+          : <EmptyState>{challenge.formation && /^f\d/.test(challenge.formation) ? `Formasyon tanınmadı (${challenge.formation})` : 'Bu görevin dizilişi bilgi tabanında yok.'}</EmptyState>}
         side={
           <SidePanel title="Plan">
             {result ? (

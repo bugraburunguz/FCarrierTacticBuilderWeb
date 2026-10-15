@@ -72,7 +72,8 @@ async function open(context, path) {
   page.on('response', (r) => r.status() >= 400 && problems.push(`HTTP ${r.status()} ${new URL(r.url()).pathname}`))
   await page.goto(`${base}${path}${path.includes('?') ? '&' : '?'}ui=v3`, { waitUntil: 'networkidle' })
   // Hazır: kare plan (data-solve-ms), skor çubuğu, skor için boş kulüp ya da görev bilgisi yok.
-  await page.locator('[data-solve-ms]').or(page.getByRole('progressbar')).or(page.getByText(/Skor planı kulüp kartlarından|görevin şartları/)).first().waitFor({ timeout: 30000 })
+  await page.locator('[data-solve-ms]').or(page.getByRole('progressbar')).or(page.getByText(/Skor planı kulüp kartlarından|görevin şartları|Formasyon tanınmadı/))
+    .or(page.getByRole('heading', { name: 'Tek kart teslimi' })).first().waitFor({ timeout: 30000 })
   await page.waitForTimeout(500)
   const ms = await page.evaluate(() => Number(document.querySelector('[data-solve-ms]')?.getAttribute('data-solve-ms') ?? NaN))
   if (Number.isFinite(ms)) solveTimes.push(ms)
@@ -96,6 +97,10 @@ const STATES = [
   { name: 'dogrulanamayan', path: '/ut/sbc/7700/77006', seed: true },
   { name: 'kulup-bos', path: '/ut/sbc/7700/77001', seed: false },
   { name: 'ozellestir', path: '/ut/sbc/7700/77001', seed: true, customize: true },
+  // V3-05d-b
+  { name: 'tek-kart-elle', path: '/ut/sbc/7700/77007', seed: true },
+  { name: 'tek-kart-uygun', path: '/ut/sbc/7700/77008', seed: true },
+  { name: 'formasyon-taninmadi', path: '/ut/sbc/7700/77009', seed: true },
 ]
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
@@ -119,11 +124,18 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
   }
 }
 
-// Gerçek içe aktarılmış setler (yerel bilgi tabanı): kare görevli 2 set + varsa skor tabanlı 1 set; kulüp sentetik.
-const sets = (await (await fetch(`${base}/api/v1/ut/kb/sbc?active=true&challenges=true`)).json()).data ?? []
-const squad = sets.filter((s) => (s.challenges ?? []).some((c) => c.kind !== 'ITEM_SCORE' && c.formation)).slice(0, 2)
-const scored = sets.find((s) => (s.challenges ?? []).some((c) => c.kind === 'ITEM_SCORE'))
-const real = [...squad.map((s) => ({ set: s, challenge: s.challenges.find((c) => c.kind !== 'ITEM_SCORE' && c.formation) })), ...(scored ? [{ set: scored, challenge: scored.challenges.find((c) => c.kind === 'ITEM_SCORE') }] : [])]
+// Gerçek içe aktarılmış setler (yerel bilgi tabanı): formasyonlu her kare görev (V3-05d-b: artık sahalı), 2 tek kart teslimi, varsa skor tabanlı; kulüp sentetik.
+// Aktif setler + --sets ile verilen set kimlikleri (liste ucu süresi geçmiş setleri döndürmez; sayfa her set kimliğiyle açılır).
+const listed = (await (await fetch(`${base}/api/v1/ut/kb/sbc?challenges=true`)).json()).data ?? []
+const extraIds = args.includes('--sets') ? args[args.indexOf('--sets') + 1].split(',').map(Number) : []
+const extra = (await Promise.all(extraIds.filter((id) => !listed.some((s) => s.id === id)).map(async (id) => (await (await fetch(`${base}/api/v1/ut/kb/sbc/${id}`)).json()).data))).filter(Boolean)
+const sets = [...listed, ...extra]
+const all = sets.flatMap((s) => (s.challenges ?? []).map((c) => ({ set: s, challenge: c })))
+const real = [
+  ...all.filter((r) => r.challenge.kind === 'SQUAD' && r.challenge.formation),
+  ...all.filter((r) => r.challenge.kind === 'SINGLE_ITEM').slice(0, 2),
+  ...all.filter((r) => r.challenge.kind === 'ITEM_SCORE').slice(0, 1),
+]
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
     for (const [i, r] of real.entries()) {
@@ -164,7 +176,8 @@ const pct = (xs, p) => {
 const timing = { samples: solveTimes.length, p50: pct(solveTimes, 50), p95: pct(solveTimes, 95), max: solveTimes.length ? Math.max(...solveTimes) : null }
 writeFileSync(fixtureFile('gates-report.json'), JSON.stringify({ report, q17, timing }, null, 2))
 const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.text?.belowCount > 0 || (r.card && r.card.cards > 0 && (r.card.minFontPx < MIN_FONT || r.card.ovrMinPx < 14))
-  || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1))) || (r.shot.startsWith('cozum-') && r.cards !== 11))
+  || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1))) || (r.shot.startsWith('cozum-') && r.cards !== 11)
+  || (r.kind === 'SQUAD' && r.cards !== 11))
 const q17bad = q17.filter((r) => r.problems.length)
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r).slice(0, 500)))
@@ -172,6 +185,9 @@ console.log(`q17 çözüm sahası: ${q17.length} kombinasyon; sorunlu ${q17bad.l
 q17bad.slice(0, 20).forEach((r) => console.log(' -', r.size, r.formation, r.problems.join('; ')))
 console.log(`gerçek setler: ${real.map((r) => `${r.set.name} / ${r.challenge.name} (${r.challenge.kind})`).join(' · ')}`)
 console.log(`çözücü süresi (ms): ${JSON.stringify(timing)}`)
-const fixturePrices = report.filter((r) => r.prices).map((r) => `${r.shot}: alınacak ${r.prices.buy}, fiyatı bilinmeyen ${r.prices.unknown}`)
-console.log(`fiyat kapsamı (gerçek setler): ${fixturePrices.slice(0, 2).join(' · ')}`)
+// Fiyat kapsamı: gerçek kare görevlerin 1280 koyu çekimleri (her görev bir kez sayılır).
+const priced = report.filter((r) => r.prices && r.kind === 'SQUAD' && r.shot.endsWith('-dark-1280'))
+const buy = priced.reduce((n, r) => n + r.prices.buy, 0)
+const unknown = priced.reduce((n, r) => n + r.prices.unknown, 0)
+console.log(`fiyat kapsamı (gerçek kare görevler, ${priced.length} görev): alınacak ${buy}, fiyatı bilinen ${buy - unknown}, bilinmeyen ${unknown}`)
 process.exitCode = bad.length || q17bad.length || (timing.p95 ?? 0) > 3000 ? 1 : 0
