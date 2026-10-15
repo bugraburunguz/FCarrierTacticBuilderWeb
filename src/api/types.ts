@@ -64,6 +64,9 @@ export interface CareerPlayerFacets {
   budgetEur?: number
   contractData: boolean
   loanData: boolean
+  /** V3-06c: kullanıcının ligi ve lig gücü (OVR) — yalnız "Lig seviyesi" göstergesi; bilinmiyorsa yok. */
+  leagueName?: string
+  leagueOvr?: number
 }
 
 export type ChangeType = 'UPGRADE' | 'DOWNGRADE' | 'MIXED' | 'NEW' | 'REMOVED' | 'TRANSFER'
@@ -625,15 +628,6 @@ export interface PlayerRoleFit {
   engineVersion?: string
   fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
   narrative?: FitNarrative
-  /** V3-06b: kariyerde levelFit'in ölçüldüğü düzey (kullanıcının ligi); kariyersiz çağrıda yok. */
-  levelReference?: LevelReference
-}
-
-/** LEAGUE: kullanıcının ligi (lig gücü OVR); OVR: lig gücü bilinmiyor, oyuncunun kendi OVR bandı. */
-export interface LevelReference {
-  kind: 'LEAGUE' | 'OVR'
-  league?: string
-  ovr?: number
 }
 
 /** V3-06b: kariyer oyuncu sayfası, Sözleşme ve değer. Veri yoksa alan gelmez (0 değil, ENG-02). */

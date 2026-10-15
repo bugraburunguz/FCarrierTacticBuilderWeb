@@ -18,7 +18,8 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-06b/career-player/', import.meta.url)
+// --out <screens altı klasör>: regresyon koşusu başka göreve yazılır (commit'li çekimler ezilmez).
+const out = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-06b/career-player'}/`, import.meta.url)
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11
@@ -47,6 +48,8 @@ const players = {
 }
 players['tam-veri'] = players.disarida
 
+/** V3-06c/0b: Roller satırında kesilen (ellipsis) rol adları. */
+const ROLE_NAMES_CLIPPED = () => [...document.querySelectorAll('[role="tabpanel"] li span[title]')].filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.textContent)
 const TABS = [['statlar', ''], ['roller', 'roller'], ['gelisim', 'gelisim'], ['sozlesme', 'sozlesme']]
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
@@ -97,7 +100,11 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
         if (w === 375) extra.tabTopOk = extra.tabTop <= TAB_TOP_MAX
         extra.inSquad = state !== 'tam-veri' && squadIds.has(id)
         extra.badgeOk = (extra.inSquadBadge > 0) === extra.inSquad
-        if (tab === 'roller') extra.reference = (await panel.locator('[role="note"]').first().textContent())?.slice(0, 160)
+        if (tab === 'roller') {
+          extra.reference = (await panel.locator('[role="note"]').first().textContent())?.slice(0, 160)
+          extra.roleNamesClipped = await page.evaluate(ROLE_NAMES_CLIPPED)
+        }
+        extra.leagueLevel = await page.getByText(/^(Ligin üstünde|Ligin altında|Lig seviyesinde)/).count()
         if (tab === 'statlar') extra.labels = await page.evaluate(labelClipping, '[role="tabpanel"]')
         if (tab === 'sozlesme') extra.contractRows = await panel.locator('dt').allTextContents()
         await shoot(`${state}-${tab}`, extra)
@@ -116,6 +123,7 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify({ players, report }, null, 2))
 const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.tabTopOk === false || r.badgeOk === false
+  || (r.roleNamesClipped && r.roleNamesClipped.length > 0) || (r.leagueLevel !== undefined && r.leagueLevel === 0)
   || (r.text && r.text.belowCount > 0) || (r.labels && r.labels.clipped.length > 0)
   || (r.card && r.card.cards > 0 && (r.card.minFontPx < MIN_FONT || r.card.ovrMinPx < 14)) || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1))))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)

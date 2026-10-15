@@ -6,7 +6,7 @@ import { FitBadge } from '../../components/card/FitBadge'
 import { FitNarrativeView } from '../../components/FitNarrativeView'
 import { HelpPopover } from '../../components/ui'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
-import { badgeHelp, fitDisplay, ROLES_HELP, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
+import { fitDisplay, ROLES_HELP, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
 import { sortRoles } from '../cards/utPlayer'
 
 const STALE_MS = 120_000
@@ -18,7 +18,8 @@ function RoleRow({ role, tailored }: { role: PlayerRoleFit; tailored: boolean })
   return (
     <li className="glass-3 flex flex-col gap-1 p-2.5">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="min-w-0 flex-1 truncate text-sm font-medium" title={role.roleName}>{role.roleName}</span>
+        {/* <480px: ad tam satırda (kısaltılmaz), çip + rozet + rol puanı alt satıra iner (V3-06c/0b). */}
+        <span className="min-w-0 flex-1 truncate text-sm font-medium max-[479px]:basis-full max-[479px]:whitespace-normal max-[479px]:break-words" title={role.roleName}>{role.roleName}</span>
         {tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
         <FitBadge state={d.state} pct={d.pct} />
         {role.levelFit !== undefined && role.levelFit !== null && <span className="text-xs text-muted">{rolePointsText(d.rolePoints)}</span>}
@@ -36,7 +37,7 @@ function RoleRow({ role, tailored }: { role: PlayerRoleFit; tailored: boolean })
 /**
  * Roller: v3 uyum (rozet = seviyesine göre %, yanında rol puanı), mevki başına en uygun roller; "Neden?" altında anlatım.
  * "Biçilmiş kaftan" mevki başına yalnız en iyi role, sunucu `tailored` derse. Sözlük `fitLabels` (tek kaynak).
- * careerId (V3-06b): kariyer motoru v3, seviye referansı kariyerin ligi; sekme başındaki tek yardım referansı söyler.
+ * careerId (V3-06b): kariyer kaydının verisiyle, kariyer motoru v3; seviye referansı her yerde oyuncunun kendi OVR bandı (V3-06c kararı).
  */
 export function RolesTab({ playerId, positions, careerId }: { playerId: number; positions: string[]; careerId?: number }) {
   const query = useQuery({ queryKey: ['player-roles-v3', playerId, careerId], queryFn: () => endpoints.playerRoles(playerId, careerId, 'v3'), staleTime: STALE_MS })
@@ -53,13 +54,12 @@ export function RolesTab({ playerId, positions, careerId }: { playerId: number; 
   if (shownPositions.length === 0) {
     return <EmptyState>Bu oyuncu için rol bulunamadı.</EmptyState>
   }
-  const reference = careerId === undefined ? undefined : query.data[0]?.levelReference
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 text-xs text-muted">
-        {reference?.kind === 'LEAGUE' ? `Seviye referansı: ${reference.league}` : 'Uygunluk nasıl okunur?'}
+        Uygunluk nasıl okunur?
         <HelpPopover label="Rozet ve rol puanı">
-          <p>{badgeHelp(reference)}</p>
+          <p>{ROLES_HELP.badge}</p>
           <p className="mt-1">{ROLES_HELP.rolePoints}</p>
         </HelpPopover>
       </div>

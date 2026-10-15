@@ -18,7 +18,8 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-05b/', import.meta.url)
+// --out <screens altı klasör>: regresyon koşusu başka göreve yazılır (commit'li V3-05b çekimleri ezilmez).
+const out = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-05b'}/`, import.meta.url)
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
@@ -73,6 +74,8 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
       if (w === 375) extra.tabTopOk = layout.tabTop <= TAB_TOP_MAX
       if (mobile) extra.cardWidthOk = layout.cardWidth <= MOBILE_CARD_MAX
       if (name === 'statlar') extra.labels = await page.evaluate(labelClipping, '[role="tabpanel"]')
+      // V3-06c/0b: kesilen rol adı yok (ellipsis); <480px'te ad tam satırda.
+      if (name === 'roller') extra.roleNamesClipped = await page.evaluate(() => [...document.querySelectorAll('[role="tabpanel"] li span[title]')].filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.textContent))
       await shoot(name, extra)
       if (name === 'statlar') {
         // Kaydırılmış durum: mobilde şerit yapışık konumuna (üst başlığın hemen altı) gelene kadar + 40px; masaüstünde 600px.
@@ -108,7 +111,7 @@ writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
 const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.tabTopOk === false || r.cardWidthOk === false
   || (r.text && r.text.belowCount > 0)
   || (r.card && r.card.cards > 0 && (r.card.minFontPx < 11 || r.card.ovrMinPx < 14 || r.card.surnamesVisible === 0))
-  || (r.labels && r.labels.clipped.length > 0) || (r.sticky && r.sticky.position === 'sticky' && !r.sticky.ok) || (r.band && !r.band.ok))
+  || (r.labels && r.labels.clipped.length > 0) || (r.roleNamesClipped && r.roleNamesClipped.length > 0) || (r.sticky && r.sticky.position === 'sticky' && !r.sticky.ok) || (r.band && !r.band.ok))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r)))
 const mins = report.map((r) => r.text?.minFontPx).filter((v) => v !== null && v !== undefined)

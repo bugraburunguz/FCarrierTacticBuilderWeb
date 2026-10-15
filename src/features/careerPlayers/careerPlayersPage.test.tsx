@@ -73,6 +73,23 @@ describe('kariyer oyuncu listesi (v3 Katalog)', () => {
     expect(await screen.findByRole('columnheader', { name: /Sözleşme/ })).toBeInTheDocument()
   })
 
+  it('Lig seviyesi: lig gücü biliniyorsa tablo sütunu ve ızgara kartı altında nötr çip; bilinmiyorsa yok (V3-06c)', async () => {
+    vi.mocked(endpoints.playerFacets).mockResolvedValue({ budgetEur: 5_000_000, contractData: false, loanData: false, leagueName: 'EFL League Two', leagueOvr: 62 })
+    const grid = renderPage()
+    const card = (await screen.findByRole('link', { name: /Ada Golcü/ })).closest('li')!
+    expect(await within(card).findByText('Ligin üstünde (+12)')).toBeInTheDocument()
+    grid.unmount()
+    const table = renderPage('/players?gorunum=table')
+    expect(await screen.findByRole('columnheader', { name: /Lig seviyesi/ })).toBeInTheDocument()
+    expect(screen.getAllByText('Ligin üstünde (+12)').length).toBeGreaterThan(0)
+    table.unmount()
+    vi.mocked(endpoints.playerFacets).mockResolvedValue({ budgetEur: 5_000_000, contractData: false, loanData: false })
+    renderPage('/players?gorunum=table')
+    await screen.findByRole('table')
+    expect(screen.queryByRole('columnheader', { name: /Lig seviyesi/ })).toBeNull()
+    expect(screen.queryByText(/Ligin üstünde/)).toBeNull()
+  })
+
   it('süzgeç ↔ adres çubuğu: adresten okunur ve sunucuya gider', async () => {
     renderPage('/players?degermin=1000000&kova=ZOR&yasmax=23')
     await screen.findByText(/2 oyuncu/)

@@ -6,7 +6,10 @@ import { PlayerCard } from '../../components/card/PlayerCard'
 import { CompareButton } from '../../components/CompareButton'
 import { useIsMobile } from '../../design/components/MobileSheet'
 import { Chip, TabPanel, Tabs } from '../../design/components/primitives'
+import { HelpPopover } from '../../components/ui'
 import { cardPlayerOfSummary } from '../../lib/cardPlayer'
+import { LEAGUE_LEVEL_HELP } from '../../lib/leagueLevel'
+import { LeagueLevelChip } from '../careerPlayers/LeagueLevelChip'
 import { ContractTab, DevelopmentTab } from './CareerPlayerTabs'
 import { BackLink, FactGrid, PlayerDetailLayout, PlayerPageError, PlayerPageLoading } from './PlayerDetailLayout'
 import { CARD_WIDTH, footText, MOBILE_CARD_WIDTH, potentialText, useTabParam } from './playerPage'
@@ -32,6 +35,8 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   const mobile = useIsMobile()
   const detail = useQuery({ queryKey: ['career-player', careerId, id], queryFn: () => endpoints.player(id, careerId), enabled: Number.isFinite(id), staleTime: STALE_MS, retry: false })
   const contract = useQuery({ queryKey: ['career-player-contract', careerId, id], queryFn: () => endpoints.playerContract(id, careerId), enabled: Number.isFinite(id), staleTime: STALE_MS, retry: false })
+  // Liste ile aynı önbellek anahtarı: lig gücü (Lig seviyesi göstergesi) facets'ten.
+  const facets = useQuery({ queryKey: ['player-facets', careerId], queryFn: () => endpoints.playerFacets(careerId), staleTime: STALE_MS })
   const summary = detail.data?.summary
 
   const back = <BackLink to="/players">Oyuncular</BackLink>
@@ -65,7 +70,18 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
       {!mobile && compare}
     </>
   )
-  const badges = inSquad ? <Chip><Check size={12} aria-hidden="true" className="text-good" />Kadronda</Chip> : undefined
+  const leagueOvr = facets.data?.leagueOvr
+  const badges = (
+    <>
+      {inSquad && <Chip><Check size={12} aria-hidden="true" className="text-good" />Kadronda</Chip>}
+      {leagueOvr !== undefined && (
+        <span className="inline-flex items-center gap-1">
+          <LeagueLevelChip overall={summary.overall} leagueOvr={leagueOvr} />
+          <HelpPopover label="Lig seviyesi"><p>{LEAGUE_LEVEL_HELP}</p></HelpPopover>
+        </span>
+      )}
+    </>
+  )
 
   return (
     <PlayerDetailLayout back={back} topAside={mobile && compare} title={summary.name} positions={mobile ? summary.positions : undefined} meta={meta} badges={badges} card={card}>

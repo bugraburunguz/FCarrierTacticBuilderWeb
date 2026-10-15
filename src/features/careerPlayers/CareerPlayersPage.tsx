@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerFacets, PlayerSummary } from '../../api/types'
 import { CompareButton } from '../../components/CompareButton'
-import { Select } from '../../components/ui'
+import { HelpPopover, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Segmented } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
@@ -12,7 +12,9 @@ import { CatalogResults } from '../catalog/CatalogResults'
 import { CatalogFiltersButton, CatalogSearch, CatalogShell, MoreFilters, PositionChips } from '../catalog/CatalogShell'
 import { CatalogTable, type CatalogColumn } from '../catalog/CatalogTable'
 import { CatalogTile } from '../catalog/CatalogTile'
+import { LEAGUE_LEVEL_HELP } from '../../lib/leagueLevel'
 import { BucketChip } from './BucketChip'
+import { LeagueLevelChip } from './LeagueLevelChip'
 import { activeCareerFilterCount, budgetKnown, careerFiltersFromParams, careerFiltersToParams, DEFAULT_CAREER_FILTERS, TEXT_SORTS, toCareerQuery, type CareerListFilters, type CareerSort } from './careerFilters'
 import { CareerFilterFields } from './CareerFilterFields'
 
@@ -41,6 +43,11 @@ function columns(facets: CareerPlayerFacets | undefined, role: boolean): Catalog
     { sort: 'value', label: 'Değer', align: 'right', cellClassName: `${NUM} whitespace-nowrap text-ink-2`, cell: (p) => (p.valueEur === undefined ? '–' : `${p.valuationEstimated ? '≈' : ''}${formatEur(p.valueEur)}`) },
     Boolean(facets?.contractData) && { label: 'Sözleşme', cellClassName: 'whitespace-nowrap text-ink-2', cell: (p) => contractText(p.contractUntil) },
     { label: 'Ulaşılabilirlik', cell: (p) => <BucketChip bucket={p.feasibility} /> },
+    facets?.leagueOvr !== undefined && {
+      label: <span className="inline-flex items-center gap-1">Lig seviyesi<HelpPopover label="Lig seviyesi"><p>{LEAGUE_LEVEL_HELP}</p></HelpPopover></span>,
+      cellClassName: 'whitespace-nowrap',
+      cell: (p) => <LeagueLevelChip overall={p.overall} leagueOvr={facets.leagueOvr} />,
+    },
     role && { sort: 'role', label: 'Rol uyumu', align: 'right', cellClassName: NUM, cell: (p) => p.roleFit?.toFixed(1) ?? '–' },
     { label: <span className="sr-only">Karşılaştır</span>, align: 'right', cell: (p) => <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact /> },
   ]
@@ -154,6 +161,7 @@ export function CareerPlayersPage({ careerId }: { careerId: number }) {
           <CatalogTile key={p.id} player={p} cardWidth={cardWidth} href={playerHref(p)} extra={(
             <div className="flex w-full flex-wrap items-center justify-center gap-1.5 text-xs text-ink-2">
               <BucketChip bucket={p.feasibility} />
+              <LeagueLevelChip overall={p.overall} leagueOvr={facets.data?.leagueOvr} />
               {p.valueEur !== undefined && <span className={NUM}>{p.valuationEstimated ? '≈' : ''}{formatEur(p.valueEur)}</span>}
               {roleSort && p.roleFit !== undefined && <span className="inline-flex gap-1">Rol <span className={`${NUM} text-ink`}>{p.roleFit.toFixed(1)}</span></span>}
             </div>

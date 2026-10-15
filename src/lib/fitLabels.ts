@@ -1,4 +1,4 @@
-import type { LevelReference, WeaponState } from '../api/types'
+import type { WeaponState } from '../api/types'
 import type { FitState } from '../components/card/FitBadge'
 import { FIT_STATE_OF, toneOf } from './fitTone'
 
@@ -33,17 +33,6 @@ export const ROLES_HELP = {
   badge: 'Rozet: oyuncunun kendi seviyesindeki oyunculara göre bu roldeki uygunluğu.',
   rolePoints: 'Rol puanı: rol vektörüne göre ham uygunluk.',
 } as const
-
-/** V3-06b: rozet açıklaması seviye referansına göre; kariyerde referans kullanıcının ligi, referans yoksa (UT) ROLES_HELP.badge. */
-export function badgeHelp(reference?: LevelReference): string {
-  if (!reference) {
-    return ROLES_HELP.badge
-  }
-  if (reference.kind === 'LEAGUE' && reference.league) {
-    return `Rozet: kariyerinin ligi ${reference.league} düzeyindeki (OVR ${reference.ovr}) oyunculara göre bu roldeki uygunluk.`
-  }
-  return 'Rozet: ligin gücü kayıttan çıkarılamadı; oyuncunun kendi OVR düzeyindeki oyunculara göre bu roldeki uygunluk.'
-}
 
 export interface FitInput {
   levelFit?: number | null

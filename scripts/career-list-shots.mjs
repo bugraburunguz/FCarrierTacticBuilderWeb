@@ -17,7 +17,8 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-06a/career-list/', import.meta.url)
+// --out <screens altı klasör>: regresyon koşusu başka göreve yazılır (commit'li çekimler ezilmez).
+const out = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-06a/career-list'}/`, import.meta.url)
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11
@@ -56,7 +57,9 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
       const axe = await new AxeBuilder({ page }).analyze()
       const serious = axe.violations.filter((a) => a.impact === 'serious' || a.impact === 'critical')
-      report.push({ shot: `${name}-${theme}-${w}`, overflow, axeSeriousCritical: serious.length, axeAll: axe.violations.map((v) => `${v.id}:${v.impact}:${v.nodes.length}`), axeNodes: serious.flatMap((v) => v.nodes.map((n) => `${v.id} ${n.target.join(' ')} ${n.any[0]?.message ?? ''}`.slice(0, 220))), problems: [...problems], text: await page.evaluate(pageMinFont, MIN_FONT), ...extra })
+      report.push({ shot: `${name}-${theme}-${w}`, overflow, axeSeriousCritical: serious.length, axeAll: axe.violations.map((v) => `${v.id}:${v.impact}:${v.nodes.length}`), axeNodes: serious.flatMap((v) => v.nodes.map((n) => `${v.id} ${n.target.join(' ')} ${n.any[0]?.message ?? ''}`.slice(0, 220))), problems: [...problems], text: await page.evaluate(pageMinFont, MIN_FONT),
+        // V3-06c: Lig seviyesi çipi (lig gücü bilinen Crewe kariyerinde) liste satırlarında görünür.
+        leagueLevel: /^(bos|mobil-sheet)$/.test(name) ? undefined : await page.getByText(/^(Ligin üstünde|Ligin altında|Lig seviyesinde)/).count(), ...extra })
       problems.length = 0
     }
     const open = async (query, ready) => {
@@ -88,7 +91,7 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
 }
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
-const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0)
+const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0) || r.leagueLevel === 0
   || (r.card && r.card.cards > 0 && (r.card.minFontPx < MIN_FONT || r.card.ovrMinPx < 14)) || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1))))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r)))

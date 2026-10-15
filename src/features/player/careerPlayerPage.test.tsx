@@ -8,7 +8,7 @@ import { ROLES_HELP } from '../../lib/fitLabels'
 import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), development: vi.fn() },
+  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn() },
 }))
 
 const CAREER = 4
@@ -20,7 +20,7 @@ const detail = (over: Partial<PlayerDetail['summary']> = {}): PlayerDetail => ({
 
 const role = (over: Partial<PlayerRoleFit>): PlayerRoleFit => ({
   position: 'ST', roleId: 'advanced_forward_attack', roleName: 'Advanced Forward (Attack)', score: 80, projectedRating: 72, badgeText: '', reasons: [], gaps: [], engineVersion: 'v3',
-  currentFit: 80, levelFit: 90, fitLabel: 'GOOD', levelReference: { kind: 'LEAGUE', league: 'League Two', ovr: 64 },
+  currentFit: 80, levelFit: 90, fitLabel: 'GOOD',
   narrative: { headline: 'Ligine göre çok iyi.', tailored: true, strengths: [], weaknesses: [] }, ...over,
 })
 
@@ -48,6 +48,7 @@ beforeEach(() => {
   vi.mocked(endpoints.player).mockReset().mockResolvedValue(detail())
   vi.mocked(endpoints.playerRoles).mockReset().mockResolvedValue([role({}), role({ roleId: 'poacher_attack', roleName: 'Poacher (Attack)', levelFit: 50, fitLabel: 'AT_LEVEL', narrative: undefined })])
   vi.mocked(endpoints.playerContract).mockReset().mockResolvedValue(contract())
+  vi.mocked(endpoints.playerFacets).mockReset().mockResolvedValue({ contractData: false, loanData: false, leagueName: 'EFL League Two', leagueOvr: 64 })
   vi.mocked(endpoints.development).mockReset()
 })
 
@@ -77,7 +78,7 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     await waitFor(() => expect(screen.getByTestId('where').textContent).toBe(''))
   })
 
-  it('Roller: kariyer motoru v3 kariyerle istenir; tek yardım referansın lig olduğunu söyler', async () => {
+  it('Roller: kariyer motoru v3 kariyerle istenir; tek yardım fitLabels\'teki "kendi seviyesindeki" metni (lig referans satırı yok)', async () => {
     renderPage('/players/7?sekme=roller')
     expect(await screen.findByText('Advanced Forward (Attack)')).toBeInTheDocument()
     expect(endpoints.playerRoles).toHaveBeenCalledWith(7, CAREER, 'v3')
@@ -86,19 +87,31 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     const panel = screen.getByRole('tabpanel')
     const notes = within(panel).getAllByRole('note')
     expect(notes).toHaveLength(1)
-    expect(notes[0]).toHaveTextContent('League Two')
+    expect(notes[0]).toHaveTextContent(ROLES_HELP.badge)
     expect(notes[0]).toHaveTextContent(ROLES_HELP.rolePoints)
+    expect(within(panel).queryByText(/Seviye referansı/)).toBeNull()
     expect(within(panel).getAllByText('Biçilmiş kaftan')).toHaveLength(1)
     expect(within(panel).getByText('Neden?')).toBeInTheDocument()
   })
 
-  it('Roller: lig gücü bilinmiyorsa yardım oyuncunun kendi seviyesini söyler (lig adı uydurulmaz)', async () => {
-    vi.mocked(endpoints.playerRoles).mockResolvedValue([role({ levelReference: { kind: 'OVR' } })])
+  it('Roller: <480px\'te rol adı kendi satırında (kısaltılmaz), çip ve rozet alt satırda (ortak RoleRow)', async () => {
     renderPage('/players/7?sekme=roller')
-    await screen.findByText('Advanced Forward (Attack)')
-    const note = within(screen.getByRole('tabpanel')).getByRole('note')
-    expect(note).toHaveTextContent('kendi OVR')
-    expect(note).not.toHaveTextContent('League Two')
+    const name = await screen.findByText('Advanced Forward (Attack)')
+    expect(name.className).toContain('max-[479px]:basis-full')
+    expect(name.className).toContain('max-[479px]:whitespace-normal')
+  })
+
+  it('Lig seviyesi: başlıkta nötr çip + yardım (lig gücü biliniyorsa); bilinmiyorsa yok', async () => {
+    const view = renderPage()
+    await screen.findByRole('heading', { name: 'Ollie Watkins' })
+    expect(await screen.findByText('Ligin üstünde (+8)')).toBeInTheDocument()
+    expect(screen.getByText('Oyuncunun OVR\'ı, kariyerindeki ligin ortalama seviyesiyle karşılaştırılır.')).toBeInTheDocument()
+    view.unmount()
+    vi.mocked(endpoints.playerFacets).mockResolvedValue({ contractData: false, loanData: false })
+    renderPage()
+    await screen.findByRole('heading', { name: 'Ollie Watkins' })
+    await waitFor(() => expect(endpoints.playerFacets).toHaveBeenCalledTimes(2))
+    expect(screen.queryByText(/Ligin|Lig seviyesinde/)).toBeNull()
   })
 
   it('Sözleşme: kalan ay oyun tarihine göre, tahmini değer ≈, kova ve alım sonrası bütçe', async () => {
