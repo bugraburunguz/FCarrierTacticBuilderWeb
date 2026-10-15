@@ -112,6 +112,22 @@ describe('SBC çözüm sayfası (V3-05d, 08 §5)', () => {
     expect(screen.getByText(/Kulüpten kullanılan:/)).toHaveTextContent('Kulüpten kullanılan: 0 kart')
   })
 
+  it('V3-05d-c: alınacak kart yoksa yalnız "Alınacak kart yok" (Toplam yok); kulüp satırı sayı + en değerli reyting', async () => {
+    renderPage('/ut/sbc/7700/77001')
+    const custom = (await screen.findByText('Özelleştir')).closest('details')!
+    fireEvent.click(within(custom).getByRole('checkbox', { name: 'Yalnız kulüp' }))
+    const list = await screen.findByRole('region', { name: 'Alışveriş listesi' })
+    await waitFor(() => expect(within(list).getByText('Alınacak kart yok')).toBeInTheDocument())
+    expect(within(list).queryByText(/^Toplam/)).toBeNull()
+    expect(screen.getByText(/^Kulüpten kullanılan:/)).toHaveTextContent(/^Kulüpten kullanılan: 11 kart · En değerli: \d{2}$/)
+  })
+
+  it('Özelleştir: "Özel kartları koru" varsayılan açık', async () => {
+    renderPage('/ut/sbc/7700/77001')
+    const custom = (await screen.findByText('Özelleştir')).closest('details')!
+    expect(within(custom).getByRole('checkbox', { name: 'Özel kartları koru' })).toBeChecked()
+  })
+
   it('Özelleştir kapalı başlar; yalnız kulüp seçilince yeniden çözülür', async () => {
     renderPage('/ut/sbc/7700/77001')
     const custom = (await screen.findByText('Özelleştir')).closest('details')!

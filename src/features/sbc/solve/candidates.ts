@@ -1,19 +1,38 @@
 import type { PlayerSummary } from '../../../api/types'
+import { estimateCoinPrice } from '../../../lib/coinPrice'
 import type { SbcCandidate } from '../../../lib/sbcTraditional'
 import { personKey, type UtCard } from '../../../lib/utCard'
+import { rulesStore } from '../../../state/rulesStore'
 
 /**
- * V3-05d çözücü önceliği (katman): 0 kulüp takas edilemez → 1 kulüp (düşük değerli önce) → 2 bilgi tabanında gözlenmiş fiyatı olan en ucuz pazar kartı
- * → 3 fiyatı bilinmeyen en düşük reytingli uygun katalog kartı. Çözücü maliyeti (SbcCandidate.price) katman taban değeri + katman içi sıradır;
- * tabanlar, bir üst katmandaki tek kartın alttaki 11 kartın toplamından pahalı olacağı kadar ayrık.
+ * Görünüm sınıfı (maliyet değil): 0 kulüp takas edilemez, 1 kulüp, 2 gözlenmiş fiyatı olan pazar kartı, 3 fiyatı bilinmeyen katalog kartı.
+ * Arayüz: ≤1 "✓" (kulüp), ≥2 alışveriş listesi.
  */
 export type Tier = 0 | 1 | 2 | 3
 
-const TIER_BASE = [0, 1_000, 100_000, 10_000_000_000] as const
-/** Kulüp kartının değer sırası için üst sınır (coin): katman 1'in maliyeti 1000-1980 aralığında kalır. */
-const CLUB_VALUE_CAP = 98_000
+/** Takas edilemez kart aynı reytingde bu oranda ucuz sayılır (mutlak öncelik değil). */
+export const UNTRADEABLE_DISCOUNT = 0.5
+/** "Özel kartları koru" açıkken özel kartın maliyet çarpanı: yalnız şart gerektirirse seçilir (şart cezası her zaman daha büyük). */
+const SPECIAL_PROTECTION = 1_000
 /** Kilitli kart her kadroya girsin diye maliyeti çok düşük. */
 const LOCKED_COST = -1_000_000_000_000
+/** Bilinen eğrinin üst ucundan sonra her reyting puanı için artış (yüksek reyting = yüksek maliyet, düzleşmez). */
+const ABOVE_CURVE_GROWTH = 1.5
+const CURVE_TOP = 90
+
+/**
+ * V3-05d-c — kartın değer vekili, TEK yerde: bilgi tabanında gözlenmiş fiyat varsa o; yoksa reytinge göre kesin artan değer
+ * (coinPrice eğrisi, üst uçtan sonra katlanarak). Takas edilemez kart UNTRADEABLE_DISCOUNT ile ucuzlar. Arayüzde gösterilmez; yalnız çözücü maliyeti.
+ */
+export function valueProxy({ rating, knownPrice, untradeable }: { rating: number; knownPrice?: number; untradeable?: boolean }): number {
+  const base = knownPrice ?? (rating <= CURVE_TOP ? estimateCoinPrice(rating) + rating : estimateCoinPrice(CURVE_TOP) * ABOVE_CURVE_GROWTH ** (rating - CURVE_TOP))
+  return untradeable ? base * UNTRADEABLE_DISCOUNT : base
+}
+
+/** Özel kart: EA rareflag > 1 (TOTW, promo…) ya da ICON/HERO/HOF. */
+export function isSpecial(card: Pick<UtCard, 'rarityId' | 'cardType'>): boolean {
+  return (card.rarityId ?? 0) > 1 || card.cardType !== undefined
+}
 
 export interface PlanCandidate extends SbcCandidate {
   tier: Tier
@@ -25,6 +44,7 @@ export interface PlanCandidate extends SbcCandidate {
   /** EA kaynak kimliği (fiyat sorgusu). */
   resourceId?: number
   locked?: boolean
+  special?: boolean
 }
 
 export interface Customize {
@@ -33,30 +53,38 @@ export interface Customize {
   onlyClub: boolean
   /** Bütçe üst sınırı (coin): fiyatı bilinmeyen kart alınmaz, bilinenlerin toplamı aşılmaz. */
   budget?: number
+  /** "Özel kartları koru" (varsayılan açık): özel kulüp kartı yalnız şart gerektirirse kullanılır. */
+  protectSpecial: boolean
 }
 
-export const DEFAULT_CUSTOMIZE: Customize = { locked: [], excluded: [], onlyClub: false }
+export const DEFAULT_CUSTOMIZE: Customize = { locked: [], excluded: [], onlyClub: false, protectSpecial: true }
 
-export function clubCandidates(cards: UtCard[]): PlanCandidate[] {
+/**
+ * Kulüp kartı maliyeti = feda edilen değer: değer vekili × (1 − transfer vergisi) — kart satılsa elde edilecek olan (vergi kurallardan, GET /ut/rules).
+ * Böylece aynı değerde pazardan almak yerine kulüp kartı kullanılır; korunan özel kart çok pahalı.
+ */
+export function clubCandidates(cards: UtCard[], { protectSpecial }: Pick<Customize, 'protectSpecial'> = DEFAULT_CUSTOMIZE): PlanCandidate[] {
+  const afterTax = 1 - rulesStore.get().transferTax
   return cards.filter((c) => c.source === 'club').map((c) => {
-    const tier: Tier = c.untradeable ? 0 : 1
-    const order = tier === 0 ? c.rating : Math.min(c.price ?? c.rating * 100, CLUB_VALUE_CAP) / 100
+    const special = isSpecial(c)
+    const value = valueProxy({ rating: c.rating, untradeable: c.untradeable }) * afterTax
     return {
-      id: c.instanceId ?? hash(c.key), cardKey: c.key, name: c.name, overall: c.rating, positions: c.positions, club: c.club, league: c.league, nationality: c.nationality,
+      id: c.instanceId ?? hash(c.key), cardKey: c.key, name: c.name, assetId: c.assetId, overall: c.rating, positions: c.positions, club: c.club, league: c.league, nationality: c.nationality,
       clubId: c.clubId, leagueId: c.leagueId, nationId: c.nationId, gender: c.gender, cardType: c.cardType, rarity: c.rarity, faceUrl: c.faceUrl,
-      source: c.pile === 'storage' ? 'storage' : 'club', untradeable: c.untradeable, playerKey: `p:${personKey(c)}`, tier, price: TIER_BASE[tier] + order,
+      source: c.pile === 'storage' ? 'storage' : 'club', untradeable: c.untradeable, playerKey: `p:${personKey(c)}`, tier: c.untradeable ? 0 : 1, special,
+      price: special && protectSpecial ? value * SPECIAL_PROTECTION : value,
     }
   })
 }
 
+/** Pazar/katalog kartı maliyeti = gözlenmiş fiyat, yoksa değer vekili (fiyatı bilinmeyen kart maliyetsiz sayılmaz). */
 export function marketCandidates(players: PlayerSummary[], prices: Map<number, number>): PlanCandidate[] {
   return players.map((p) => {
     const knownPrice = p.faceAssetId !== undefined ? prices.get(p.faceAssetId) : undefined
-    const tier: Tier = knownPrice !== undefined ? 2 : 3
     return {
-      id: p.id, cardKey: `m:${p.id}`, name: p.name, overall: p.overall, positions: p.positions, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender,
-      faceUrl: p.faceUrl, source: 'market', playerKey: `p:${p.faceAssetId ?? p.id}`, resourceId: p.faceAssetId, knownPrice, tier,
-      price: TIER_BASE[tier] + (knownPrice ?? p.overall * 1000),
+      id: p.id, cardKey: `m:${p.id}`, name: p.name, assetId: p.faceAssetId, overall: p.overall, positions: p.positions, club: p.club, league: p.league, nationality: p.nationality, gender: p.gender,
+      faceUrl: p.faceUrl, source: 'market', playerKey: `p:${p.faceAssetId ?? p.id}`, resourceId: p.faceAssetId, knownPrice, tier: knownPrice !== undefined ? 2 : 3,
+      price: valueProxy({ rating: p.overall, knownPrice }),
     }
   })
 }

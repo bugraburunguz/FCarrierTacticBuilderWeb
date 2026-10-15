@@ -8,7 +8,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -16,11 +16,11 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14,
-        "surnamesVisible": 8
+        "surnamesVisible": 6
       },
-      "solveMs": 28,
+      "solveMs": 26,
       "band": {
         "bandBottom": 48,
         "surfaces": [
@@ -67,7 +67,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -75,9 +75,9 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "90",
+        "minFontText": "LB",
         "ovrMinPx": 14,
-        "surnamesVisible": 16
+        "surnamesVisible": 8
       },
       "solveMs": 20
     },
@@ -89,7 +89,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -97,9 +97,9 @@
       "card": {
         "cards": 14,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14,
-        "surnamesVisible": 8
+        "surnamesVisible": 6
       },
       "solveMs": 20
     },
@@ -111,7 +111,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -119,9 +119,9 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "LB",
         "ovrMinPx": 14,
-        "surnamesVisible": 16
+        "surnamesVisible": 8
       },
       "solveMs": 8
     },
@@ -133,7 +133,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -141,9 +141,9 @@
       "card": {
         "cards": 6,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14,
-        "surnamesVisible": 3
+        "surnamesVisible": 0
       },
       "solveMs": 20
     },
@@ -221,7 +221,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -229,11 +229,11 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14,
-        "surnamesVisible": 8
+        "surnamesVisible": 6
       },
-      "solveMs": 22,
+      "solveMs": 20,
       "band": {
         "bandBottom": 48,
         "surfaces": [
@@ -280,7 +280,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -288,9 +288,9 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "90",
+        "minFontText": "LB",
         "ovrMinPx": 14,
-        "surnamesVisible": 16
+        "surnamesVisible": 8
       },
       "solveMs": 20
     },
@@ -302,7 +302,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -310,11 +310,11 @@
       "card": {
         "cards": 14,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14,
-        "surnamesVisible": 8
+        "surnamesVisible": 6
       },
-      "solveMs": 23
+      "solveMs": 19
     },
     {
       "shot": "kulup-bos-light-375",
@@ -324,7 +324,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -332,11 +332,11 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "LB",
         "ovrMinPx": 14,
-        "surnamesVisible": 16
+        "surnamesVisible": 8
       },
-      "solveMs": 9
+      "solveMs": 12
     },
     {
       "shot": "ozellestir-light-375",
@@ -346,7 +346,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -354,11 +354,11 @@
       "card": {
         "cards": 6,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14,
-        "surnamesVisible": 3
+        "surnamesVisible": 0
       },
-      "solveMs": 20
+      "solveMs": 24
     },
     {
       "shot": "tek-kart-elle-light-375",
@@ -434,7 +434,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -446,11 +446,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 11
+        "surnamesVisible": 6
       },
-      "solveMs": 21,
+      "solveMs": 19,
       "band": {
         "bandBottom": 48,
         "surfaces": [
@@ -501,7 +501,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -513,11 +513,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
-      "solveMs": 23
+      "solveMs": 20
     },
     {
       "shot": "dogrulanamayan-dark-768",
@@ -527,7 +527,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -539,9 +539,9 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 11
+        "surnamesVisible": 7
       },
       "solveMs": 20
     },
@@ -553,7 +553,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -565,11 +565,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "ovrMinPx": 16.4,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
-      "solveMs": 10
+      "solveMs": 8
     },
     {
       "shot": "ozellestir-dark-768",
@@ -579,7 +579,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -591,11 +591,11 @@
       "card": {
         "cards": 18,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 9
+        "surnamesVisible": 4
       },
-      "solveMs": 20
+      "solveMs": 19
     },
     {
       "shot": "tek-kart-elle-dark-768",
@@ -683,7 +683,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -695,11 +695,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 11
+        "surnamesVisible": 6
       },
-      "solveMs": 23,
+      "solveMs": 19,
       "band": {
         "bandBottom": 48,
         "surfaces": [
@@ -750,7 +750,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -762,11 +762,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
-      "solveMs": 21
+      "solveMs": 20
     },
     {
       "shot": "dogrulanamayan-light-768",
@@ -776,7 +776,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -788,9 +788,9 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 11
+        "surnamesVisible": 7
       },
       "solveMs": 20
     },
@@ -802,7 +802,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -814,9 +814,9 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "ovrMinPx": 16.4,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
       "solveMs": 9
     },
@@ -828,7 +828,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -840,11 +840,11 @@
       "card": {
         "cards": 18,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 17.9,
-        "surnamesVisible": 9
+        "surnamesVisible": 4
       },
-      "solveMs": 20
+      "solveMs": 19
     },
     {
       "shot": "tek-kart-elle-light-768",
@@ -932,7 +932,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -944,11 +944,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 11
+        "surnamesVisible": 6
       },
-      "solveMs": 20,
+      "solveMs": 19,
       "band": {
         "bandBottom": 48,
         "surfaces": [
@@ -999,7 +999,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1011,11 +1011,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
-      "solveMs": 22
+      "solveMs": 20
     },
     {
       "shot": "dogrulanamayan-dark-1280",
@@ -1025,7 +1025,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1037,11 +1037,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 11
+        "surnamesVisible": 7
       },
-      "solveMs": 22
+      "solveMs": 20
     },
     {
       "shot": "kulup-bos-dark-1280",
@@ -1051,7 +1051,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1063,11 +1063,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
-      "solveMs": 9
+      "solveMs": 10
     },
     {
       "shot": "ozellestir-dark-1280",
@@ -1077,7 +1077,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1089,9 +1089,9 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 11
+        "surnamesVisible": 6
       },
       "solveMs": 20
     },
@@ -1181,7 +1181,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1193,11 +1193,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 11
+        "surnamesVisible": 6
       },
-      "solveMs": 21,
+      "solveMs": 20,
       "band": {
         "bandBottom": 48,
         "surfaces": [
@@ -1248,7 +1248,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1260,9 +1260,9 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "88",
+        "minFontText": "GK",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
       "solveMs": 20
     },
@@ -1274,7 +1274,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1286,11 +1286,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Henderikx",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 11
+        "surnamesVisible": 7
       },
-      "solveMs": 20
+      "solveMs": 24
     },
     {
       "shot": "kulup-bos-light-1280",
@@ -1300,7 +1300,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1312,11 +1312,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "84",
+        "minFontText": "GK",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 22
+        "surnamesVisible": 11
       },
-      "solveMs": 9
+      "solveMs": 10
     },
     {
       "shot": "ozellestir-light-1280",
@@ -1326,7 +1326,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -1338,11 +1338,11 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Oyuncu",
         "ovrMinPx": 14.3,
-        "surnamesVisible": 11
+        "surnamesVisible": 6
       },
-      "solveMs": 21
+      "solveMs": 20
     },
     {
       "shot": "tek-kart-elle-light-1280",
@@ -1430,7 +1430,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1438,18 +1438,22 @@
       "card": {
         "cards": 14,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Trondsen",
         "ovrMinPx": 14,
         "surnamesVisible": 7
       },
-      "solveMs": 70,
+      "solveMs": 75,
       "set": "Future Stars Challenge 2",
       "challenge": "Future Stars Challenge 2",
       "kind": "SQUAD",
       "prices": {
-        "buy": 1,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 2
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1460,7 +1464,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1468,18 +1472,22 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 8
       },
-      "solveMs": 29,
+      "solveMs": 32,
       "set": "3x 79+ Upgrade",
       "challenge": "3x 79+ Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1490,7 +1498,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Sivera",
+        "minFontText": "Çakır",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1498,18 +1506,22 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Gómez",
         "ovrMinPx": 14,
         "surnamesVisible": 8
       },
-      "solveMs": 61,
+      "solveMs": 75,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 3,
-        "unknown": 0
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1520,7 +1532,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1528,18 +1540,22 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Bos",
         "ovrMinPx": 14,
         "surnamesVisible": 10
       },
-      "solveMs": 30,
+      "solveMs": 35,
       "set": "Gold Upgrade",
       "challenge": "Gold Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1550,7 +1566,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "31",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1558,11 +1574,11 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "2",
+        "minFontText": "Small",
         "ovrMinPx": 14,
         "surnamesVisible": 10
       },
-      "solveMs": 18,
+      "solveMs": 22,
       "set": "Silver Upgrade",
       "challenge": "Silver Upgrade",
       "kind": "SQUAD",
@@ -1570,6 +1586,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
       "cards": 11
     },
     {
@@ -1580,7 +1600,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Rodríguez",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1588,11 +1608,11 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "47",
+        "minFontText": "Qi",
         "ovrMinPx": 14,
         "surnamesVisible": 10
       },
-      "solveMs": 62,
+      "solveMs": 57,
       "set": "Bronze Upgrade",
       "challenge": "Bronze Upgrade",
       "kind": "SQUAD",
@@ -1600,6 +1620,10 @@
         "buy": 8,
         "unknown": 0
       },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
       "cards": 11
     },
     {
@@ -1618,18 +1642,22 @@
       "card": {
         "cards": 14,
         "minFontPx": 11,
-        "minFontText": "25",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 7
       },
-      "solveMs": 90,
+      "solveMs": 94,
       "set": "Marquee Matchups",
       "challenge": "RB Leipzig v Eintracht Frankfurt",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 3
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -1640,7 +1668,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Pisseri",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1648,18 +1676,22 @@
       "card": {
         "cards": 9,
         "minFontPx": 11,
-        "minFontText": "25",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 6
       },
-      "solveMs": 70,
+      "solveMs": 83,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 2
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -1670,7 +1702,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Lunin",
+        "minFontText": "Gulácsi",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1678,18 +1710,22 @@
       "card": {
         "cards": 10,
         "minFontPx": 11,
-        "minFontText": "25",
+        "minFontText": "Castro",
         "ovrMinPx": 14,
         "surnamesVisible": 6
       },
-      "solveMs": 93,
+      "solveMs": 100,
       "set": "Marquee Matchups",
       "challenge": "Real Madrid v Villarreal CF",
       "kind": "SQUAD",
       "prices": {
-        "buy": 4,
-        "unknown": 0
+        "buy": 3,
+        "unknown": 3
       },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -1700,26 +1736,30 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Butland",
         "below": [],
         "belowCount": 0,
         "excluded": []
       },
       "card": {
-        "cards": 13,
+        "cards": 12,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 7
       },
-      "solveMs": 62,
+      "solveMs": 77,
       "set": "Marquee Matchups",
       "challenge": "Liverpool v Manchester City",
       "kind": "SQUAD",
       "prices": {
-        "buy": 6,
-        "unknown": 2
+        "buy": 7,
+        "unknown": 7
       },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1750,6 +1790,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -1780,6 +1824,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -1790,7 +1838,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1798,18 +1846,22 @@
       "card": {
         "cards": 14,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Trondsen",
         "ovrMinPx": 14,
         "surnamesVisible": 7
       },
-      "solveMs": 68,
+      "solveMs": 71,
       "set": "Future Stars Challenge 2",
       "challenge": "Future Stars Challenge 2",
       "kind": "SQUAD",
       "prices": {
-        "buy": 1,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 2
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1820,7 +1872,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1828,18 +1880,22 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 8
       },
-      "solveMs": 29,
+      "solveMs": 32,
       "set": "3x 79+ Upgrade",
       "challenge": "3x 79+ Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1850,7 +1906,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Sivera",
+        "minFontText": "Çakır",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1858,18 +1914,22 @@
       "card": {
         "cards": 16,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Gómez",
         "ovrMinPx": 14,
         "surnamesVisible": 8
       },
-      "solveMs": 62,
+      "solveMs": 74,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 3,
-        "unknown": 0
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1880,7 +1940,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1888,18 +1948,22 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Bos",
         "ovrMinPx": 14,
         "surnamesVisible": 10
       },
-      "solveMs": 27,
+      "solveMs": 34,
       "set": "Gold Upgrade",
       "challenge": "Gold Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -1910,7 +1974,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "31",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1918,11 +1982,11 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "2",
+        "minFontText": "Small",
         "ovrMinPx": 14,
         "surnamesVisible": 10
       },
-      "solveMs": 18,
+      "solveMs": 23,
       "set": "Silver Upgrade",
       "challenge": "Silver Upgrade",
       "kind": "SQUAD",
@@ -1930,6 +1994,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
       "cards": 11
     },
     {
@@ -1940,7 +2008,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Rodríguez",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -1948,11 +2016,11 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "47",
+        "minFontText": "Qi",
         "ovrMinPx": 14,
         "surnamesVisible": 10
       },
-      "solveMs": 59,
+      "solveMs": 56,
       "set": "Bronze Upgrade",
       "challenge": "Bronze Upgrade",
       "kind": "SQUAD",
@@ -1960,6 +2028,10 @@
         "buy": 8,
         "unknown": 0
       },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
       "cards": 11
     },
     {
@@ -1978,18 +2050,22 @@
       "card": {
         "cards": 14,
         "minFontPx": 11,
-        "minFontText": "25",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 7
       },
-      "solveMs": 90,
+      "solveMs": 96,
       "set": "Marquee Matchups",
       "challenge": "RB Leipzig v Eintracht Frankfurt",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 3
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2000,7 +2076,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Pisseri",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -2008,18 +2084,22 @@
       "card": {
         "cards": 9,
         "minFontPx": 11,
-        "minFontText": "25",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 6
       },
-      "solveMs": 72,
+      "solveMs": 82,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 2
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2030,7 +2110,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Lunin",
+        "minFontText": "Gulácsi",
         "below": [],
         "belowCount": 0,
         "excluded": []
@@ -2038,18 +2118,22 @@
       "card": {
         "cards": 10,
         "minFontPx": 11,
-        "minFontText": "25",
+        "minFontText": "Castro",
         "ovrMinPx": 14,
         "surnamesVisible": 6
       },
-      "solveMs": 97,
+      "solveMs": 98,
       "set": "Marquee Matchups",
       "challenge": "Real Madrid v Villarreal CF",
       "kind": "SQUAD",
       "prices": {
-        "buy": 4,
-        "unknown": 0
+        "buy": 3,
+        "unknown": 3
       },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2060,26 +2144,30 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Butland",
         "below": [],
         "belowCount": 0,
         "excluded": []
       },
       "card": {
-        "cards": 13,
+        "cards": 12,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Acuña",
         "ovrMinPx": 14,
         "surnamesVisible": 7
       },
-      "solveMs": 63,
+      "solveMs": 79,
       "set": "Marquee Matchups",
       "challenge": "Liverpool v Manchester City",
       "kind": "SQUAD",
       "prices": {
-        "buy": 6,
-        "unknown": 2
+        "buy": 7,
+        "unknown": 7
       },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2110,6 +2198,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -2140,6 +2232,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -2150,7 +2246,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2162,18 +2258,22 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Günok",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 67,
+      "solveMs": 74,
       "set": "Future Stars Challenge 2",
       "challenge": "Future Stars Challenge 2",
       "kind": "SQUAD",
       "prices": {
-        "buy": 1,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 2
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2184,7 +2284,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2196,18 +2296,22 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 29,
+      "solveMs": 34,
       "set": "3x 79+ Upgrade",
       "challenge": "3x 79+ Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2218,7 +2322,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Sivera",
+        "minFontText": "Çakır",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2230,18 +2334,22 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "Sivera",
+        "minFontText": "Çakır",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 60,
+      "solveMs": 75,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 3,
-        "unknown": 0
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2252,7 +2360,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2264,18 +2372,22 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 27,
+      "solveMs": 34,
       "set": "Gold Upgrade",
       "challenge": "Gold Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2286,7 +2398,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "31",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2298,11 +2410,11 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "31",
+        "minFontText": "Günok",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 17,
+      "solveMs": 22,
       "set": "Silver Upgrade",
       "challenge": "Silver Upgrade",
       "kind": "SQUAD",
@@ -2310,6 +2422,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
       "cards": 11
     },
     {
@@ -2320,7 +2436,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Rodríguez",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2332,11 +2448,11 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Rodríguez",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 57,
+      "solveMs": 56,
       "set": "Bronze Upgrade",
       "challenge": "Bronze Upgrade",
       "kind": "SQUAD",
@@ -2344,6 +2460,10 @@
         "buy": 8,
         "unknown": 0
       },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
       "cards": 11
     },
     {
@@ -2370,14 +2490,18 @@
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 89,
+      "solveMs": 96,
       "set": "Marquee Matchups",
       "challenge": "RB Leipzig v Eintracht Frankfurt",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 3
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2388,7 +2512,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Pisseri",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2400,18 +2524,22 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "2",
+        "minFontText": "Petkov",
         "ovrMinPx": 14.3,
         "surnamesVisible": 10
       },
-      "solveMs": 72,
+      "solveMs": 82,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 2
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2422,7 +2550,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Lunin",
+        "minFontText": "Gulácsi",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2434,18 +2562,22 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "Lunin",
+        "minFontText": "Gulácsi",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 93,
+      "solveMs": 96,
       "set": "Marquee Matchups",
       "challenge": "Real Madrid v Villarreal CF",
       "kind": "SQUAD",
       "prices": {
-        "buy": 4,
-        "unknown": 0
+        "buy": 3,
+        "unknown": 3
       },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2456,7 +2588,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Butland",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2468,18 +2600,22 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Acuña",
         "ovrMinPx": 14.3,
         "surnamesVisible": 10
       },
-      "solveMs": 65,
+      "solveMs": 81,
       "set": "Marquee Matchups",
       "challenge": "Liverpool v Manchester City",
       "kind": "SQUAD",
       "prices": {
-        "buy": 6,
-        "unknown": 2
+        "buy": 7,
+        "unknown": 7
       },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2514,6 +2650,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -2548,6 +2688,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -2558,7 +2702,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2570,18 +2714,22 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Günok",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 69,
+      "solveMs": 73,
       "set": "Future Stars Challenge 2",
       "challenge": "Future Stars Challenge 2",
       "kind": "SQUAD",
       "prices": {
-        "buy": 1,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 2
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2592,7 +2740,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2604,18 +2752,22 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 30,
+      "solveMs": 33,
       "set": "3x 79+ Upgrade",
       "challenge": "3x 79+ Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2626,7 +2778,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Sivera",
+        "minFontText": "Çakır",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2638,18 +2790,22 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "Sivera",
+        "minFontText": "Çakır",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 60,
+      "solveMs": 75,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 3,
-        "unknown": 0
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2660,7 +2816,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2672,18 +2828,22 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Unsain",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 27,
+      "solveMs": 35,
       "set": "Gold Upgrade",
       "challenge": "Gold Upgrade",
       "kind": "SQUAD",
       "prices": {
-        "buy": 0,
-        "unknown": 0
+        "buy": 6,
+        "unknown": 6
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2694,7 +2854,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "31",
+        "minFontText": "Günok",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2706,11 +2866,11 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "31",
+        "minFontText": "Günok",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 18,
+      "solveMs": 22,
       "set": "Silver Upgrade",
       "challenge": "Silver Upgrade",
       "kind": "SQUAD",
@@ -2718,6 +2878,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
       "cards": 11
     },
     {
@@ -2728,7 +2892,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Rodríguez",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2740,11 +2904,11 @@
       "card": {
         "cards": 21,
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Rodríguez",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 56,
+      "solveMs": 57,
       "set": "Bronze Upgrade",
       "challenge": "Bronze Upgrade",
       "kind": "SQUAD",
@@ -2752,6 +2916,10 @@
         "buy": 8,
         "unknown": 0
       },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
       "cards": 11
     },
     {
@@ -2778,14 +2946,18 @@
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 89,
+      "solveMs": 93,
       "set": "Marquee Matchups",
       "challenge": "RB Leipzig v Eintracht Frankfurt",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 1
+        "buy": 6,
+        "unknown": 3
       },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2796,7 +2968,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "16",
+        "minFontText": "Pisseri",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2808,18 +2980,22 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "2",
+        "minFontText": "Petkov",
         "ovrMinPx": 14.3,
         "surnamesVisible": 10
       },
-      "solveMs": 71,
+      "solveMs": 80,
       "set": "Marquee Matchups",
       "challenge": "Como 1907 v AS Roma",
       "kind": "SQUAD",
       "prices": {
-        "buy": 2,
-        "unknown": 2
+        "buy": 5,
+        "unknown": 5
       },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2830,7 +3006,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "Lunin",
+        "minFontText": "Gulácsi",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2842,18 +3018,22 @@
       "card": {
         "cards": 22,
         "minFontPx": 11,
-        "minFontText": "Lunin",
+        "minFontText": "Gulácsi",
         "ovrMinPx": 14.3,
         "surnamesVisible": 11
       },
-      "solveMs": 95,
+      "solveMs": 96,
       "set": "Marquee Matchups",
       "challenge": "Real Madrid v Villarreal CF",
       "kind": "SQUAD",
       "prices": {
-        "buy": 4,
-        "unknown": 0
+        "buy": 3,
+        "unknown": 3
       },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
       "cards": 11
     },
     {
@@ -2864,7 +3044,7 @@
       "problems": [],
       "text": {
         "minFontPx": 11,
-        "minFontText": "1",
+        "minFontText": "Butland",
         "below": [],
         "belowCount": 0,
         "excluded": [
@@ -2876,18 +3056,22 @@
       "card": {
         "cards": 20,
         "minFontPx": 11,
-        "minFontText": "17",
+        "minFontText": "Acuña",
         "ovrMinPx": 14.3,
         "surnamesVisible": 10
       },
-      "solveMs": 66,
+      "solveMs": 80,
       "set": "Marquee Matchups",
       "challenge": "Liverpool v Manchester City",
       "kind": "SQUAD",
       "prices": {
-        "buy": 6,
-        "unknown": 2
+        "buy": 7,
+        "unknown": 7
       },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
       "cards": 11
     },
     {
@@ -2922,6 +3106,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     },
     {
@@ -2956,6 +3144,10 @@
         "buy": 0,
         "unknown": 0
       },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
       "cards": 0
     }
   ],
@@ -2963,42 +3155,6 @@
     {
       "size": "375",
       "formation": "3-1-4-2",
-      "solveMs": 22,
-      "cardWidth": 48,
-      "minFont": 11,
-      "ovrFont": 14,
-      "problems": []
-    },
-    {
-      "size": "375",
-      "formation": "3-4-1-2",
-      "solveMs": 22,
-      "cardWidth": 48,
-      "minFont": 11,
-      "ovrFont": 14,
-      "problems": []
-    },
-    {
-      "size": "375",
-      "formation": "3-4-2-1",
-      "solveMs": 21,
-      "cardWidth": 48,
-      "minFont": 11,
-      "ovrFont": 14,
-      "problems": []
-    },
-    {
-      "size": "375",
-      "formation": "3-4-3",
-      "solveMs": 21,
-      "cardWidth": 48,
-      "minFont": 11,
-      "ovrFont": 14,
-      "problems": []
-    },
-    {
-      "size": "375",
-      "formation": "3-5-2",
       "solveMs": 20,
       "cardWidth": 48,
       "minFont": 11,
@@ -3007,8 +3163,44 @@
     },
     {
       "size": "375",
+      "formation": "3-4-1-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-4-2-1",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-4-3",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-5-2",
+      "solveMs": 18,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
       "formation": "4-1-2-1-2",
-      "solveMs": 21,
+      "solveMs": 20,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3017,7 +3209,7 @@
     {
       "size": "375",
       "formation": "4-1-2-1-2 (geniş)",
-      "solveMs": 21,
+      "solveMs": 23,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3035,7 +3227,7 @@
     {
       "size": "375",
       "formation": "4-1-4-1",
-      "solveMs": 20,
+      "solveMs": 21,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3062,7 +3254,7 @@
     {
       "size": "375",
       "formation": "4-2-3-1 (2)",
-      "solveMs": 19,
+      "solveMs": 18,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3071,7 +3263,7 @@
     {
       "size": "375",
       "formation": "4-2-4",
-      "solveMs": 21,
+      "solveMs": 24,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3080,7 +3272,7 @@
     {
       "size": "375",
       "formation": "4-3-1-2",
-      "solveMs": 21,
+      "solveMs": 20,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3089,7 +3281,7 @@
     {
       "size": "375",
       "formation": "4-3-2-1",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3107,7 +3299,7 @@
     {
       "size": "375",
       "formation": "4-3-3 (3 CM)",
-      "solveMs": 22,
+      "solveMs": 19,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3116,7 +3308,7 @@
     {
       "size": "375",
       "formation": "4-3-3 (2 CDM)",
-      "solveMs": 21,
+      "solveMs": 19,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3125,7 +3317,7 @@
     {
       "size": "375",
       "formation": "4-3-3 (CAM)",
-      "solveMs": 21,
+      "solveMs": 19,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3143,7 +3335,7 @@
     {
       "size": "375",
       "formation": "4-4-2 (2 CDM)",
-      "solveMs": 19,
+      "solveMs": 20,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3170,7 +3362,7 @@
     {
       "size": "375",
       "formation": "5-2-3",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3188,7 +3380,7 @@
     {
       "size": "375",
       "formation": "5-4-1",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3197,7 +3389,7 @@
     {
       "size": "375",
       "formation": "4-2-1-3",
-      "solveMs": 19,
+      "solveMs": 17,
       "cardWidth": 48,
       "minFont": 11,
       "ovrFont": 14,
@@ -3224,7 +3416,7 @@
     {
       "size": "768",
       "formation": "3-1-4-2",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3233,15 +3425,6 @@
     {
       "size": "768",
       "formation": "3-4-1-2",
-      "solveMs": 27,
-      "cardWidth": 52,
-      "minFont": 11,
-      "ovrFont": 14,
-      "problems": []
-    },
-    {
-      "size": "768",
-      "formation": "3-4-2-1",
       "solveMs": 20,
       "cardWidth": 52,
       "minFont": 11,
@@ -3250,8 +3433,17 @@
     },
     {
       "size": "768",
+      "formation": "3-4-2-1",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
       "formation": "3-4-3",
-      "solveMs": 21,
+      "solveMs": 19,
       "cardWidth": 70,
       "minFont": 11,
       "ovrFont": 17.9,
@@ -3269,7 +3461,7 @@
     {
       "size": "768",
       "formation": "4-1-2-1-2",
-      "solveMs": 22,
+      "solveMs": 20,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3278,7 +3470,7 @@
     {
       "size": "768",
       "formation": "4-1-2-1-2 (geniş)",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3314,7 +3506,7 @@
     {
       "size": "768",
       "formation": "4-2-3-1",
-      "solveMs": 20,
+      "solveMs": 18,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3323,7 +3515,7 @@
     {
       "size": "768",
       "formation": "4-2-3-1 (2)",
-      "solveMs": 20,
+      "solveMs": 18,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3332,7 +3524,7 @@
     {
       "size": "768",
       "formation": "4-2-4",
-      "solveMs": 22,
+      "solveMs": 20,
       "cardWidth": 70,
       "minFont": 11,
       "ovrFont": 17.9,
@@ -3341,7 +3533,7 @@
     {
       "size": "768",
       "formation": "4-3-1-2",
-      "solveMs": 22,
+      "solveMs": 21,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3350,7 +3542,7 @@
     {
       "size": "768",
       "formation": "4-3-2-1",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3359,24 +3551,6 @@
     {
       "size": "768",
       "formation": "4-3-3",
-      "solveMs": 21,
-      "cardWidth": 52,
-      "minFont": 11,
-      "ovrFont": 14,
-      "problems": []
-    },
-    {
-      "size": "768",
-      "formation": "4-3-3 (3 CM)",
-      "solveMs": 21,
-      "cardWidth": 70,
-      "minFont": 11,
-      "ovrFont": 17.9,
-      "problems": []
-    },
-    {
-      "size": "768",
-      "formation": "4-3-3 (2 CDM)",
       "solveMs": 22,
       "cardWidth": 52,
       "minFont": 11,
@@ -3385,8 +3559,26 @@
     },
     {
       "size": "768",
+      "formation": "4-3-3 (3 CM)",
+      "solveMs": 20,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-3 (2 CDM)",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
       "formation": "4-3-3 (CAM)",
-      "solveMs": 21,
+      "solveMs": 19,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3395,15 +3587,6 @@
     {
       "size": "768",
       "formation": "4-4-2",
-      "solveMs": 21,
-      "cardWidth": 70,
-      "minFont": 11,
-      "ovrFont": 17.9,
-      "problems": []
-    },
-    {
-      "size": "768",
-      "formation": "4-4-2 (2 CDM)",
       "solveMs": 19,
       "cardWidth": 70,
       "minFont": 11,
@@ -3412,8 +3595,17 @@
     },
     {
       "size": "768",
+      "formation": "4-4-2 (2 CDM)",
+      "solveMs": 18,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
       "formation": "4-5-1",
-      "solveMs": 21,
+      "solveMs": 20,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3422,7 +3614,7 @@
     {
       "size": "768",
       "formation": "5-2-1-2",
-      "solveMs": 21,
+      "solveMs": 20,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3431,7 +3623,7 @@
     {
       "size": "768",
       "formation": "5-2-3",
-      "solveMs": 23,
+      "solveMs": 20,
       "cardWidth": 70,
       "minFont": 11,
       "ovrFont": 17.9,
@@ -3440,7 +3632,7 @@
     {
       "size": "768",
       "formation": "5-3-2",
-      "solveMs": 21,
+      "solveMs": 20,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3449,7 +3641,7 @@
     {
       "size": "768",
       "formation": "5-4-1",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 52,
       "minFont": 11,
       "ovrFont": 14,
@@ -3503,7 +3695,7 @@
     {
       "size": "1280x800",
       "formation": "3-4-2-1",
-      "solveMs": 20,
+      "solveMs": 22,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3512,7 +3704,7 @@
     {
       "size": "1280x800",
       "formation": "3-4-3",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3521,7 +3713,7 @@
     {
       "size": "1280x800",
       "formation": "3-5-2",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3530,7 +3722,7 @@
     {
       "size": "1280x800",
       "formation": "4-1-2-1-2",
-      "solveMs": 21,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3539,7 +3731,7 @@
     {
       "size": "1280x800",
       "formation": "4-1-2-1-2 (geniş)",
-      "solveMs": 23,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3548,7 +3740,7 @@
     {
       "size": "1280x800",
       "formation": "4-1-3-2",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3566,7 +3758,7 @@
     {
       "size": "1280x800",
       "formation": "4-2-2-2",
-      "solveMs": 19,
+      "solveMs": 18,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3584,7 +3776,7 @@
     {
       "size": "1280x800",
       "formation": "4-2-3-1 (2)",
-      "solveMs": 20,
+      "solveMs": 18,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3593,51 +3785,6 @@
     {
       "size": "1280x800",
       "formation": "4-2-4",
-      "solveMs": 21,
-      "cardWidth": 56,
-      "minFont": 11,
-      "ovrFont": 14.3,
-      "problems": []
-    },
-    {
-      "size": "1280x800",
-      "formation": "4-3-1-2",
-      "solveMs": 20,
-      "cardWidth": 56,
-      "minFont": 11,
-      "ovrFont": 14.3,
-      "problems": []
-    },
-    {
-      "size": "1280x800",
-      "formation": "4-3-2-1",
-      "solveMs": 20,
-      "cardWidth": 56,
-      "minFont": 11,
-      "ovrFont": 14.3,
-      "problems": []
-    },
-    {
-      "size": "1280x800",
-      "formation": "4-3-3",
-      "solveMs": 21,
-      "cardWidth": 56,
-      "minFont": 11,
-      "ovrFont": 14.3,
-      "problems": []
-    },
-    {
-      "size": "1280x800",
-      "formation": "4-3-3 (3 CM)",
-      "solveMs": 20,
-      "cardWidth": 56,
-      "minFont": 11,
-      "ovrFont": 14.3,
-      "problems": []
-    },
-    {
-      "size": "1280x800",
-      "formation": "4-3-3 (2 CDM)",
       "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
@@ -3646,8 +3793,53 @@
     },
     {
       "size": "1280x800",
+      "formation": "4-3-1-2",
+      "solveMs": 22,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-2-1",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3 (3 CM)",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3 (2 CDM)",
+      "solveMs": 24,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
       "formation": "4-3-3 (CAM)",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3665,7 +3857,7 @@
     {
       "size": "1280x800",
       "formation": "4-4-2 (2 CDM)",
-      "solveMs": 19,
+      "solveMs": 18,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3674,7 +3866,7 @@
     {
       "size": "1280x800",
       "formation": "4-5-1",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3683,7 +3875,7 @@
     {
       "size": "1280x800",
       "formation": "5-2-1-2",
-      "solveMs": 22,
+      "solveMs": 20,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3692,7 +3884,7 @@
     {
       "size": "1280x800",
       "formation": "5-2-3",
-      "solveMs": 20,
+      "solveMs": 24,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3710,7 +3902,7 @@
     {
       "size": "1280x800",
       "formation": "5-4-1",
-      "solveMs": 20,
+      "solveMs": 19,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3728,7 +3920,7 @@
     {
       "size": "1280x800",
       "formation": "4-4-1-1",
-      "solveMs": 20,
+      "solveMs": 23,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3737,7 +3929,7 @@
     {
       "size": "1280x800",
       "formation": "4-5-1 (CAM)",
-      "solveMs": 19,
+      "solveMs": 22,
       "cardWidth": 56,
       "minFont": 11,
       "ovrFont": 14.3,
@@ -3747,7 +3939,7 @@
   "timing": {
     "samples": 157,
     "p50": 20,
-    "p95": 89,
-    "max": 97
+    "p95": 93,
+    "max": 100
   }
 }

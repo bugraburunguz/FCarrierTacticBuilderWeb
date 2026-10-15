@@ -13,6 +13,8 @@ export interface SbcCandidate extends ChemCard {
   playerKey?: string
   /** V3-05d: bilgi tabanında gözlenen fiyat (bütçe şartı yalnız bunu toplar). */
   knownPrice?: number
+  /** V3-05d-c: EA assetId (kart adı katalogdan). */
+  assetId?: number
 }
 
 /** V3-05d: arama seçenekleri. deadlineMs aşılınca ışın daraltılır (yanıt süresi sınırlı); penaltyScale verilirse şart cezası bu katsayıyla (maliyet yalnız eşitlik bozucu). */

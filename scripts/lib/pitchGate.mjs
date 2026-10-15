@@ -63,6 +63,8 @@ export function measurePitch({ formationId, expected, longest }) {
     const r = el?.getBoundingClientRect()
     if (!el || !el.textContent.trim() || r.width < 4 || r.height < 4) nameProblem = 'Q18: kartta isim görünmüyor'
     else if (parseFloat(getComputedStyle(el).fontSize) < 10.95) nameProblem = 'Q18: isim yazısı 11px altında'
+    // V3-05d-c: ad şeridi yalnız rakamdan (ya da "#" kimlikten) oluşamaz
+    else if (/^[#\d\s]+$/.test(el.textContent.trim())) nameProblem = `Q18: ad şeridinde ad yerine sayı ("${el.textContent.trim()}")`
   })
   if (nameProblem) problems.push(nameProblem)
   const root = document.documentElement

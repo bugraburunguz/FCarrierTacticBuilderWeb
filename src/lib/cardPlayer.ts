@@ -8,6 +8,8 @@ export function cardPlayerOf(card: UtCard | SbcCandidate, position?: string): Ca
   const isUt = 'rating' in card
   return {
     name: card.name,
+    // V3-05d-c: kulüp kartının adı katalogdan (assetId); yakalanan ad yedek
+    assetId: card.assetId,
     rating: isUt ? card.rating : card.overall,
     position,
     faceUrl: card.faceUrl,

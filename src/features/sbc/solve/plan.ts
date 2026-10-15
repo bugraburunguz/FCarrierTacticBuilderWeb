@@ -9,7 +9,7 @@ export const SOLVE_DEADLINE_MS = 3000
  * Şart cezası katsayısı: en pahalı katmanın (fiyatı bilinmeyen) 11 kartlık toplamından büyük; böylece çözücü önce şartları sağlar,
  * maliyet (öncelik katmanı) yalnız eşit şartlı kadrolar arasında seçer.
  */
-export const PENALTY_SCALE = 1e11
+export const PENALTY_SCALE = 1e12
 
 export interface PlanRequest {
   slots: SbcSlot[]

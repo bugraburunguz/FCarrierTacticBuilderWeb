@@ -11,6 +11,7 @@ import { Workspace } from '../../design/components/Workspace'
 import { Button, EmptyState, ErrorState, SidePanel, Skeleton } from '../../design/components/primitives'
 import { describeRequirement } from '../../lib/sbcChallenge'
 import { isItemScore, isSingleItem } from '../../lib/kbSbc'
+import { CardName } from '../../components/card/CardName'
 import { singleItemCandidates, type SingleItemPlan } from './solve/singleItem'
 
 const SINGLE_ITEM_LIMIT = 30
@@ -58,10 +59,14 @@ function ShoppingPanel({ title, picks }: { title: string; picks: (PlanCandidate 
       <section aria-label="Alışveriş listesi" className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <h2 className="font-display text-base font-semibold">Alışveriş listesi</h2>
-          <Button onClick={() => navigator.clipboard?.writeText(shoppingText(title, list)).then(() => setCopied(true))} className="gap-1.5" disabled={list.buy.length === 0} disabledReason={list.buy.length === 0 ? 'Alınacak kart yok' : undefined}>
-            <Copy size={14} aria-hidden="true" />Kopyala
-          </Button>
+          {list.buy.length > 0 && (
+            <Button onClick={() => navigator.clipboard?.writeText(shoppingText(title, list)).then(() => setCopied(true))} className="gap-1.5">
+              <Copy size={14} aria-hidden="true" />Kopyala
+            </Button>
+          )}
         </div>
+        {/* V3-05d-c: alınacak kart yoksa yalnız bu satır (Toplam 0 yazılmaz). */}
+        {list.buy.length === 0 && <p className="text-sm text-ink-2">Alınacak kart yok</p>}
         {list.buy.length > 0 && (
           <ul className="flex flex-col gap-1 text-sm">
             {list.buy.map((p) => (
@@ -72,13 +77,16 @@ function ShoppingPanel({ title, picks }: { title: string; picks: (PlanCandidate 
             ))}
           </ul>
         )}
-        <p className="text-sm">
-          Toplam <span className="num font-semibold">{coins(list.knownTotal)}</span>
-          {list.unknownCount > 0 && <span className="text-ink-2"> · {list.unknownCount} kartın fiyatı bilinmiyor</span>}
-        </p>
+        {list.buy.length > 0 && (
+          <p className="text-sm">
+            Toplam <span className="num font-semibold">{coins(list.knownTotal)}</span>
+            {list.unknownCount > 0 && <span className="text-ink-2"> · {list.unknownCount} kartın fiyatı bilinmiyor</span>}
+          </p>
+        )}
         {copied && <p role="status" className="text-xs text-ink-2">Liste panoya kopyalandı.</p>}
       </section>
-      <p className="text-sm">Kulüpten kullanılan: <span className="num font-semibold">{list.club.length}</span> kart{list.club.length > 0 ? ` (önce takas edilemeyenler: ${list.clubUntradeable})` : ''}</p>
+      {/* V3-05d-c: değer vekili gösterilmez; yalnız sayı ve kullanılan en yüksek reyting. */}
+      <p className="text-sm">Kulüpten kullanılan: <span className="num font-semibold">{list.club.length}</span> kart{list.club.length > 0 ? ` · En değerli: ${Math.max(...list.club.map((p) => p.overall))}` : ''}</p>
     </>
   )
 }
@@ -94,6 +102,10 @@ function CustomizePanel({ customize, set, picks }: { customize: Customize; set: 
           <input type="checkbox" className="size-4 accent-[var(--accent)]" checked={customize.onlyClub} onChange={(e) => set({ ...customize, onlyClub: e.target.checked })} />
           Yalnız kulüp
         </label>
+        <label className="inline-flex min-h-10 items-center gap-2">
+          <input type="checkbox" className="size-4 accent-[var(--accent)]" checked={customize.protectSpecial} onChange={(e) => set({ ...customize, protectSpecial: e.target.checked })} />
+          Özel kartları koru
+        </label>
         <label className="flex flex-col gap-1 text-xs font-medium text-muted">
           Bütçe üst sınırı
           <Input type="number" min={0} step={500} inputMode="numeric" placeholder="Sınır yok" value={customize.budget ?? ''}
@@ -103,7 +115,7 @@ function CustomizePanel({ customize, set, picks }: { customize: Customize; set: 
           <ul aria-label="Kadrodaki kartlar" className="flex flex-col gap-1">
             {cards.map((p) => (
               <li key={p.cardKey} className="flex items-center justify-between gap-2">
-                <span className="min-w-0 truncate">{p.locked && <Lock size={12} aria-label="Kilitli" className="mr-1 inline" />}{p.name} <span className="num text-xs text-ink-2">{p.overall}</span></span>
+                <span className="min-w-0 truncate">{p.locked && <Lock size={12} aria-label="Kilitli" className="mr-1 inline" />}<CardName assetId={p.assetId} name={p.name} position={p.positions[0]} rating={p.overall} /> <span className="num text-xs text-ink-2">{p.overall}</span></span>
                 <span className="flex shrink-0 gap-1">
                   <Button className="min-h-8 px-2 text-xs" aria-pressed={customize.locked.includes(p.cardKey)} onClick={() => set({ ...customize, locked: toggle(customize.locked, p.cardKey) })}>Kilitle</Button>
                   <Button className="min-h-8 px-2 text-xs" onClick={() => set({ ...customize, excluded: [...customize.excluded, p.cardKey], locked: customize.locked.filter((k) => k !== p.cardKey) })}>Hariç tut</Button>
@@ -180,7 +192,7 @@ function SingleItemView({ challenge, plan }: { challenge: SbcChallenge; plan: Si
         <ul aria-label="Uygun kulüp kartları" className="flex flex-col gap-1 text-sm">
           {plan.cards.slice(0, SINGLE_ITEM_LIMIT).map((c) => (
             <li key={c.key} className="flex justify-between gap-2 border-b border-[var(--glass-border)] py-1">
-              <span className="min-w-0 truncate">{c.name} <span className="num text-xs text-ink-2">{c.rating} · {c.positions[0]}</span></span>
+              <span className="min-w-0 truncate"><CardName assetId={c.assetId} name={c.name} position={c.positions[0]} rating={c.rating} /> <span className="num text-xs text-ink-2">{c.rating} · {c.positions[0]}</span></span>
               <span className="shrink-0 text-xs text-ink-2">{c.untradeable ? 'takas edilemez' : 'takas edilebilir'}</span>
             </li>
           ))}

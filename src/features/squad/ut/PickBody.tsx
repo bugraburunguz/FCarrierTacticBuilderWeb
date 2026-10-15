@@ -11,6 +11,7 @@ import { cardPlayerOf } from '../../../lib/cardPlayer'
 import { coins, shortCoins } from '../../../lib/coins'
 import { fromSummary, personKey, type CardSource, type UtCard } from '../../../lib/utCard'
 import { utCardStore } from '../../../state/utCardStore'
+import { CardName } from '../../../components/card/CardName'
 import { FIT_STATE, PickList, type PickRow } from '../pick/PickList'
 
 const TIER_TONE: Record<string, 'emerald' | 'sky' | 'amber' | 'slate'> = { 'A+': 'emerald', A: 'sky', B: 'amber', C: 'slate' }
@@ -49,7 +50,7 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
   const links = chemLinks ?? 0
   return (
     <div className="mb-3 space-y-1.5 rounded-md border border-line bg-surface-2 p-3 text-sm">
-      <p className="font-semibold">{card.name}</p>
+      <p className="font-semibold"><CardName assetId={card.assetId} name={card.name} position={card.positions[0]} rating={card.rating} /></p>
       <p className="text-xs text-muted">
         {SOURCE_LABEL[card.source]} · {card.rating} OVR{card.rarity ? ` · ${card.rarity}` : ''}{card.club ? ` · ${card.club}` : ''} · fiyat {coins(card.price)}
         {card.untradeable ? ' · untradeable' : ''}

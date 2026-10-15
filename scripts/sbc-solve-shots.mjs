@@ -36,13 +36,44 @@ const ok = (data) => ({ status: 200, contentType: 'application/json', body: JSON
 const MIN_FONT = 11
 const CLUB = { cards: sbcClubFixture(), importedAt: '2026-10-15T10:00:00Z' }
 
+/**
+ * V3-05d-c: gerçek set çekimleri için katalog oyuncularından kulüp (yerel katalog, yalnız okuma). Yakalanan ad YOK ("#assetId", definitions'sız
+ * yakalama gibi): sayfa adı assetId → /players/assets ile çözmeli. Her 3 karttan biri takas edilemez; 84+ üç kart özel (rarityId 3).
+ */
+async function catalogClub() {
+  const cards = []
+  const seen = new Set()
+  for (const pos of ['GK', 'LB', 'CB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST', 'LWB', 'RWB', 'CF']) {
+    resetRateLimits()
+    // Reytinge yayılmış kulüp (bronz/gümüş/altın her bant): her mevki için bu reytinglerden birer kart.
+    for (const rating of [62, 66, 70, 73, 76, 78, 82, 85]) {
+      const page = (await (await fetch(`${base}/api/v1/players?pos=${pos}&ovr_min=${rating}&ovr_max=${rating}&sort=overall&order=asc&size=1&gender=0`)).json()).data
+      for (const p of page.items) {
+        if (!p.faceAssetId || seen.has(p.faceAssetId)) continue
+        seen.add(p.faceAssetId)
+        cards.push({ key: `c:cat:${p.id}`, source: 'club', name: `#${p.faceAssetId}`, rating: p.overall, positions: p.positions, club: p.club, league: p.league,
+          nationality: p.nationality, assetId: p.faceAssetId, playerId: p.id, instanceId: 5_000_000 + cards.length, untradeable: cards.length % 3 === 0, pile: 'club',
+          catalogName: p.name })
+      }
+    }
+  }
+  cards.filter((c) => c.rating >= 84).slice(0, 3).forEach((c) => { c.rarityId = 3 })
+  return cards
+}
+const stripOf = (name) => [...name.trim().split(/\s+/)].reverse().find((w) => /\p{L}/u.test(w)) ?? name
+const REAL_CARDS = await catalogClub()
+resetRateLimits() // katalog istekleri yerel anonim hız sınırını doldurur
+const REAL_CLUB = { cards: REAL_CARDS.map(({ catalogName, ...c }) => c), importedAt: '2026-10-15T10:00:00Z' }
+const EXPECTED_SURNAMES = new Set(REAL_CARDS.map((c) => stripOf(c.catalogName).toLocaleUpperCase('tr')))
+const SPECIAL_NAMES = new Set(REAL_CARDS.filter((c) => c.rarityId === 3).map((c) => c.catalogName))
+
 await createGateAccount(base, 'gate-')
 const login = async () => (await (await fetch(`${base}/api/v1/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: process.env.GATE_EMAIL, password: process.env.GATE_PASSWORD }) })).json()).data
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
 const solveTimes = []
 
-async function newContext({ w, h, theme, seed, fixture, formation = '4-4-2' }) {
+async function newContext({ w, h, theme, seed, fixture, formation = '4-4-2', club = CLUB }) {
   resetRateLimits()
   const session = await login()
   const context = await browser.newContext({ viewport: { width: w, height: h } })
@@ -52,7 +83,7 @@ async function newContext({ w, h, theme, seed, fixture, formation = '4-4-2' }) {
     localStorage.setItem('fc.access', s.accessToken)
     localStorage.setItem('fc.refresh', s.refreshToken)
     if (club) localStorage.setItem('fc.utCards', JSON.stringify(club))
-  }, { t: theme, s: session, club: seed ? CLUB : null })
+  }, { t: theme, s: session, club: seed ? club : null })
   if (fixture) {
     const now = Date.now()
     await context.route(/\/api\/v1\/ut\/kb\/sbc\/7700(\?|$)/, (r) => r.fulfill(ok(sbcSetFixture(now, formation))))
@@ -139,14 +170,23 @@ const real = [
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
     for (const [i, r] of real.entries()) {
-      const context = await newContext({ w, h, theme, seed: true, fixture: false })
+      const context = await newContext({ w, h, theme, seed: true, fixture: false, club: REAL_CLUB })
       const { page, problems, ms } = await open(context, `/ut/sbc/${r.set.id}/${r.challenge.id}`)
       // Fiyat kapsamı: alışveriş listesinde gözlenmiş fiyatı olan / "fiyat yok" kart sayısı.
       const prices = await page.evaluate(() => {
         const rows = [...document.querySelectorAll('section[aria-label="Alışveriş listesi"] li')].map((li) => li.textContent ?? '')
         return { buy: rows.length, unknown: rows.filter((t) => t.includes('fiyat yok')).length }
       })
+      // V3-05d-c: kulüp kartlarının (rozet "✓") ad şeridi katalogdaki soyadla eşleşmeli; kullanılan özel kart ve "En değerli".
+      await page.waitForTimeout(300)
+      const club = await page.evaluate(() => [...document.querySelectorAll('section[aria-label="Saha"] [data-slot-group]')]
+        .filter((g) => [...g.querySelectorAll('span, div')].some((e) => e.childElementCount === 0 && e.textContent.trim() === '✓'))
+        .map((g) => ({ strip: g.querySelector('[data-card-name]')?.textContent.trim() ?? '', label: g.querySelector('[role="img"]')?.getAttribute('aria-label') ?? '' })))
+      const wrongNames = club.filter((c) => !EXPECTED_SURNAMES.has(c.strip.toLocaleUpperCase('tr'))).map((c) => c.strip)
+      const specialUsed = club.filter((c) => SPECIAL_NAMES.has(c.label.split(', ')[0])).map((c) => c.label.split(', ').slice(0, 2).join(' '))
+      const mostValuable = await page.evaluate(() => document.body.innerText.match(/En değerli: (\d+)/)?.[1] ?? null)
       await record(realFile, page, problems, `gercek-${i + 1}-${theme}-${w}`, { solveMs: ms, set: r.set.name, challenge: r.challenge.name, kind: r.challenge.kind, prices,
+        clubCards: club.length, wrongNames, specialUsed, mostValuable,
         cards: await page.locator('section[aria-label="Saha"] [data-slot-group] [role="img"][aria-label*=", "]').count() })
       await context.close()
     }
@@ -177,7 +217,7 @@ const timing = { samples: solveTimes.length, p50: pct(solveTimes, 50), p95: pct(
 writeFileSync(fixtureFile('gates-report.json'), JSON.stringify({ report, q17, timing }, null, 2))
 const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || r.text?.belowCount > 0 || (r.card && r.card.cards > 0 && (r.card.minFontPx < MIN_FONT || r.card.ovrMinPx < 14))
   || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1))) || (r.shot.startsWith('cozum-') && r.cards !== 11)
-  || (r.kind === 'SQUAD' && r.cards !== 11))
+  || (r.kind === 'SQUAD' && r.cards !== 11) || (r.wrongNames?.length ?? 0) > 0)
 const q17bad = q17.filter((r) => r.problems.length)
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r).slice(0, 500)))
@@ -190,4 +230,6 @@ const priced = report.filter((r) => r.prices && r.kind === 'SQUAD' && r.shot.end
 const buy = priced.reduce((n, r) => n + r.prices.buy, 0)
 const unknown = priced.reduce((n, r) => n + r.prices.unknown, 0)
 console.log(`fiyat kapsamı (gerçek kare görevler, ${priced.length} görev): alınacak ${buy}, fiyatı bilinen ${buy - unknown}, bilinmeyen ${unknown}`)
+// Her gerçek kare görev için: kulüpten kullanılan, en değerli, kullanılan özel kart, adı katalogla eşleşmeyen şerit
+priced.forEach((r) => console.log(` · ${r.set} / ${r.challenge}: kulüp ${r.clubCards} kart, En değerli ${r.mostValuable ?? '-'}, özel ${r.specialUsed.length ? r.specialUsed.join(', ') : 'yok'}, ad uyuşmazlığı ${r.wrongNames.length}`))
 process.exitCode = bad.length || q17bad.length || (timing.p95 ?? 0) > 3000 ? 1 : 0

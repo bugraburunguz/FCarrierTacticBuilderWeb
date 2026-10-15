@@ -1,6 +1,7 @@
 import { langOfNationality } from '../../lib/nameCase'
 import { useId, useState } from 'react'
 import { assetUrl } from '../../lib/assetUrl'
+import { displayName, useAssetName } from '../../lib/assetNames'
 import { designFor, shortLabel, type CardKind } from '../../lib/cardDesign'
 import { ChemDiamonds } from './ChemDiamonds'
 import { FitBadge, type FitState } from './FitBadge'
@@ -13,6 +14,8 @@ export type CardSize = keyof typeof SIZE_WIDTH
 
 export interface CardPlayer extends CardKind {
   name: string
+  /** V3-05d-c: EA assetId verilirse ad katalogdan (/players/assets) çözülür; yakalanan ad yalnız yedek. */
+  assetId?: number
   rating: number
   position?: string
   faceUrl?: string
@@ -70,6 +73,7 @@ const FRAME_PATH = 'M90 2 C122 2 160 10 176 24 L176 196 C176 214 150 232 90 248 
 export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '', minText, minRating = CARD_MIN_RATING, probe = false }: PlayerCardProps) {
   const uid = useId().replace(/:/g, '')
   const [failed, setFailed] = useState(false)
+  const catalogName = useAssetName(player.assetId)
   const w = width ?? SIZE_WIDTH[size]
   const scale = w / BASE_W
   const design = designFor(player.rating, player)
@@ -86,7 +90,9 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
   const showStats = (probe || w >= STATS_MIN_WIDTH) && !nameStrip && Boolean(player.faceStats?.length)
   const ratingBase = Math.max(46, minRating / scale)
   const face = assetUrl(player.faceUrl)
-  const surname = player.name.split(' ').slice(-1)[0]
+  // Ad: katalog (assetId) → yakalanan gerçek ad → "ST 84" (title "Ad bilinmiyor"); şerit asla yalnız rakam olmaz (Q18).
+  const shown = displayName(catalogName, player.name, player.position, player.rating)
+  const surname = shown.strip
   const nameLang = langOfNationality(player.nationality)
   const tags = [player.nationality, player.club, player.league].map(shortLabel)
 
@@ -95,7 +101,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
       className={`relative inline-block select-none ${className}`}
       style={{ width: w, height: BASE_H * scale }}
       role="img"
-      aria-label={`${player.name}, ${player.rating}${player.position ? `, ${player.position}` : ''}${player.club ? `, ${player.club}` : ''}`}
+      aria-label={`${shown.full ?? `${shown.strip} (ad bilinmiyor)`}, ${player.rating}${player.position ? `, ${player.position}` : ''}${player.club ? `, ${player.club}` : ''}`}
     >
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: BASE_W, height: BASE_H, transform: `scale(${scale})`, color: look.ink }}>
         <svg viewBox={`0 0 ${BASE_W} ${BASE_H}`} width={BASE_W} height={BASE_H} className="absolute inset-0" aria-hidden="true">
@@ -155,7 +161,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
 
         {showName && (
           <div className="absolute left-0 right-0 text-center font-display" style={{ top: 141, padding: '0 30px' }}>
-            <div lang={nameLang} title={player.name} className="truncate uppercase" style={{ fontSize: 21, fontWeight: 800, lineHeight: 1 }}>
+            <div lang={nameLang} title={shown.title} className="truncate uppercase" style={{ fontSize: 21, fontWeight: 800, lineHeight: 1 }}>
               {surname}
             </div>
             <div style={{ height: 1, background: look.rule, margin: '5px auto 0', width: '78%' }} />
@@ -178,7 +184,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
         <div
           data-card-name
           lang={nameLang}
-          title={player.name}
+          title={shown.title}
           className="absolute left-0 right-0 truncate text-center font-display font-extrabold uppercase leading-none"
           style={{ top: BASE_H * scale * (141 / BASE_H), padding: '0 6%', fontSize: Math.max(textFloor, 21 * scale), color: look.ink }}
         >
