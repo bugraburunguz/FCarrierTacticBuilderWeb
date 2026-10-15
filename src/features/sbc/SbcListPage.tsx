@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { KbItem } from '../../api/types'
 import { useAuth } from '../../auth/AuthContext'
-import { HelpPopover, Input, Select } from '../../components/ui'
+import { Input, Select } from '../../components/ui'
+import { CAPTURE_BLOCKED_TEXT } from '../../lib/features'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, EmptyState, ErrorState, Skeleton, TabPanel, Tabs } from '../../design/components/primitives'
 import { SbcCard } from './SbcCard'
@@ -45,7 +46,8 @@ function SortSelect({ filters, set }: { filters: SbcFilters; set: (patch: Partia
 
 /**
  * UT SBC listesi (Katalog şablonu, 11 §Katalog, 08 §4): yapışkan opak filtre çubuğu, altında set kartı ızgarası.
- * Kaynak yalnız uzantı yakalamaları (GET /ut/kb/sbc) ve oylar (oturumlu). Süzgeçler adres çubuğunda; varsayılanlar yazılmaz.
+ * Kaynak: bilgi tabanı (GET /ut/kb/sbc) ve oylar (oturumlu). Web App yakalaması şu an EA tarafından engelli (V3-05c-b); KB boşsa bunu söyler,
+ * yakalama yöntemine yönlendirmez. Süzgeçler adres çubuğunda; varsayılanlar yazılmaz.
  */
 export function SbcListPage() {
   const [params, setParams] = useSearchParams()
@@ -130,16 +132,8 @@ export function SbcListPage() {
       ) : sets.isError ? (
         <ErrorState message="SBC'ler yüklenemedi." onRetry={() => sets.refetch()} />
       ) : all.length === 0 ? (
-        <EmptyState action={(
-          <span className="inline-flex items-center gap-2">
-            <Link to="/ut/import" className="text-sm font-semibold text-accent hover:underline">Kulüp içe aktar</Link>
-            <HelpPopover label="SBC'ler nereden gelir?">
-              EA sitesine ya da hayran sitelerine çağrı yapılmaz. Uzantı, UT web uygulamasında açtığın SBC ekranlarını yakalar; içe aktarma sayfasından uzantıyı bağlayabilirsin.
-            </HelpPopover>
-          </span>
-        )}>
-          SBC'ler tarayıcı uzantısının yakalamalarıyla gelir; henüz yakalanmış aktif set yok.
-        </EmptyState>
+        // V3-05c-b: veri kaynağı yok; yakalama yöntemine yönlendirilmez (içe aktarma sayfasıyla aynı metin).
+        <EmptyState>Aktif SBC kaydı yok. {CAPTURE_BLOCKED_TEXT}</EmptyState>
       ) : (
         <TabPanel idPrefix={PREFIX} id={activeTab.id} active>
           {shown.length === 0 ? (

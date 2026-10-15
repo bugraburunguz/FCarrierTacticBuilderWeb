@@ -44,7 +44,13 @@ describe('SBC listesi (v3)', () => {
     expect(within(grid()).getAllByRole('listitem')).toHaveLength(14)
     const card = cardOf('TOTW Haaland')
     expect(within(card).getByText('3 görev')).toBeInTheDocument()
-    expect(within(card).getByRole('link', { name: 'Çöz: TOTW Haaland' })).toHaveAttribute('href', '/ut/sbc/9302')
+    // tek tıklama hedefi: kartın tamamı bağlantı, adı set adı; içinde başka etkileşimli öğe yok (nested-interactive 0)
+    const link = within(card).getByRole('link', { name: 'TOTW Haaland' })
+    expect(link).toHaveAttribute('href', '/ut/sbc/9302')
+    expect(link).toHaveTextContent('Çöz →')
+    expect(link.querySelectorAll('a, button, input, select, textarea, [tabindex]')).toHaveLength(0)
+    expect(within(card).getAllByRole('link')).toHaveLength(1)
+    expect(within(card).queryByRole('button')).toBeNull()
     expect(endpoints.kbSbc).toHaveBeenCalledWith({ active: true })
   })
 
@@ -104,11 +110,12 @@ describe('SBC listesi (v3)', () => {
     await waitFor(() => expect(within(grid()).getAllByRole('listitem')).toHaveLength(3))
   })
 
-  it('bilgi tabanı tamamen boş: uzantı yakalamalarını anlatan metin ve içe aktarma bağlantısı', async () => {
+  it('bilgi tabanı tamamen boş: EA engelini söyler; uzantıya/HAR\'a yönlendirmez', async () => {
     vi.mocked(endpoints.kbSbc).mockResolvedValue([])
     renderPage()
-    expect(await screen.findByText(/SBC'ler tarayıcı uzantısının yakalamalarıyla gelir/)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Kulüp içe aktar' })).toHaveAttribute('href', '/ut/import')
+    expect(await screen.findByText(/EA, FC 27 Web App'te uzantıları ve geliştirici araçlarını engelliyor/)).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /içe aktar/i })).toBeNull()
+    expect(document.body.textContent).not.toMatch(/uzantı(yı|nın) (bağla|kur)|HAR|DevTools|Preserve log/)
   })
 
   it('yükleniyor iskeleti ve hata durumu (Tekrar dene)', async () => {

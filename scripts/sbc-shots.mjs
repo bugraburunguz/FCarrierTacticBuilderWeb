@@ -66,7 +66,19 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     await page.getByRole('img', { name: /^Erling Haaland, 93/ }).scrollIntoViewIfNeeded()
     const card = await page.evaluate(cardMinFont, 'ul[aria-label="SBC setleri"]')
     await page.evaluate(() => window.scrollTo(0, 0))
-    await record('izgara', { cards: await page.evaluate(() => document.querySelectorAll('ul[aria-label="SBC setleri"] > li').length), card, votesShown: await page.getByText(/^%\d+$/).count() })
+    // V3-05c-b: aynı satırdaki kartların İÇERİK yüksekliği farkı (ızgara kartı satır boyunca uzatır; içerik = çocukların yüksekliği + aralıklar).
+    const rows = await page.evaluate(() => {
+      const byRow = new Map()
+      for (const a of document.querySelectorAll('a[data-sbc-card]')) {
+        const top = Math.round(a.getBoundingClientRect().top + window.scrollY)
+        const kids = [...a.children]
+        const gap = parseFloat(getComputedStyle(a).rowGap) || 0
+        const content = kids.reduce((n, k) => n + k.getBoundingClientRect().height, 0) + gap * (kids.length - 1)
+        byRow.set(top, [...(byRow.get(top) ?? []), content])
+      }
+      return [...byRow.values()].map((hs) => Math.round(Math.max(...hs) - Math.min(...hs)))
+    })
+    await record('izgara', { rowContentDiffMax: Math.max(0, ...rows), cards: await page.evaluate(() => document.querySelectorAll('ul[aria-label="SBC setleri"] > li').length), card, votesShown: await page.getByText(/^%\d+$/).count() })
     await page.evaluate(() => window.scrollTo(0, 1200))
     await record('izgara-kaydirilmis', { band: await page.evaluate(stickyBand, BAND) })
     await open('sekme=bitiyor', gridReady)
@@ -74,7 +86,7 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     await open('kategori=Foundations&ara=zzz', () => page.getByText('Bu kategoride aktif SBC yok.').waitFor())
     await record('bos')
     empty = true
-    await open('', () => page.getByText(/SBC'ler tarayıcı uzantısının yakalamalarıyla gelir/).waitFor())
+    await open('', () => page.getByText(/EA, FC 27 Web App'te uzantıları ve geliştirici araçlarını engelliyor/).waitFor())
     await record('kb-bos')
     empty = false
     if (w < 820) {
@@ -89,9 +101,10 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify(report, null, 2))
 const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0)
-  || (r.card && r.card.cards > 0 && (r.card.minFontPx < 11 || r.card.ovrMinPx < 14)) || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1))))
+  || (r.card && r.card.cards > 0 && (r.card.minFontPx < 11 || r.card.ovrMinPx < 14)) || (r.band && (!r.band.ok || r.band.surfaces.some((s) => s.alpha < 1)))
+  || (r.shot.endsWith('-1280') && r.rowContentDiffMax > 24))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' -', JSON.stringify(r)))
 const mins = report.map((r) => r.text?.minFontPx).filter((v) => v !== null && v !== undefined)
 console.log(` · sayfa minFont: en küçük ${Math.min(...mins)}px; hariç tutulan: ${JSON.stringify([...new Set(report.flatMap((r) => r.text?.excluded ?? []))])}`)
-report.filter((r) => /^(izgara|izgara-kaydirilmis|bitiyor)-dark/.test(r.shot)).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ cards: r.cards, votesShown: r.votesShown, card: r.card, band: r.band && { bandBottom: r.band.bandBottom, leakCount: r.band.leakCount, surfaces: r.band.surfaces } })))
+report.filter((r) => /^(izgara|izgara-kaydirilmis|bitiyor)-dark/.test(r.shot)).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ cards: r.cards, votesShown: r.votesShown, rowContentDiffMax: r.rowContentDiffMax, card: r.card, band: r.band && { bandBottom: r.band.bandBottom, leakCount: r.band.leakCount, surfaces: r.band.surfaces } })))
