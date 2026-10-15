@@ -4,7 +4,8 @@ import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerFacets } from '../../api/types'
 import { Input, Select } from '../../components/ui'
 import { Chip } from '../../design/components/primitives'
-import { BUCKETS, budgetKnown, CONTRACT_MONTHS, contractFilterAvailable, type CareerListFilters } from './careerFilters'
+import { ATTR_LABELS } from '../../lib/format'
+import { ATTR_MIN_KEYS, BUCKETS, budgetKnown, CONTRACT_MONTHS, contractFilterAvailable, type CareerListFilters } from './careerFilters'
 
 const label = 'flex flex-col gap-1 text-xs font-medium text-muted'
 const STALE_MS = 300_000
@@ -110,6 +111,24 @@ export function CareerFilterFields({ careerId, filters, set, facets }: { careerI
         {facets?.loanData && <Toggle text="Kiralık" checked={filters.loan} onChange={(loan) => set({ loan })} />}
         <Toggle text="Serbest oyuncu" checked={filters.freeAgent} onChange={(freeAgent) => set({ freeAgent, team: undefined })} />
       </div>
+      <details className="text-sm">
+        <summary className="min-h-8 cursor-pointer text-xs font-semibold text-accent">
+          Öznitelik minimumları{Object.keys(filters.attrMin).length > 0 ? ` (${Object.keys(filters.attrMin).length})` : ''}
+        </summary>
+        <div className="grid grid-cols-2 gap-3 pt-2 min-[820px]:grid-cols-5">
+          {ATTR_MIN_KEYS.map((key) => (
+            <label key={key} className={label}>
+              {ATTR_LABELS[key] ?? key}
+              <Input type="number" inputMode="numeric" min={1} max={99} placeholder="En az" aria-label={`${ATTR_LABELS[key] ?? key} en az`} value={filters.attrMin[key] ?? ''}
+                onChange={(e) => {
+                  const { [key]: _old, ...rest } = filters.attrMin
+                  const value = toNum(e.target.value)
+                  set({ attrMin: value === undefined ? rest : { ...rest, [key]: value } })
+                }} />
+            </label>
+          ))}
+        </div>
+      </details>
       <div className={label}>
         <span id={bucketId}>Ulaşılabilirlik</span>
         <div role="group" aria-labelledby={bucketId}className="flex flex-wrap gap-1.5">

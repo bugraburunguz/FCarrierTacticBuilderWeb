@@ -127,6 +127,15 @@ describe('kariyer oyuncu listesi (v3 Katalog)', () => {
     await waitFor(() => expect(lastQuery()).toMatchObject({ free_agent: true, team: undefined }))
   })
 
+  it('öznitelik minimumları katlanmış grupta; değer sunucuya attrMin olarak gider', async () => {
+    renderPage()
+    await screen.findByText(/2 oyuncu/)
+    const group = screen.getByText('Öznitelik minimumları').closest('details')!
+    expect(group).not.toHaveAttribute('open')
+    fireEvent.change(within(group).getByLabelText('Bitiricilik en az'), { target: { value: '70' } })
+    await waitFor(() => expect(lastQuery().attrMin).toEqual({ Finishing: 70 }))
+  })
+
   it('boş sonuçta süzgeçleri temizle önerilir', async () => {
     vi.mocked(endpoints.players).mockResolvedValue(page([]))
     renderPage('/players?kova=HAYAL')

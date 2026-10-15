@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { careerFiltersFromParams, careerFiltersToParams, DEFAULT_CAREER_FILTERS, toCareerQuery, type CareerListFilters } from './careerFilters'
+import { activeCareerFilterCount, ATTR_MIN_KEYS, careerFiltersFromParams, careerFiltersToParams, DEFAULT_CAREER_FILTERS, toCareerQuery, type CareerListFilters } from './careerFilters'
 
 const FULL: CareerListFilters = {
   ...DEFAULT_CAREER_FILTERS,
@@ -73,6 +73,18 @@ describe('kariyer listesi süzgeçleri', () => {
     const free = toCareerQuery({ ...DEFAULT_CAREER_FILTERS, freeAgent: true, team: 101 }, 4, undefined, 0)
     expect(free.free_agent).toBe(true)
     expect(free.team).toBeUndefined()
+  })
+
+  it('V3-05d/0: öznitelik minimumları (eski sayfanın 10 alanı) adres çubuğunda, varsayılan yazılmaz, sorguya attrMin olarak gider', () => {
+    expect(ATTR_MIN_KEYS).toEqual(['Finishing', 'Vision', 'Crossing', 'Acceleration', 'SprintSpeed', 'Dribbling', 'Stamina', 'Strength', 'DefAwareness', 'Heading'])
+    const f = { ...DEFAULT_CAREER_FILTERS, attrMin: { Finishing: 75, SprintSpeed: 80 } }
+    const params = careerFiltersToParams(f)
+    expect(params.toString()).toBe('oz_Finishing=75&oz_SprintSpeed=80')
+    expect(careerFiltersFromParams(params)).toEqual(f)
+    expect(toCareerQuery(f, 4, undefined, 0).attrMin).toEqual({ Finishing: 75, SprintSpeed: 80 })
+    expect(toCareerQuery(DEFAULT_CAREER_FILTERS, 4, undefined, 0).attrMin).toBeUndefined()
+    expect(careerFiltersFromParams(new URLSearchParams('oz_Finishing=120&oz_Bilinmeyen=50&oz_Vision=abc')).attrMin).toEqual({})
+    expect(activeCareerFilterCount(f)).toBe(1)
   })
 
   it('kova ve kiralık süzgeci sorguya geçer', () => {
