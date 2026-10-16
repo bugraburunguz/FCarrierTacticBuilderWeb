@@ -3,6 +3,14 @@
  * Aşağıdaki "köprü" bloğu eski semantik adları (--bg, --surface, --ink ...) v3 değerlerine bağlar; böylece henüz taşınmamış sayfalar da v3 renklerinde görünür.
  * Yeni kodda yalnız bu dosyadaki v3 adları kullanılır; yeni renk/font uydurulmaz.
  */
+
+/* Tema bağımsız: bileşenlere gömülü eski hex'lerin aynı değerli adları (V3-07b; v2 ve v3'te aynı anlam). Yeni değer değil. */
+:root {
+  --ovr-80: #0e9b52; --ovr-70: #3aa14a; --ovr-65: #86b81f; --ovr-60: #d0a022; --ovr-low: #d47a24;
+  --dot-green: #2fbf71; --dot-yellow: #e6b325; --dot-red: #e5484d;
+  --drag-border: #10b981; --drag-bg: #ffffff; --drag-ink: #0f172a; --drag-rating: #047857; --drag-sub: #64748b;
+}
+
 :root[data-ui="v3"] {
   --bg-base: #070a12;
   --aurora-1: #2b4cff; --aurora-2: #00c2a8; --aurora-3: #7a2cff;

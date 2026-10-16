@@ -1,6 +1,7 @@
 import type { BehaviorTag, Role } from '../../api/types'
 import { TagChips } from '../TagChips'
-import { Field, Pill, Select } from '../ui'
+import { Chip } from '../../design/components/primitives'
+import { Field, Select } from '../ui'
 
 interface Props {
   derivedRoleName?: string
@@ -18,7 +19,7 @@ export function BehaviorsPanel({ derivedRoleName, roleHint, tags, selected, onTa
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className="text-muted">Türetilen rol:</span>
-        <Pill tone="emerald">{derivedRoleName ?? '…'}</Pill>
+        <Chip tone="good">{derivedRoleName ?? '…'}</Chip>
       </div>
       {roleHint && <p className="rounded-md bg-code-soft p-2 text-sm text-code">Aranan profil: {roleHint}</p>}
       <div>

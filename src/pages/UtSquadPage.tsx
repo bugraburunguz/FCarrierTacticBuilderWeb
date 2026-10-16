@@ -1,218 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
 import type { WeaponState } from '../api/types'
 import { FormationStyleChips } from '../components/FormationStyleChips'
-import { Pitch, type PitchSlot } from '../components/pitch/Pitch'
-import { cardPlayerOf } from '../lib/cardPlayer'
-import type { FitState } from '../components/card/FitBadge'
+import { Pitch } from '../components/pitch/Pitch'
 import { Button, ErrorBox, Pill, Select, Spinner } from '../components/ui'
 import { coins, shortCoins } from '../lib/coins'
-import { PickBody, PickModal } from '../features/squad/ut/PickBody'
-import { Chip, StatTile } from '../design/components/primitives'
-import { SquadRoleDialog, SquadWorkspaceView } from '../features/squad/SquadWorkspaceView'
+import { PickModal } from '../features/squad/ut/PickBody'
+import { SquadRoleDialog } from '../features/squad/SquadWorkspaceView'
 import { TacticCodeCard } from '../features/squad/TacticCodeCard'
-import type { TacticSetup } from '../features/squad/types'
-import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
-import { useUtBinding } from '../features/squad/useUtBinding'
-import { useUtRules } from '../state/rulesStore'
-import { isV3 } from '../design/uiVersion'
-import { MAX_SQUAD_CHEM, squadChemistry } from '../lib/chemistry'
-import { teamRating } from '../lib/sbcTraditional'
-import { roleBaseName } from '../lib/squadBuilder'
-import { personKey, priceSummary, type UtCard } from '../lib/utCard'
-import { mapActiveSquad } from '../lib/activeSquad'
-import { extensionCaptureEnabled } from '../lib/features'
-import { useUtCapture } from '../state/utCaptureStore'
-import { utCardStore } from '../state/utCardStore'
-import { DEFAULT_UT_SETUP } from '../state/utSquadStore'
+import { useUtSquadBuilder } from '../features/squad/useUtSquadBuilder'
+import { MAX_SQUAD_CHEM } from '../lib/chemistry'
 
-const CHEM_BADGE: WeaponState[] = ['RED', 'YELLOW', 'YELLOW', 'GREEN']
-const FIT_STATE: Record<WeaponState, FitState> = { GREEN: 'good', YELLOW: 'ok', RED: 'bad' }
 const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
 
 const PANEL = 'rounded-md border border-line bg-surface p-3.5 text-ink'
 const PANEL_TITLE = 'mb-2.5 border-b border-line pb-1.5 font-display text-lg font-bold uppercase tracking-wide'
 
+/** v2 UT kadro kurucusu (v3: features/squad/UtSquadBuilderPage). Ortak mantık useUtSquadBuilder'da. */
 export function UtSquadPage() {
-  useUtRules()
-  const { binding, saved, markActiveSquad } = useUtBinding()
-  const ws = useSquadWorkspace('ut', binding)
-  const { state, slots, roleBySlot, formation, formations, selection, selectedSlot: dialogSlot } = ws
-  const picked = state.assigned
-  const setup = state.setup ?? DEFAULT_UT_SETUP
-  const setSetup = (change: Partial<TacticSetup>) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_UT_SETUP), ...change } }))
-  const capture = useUtCapture()
-  // V3-06a: fiyat / kulüp aktif kadrosu / kulüp SBC'leri yalnız Web App yakalamasından gelir; VITE_EXTENSION_CAPTURE=off iken gösterilmez.
-  const captureOn = extensionCaptureEnabled()
+  const { ws, setup, setSetup, capture, captureOn, pickedSlots, evaluation, chem, price, rating, views, loadActiveSquad, pickDialog, pickProps } = useUtSquadBuilder()
+  const { formation, formations } = ws
   const loadNote = ws.note
-
-  const pickedSlots = slots.filter((s) => picked[s.slotId] && roleBySlot.get(s.slotId))
-  const evaluationBody = pickedSlots.map((s) => {
-    const card = picked[s.slotId]
-    return {
-      slotId: s.slotId,
-      position: s.position,
-      roleId: roleBySlot.get(s.slotId)!.roleId,
-      ...(card.attrs
-        ? { card: { name: card.name, overall: card.rating, positions: card.positions, attrs: card.attrs } }
-        : { playerId: card.playerId }),
-    }
-  })
-  const evaluation = useQuery({
-    queryKey: ['ut-evaluate', JSON.stringify(evaluationBody), setup.buildUp, setup.depth],
-    queryFn: () => endpoints.utSquadEvaluate({ slots: evaluationBody, setup }),
-    enabled: evaluationBody.length > 0 && evaluationBody.every((b) => 'card' in b || b.playerId !== undefined),
-    retry: false,
-    staleTime: 60_000,
-  })
-  const evalBySlot = Object.fromEntries((evaluation.data?.slots ?? []).map((e) => [e.slotId, e]))
-
-  const chemOf = (cardAt: (slotId: string) => UtCard | undefined) =>
-    squadChemistry(
-      slots.map((s, i) => {
-        const p = cardAt(s.slotId)
-        return {
-          position: s.position,
-          card: p ? { id: i, gender: p.gender, club: p.club, league: p.league, nationality: p.nationality, clubId: p.clubId, leagueId: p.leagueId, nationId: p.nationId, positions: p.positions, cardType: p.cardType } : undefined,
-        }
-      }),
-    )
-  const chem = useMemo(() => chemOf((slotId) => picked[slotId]), [slots, picked]) // eslint-disable-line react-hooks/exhaustive-deps
-  const fitted = (evaluation.data?.slots ?? []).flatMap((e) => (e.roleFit === undefined ? [] : [e.roleFit]))
-  const roleFitAverage = fitted.length > 0 ? Math.round(fitted.reduce((a, b) => a + b, 0) / fitted.length) : undefined
-  const price = priceSummary(slots.map((s) => picked[s.slotId]))
-
-  const roleById = new Map((ws.roles.data ?? []).map((r) => [r.id, r]))
-  const views: PitchSlot[] = slots.map((s, i) => {
-    const card = picked[s.slotId]
-    const e = evalBySlot[s.slotId]
-    const role = roleById.get(roleBySlot.get(s.slotId)?.roleId ?? s.defaultRole)
-    const band = e?.roleFit !== undefined ? (e.badge ?? CHEM_BADGE[chem.perSlot[i]]) : undefined
-    return {
-      slotId: s.slotId,
-      position: s.position,
-      x: s.x,
-      y: s.y,
-      player: card && cardPlayerOf(card, s.position),
-      chem: card ? (chem.perSlot[i] as 0 | 1 | 2 | 3) : undefined,
-      price: card?.price !== undefined ? shortCoins(card.price) : undefined,
-      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : roleBySlot.get(s.slotId)?.roleName,
-      fit: card && e?.roleFit !== undefined && band ? { pct: Math.round(e.roleFit), state: FIT_STATE[band] } : undefined,
-    }
-  })
-
-  // Kadro her değişimde utSquadStore'a kaydedilir (useUtBinding); kayıtlı kadro yokken yakalamada aktif kadro varsa otomatik yerleşir.
-  const autoApplied = useRef(false)
-  useEffect(() => {
-    if (autoApplied.current || saved || !capture?.activeSquad || !formations.data) {
-      return
-    }
-    autoApplied.current = true
-    const loaded = mapActiveSquad(capture.activeSquad, formations.data)
-    if (loaded.formationId) {
-      markActiveSquad()
-      ws.patch({ formationId: loaded.formationId, assigned: loaded.picked })
-      ws.setNote(`Kulübünün aktif kadrosu otomatik yüklendi (${Object.keys(loaded.picked).length} kart${capture.activeSquad.tactic?.tacticName ? ` · taktik: ${capture.activeSquad.tactic.tacticName}` : ''}).`)
-    }
-  }, [saved, capture, formations.data, markActiveSquad, ws])
-
-  function loadActiveSquad() {
-    const squad = capture?.activeSquad
-    if (!squad || !formations.data) {
-      return
-    }
-    const loaded = mapActiveSquad(squad, formations.data, formation)
-    ws.patch({ ...(loaded.formationId ? { formationId: loaded.formationId } : {}), roleOverride: {}, assigned: loaded.picked })
-    markActiveSquad()
-    ws.clearSelection()
-    ws.setNote(`${Object.keys(loaded.picked).length} kart aktif kadrodan yüklendi${loaded.unplaced > 0 ? `, ${loaded.unplaced} kart yerleşemedi` : ''}${squad.tactic?.tacticName ? ` · taktik: ${squad.tactic.tacticName}` : ''}. Taktik talimatları (rol/focus) henüz çözülmediği için roller otomatik.`)
-  }
-
   const tacticCode = <TacticCodeCard mode="ut" tactic={ws.tactic} resolved={ws.resolved.data} onLoaded={ws.applyImportedCode} />
-  const pickDialog = selection?.panel === 'card' && dialogSlot ? dialogSlot : undefined
-  const pickProps = pickDialog && {
-    position: pickDialog.position,
-    current: picked[pickDialog.slotId],
-    roleName: roleBySlot.get(pickDialog.slotId)?.roleName,
-    roleId: roleBySlot.get(pickDialog.slotId)?.roleId,
-    setup,
-    chemFor: (card: UtCard) => chemOf((slotId) => (slotId === pickDialog.slotId ? card : picked[slotId])).perSlot[slots.indexOf(pickDialog)] as 0 | 1 | 2 | 3,
-    onClear: () => {
-      ws.assign(pickDialog.slotId, null)
-      ws.clearSelection()
-    },
-    evaluation: evalBySlot[pickDialog.slotId],
-    chemLinks: chem.perSlot[slots.indexOf(pickDialog)],
-    usedKeys: new Set(Object.values(picked).map(personKey)),
-    onPick: (card: UtCard) => {
-      ws.assign(pickDialog.slotId, card)
-      ws.clearSelection()
-    },
-  }
-
-  if (isV3()) {
-    return (
-      <>
-        <SquadWorkspaceView
-          title="UT Kadro Kurucu"
-          slots={views}
-          selectedSlotId={pickDialog?.slotId}
-          onPickPlayer={(slotId) => ws.select(slotId, 'card')}
-          onPickRole={(slotId) => ws.select(slotId, 'role')}
-          onRemove={(slotId) => ws.assign(slotId, null)}
-          onSwap={ws.swap}
-          slotPanel={pickProps && pickDialog ? { title: `${pickDialog.position} — Kart seç`, onClose: ws.clearSelection, body: <PickBody {...pickProps} /> } : undefined}
-          formations={(formations.data ?? []).map((f) => ({ id: f.id, label: f.label ?? f.id }))}
-          formationsLoading={formations.isLoading}
-          formationsError={formations.error ? 'Formasyonlar yüklenemedi.' : undefined}
-          formationId={formation?.id}
-          onFormation={(id) => ws.changeFormation(id)}
-          setup={setup}
-          onSetup={(next) => setSetup(next)}
-          squadNameKey="fc.squadName.ut"
-          ratingStars={pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined}
-          allAverages={[{ label: 'Ort. OVR', value: evaluation.data?.averageOverall }, { label: 'Rol uyumu', value: roleFitAverage === undefined ? undefined : `%${roleFitAverage}` }, { label: 'Dolu', value: `${pickedSlots.length}/11` }]}
-          stats={[{ label: 'Rating', value: pickedSlots.length === 11 ? teamRating(Object.values(picked).map((card) => card.rating)) : undefined }, { label: 'Dolu', value: pickedSlots.length, suffix: '/ 11' }]}
-          averages={ws.averages}
-          chem={{ value: chem.total, max: MAX_SQUAD_CHEM }}
-          sections={
-            <>
-              <section aria-label="Meta" className="space-y-2">
-                <Chip tone="info">Rol uyumu {roleFitAverage === undefined ? '–' : `%${roleFitAverage}`}</Chip>
-              </section>
-              {captureOn && (
-                <section aria-label="Fiyat" className="space-y-2">
-                  <h3 className="font-display text-lg font-semibold">Fiyat</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <StatTile label="Toplam" value={price.known > 0 ? shortCoins(price.total) : undefined} />
-                    <StatTile label="Ortalama" value={price.average !== undefined ? shortCoins(price.average) : undefined} />
-                  </div>
-                  <p className="text-xs text-muted">{price.known}/{price.count} kartın fiyatı biliniyor</p>
-                  <p className="text-xs text-muted">Fiyat grafiği: henüz veri yok.</p>
-                </section>
-              )}
-            </>
-          }
-          tacticCode={tacticCode}
-          onClear={ws.clearAssigned}
-          clearDisabled={pickedSlots.length === 0}
-          note={loadNote}
-          actions={captureOn && capture?.activeSquad ? <Button onClick={loadActiveSquad}>Kulüp aktif kadrosunu yükle</Button> : undefined}
-          notice={(utCardStore.get()?.cards ?? []).length === 0 && pickedSlots.length === 0 ? { id: 'ut-no-cards', text: captureOn
-            ? <>Kulüp kartların yok: mevkiye tıkla, katalogdan seç ya da <Link to="/ut/import" className="text-accent underline">kulüp içe aktar</Link>.</>
-            : <>Mevkiye tıkla ve katalogdan seç.</> } : undefined}
-        />
-        <SquadRoleDialog ws={ws} />
-      </>
-    )
-  }
 
   return (
     <div className="matchday space-y-3">
       <div className="flex flex-wrap items-stretch gap-px overflow-hidden rounded-md border border-line bg-line">
-        <Kpi label="Rating" value={pickedSlots.length === 11 ? String(teamRating(Object.values(picked).map((c) => c.rating))) : '—'} />
+        <Kpi label="Rating" value={rating !== undefined ? String(rating) : '—'} />
         <Kpi label="Kimya" value={`${chem.total}`} suffix={`/ ${MAX_SQUAD_CHEM}`} />
         <Kpi label="Meta ort." value={evaluation.data ? String(evaluation.data.averageMeta) : '—'} />
         {captureOn && <Kpi label="Toplam değer" value={shortCoins(price.known > 0 ? price.total : undefined)} suffix={price.count > price.known ? `${price.known}/${price.count} fiyat` : undefined} />}

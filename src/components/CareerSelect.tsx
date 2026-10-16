@@ -4,7 +4,7 @@ import { endpoints } from '../api/endpoints'
 import { useAuth } from '../auth/AuthContext'
 import { careerStore, useActiveCareerId } from '../state/careerStore'
 import { formatEur } from '../lib/format'
-import { Modal } from './Modal'
+import { AppDialog } from '../design/components/AppDialog'
 import { NewCareerForm } from './NewCareerForm'
 import { Button, Field, Select, Spinner } from './ui'
 
@@ -46,9 +46,9 @@ export function CareerSelect() {
         + Yeni kariyer
       </Button>
       {creating && (
-        <Modal wide title="Yeni kariyer" hint="Kulüp seç, bütçeni gir; veri aktarmak şart değil" onClose={() => setCreating(false)}>
+        <AppDialog wide title="Yeni kariyer" hint="Kulüp seç, bütçeni gir; veri aktarmak şart değil" onClose={() => setCreating(false)}>
           <NewCareerForm onCreated={() => setCreating(false)} />
-        </Modal>
+        </AppDialog>
       )}
     </div>
   )

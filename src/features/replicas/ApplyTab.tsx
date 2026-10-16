@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { ReplicaApplySlot } from '../../api/types'
 import { FitBadge } from '../../components/card/FitBadge'
-import { Modal } from '../../components/Modal'
 import { ErrorBox } from '../../components/ui'
+import { AppDialog } from '../../design/components/AppDialog'
 import { Button, EmptyState, Skeleton, StatTile } from '../../design/components/primitives'
 import { PickBody } from '../squad/ut/PickBody'
 import { AttentionPoints } from './AttentionPoints'
@@ -36,11 +36,11 @@ function SlotRow({ slot, mode, onSuggest }: { slot: ReplicaApplySlot; mode: 'car
       )}
       {slot.suggest &&
         (mode === 'career' ? (
-          <Link to={`/career/transfer?pos=${slot.position}`} className="glass-3 inline-flex min-h-8 items-center px-3 text-xs font-semibold text-accent hover:bg-[var(--glass-hover)] max-sm:min-h-11" aria-label={`${slot.position} için oyuncu öner`}>
+          <Link to={`/career/transfer?pos=${slot.position}`} className="glass-3 inline-flex min-h-8 items-center px-3 text-xs font-semibold text-ink underline decoration-accent underline-offset-2 hover:bg-[var(--glass-hover)] max-sm:min-h-11" aria-label={`${slot.position} için oyuncu öner`}>
             Öner
           </Link>
         ) : (
-          <button type="button" onClick={() => onSuggest(slot)} className="glass-3 inline-flex min-h-8 items-center px-3 text-xs font-semibold text-accent hover:bg-[var(--glass-hover)] max-sm:min-h-11" aria-label={`${slot.position} için oyuncu öner`}>
+          <button type="button" onClick={() => onSuggest(slot)} className="glass-3 inline-flex min-h-8 items-center px-3 text-xs font-semibold text-ink underline decoration-accent underline-offset-2 hover:bg-[var(--glass-hover)] max-sm:min-h-11" aria-label={`${slot.position} için oyuncu öner`}>
             Öner
           </button>
         ))}
@@ -99,7 +99,7 @@ export function ApplyTab({ replicaId, apply }: { replicaId: string; apply: Retur
       <AttentionPoints analysis={data.analysis} withPlayers />
       <SaveToSlot replicaId={replicaId} careerId={data.source === 'CAREER' ? plan.body.careerId : undefined} />
       {suggesting && (
-        <Modal wide title={`${suggesting.position} · ${suggesting.roleName} — Kart seç`} hint="Kulüp kartların ya da katalog" onClose={() => setSuggesting(undefined)}>
+        <AppDialog wide title={`${suggesting.position} · ${suggesting.roleName} — Kart seç`} hint="Kulüp kartların ya da katalog" onClose={() => setSuggesting(undefined)}>
           <PickBody
             position={suggesting.position}
             roleId={suggesting.roleId}
@@ -114,7 +114,7 @@ export function ApplyTab({ replicaId, apply }: { replicaId: string; apply: Retur
           <div className="mt-3">
             <Button onClick={() => setSuggesting(undefined)}>Vazgeç</Button>
           </div>
-        </Modal>
+        </AppDialog>
       )}
     </div>
   )

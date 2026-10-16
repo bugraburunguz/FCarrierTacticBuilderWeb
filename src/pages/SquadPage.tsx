@@ -1,8 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
-import type { Career, CareerPlayer, RosterEvent, RosterEventType } from '../api/types'
+import type { Career, RosterEvent, RosterEventType } from '../api/types'
+import { useCareerSquad, useInvalidateCareer } from '../features/squad/kadro/useCareerSquad'
 import { CareerSelect } from '../components/CareerSelect'
 import { MoneyInput } from '../components/MoneyInput'
 import { NewCareerForm } from '../components/NewCareerForm'
@@ -11,14 +12,11 @@ import { SquadTagsView } from '../components/SquadTagsView'
 import { SquadList } from '../components/SquadList'
 import { SquadDensity } from '../components/SquadDensity'
 import { TacticLineup } from '../components/TacticLineup'
-import { analyzeDepth } from '../lib/depth'
-import { useUtRules } from '../state/rulesStore'
 import { bestSquadRating, starRating } from '../lib/squadRating'
-import { useTactic } from '../state/tacticStore'
 import { TransferDialog } from '../components/TransferDialog'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
 import { formatEur } from '../lib/format'
-import { careerStore, useActiveCareerId } from '../state/careerStore'
+import { careerStore } from '../state/careerStore'
 
 const EVENT_LABELS: Record<RosterEventType, string> = {
   BUY: 'Transfer',
@@ -29,11 +27,6 @@ const EVENT_LABELS: Record<RosterEventType, string> = {
 }
 
 const GENDER_LABEL: Record<number, string> = { 0: 'Erkek', 1: 'Kadın' }
-
-function useInvalidateCareer() {
-  const queryClient = useQueryClient()
-  return () => Promise.all(['careers', 'squad', 'events'].map((k) => queryClient.invalidateQueries({ queryKey: [k] })))
-}
 
 function NewCareer() {
   return (
@@ -192,31 +185,11 @@ function History({ careerId, events }: { careerId: number; events: RosterEvent[]
   )
 }
 
+/** v2 kadro sayfası (v3: features/squad/kadro/KadroPage). Ortak veri useCareerSquad'da. */
 export function SquadPage() {
-  useUtRules()
-  const careerId = useActiveCareerId()
-  const refresh = useInvalidateCareer()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId)
-  const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: careerId !== undefined })
-  const events = useQuery({ queryKey: ['events', careerId], queryFn: () => endpoints.events(careerId!), enabled: careerId !== undefined })
+  const { career, squad, events, positionAdvice, formations, formation, needs, squadIds, dialog, setDialog, move, openMove, submitMove } = useCareerSquad()
   const [tab, setTab] = useState<SquadTab>('squad')
   const [view, setView] = useState<'list' | 'cards' | 'tags'>('list')
-  const [dialog, setDialog] = useState<{ mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer } | null>(null)
-  const move = useMutation({
-    mutationFn: (v: { type: RosterEventType; playerId: number; feeEur: number; toClubId?: number }) => endpoints.applyEvent(careerId!, v),
-    onSuccess: async () => {
-      setDialog(null)
-      await refresh()
-    },
-  })
-  const positionAdvice = useQuery({ queryKey: ['position-advice', careerId, squad.data?.length], queryFn: () => endpoints.positionAdvice(careerId!), enabled: careerId !== undefined && (squad.data?.length ?? 0) > 0, staleTime: 120_000 })
-  const tactic = useTactic()
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
-  const formation = formations.data?.find((f) => f.id === tactic.formation)
-  const needs = formation ? analyzeDepth(squad.data ?? [], formation, tactic, roles.data ?? []) : []
-  const squadIds = new Set((squad.data ?? []).map((s) => s.player.id))
 
   return (
     <div className="space-y-4">
@@ -288,8 +261,8 @@ export function SquadPage() {
                 busy={move.isPending}
                 needs={needs}
                 positionAdvice={positionAdvice.data ?? []}
-                onSell={(entry) => { move.reset(); setDialog({ mode: 'SELL', entry }) }}
-                onLoanOut={(entry) => { move.reset(); setDialog({ mode: 'LOAN_OUT', entry }) }}
+                onSell={(entry) => openMove('SELL', entry)}
+                onLoanOut={(entry) => openMove('LOAN_OUT', entry)}
               />
             )}
           </Card>
@@ -311,7 +284,7 @@ export function SquadPage() {
           pending={move.isPending}
           error={move.error}
           onClose={() => setDialog(null)}
-          onSubmit={(v) => move.mutate({ type: dialog.mode, playerId: dialog.entry.player.id, ...v })}
+          onSubmit={submitMove}
         />
       )}
     </div>

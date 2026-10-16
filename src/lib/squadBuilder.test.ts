@@ -32,9 +32,11 @@ describe('squad builder yardımcıları', () => {
   })
 
   it('OVR bandı eşikleri', () => {
-    expect(ovrBand(80)).toBe('#0e9b52')
-    expect(ovrBand(65)).toBe('#86b81f')
-    expect(ovrBand(59)).toBe('#d47a24')
+    expect(ovrBand(80)).toBe('var(--ovr-80)')
+    expect(ovrBand(70)).toBe('var(--ovr-70)')
+    expect(ovrBand(65)).toBe('var(--ovr-65)')
+    expect(ovrBand(60)).toBe('var(--ovr-60)')
+    expect(ovrBand(59)).toBe('var(--ovr-low)')
   })
 
   it('formasyon değişiminde uyumlu oyuncu yerinde kalır, diğeri boş uyumlu slota geçer, sığmayan düşer', () => {

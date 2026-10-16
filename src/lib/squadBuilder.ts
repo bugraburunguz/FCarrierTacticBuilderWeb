@@ -1,13 +1,13 @@
 import type { FormationSlot, Role } from '../api/types'
 import { canPlaySlot } from './positions'
 
-/** OVR rengi; düşük OVR'lı (League 2) kadrolara göre ayarlı eşikler. */
+/** OVR rengi (token'lar design/tokens.css); düşük OVR'lı (League 2) kadrolara göre ayarlı eşikler. */
 export function ovrBand(overall: number): string {
-  if (overall >= 80) return '#0e9b52'
-  if (overall >= 70) return '#3aa14a'
-  if (overall >= 65) return '#86b81f'
-  if (overall >= 60) return '#d0a022'
-  return '#d47a24'
+  if (overall >= 80) return 'var(--ovr-80)'
+  if (overall >= 70) return 'var(--ovr-70)'
+  if (overall >= 65) return 'var(--ovr-65)'
+  if (overall >= 60) return 'var(--ovr-60)'
+  return 'var(--ovr-low)'
 }
 
 export const roleBaseName = (role: Pick<Role, 'name'>): string => role.name.replace(/\s*\(.*\)\s*$/, '')

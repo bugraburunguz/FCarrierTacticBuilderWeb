@@ -1,21 +1,10 @@
 import { toneOf, type FitTone } from '../../lib/fitTone'
 import { X } from 'lucide-react'
-import type { WeaponState } from '../../api/types'
+import type { SlotView } from '../../features/squad/types'
 import { BadgeDot } from '../ui'
 import { ovrBand } from '../../lib/squadBuilder'
 
-export interface SlotView {
-  slotId: string
-  position: string
-  x: number
-  y: number
-  player?: { id: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string; faceStats?: number[]; faceLabels?: string[]; faceStatsApproximate?: boolean }
-  roleLabel: string
-  fit?: { pct: number; band?: WeaponState | null }
-  placeholder?: string
-  sub?: string
-  selected?: boolean
-}
+export type { SlotView }
 
 const FIT_STYLE: Record<FitTone, string> = {
   NEUTRAL: 'bg-surface-2 text-ink',

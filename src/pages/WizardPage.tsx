@@ -5,48 +5,11 @@ import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
 import { SetupChips } from '../components/SetupChips'
 import { Button, Card, ErrorBox, Pill, Spinner } from '../components/ui'
-import { DEFAULT_ANSWERS, profileOf, recommend, type BuildUp, type FormationPref, type Striker, type Width, type WizardAnswers } from '../lib/wizard'
+import { DEFAULT_ANSWERS, recommend, type WizardAnswers } from '../lib/wizard'
+import { tacticFromPreset, WIZARD_QUESTIONS, WIZARD_RESULT_PATH, type WizardOption } from '../lib/wizardQuestions'
 import { tacticStore } from '../state/tacticStore'
 
-interface Option<T> {
-  value: T
-  label: string
-  hint: string
-}
-
-const BUILD_UP: Option<BuildUp>[] = [
-  { value: 'Short', label: 'Topla oyna', hint: 'Kısa paslarla kur, topu rakibe verme.' },
-  { value: 'Balanced', label: 'Dengeli', hint: 'Duruma göre hem kur hem direkt oyna.' },
-  { value: 'Counter', label: 'Kontra', hint: 'Topu kazan, hızlı ve dikey çık.' },
-]
-
-const DEPTH: Option<number>[] = [
-  { value: 30, label: 'Geride bekle', hint: 'Alçak blok, boşluk bırakma.' },
-  { value: 50, label: 'Orta blok', hint: 'Orta sahada kompakt dur.' },
-  { value: 70, label: 'Yüksek hat', hint: 'Rakibi kendi yarı sahasında sıkıştır.' },
-  { value: 90, label: 'Agresif pres', hint: 'Anında pres + ofsayt; hızlı stoper ister.' },
-]
-
-const WIDTH: Option<Width>[] = [
-  { value: 'wings', label: 'Kanatlardan', hint: 'Bindiren bekler, ortalar, genişlik.' },
-  { value: 'center', label: 'Merkezden', hint: 'İçeri kat eden kanatlar, oyun kuran 10.' },
-  { value: 'mixed', label: 'Karışık', hint: 'Kararsızım, ikisi de olur.' },
-]
-
-const STRIKER: Option<Striker>[] = [
-  { value: 'target', label: 'Hedef forvet', hint: 'Güçlü, ortaları ve uzun topları bitirir.' },
-  { value: 'run', label: 'Arkaya koşan', hint: 'Hızlı, savunma arkasına sızar.' },
-  { value: 'drop', label: 'Düşen / yaratıcı', hint: 'Geri iner, oyunu bağlar (false 9).' },
-  { value: 'press', label: 'Pres yapan', hint: 'Savunmanın ilk adamı.' },
-  { value: 'any', label: 'Fark etmez', hint: '' },
-]
-
-const FORMATION: Option<FormationPref>[] = [
-  { value: '4-3-3', label: '4-3-3', hint: '' },
-  { value: '4-2-3-1', label: '4-2-3-1', hint: '' },
-  { value: '4-4-2', label: '4-4-2', hint: '' },
-  { value: 'any', label: 'Fark etmez', hint: '' },
-]
+type Option<T> = WizardOption<T>
 
 function Question<T extends string | number>({ title, options, value, onChange }: { title: string; options: Option<T>[]; value: T; onChange: (v: T) => void }) {
   return (
@@ -75,22 +38,23 @@ export function WizardPage() {
   const results = recommend(presets.data ?? [], answers)
 
   function apply(preset: Preset) {
-    const slots: Record<string, { tags: string[] }> = {}
-    Object.entries(preset.slotTags ?? {}).forEach(([slotId, ids]) => (slots[slotId] = { tags: ids }))
-    const profile = profileOf(preset)
-    tacticStore.set({ formation: preset.formation, presetId: preset.id, slots, setup: { buildUp: profile.buildUp, depth: profile.depth } })
-    navigate('/tactics/builder')
+    tacticStore.set(tacticFromPreset(preset))
+    navigate(WIZARD_RESULT_PATH)
   }
 
   return (
     <div className="grid items-start gap-4 lg:grid-cols-[1fr_minmax(320px,420px)]">
       <Card title="Taktik sihirbazı — nasıl oynamak istiyorsun?">
         <div className="space-y-5">
-          <Question title="1. Oyun kurulumu" options={BUILD_UP} value={answers.buildUp} onChange={(buildUp) => setAnswers({ ...answers, buildUp })} />
-          <Question title="2. Rakip topu kurarken savunman" options={DEPTH} value={answers.depth} onChange={(depth) => setAnswers({ ...answers, depth })} />
-          <Question title="3. Hücum yolu" options={WIDTH} value={answers.width} onChange={(width) => setAnswers({ ...answers, width })} />
-          <Question title="4. Forvet tipi" options={STRIKER} value={answers.striker} onChange={(striker) => setAnswers({ ...answers, striker })} />
-          <Question title="5. Formasyon tercihi" options={FORMATION} value={answers.formation} onChange={(formation) => setAnswers({ ...answers, formation })} />
+          {WIZARD_QUESTIONS.map((q, i) => (
+            <Question<string | number>
+              key={q.key}
+              title={`${i + 1}. ${q.title}`}
+              options={q.options as Option<string | number>[]}
+              value={answers[q.key]}
+              onChange={(value) => setAnswers({ ...answers, [q.key]: value })}
+            />
+          ))}
         </div>
         <p className="mt-4 text-xs text-muted">Cevapların hazır taktiklerle (stil, replika, kişisel) karşılaştırılır; sonuçlar anında sağda güncellenir. Taktik, kadronla uyumuna bakılmadan önerilir — kuruduktan sonra Auto-Fit ile kadronu test edebilirsin.</p>
       </Card>

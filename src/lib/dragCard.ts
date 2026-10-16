@@ -23,9 +23,9 @@ export function setCardDragImage(event: DragEvent, info: DragCardInfo) {
     'padding:8px 12px',
     'min-width:190px',
     'border-radius:14px',
-    'border:2px solid #10b981',
-    'background:#ffffff',
-    'color:#0f172a',
+    'border:2px solid var(--drag-border)',
+    'background:var(--drag-bg)',
+    'color:var(--drag-ink)',
     'font:600 14px system-ui,sans-serif',
     'box-shadow:0 14px 28px rgba(15,23,42,.35)',
     'transform:rotate(-3deg)',
@@ -34,14 +34,14 @@ export function setCardDragImage(event: DragEvent, info: DragCardInfo) {
 
   const rating = document.createElement('span')
   rating.textContent = String(info.overall)
-  rating.style.cssText = 'font-size:22px;font-weight:800;color:#047857;min-width:30px;text-align:center'
+  rating.style.cssText = 'font-size:22px;font-weight:800;color:var(--drag-rating);min-width:30px;text-align:center'
   const body = document.createElement('span')
   body.style.cssText = 'display:flex;flex-direction:column;line-height:1.2'
   const name = document.createElement('span')
   name.textContent = info.name
   const sub = document.createElement('span')
   sub.textContent = [info.position, info.detail].filter(Boolean).join(' · ')
-  sub.style.cssText = 'font-size:11px;font-weight:500;color:#64748b'
+  sub.style.cssText = 'font-size:11px;font-weight:500;color:var(--drag-sub)'
   body.append(name, sub)
   ghost.append(rating, body)
   document.body.appendChild(ghost)

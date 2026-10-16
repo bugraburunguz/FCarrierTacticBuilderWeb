@@ -1,7 +1,7 @@
 import type { BehaviorTag, CareerPlayer, FormationSlot, Preset, Role } from '../../api/types'
 import { BehaviorsPanel } from '../../components/squadBuilder/BehaviorsPanel'
 import { RoleFocusPanel } from '../../components/squadBuilder/RoleFocusModal'
-import type { SlotTab } from '../../components/squadBuilder/SlotModal'
+import type { SlotTab } from './types'
 import { roleGroups } from '../../lib/squadBuilder'
 import { RecommendationPanel } from '../recommend/RecommendationPanel'
 import { CareerPickList } from './pick/CareerPickList'

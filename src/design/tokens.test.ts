@@ -56,6 +56,14 @@ describe('v3 token seti (11 §3)', () => {
     expect(contrastRatio(parseColor(DARK['--faint']), surface)).toBeGreaterThanOrEqual(3)
   })
 
+  it('V3-07b: eski hex renklerin tema bağımsız token karşılığı (v2 ve v3, aynı değer)', () => {
+    expect(block(':root')).toEqual({
+      '--ovr-80': '#0e9b52', '--ovr-70': '#3aa14a', '--ovr-65': '#86b81f', '--ovr-60': '#d0a022', '--ovr-low': '#d47a24',
+      '--dot-green': '#2fbf71', '--dot-yellow': '#e6b325', '--dot-red': '#e5484d',
+      '--drag-border': '#10b981', '--drag-bg': '#ffffff', '--drag-ink': '#0f172a', '--drag-rating': '#047857', '--drag-sub': '#64748b',
+    })
+  })
+
   it('şeffaflığı azalt / yüksek kontrast fallback yüzeyleri opak', () => {
     expect(tokensCss).toMatch(/prefers-reduced-transparency: reduce/)
     expect(tokensCss).toMatch(/data-transparency="reduced"/)

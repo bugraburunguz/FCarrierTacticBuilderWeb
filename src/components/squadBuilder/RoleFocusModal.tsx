@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { firstFocus, type RoleGroup } from '../../lib/squadBuilder'
-import { Modal } from '../Modal'
+import { AppDialog } from '../../design/components/AppDialog'
 
 interface Props {
   position: string
@@ -15,9 +15,9 @@ interface Props {
 /** Taslak yerel tutulur; yalnızca Uygula'da dışarı yazılır. */
 export function RoleFocusModal(props: Props) {
   return (
-    <Modal title={`${props.position} — Rol & Özelleştirme`} hint="Rol ve odak seç" onClose={props.onClose}>
+    <AppDialog title={`${props.position} — Rol & Özelleştirme`} hint="Rol ve odak seç" onClose={props.onClose}>
       <RoleFocusPanel {...props} />
-    </Modal>
+    </AppDialog>
   )
 }
 

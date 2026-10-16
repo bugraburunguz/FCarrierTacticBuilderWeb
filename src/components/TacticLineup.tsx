@@ -1,15 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
 import type { CareerPlayer, Formation } from '../api/types'
-import { mirrorTactic } from '../lib/mirror'
-import { pickBench } from '../lib/bench'
-import { tacticStore, toTacticRequest, useTactic } from '../state/tacticStore'
+import { shortRole, useCareerLineup } from '../features/squad/kadro/useCareerLineup'
 import { Pitch } from './squadBuilder/Pitch'
-import type { SlotView } from './squadBuilder/PositionCard'
-import { useNavigate } from 'react-router-dom'
-import { swapSlots } from '../lib/squadBuilder'
-import { lineupStore } from '../state/lineupStore'
 import { BadgeDot, Button, Card, ErrorBox, Pill, Spinner } from './ui'
 
 interface Props {
@@ -18,47 +10,17 @@ interface Props {
   formations: Formation[]
 }
 
-function cardInfo(squad: CareerPlayer[], playerId?: number) {
-  const p = squad.find((c) => c.player.id === playerId)?.player
-  return { faceUrl: p?.faceUrl, club: p?.club, league: p?.league, nationality: p?.nationality }
-}
-
-const shortRole =(name: string) => name.replace(/\s*\(.*\)/, '')
-
+/** v2 ilk 11 kartı (v3: features/squad/kadro/KadroPage). Mantık useCareerLineup'ta. */
 export function TacticLineup({ careerId, squad, formations }: Props) {
-  const tactic = useTactic()
-  const navigate = useNavigate()
-  const request = toTacticRequest(tactic)
-  const formation = formations.find((f) => f.id === tactic.formation)
-  const lineup = useQuery({
-    queryKey: ['lineup', careerId, squad.length, JSON.stringify(request)],
-    queryFn: () => endpoints.lineup(careerId, request),
-    enabled: squad.length >= 11 && formation !== undefined,
-    retry: false,
-  })
+  const { tactic, formation, enough, lineup, fit, bench, views, openBuilder, swap, saveMirrored } = useCareerLineup(careerId, squad, formations)
 
-  if (squad.length < 11) {
+  if (!enough) {
     return (
       <Card title="Seçili taktikte kadro">
         <p className="text-sm text-muted">İlk 11’i dizebilmek için kadroda en az 11 oyuncu olmalı.</p>
       </Card>
     )
   }
-  const fit = lineup.data
-  const bench = fit ? pickBench(squad, fit) : []
-  const views: SlotView[] = (formation?.slots ?? []).map((sl) => {
-    const result = fit?.slots.find((s) => s.slotId === sl.slotId)
-    return {
-      slotId: sl.slotId,
-      position: sl.position,
-      x: sl.x,
-      y: sl.y,
-      player: result?.playerName ? { id: result.playerId ?? 0, name: result.playerName, overall: result.overall ?? 0, ...cardInfo(squad, result.playerId) } : undefined,
-      roleLabel: result ? shortRole(result.roleName) + (result.roleName.match(/((.*))/) ? ` · ${result.roleName.match(/((.*))/)![1]}` : '') : '…',
-      fit: result?.roleFit ? { pct: Math.round(result.roleFit.score), band: result.roleFit.badge } : undefined,
-    }
-  })
-
   return (
     <Card
       title={`Seçili taktikte kadro · ${tactic.formation}${tactic.presetId ? ` · ${tactic.presetId}` : ''}`}
@@ -79,7 +41,7 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
               <span>
                 <Pill tone="amber">Aynalandı</Pill> Kadronda bu görevlere sağ-sol ters daha uygun oyuncular var; taktik otomatik aynalandı (ör. sağ kanat görevi sola geçti).
               </span>
-              <Button variant="secondary" onClick={() => tacticStore.set(mirrorTactic(tactic))}>
+              <Button variant="secondary" onClick={saveMirrored}>
                 Aynalanmış taktiği kaydet
               </Button>
             </div>
@@ -88,18 +50,9 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
             <div className="rounded-md border border-line bg-surface p-2.5">
               <Pitch
                 slots={views}
-                onPickPlayer={() => navigate('/squad/builder')}
-                onPickRole={() => navigate('/squad/builder')}
-                onSwap={(from, to) => {
-                  const current: Record<string, number> = {}
-                  fit.slots.forEach((s) => {
-                    if (s.playerId !== undefined) {
-                      current[s.slotId] = s.playerId
-                    }
-                  })
-                  lineupStore.set(careerId, swapSlots(current, from, to))
-                  navigate('/squad/builder')
-                }}
+                onPickPlayer={openBuilder}
+                onPickRole={openBuilder}
+                onSwap={swap}
               />
               <p className="mt-2 px-1 text-xs text-muted">Oyuncuyu başka karta sürüklersen değişiklik Kadro kurucuda kaydedilir.</p>
             </div>

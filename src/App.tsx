@@ -18,6 +18,7 @@ const CareerTransferPage = lazy(() => import('./pages/CareerTransferPage').then(
 const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })))
 const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ default: m.ComparePage })))
 const WizardPage = lazy(() => import('./pages/WizardPage').then((m) => ({ default: m.WizardPage })))
+const TacticWizardPage = lazy(() => import('./features/wizard/TacticWizardPage').then((m) => ({ default: m.TacticWizardPage })))
 const WonderkidsPage = lazy(() => import('./pages/WonderkidsPage').then((m) => ({ default: m.WonderkidsPage })))
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })))
 const ImportPage = lazy(() => import('./pages/ImportPage').then((m) => ({ default: m.ImportPage })))
@@ -27,7 +28,10 @@ const PlayerDetailPage = lazy(() => import('./pages/PlayerDetailPage').then((m) 
 const PlayersPage = lazy(() => import('./pages/PlayersPage').then((m) => ({ default: m.PlayersPage })))
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
 const SquadBuilderPage = lazy(() => import('./pages/SquadBuilderPage').then((m) => ({ default: m.SquadBuilderPage })))
+const CareerSquadBuilderPage = lazy(() => import('./features/squad/CareerSquadBuilderPage').then((m) => ({ default: m.CareerSquadBuilderPage })))
+const UtSquadBuilderPage = lazy(() => import('./features/squad/UtSquadBuilderPage').then((m) => ({ default: m.UtSquadBuilderPage })))
 const SquadPage = lazy(() => import('./pages/SquadPage').then((m) => ({ default: m.SquadPage })))
+const KadroPage = lazy(() => import('./features/squad/kadro/KadroPage').then((m) => ({ default: m.KadroPage })))
 const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default: m.TeamsPage })))
 const UtMetaPage = lazy(() => import('./pages/UtMetaPage').then((m) => ({ default: m.UtMetaPage })))
 const UtClubPage = lazy(() => import('./pages/UtClubPage').then((m) => ({ default: m.UtClubPage })))
@@ -110,9 +114,9 @@ export function App() {
         <Route path="compare" element={<ComparePage />} />
         <Route path="wonderkids" element={<WonderkidsPage />} />
         <Route path="tactics/builder" element={<Navigate to="/squad/builder" replace />} />
-        <Route path="tactics/wizard" element={<WizardPage />} />
-        <Route path="squad" element={<RequireAuth><SquadPage /></RequireAuth>} />
-        <Route path="squad/builder" element={<SquadBuilderPage />} />
+        <Route path="tactics/wizard" element={isV3() ? <TacticWizardPage /> : <WizardPage />} />
+        <Route path="squad" element={<RequireAuth>{isV3() ? <KadroPage /> : <SquadPage />}</RequireAuth>} />
+        <Route path="squad/builder" element={isV3() ? <CareerSquadBuilderPage /> : <SquadBuilderPage />} />
         <Route path="replicas" element={<ReplicasPage />} />
         <Route path="replicas/:id" element={<ReplicaDetailPage />} />
         <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
@@ -128,7 +132,7 @@ export function App() {
         <Route path="career/growth" element={<RequireAuth>{isV3() ? <GrowthPage /> : <CareerGrowthPage />}</RequireAuth>} />
         <Route path="teams" element={<RequireAuth><TeamsPage /></RequireAuth>} />
         <Route path="ut/players/:assetId" element={<UtPlayerPage />} />
-        <Route path="ut/squad" element={<UtSquadPage />} />
+        <Route path="ut/squad" element={isV3() ? <UtSquadBuilderPage /> : <UtSquadPage />} />
         <Route path="ut/meta" element={<UtMetaPage />} />
         {/* V3-06a: tek veri kaynağı Web App yakalaması olan UT sayfaları; yakalama bayrağı kapalıyken tek kısa not (kod duruyor).
             v3: Katalog şablonlu SBC listesi; v2 sayfası (UtSbcPage/KbSbcList) dokunulmadan kalır. */}

@@ -66,10 +66,15 @@ async function squadSample(formation) {
 
 let session
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
-if (modes.includes('career') && process.env.GATE_EMAIL) {
+// Erişim token'ı 15 dk yaşar; tam matris daha uzun sürer (V3-07b: 116 dolu kariyer satırı süre dolunca boş sahayla ölçüldü). Her boyutta yeniden giriş.
+async function freshSession() {
   const probe = await browser.newContext()
-  session = (await (await probe.request.post(`${base}/api/v1/auth/login`, { data: { email: process.env.GATE_EMAIL, password: process.env.GATE_PASSWORD } })).json()).data
+  const data = (await (await probe.request.post(`${base}/api/v1/auth/login`, { data: { email: process.env.GATE_EMAIL, password: process.env.GATE_PASSWORD } })).json()).data
   await probe.close()
+  return data
+}
+if (modes.includes('career') && process.env.GATE_EMAIL) {
+  session = await freshSession()
 }
 
 const results = []
@@ -80,6 +85,9 @@ for (const mode of modes) {
     }
     for (const size of SIZES) {
       resetRateLimits()
+      if (mode === 'career' && state === 'filled') {
+        session = await freshSession()
+      }
       const context = await browser.newContext({ viewport: { width: size.width, height: size.height } })
       // Anonim GET'ler bir kez alınır (hız sınırına takılmamak için); oturumlu istekler her seferinde gerçek.
       await context.route('**/api/v1/**', async (route) => {
@@ -137,6 +145,9 @@ for (const mode of modes) {
         await page.waitForTimeout(state === 'filled' ? 900 : 200)
         // Ölçüm scripts/lib/pitchGate.mjs'te (SBC çözüm sahası kapısıyla ortak).
         const report = q18Problems(await page.evaluate(measurePitch, { formationId: formation.id, expected: formation.slots.length, longest: LONGEST }), size.width)
+        if (state === 'filled' && !report.cardWidth) {
+          report.problems.push('dolu kadroda ölçülecek kart yok (saha boş yüklendi)')
+        }
         // Scroll'suz sığma artık kapı değil, hedef: yalnız raporlanır.
         results.push({ mode, state, size: size.name, formation: formation.id, fieldWidth: Math.round(report.fieldWidth), cardWidth: report.cardWidth && Math.round(report.cardWidth), minFont: report.minFont && Number(report.minFont.toFixed(1)), ovrFont: report.ovrFont && Number(report.ovrFont.toFixed(1)), fitsViewport: report.fieldBottom <= report.innerHeight + 1, problems: report.problems })
         await page.close()
