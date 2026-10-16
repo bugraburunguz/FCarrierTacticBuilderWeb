@@ -91,6 +91,16 @@ describe('Gelişim (v3)', () => {
     expect(within(up).getAllByRole('row').slice(1).map((r) => r.textContent)).toEqual(['Oyuncu 270 → 75+5', 'Oyuncu 158 → 61+3'])
   })
 
+  it('yükselen ve düşen çubukları ortak ölçek (iki listenin mutlak en büyük farkı): −1, +5\'in beşte biri (V3-07a)', async () => {
+    renderPage()
+    const up = await screen.findByRole('region', { name: 'En çok yükselenler' })
+    const upBar = await waitFor(() => within(up).getByRole('img').querySelector('rect')!)
+    const downBar = within(screen.getByRole('region', { name: 'Düşenler' })).getByRole('img').querySelector('rect')!
+    const upWidth = Number(upBar.getAttribute('width'))
+    const downWidth = Number(downBar.getAttribute('width'))
+    expect(downWidth).toBeCloseTo(upWidth / 5, 0)
+  })
+
   it('aralık seçici: son iki içe aktarma (varsayılan) / sezon başı → şimdi (sezon verisi varsa) → snapshotDiff from/to', async () => {
     renderPage()
     await screen.findByRole('region', { name: 'En çok yükselenler' })

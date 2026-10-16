@@ -124,6 +124,8 @@ export const endpoints = {
   login: (email: string, password: string) => api.post<TokenResponse>('/auth/login', { email, password }, false),
   logout: (refreshToken: string) => api.post<void>('/auth/logout', { refreshToken }, false),
   me: () => api.get<Me>('/me'),
+  /** V3-07a: diğer oturumlar kapanır, bu oturum için yeni token'lar döner. */
+  changePassword: (currentPassword: string, newPassword: string) => api.post<TokenResponse>('/me/password', { currentPassword, newPassword }),
   verifyEmail: (token: string) => api.post<void>('/auth/verify-email', { token }, false),
   resendVerification: () => api.post<void>('/me/email/resend'),
   subscribe: () => api.post<Subscription>('/billing/subscribe'),
@@ -213,8 +215,8 @@ export const endpoints = {
   creditCosts: () => api.get<CreditCosts>('/billing/costs'),
 
   careers: () => api.get<Career[]>('/careers'),
-  createCareer: (body: { clubId: number; budgetEur?: number; name?: string }) => api.post<Career>('/careers', body),
-  updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number; spoilerMode?: string; wageBudgetEur?: number; windowEndsOn?: string; challengeId?: string }) =>
+  createCareer: (body: { clubId: number; budgetEur?: number; name?: string; season?: number }) => api.post<Career>('/careers', body),
+  updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number; spoilerMode?: string; wageBudgetEur?: number; windowEndsOn?: string; challengeId?: string; gameDate?: string }) =>
     request<Career>(`/careers/${careerId}`, { method: 'PATCH', body }),
   importCareer: (careerId: number, form: FormData) => request<ImportSummary>(`/careers/${careerId}/import`, { method: 'POST', body: form }),
   syncSquad: (careerId: number, teamId: number) => request<{ players: number }>(`/careers/${careerId}/import/squad`, { method: 'POST', query: { teamId } }),

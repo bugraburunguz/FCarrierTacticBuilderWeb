@@ -56,6 +56,8 @@ export function GrowthPage() {
   const history = useQuery({ queryKey: ['history', id, selectedId], queryFn: () => endpoints.playerHistory(id!, selectedId!), enabled: id !== undefined && selectedId !== undefined && enough, retry: false })
   const series = useMemo(() => (history.data && history.data.length > 0 ? historySeries(history.data) : undefined), [history.data])
   const moved = useMemo(() => movers(diff.data?.rows ?? []), [diff.data])
+  // Ortak ölçek: −1, +14'ün yanında kısa görünür (iki listenin mutlak en büyük farkı).
+  const scaleMax = Math.max(0, ...[...moved.risers, ...moved.fallers].map((m) => Math.abs(m.delta)))
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -115,14 +117,14 @@ export function GrowthPage() {
               <Section title="En çok yükselenler" className="min-[1024px]:flex-1">
                 {diff.isLoading ? <Skeleton className="h-40" /> : moved.risers.length === 0 ? <p className="text-sm text-ink-2">Bu aralıkta OVR'ı yükselen yok.</p> : (
                   <Suspense fallback={<Skeleton className="h-40" />}>
-                    <MoversChart movers={moved.risers.slice(0, MOVERS_SHOWN)} caption="En çok yükselenler: OVR farkı" />
+                    <MoversChart movers={moved.risers.slice(0, MOVERS_SHOWN)} caption="En çok yükselenler: OVR farkı" scaleMax={scaleMax} />
                   </Suspense>
                 )}
               </Section>
               <Section title="Düşenler" className="min-[1024px]:flex-1">
                 {diff.isLoading ? <Skeleton className="h-40" /> : moved.fallers.length === 0 ? <p className="text-sm text-ink-2">Bu aralıkta OVR'ı düşen yok.</p> : (
                   <Suspense fallback={<Skeleton className="h-40" />}>
-                    <MoversChart movers={moved.fallers.slice(0, MOVERS_SHOWN)} caption="Düşenler: OVR farkı" />
+                    <MoversChart movers={moved.fallers.slice(0, MOVERS_SHOWN)} caption="Düşenler: OVR farkı" scaleMax={scaleMax} />
                   </Suspense>
                 )}
               </Section>

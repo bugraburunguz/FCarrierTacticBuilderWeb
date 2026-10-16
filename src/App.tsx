@@ -43,6 +43,14 @@ const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPa
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const CareerPlayersPage = lazy(() => import('./features/careerPlayers/CareerPlayersPage').then((m) => ({ default: m.CareerPlayersPage })))
+const HomeV3 = lazy(() => import('./features/home/HomePage').then((m) => ({ default: m.HomePage })))
+const LoginV3 = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.LoginPage })))
+const RegisterV3 = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.RegisterPage })))
+const VerifyEmailV3 = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.VerifyEmailPage })))
+const PrivacyPage = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.PrivacyPage })))
+const ProfileV3 = lazy(() => import('./features/account/ProfilePage').then((m) => ({ default: m.ProfilePage })))
+const CareerImportPage = lazy(() => import('./features/import/CareerImportPage').then((m) => ({ default: m.CareerImportPage })))
+const NewCareerPage = lazy(() => import('./features/career/NewCareerPage').then((m) => ({ default: m.NewCareerPage })))
 const GrowthPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthPage })))
 const DeskPage = lazy(() => import('./features/desk/DeskPage').then((m) => ({ default: m.DeskPage })))
 const TransferCenterPage = lazy(() => import('./features/transfer/TransferCenterPage').then((m) => ({ default: m.TransferCenterPage })))
@@ -90,11 +98,13 @@ export function App() {
     <Suspense fallback={<Spinner />}>
     <Routes>
       <Route element={isV3() ? <AppShell /> : <Layout />}>
-        <Route index element={<HomePage />} />
+        {/* V3-07a: v3'te ana sayfa, hesap ekranları, içe aktarma, yeni kariyer ve profil yeni; v2 sayfaları v2 için kalır. */}
+        <Route index element={isV3() ? <HomeV3 /> : <HomePage />} />
         <Route path="about" element={<AboutPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
-        <Route path="verify-email" element={<VerifyEmailPage />} />
+        <Route path="login" element={isV3() ? <LoginV3 /> : <LoginPage />} />
+        <Route path="register" element={isV3() ? <RegisterV3 /> : <RegisterPage />} />
+        <Route path="verify-email" element={isV3() ? <VerifyEmailV3 /> : <VerifyEmailPage />} />
+        <Route path="privacy" element={<PrivacyPage />} />
         <Route path="players" element={<PlayersRoute />} />
         <Route path="players/:id" element={<PlayerDetailRoute />} />
         <Route path="compare" element={<ComparePage />} />
@@ -108,10 +118,10 @@ export function App() {
         <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
-        <Route path="career/import" element={<RequireAuth><ImportPage /></RequireAuth>} />
+        <Route path="career/import" element={<RequireAuth>{isV3() ? <CareerImportPage /> : <ImportPage />}</RequireAuth>} />
         {/* V3-06d: v3'te Kariyer Masası (yalnız v3, Ayarlar sekmesi); v2 sayfası v2 için kalır. */}
         <Route path="career/desk" element={<RequireAuth>{isV3() ? <DeskPage /> : <CareerDeskPage />}</RequireAuth>} />
-        <Route path="career/new" element={<RequireAuth><CareerNewPage /></RequireAuth>} />
+        <Route path="career/new" element={<RequireAuth>{isV3() ? <NewCareerPage /> : <CareerNewPage />}</RequireAuth>} />
         {/* V3-06c: v3'te Transfer Merkezi (yalnız v3 uçları); v2 sayfası v2 için kalır. */}
         <Route path="career/transfer" element={<RequireAuth>{isV3() ? <TransferCenterPage /> : <CareerTransferPage />}</RequireAuth>} />
         {/* V3-06e: v3'te Gelişim (grafik, yalnız mevcut uçlar); v2 sayfası v2 için kalır. */}
@@ -131,7 +141,7 @@ export function App() {
         <Route path="ut/import" element={<UtImportPage />} />
         <Route path="ut/evo" element={<CaptureOnly title="Evolution"><UtEvolutionsPage /></CaptureOnly>} />
         <Route path="admin/ut" element={<AdminUtPage />} />
-        <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+        <Route path="profile" element={<RequireAuth>{isV3() ? <ProfileV3 /> : <ProfilePage />}</RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

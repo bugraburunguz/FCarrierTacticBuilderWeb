@@ -119,13 +119,14 @@ export function HistoryChart({ series }: { series: HistorySeries }) {
 }
 
 /** Yatay bar: iki içe aktarma arası OVR farkı (yükselen --good, düşen --bad; değer metinde, renk tek başına anlam taşımaz). */
-export function MoversChart({ movers, caption }: { movers: Mover[]; caption: string }) {
+/** scaleMax (V3-07a): yükselen ve düşen grafikleri ortak ölçek (iki listenin mutlak en büyük farkı); verilmezse listenin kendisi. */
+export function MoversChart({ movers, caption, scaleMax }: { movers: Mover[]; caption: string; scaleMax?: number }) {
   const { ref, width } = useWidth()
   const row = 30
   const nameWidth = Math.min(160, Math.round(width * 0.42))
   const valueWidth = 40
   const height = movers.length * row + 4
-  const max = Math.max(...movers.map((m) => Math.abs(m.delta)), 1)
+  const max = Math.max(scaleMax ?? 0, ...movers.map((m) => Math.abs(m.delta)), 1)
   const barMax = width - nameWidth - valueWidth - 8
   const summary = movers.map((m) => `${m.name} ${signed(m.delta)}`).join(', ')
   const chart = (

@@ -1,20 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { endpoints } from '../../api/endpoints'
-import type { KbItem } from '../../api/types'
-import { useAuth } from '../../auth/AuthContext'
 import { Input, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, EmptyState, ErrorState, Skeleton, TabPanel, Tabs } from '../../design/components/primitives'
 import { SbcCard } from './SbcCard'
-import { categoriesOf, categoryLabel, filterSets, parseReward, sbcFiltersFromParams, sbcFiltersToParams, type SbcFilters, type SbcSort, type SbcTab } from './sbcList'
+import { useActiveSbcSets, useNow } from './useActiveSbcSets'
+import { categoriesOf, categoryLabel, filterSets, sbcFiltersFromParams, sbcFiltersToParams, type SbcFilters, type SbcSort, type SbcTab } from './sbcList'
 
-const STALE_MS = 120_000
-/** /players/assets üst sınırı (backend MAX_ASSET_IDS). */
-const MAX_ASSET_NAMES = 100
-const MINUTE = 60_000
 const SKELETONS = 8
 const PREFIX = 'sbc'
 const SORTS: { id: SbcSort; label: string }[] = [
@@ -24,15 +17,6 @@ const SORTS: { id: SbcSort; label: string }[] = [
 /** Izgara: hücre en az 15rem (ödül kartı + metin), kap daralınca tek sütun. */
 const GRID_STYLE = { gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 15rem), 1fr))' }
 
-/** Geri sayım dakikada bir güncellenir (aria-live yok). */
-function useNow(): number {
-  const [now, setNow] = useState(() => Date.now())
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now()), MINUTE)
-    return () => window.clearInterval(timer)
-  }, [])
-  return now
-}
 
 function SortSelect({ filters, set }: { filters: SbcFilters; set: (patch: Partial<SbcFilters>) => void }) {
   return (
@@ -54,32 +38,10 @@ export function SbcListPage() {
   const [params, setParams] = useSearchParams()
   const filters = useMemo(() => sbcFiltersFromParams(params), [params])
   const set = (patch: Partial<SbcFilters>) => setParams(sbcFiltersToParams({ ...filters, ...patch }), { replace: true })
-  const { authenticated } = useAuth()
   const mobile = useIsMobile()
   const [sheet, setSheet] = useState(false)
   const now = useNow()
-
-  const sets = useQuery({ queryKey: ['kb-sbc', 'active'], queryFn: () => endpoints.kbSbc({ active: true }), staleTime: STALE_MS })
-  const all = useMemo(() => sets.data ?? [], [sets.data])
-  const resources = useMemo(() => [...new Set(all.flatMap((s) => parseReward(s.reward).itemResourceIds))].sort((a, b) => a - b), [all])
-  const items = useQuery({
-    queryKey: ['kb-items-resource', resources],
-    queryFn: () => endpoints.kbItems({ resource: resources, limit: Math.min(resources.length, 100) }),
-    enabled: resources.length > 0,
-    staleTime: STALE_MS,
-  })
-  const itemMap = useMemo(() => new Map<number, KbItem>((items.data ?? []).map((i) => [i.eaResourceId, i])), [items.data])
-  // V3-05c-c: EA verisi gelen ödül kartlarının adı katalogdan (assetId), tek istekte.
-  const assets = useMemo(() => [...new Set(all.flatMap((s) => parseReward(s.reward).eaItems.map((i) => i.assetId)).filter((a): a is number => a !== undefined))].sort((a, b) => a - b), [all])
-  const names = useQuery({
-    queryKey: ['player-asset-names', assets],
-    queryFn: () => endpoints.playerAssetNames(assets.slice(0, MAX_ASSET_NAMES)),
-    enabled: assets.length > 0,
-    staleTime: STALE_MS,
-  })
-  const nameMap = useMemo(() => new Map<number, string>((names.data ?? []).map((n) => [n.assetId, n.name])), [names.data])
-  const votes = useQuery({ queryKey: ['sbc-votes'], queryFn: endpoints.sbcVotes, enabled: authenticated, staleTime: STALE_MS })
-  const voteMap = useMemo(() => new Map((votes.data?.sets ?? []).map((v) => [v.setId, v])), [votes.data])
+  const { sets, all, itemMap, nameMap, voteMap } = useActiveSbcSets()
 
   // Sekme kimlikleri HTML id'sinde güvenli olsun: kategori sekmeleri sıra numarasıyla, adres çubuğunda ham kategori adıyla.
   const categories = useMemo(() => categoriesOf(all), [all])
