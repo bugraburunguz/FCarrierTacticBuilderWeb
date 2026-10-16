@@ -36,18 +36,18 @@ export function valueProxy({ rating, knownPrice, untradeable }: { rating: number
 }
 
 /**
- * V3-07c — "SBC yemi" kuralı, TEK yerde: kopya kart her zaman yem; ayrıca özel olmayan ve değer vekili (bilinen fiyat varsa o) çözücünün koruma
- * eşiğindeki kartın (Özelleştir varsayılanı protectRatingFrom) değerinin altında kalan kart "düşük değer". Çözücü bu kartları serbestçe kullanır.
+ * PROD-PREP 0 — "SBC yemi" kuralı, TEK yerde (koruma eşiği çözücünün Özelleştir varsayılanı):
+ * 1) kopya her zaman yem; 2) korunan kart (≥ eşik ya da özel) kopya değilse asla; 3) takas edilebilir kart kopya değilse değil (satılabilir);
+ * 4) kalanlar (korunmayan + takas edilemez) yem. Metin SBC_FODDER_RULES'ta (HelpPopover).
  */
-export function sbcFodder(card: Pick<UtCard, 'rating' | 'price' | 'untradeable' | 'duplicate' | 'rarityId' | 'cardType'>): 'kopya' | 'düşük değer' | undefined {
+export function sbcFodder(card: Pick<UtCard, 'rating' | 'untradeable' | 'duplicate' | 'rarityId' | 'cardType'>): 'kopya' | 'takas edilemez' | undefined {
   if (card.duplicate) {
     return 'kopya'
   }
-  if (isSpecial(card)) {
+  if (isSpecial(card) || card.rating >= DEFAULT_CUSTOMIZE.protectRatingFrom) {
     return undefined
   }
-  const threshold = valueProxy({ rating: DEFAULT_CUSTOMIZE.protectRatingFrom })
-  return valueProxy({ rating: card.rating, knownPrice: card.price, untradeable: card.untradeable }) < threshold ? 'düşük değer' : undefined
+  return card.untradeable ? 'takas edilemez' : undefined
 }
 
 /** Özel kart: EA rareflag > 1 (TOTW, promo…) ya da ICON/HERO/HOF. */
@@ -83,6 +83,14 @@ export interface Customize {
 }
 
 export const DEFAULT_CUSTOMIZE: Customize = { locked: [], excluded: [], onlyClub: false, protectSpecial: true, protectRatingFrom: 85, mode: 'club-first' }
+
+/** "SBC yemi" kuralının kullanıcıya gösterilen dört satırı (sbcFodder ile aynı sıra). */
+export const SBC_FODDER_RULES = [
+  'Kopya kart her zaman yem.',
+  `Korunan kart (${DEFAULT_CUSTOMIZE.protectRatingFrom}+ ya da özel) kopya değilse asla yem değil.`,
+  'Takas edilebilir kart kopya değilse yem değil (satılabilir).',
+  'Kalanlar (korunmayan ve takas edilemez) yem.',
+]
 
 type CostOptions = Pick<Customize, 'protectSpecial' | 'protectRatingFrom' | 'mode'>
 

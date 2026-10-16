@@ -9,7 +9,7 @@ import { cardPlayerOf } from '../../../lib/cardPlayer'
 import type { UtCard } from '../../../lib/utCard'
 import { CatalogFiltersButton, CatalogSearch, CatalogShell, MoreFilters, PositionChips } from '../../catalog/CatalogShell'
 import { LocalCatalogGrid } from '../../catalog/LocalCatalogGrid'
-import { sbcFodder } from '../../sbc/solve/candidates'
+import { SBC_FODDER_RULES, sbcFodder } from '../../sbc/solve/candidates'
 import { applyClubFilters, CLUB_DEFAULTS, clubFacets, clubFiltersFromParams, clubFiltersToParams, type ClubFilters, type ClubSort, type TriState } from './clubFilters'
 import { SbcPickerDialog } from './SbcPickerDialog'
 import { useUtClub } from './useUtClub'
@@ -22,7 +22,7 @@ const SORTS: { id: ClubSort; label: string }[] = [
   { id: 'fodder', label: 'Önce SBC yemi' },
 ]
 const coin = (v?: number) => (v === undefined ? '–' : v.toLocaleString('tr-TR'))
-const FODDER_TITLE = { kopya: 'Kopya', 'düşük değer': 'Düşük değer' } as const
+const FODDER_TITLE = { kopya: 'Kopya', 'takas edilemez': 'Korunmayan ve takas edilemez' } as const
 
 function Badges({ c, starter }: { c: UtCard; starter: boolean }) {
   const fodder = sbcFodder(c)
@@ -112,7 +112,7 @@ export function UtClubV3Page() {
   return (
     <CatalogShell
       title="Kulübüm"
-      subtitle={<p className="flex items-center gap-1 text-sm text-ink-2">{owned.length} kulüp kartı<HelpPopover label="SBC yemi ve değer">SBC yemi: kopya kart ya da değeri, çözücünün koruduğu kartların (85+ ya da özel) altında kalan kart; çözücü bu kartları serbestçe kullanır. Değer: pazar ortalaması, yoksa son satış; bilinmiyorsa reytinge göre tahmin (yalnız sıralama).</HelpPopover></p>}
+      subtitle={<p className="flex items-center gap-1 text-sm text-ink-2">{owned.length} kulüp kartı<HelpPopover label="SBC yemi nedir"><span className="block font-semibold">SBC yemi</span><ul className="list-disc pl-4">{SBC_FODDER_RULES.map((r) => <li key={r}>{r}</li>)}</ul><span className="mt-1 block">Değer: pazar ortalaması, yoksa son satış; bilinmiyorsa reytinge göre tahmin (yalnız sıralama).</span></HelpPopover></p>}
       bar={bar}
     >
       {mobile && sheet && (

@@ -17,7 +17,8 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const outDir = new URL('../docs/review/v2/screens/V3-07c/', import.meta.url)
+// --out: başka görevin regresyon koşusu V3-07c kanıtını ezmesin (örn. --out PROD-PREP/kulubum).
+const outDir = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-07c'}/`, import.meta.url)
 mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 const SAMPLE_CAPTURES = fileURLToPath(new URL('../tests/fixtures/captures/sample-captures.json', import.meta.url))

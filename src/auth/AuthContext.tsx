@@ -9,7 +9,8 @@ interface AuthState {
   me: Me | undefined
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
+  /** privacyVersion: kayıtta okunduğu onaylanan aydınlatma metni sürümü (sunucu zorunlu tutar). */
+  register: (email: string, password: string, privacyVersion?: number) => Promise<void>
   logout: () => Promise<void>
   refreshMe: () => Promise<unknown>
 }
@@ -31,8 +32,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const register = useCallback(
-    async (email: string, password: string) => {
-      const response = await endpoints.register(email, password)
+    async (email: string, password: string, privacyVersion?: number) => {
+      const response = await endpoints.register(email, password, privacyVersion)
       tokens.set(response.accessToken, response.refreshToken)
       await queryClient.invalidateQueries({ queryKey: ['me'] })
     },

@@ -11,6 +11,7 @@ describe('eski parça kapısı (V3-07b, V3-07c)', () => {
   it.each([
     '/squad', '/squad/builder', '/ut/squad', '/tactics/wizard', '/replicas/:id',
     '/ut/club', '/ut/evo', '/ut/objectives', '/ut/meta', '/ut/import', '/compare', '/wonderkids', '/teams',
+    '/about', '/privacy',
   ])('%s: v3 sayfası ve zinciri eski parça içermez', (path) => {
     const route = all.find((r) => r.path === path)
     expect(route?.file, `${path} için dosya`).toBeTruthy()

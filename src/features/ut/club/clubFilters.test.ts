@@ -38,8 +38,9 @@ describe('clubFilters', () => {
     expect(sorted('rating')).toEqual(['c', 'a', 'b', 'd'])
     expect(sorted('name')).toEqual(['a', 'b', 'c', 'd'])
     expect(sorted('value')[0]).toBe('c')
-    // Yem önce (kendi içinde reyting artan: en ucuz önce); a (84, takas edilemez) de değer vekiliyle eşik altında. Özel c en sonda.
-    expect(sorted('fodder')).toEqual(['d', 'b', 'a', 'c'])
+    // PROD-PREP 0: yem = kopya (b) ya da korunmayan + takas edilemez (a: 84 < 85). d takas edilebilir → yem değil; c özel → yem değil.
+    // Yem önce (kendi içinde reyting artan), sonra diğerleri reyting artan.
+    expect(sorted('fodder')).toEqual(['b', 'a', 'd', 'c'])
   })
 
   it('yüzler: kartlardaki lig, ülke, kulüp ve nadirlik değerleri (alfabetik, tekil)', () => {

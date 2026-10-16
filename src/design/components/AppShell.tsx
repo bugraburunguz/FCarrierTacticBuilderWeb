@@ -6,9 +6,11 @@ import { useAuth } from '../../auth/AuthContext'
 import { CompareTray } from '../../components/CompareTray'
 import { useShellEffects } from '../../components/useShellEffects'
 import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
+import { PrivacyNoticeBanner } from '../../features/legal/PrivacyNoticeBanner'
 import { extensionCaptureEnabled } from '../../lib/features'
 import { activeNav, MODES, mobileBar, navFor, type NavGroup } from '../../lib/navConfig'
 import { MobileSheet } from './MobileSheet'
+import { BETA_TEXT, useAppConfig } from '../../state/appConfig'
 import { useStorageError } from '../../state/bigStore'
 import { modeStore, useMode } from '../../state/modeStore'
 import { LogoLockup } from '../brand/LogoLockup'
@@ -88,6 +90,7 @@ export function AppShell() {
   const mode = useMode()
   const storageError = useStorageError()
   const { authenticated, me, logout } = useAuth()
+  const { freeBeta } = useAppConfig()
   useShellEffects(pathname)
   // Uzantı yakalaması kapalıyken (VITE_EXTENSION_CAPTURE=off) yakalamaya bağlı UT öğeleri yan menüden ve mobil alt menüden çıkar (V3-06a).
   // V3-06d: kariyerde tek menü (CAREER_NAV); aktif öğe rotadan.
@@ -113,7 +116,7 @@ export function AppShell() {
           <MobileMenu loginLink={!(authenticated && me)} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
           {authenticated && me ? (
             <>
-              <span className="hidden sm:block">{me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
+              <span className="hidden sm:block">{freeBeta ? <Chip tone="good">{BETA_TEXT}</Chip> : me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
               <UserMenu email={me.email} onLogout={async () => { await logout(); navigate('/login') }} />
             </>
           ) : (
@@ -131,6 +134,7 @@ export function AppShell() {
         </div>
       )}
       {authenticated && <VerifyEmailBanner />}
+      {authenticated && <PrivacyNoticeBanner />}
 
       <div className="flex">
         <nav aria-label="Ana menü" className="glass sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
@@ -162,7 +166,10 @@ export function AppShell() {
           <Outlet />
           <footer className="mt-10 flex flex-col gap-1 border-t border-line pt-4 text-xs text-muted">
             <p>{LEGAL_NOTE}</p>
-            <NavLink to="/about" className="inline-flex min-h-8 items-center self-start font-semibold text-accent max-sm:min-h-11">Hakkında</NavLink>
+            <div className="flex flex-wrap gap-x-4">
+              <NavLink to="/about" className="inline-flex min-h-8 items-center font-semibold text-accent max-sm:min-h-11">Hakkında</NavLink>
+              <NavLink to="/privacy" className="inline-flex min-h-8 items-center font-semibold text-accent max-sm:min-h-11">Gizlilik</NavLink>
+            </div>
           </footer>
         </main>
       </div>

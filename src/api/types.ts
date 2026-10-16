@@ -379,6 +379,9 @@ export interface Me {
   emailVerified?: boolean
   emailVerificationRequired?: boolean
   createdAt?: string
+  /** PROD-PREP 3: onaylanan aydınlatma metni sürümü; yoksa ya da güncelden küçükse bilgilendirme bandı. */
+  privacyAckVersion?: number
+  privacyAckAt?: string
 }
 
 export interface Career {
