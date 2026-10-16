@@ -90,6 +90,9 @@ describe('KadroPage (v3 /squad)', () => {
 
   it('kahraman saha: seçili taktikte ilk 11 (tek lineup isteği), yedek kulübesi ve kadro rating\'i', async () => {
     renderAt()
+    // V3-07c 0b: ilk sekme "Saha" (üst alt menüde "Kadro" zaten var)
+    expect(await screen.findByRole('tab', { name: 'Saha', selected: true })).toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Kadro' })).toBeNull()
     const pitch = await screen.findByRole('region', { name: 'Saha' })
     expect(await within(pitch).findByRole('button', { name: /^GK — Oyuncu 1, 75/ })).toBeInTheDocument()
     expect(endpoints.lineup).toHaveBeenCalledTimes(1)
@@ -106,6 +109,20 @@ describe('KadroPage (v3 /squad)', () => {
     renderAt()
     expect(await screen.findByRole('button', { name: 'Goalkeeper · Balanced' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Fullback' })).toBeInTheDocument()
+  })
+
+  it('V3-07c 0a: rozet etiketi ve yüzdesi aynı sayıdan (levelFit); ham rol puanı gösterilmez, yüzde arttıkça etiket kötüleşmez', async () => {
+    const result = lineupResult()
+    // Sunucu: etiket levelFit'ten (≥65 Uygun, 40–65 Seviyesinde). Ham puan (score/currentFit) ters sırada: eski ekran %52 "Uygun", %62 "Seviyesinde" gösteriyordu.
+    result.slots[0].roleFit = { score: 52, currentFit: 52, levelFit: 70, fitLabel: 'GOOD', badge: 'GREEN' } as never
+    result.slots[1].roleFit = { score: 62, currentFit: 62, levelFit: 50, fitLabel: 'AT_LEVEL', badge: null } as never
+    result.slots[0].depth = [{ playerId: 12, playerName: 'Oyuncu 12', combined: 40, roleFitScore: 41, badge: 'YELLOW', levelFit: 33, fitLabel: 'WEAK' }] as never
+    vi.mocked(endpoints.lineup).mockResolvedValue(result as never)
+    renderAt()
+    expect((await screen.findAllByLabelText('Rol için uygun, yüzde 70')).length).toBeGreaterThan(0)
+    expect(screen.getAllByLabelText('Rol için seviyesinde, yüzde 50').length).toBeGreaterThan(0)
+    expect(screen.queryByLabelText(/yüzde 52|yüzde 62/)).toBeNull()
+    expect(screen.getByRole('list', { name: 'Yedek kulübesi' })).toHaveTextContent('GK %33')
   })
 
   it('sahada karta tıklamak kadro kurucuya götürür', async () => {

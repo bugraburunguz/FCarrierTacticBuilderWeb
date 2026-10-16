@@ -1,5 +1,4 @@
 import type { PitchSlot } from '../../components/pitch/Pitch'
-import { FIT_STATE_OF, toneOf } from '../../lib/fitTone'
 import type { SlotView } from './types'
 
 /** SlotView → ortak saha slotu (kariyer ve UT aynı FC kartlarını çizer; yüz değerleri kartta görünür). */
@@ -21,7 +20,7 @@ export function pitchSlotsOf(slots: SlotView[]): PitchSlot[] {
       faceLabels: s.player.faceLabels,
       faceStatsApproximate: s.player.faceStatsApproximate,
     },
-    fit: s.fit && { pct: s.fit.pct, state: FIT_STATE_OF[toneOf(s.fit.band)] },
+    fit: s.fit && { pct: s.fit.pct, state: s.fit.state },
     roleLabel: s.roleLabel,
     selected: s.selected,
   }))

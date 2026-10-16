@@ -35,6 +35,21 @@ export function valueProxy({ rating, knownPrice, untradeable }: { rating: number
   return untradeable ? base * UNTRADEABLE_DISCOUNT : base
 }
 
+/**
+ * V3-07c — "SBC yemi" kuralı, TEK yerde: kopya kart her zaman yem; ayrıca özel olmayan ve değer vekili (bilinen fiyat varsa o) çözücünün koruma
+ * eşiğindeki kartın (Özelleştir varsayılanı protectRatingFrom) değerinin altında kalan kart "düşük değer". Çözücü bu kartları serbestçe kullanır.
+ */
+export function sbcFodder(card: Pick<UtCard, 'rating' | 'price' | 'untradeable' | 'duplicate' | 'rarityId' | 'cardType'>): 'kopya' | 'düşük değer' | undefined {
+  if (card.duplicate) {
+    return 'kopya'
+  }
+  if (isSpecial(card)) {
+    return undefined
+  }
+  const threshold = valueProxy({ rating: DEFAULT_CUSTOMIZE.protectRatingFrom })
+  return valueProxy({ rating: card.rating, knownPrice: card.price, untradeable: card.untradeable }) < threshold ? 'düşük değer' : undefined
+}
+
 /** Özel kart: EA rareflag > 1 (TOTW, promo…) ya da ICON/HERO/HOF. */
 export function isSpecial(card: Pick<UtCard, 'rarityId' | 'cardType'>): boolean {
   return (card.rarityId ?? 0) > 1 || card.cardType !== undefined

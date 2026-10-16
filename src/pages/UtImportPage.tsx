@@ -1,7 +1,3 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
 import type { CaptureResult } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import { ExtensionSync } from '../components/ExtensionSync'
@@ -10,58 +6,19 @@ import { HarImport } from '../features/import/HarImport'
 import { CaptureOnly } from '../components/CaptureOnly'
 import { extensionCaptureEnabled, harImportEnabled } from '../lib/features'
 import { Button, Card, EmptyState, ErrorBox, Pill } from '../components/ui'
-import { toPlannerObjectives, toSbcPool } from '../lib/capture'
-import { objectiveStore } from '../state/objectiveStore'
-import { mergeCards } from '../lib/captureMerge'
-import { fromCapture, cardPrice, type UtCard } from '../lib/utCard'
-import { sbcPoolStore } from '../state/sbcPoolStore'
-import { utCardStore } from '../state/utCardStore'
-import { utCaptureStore } from '../state/utCaptureStore'
-import { mapActiveSquad } from '../lib/activeSquad'
-import { DEFAULT_UT_SETUP, utSquadStore } from '../state/utSquadStore'
+import { useUtImport } from '../features/ut/import/useUtImport'
 
 const TOP_CARDS = 25
 const TOP_PRICES = 15
-
-function toLibrary(result: CaptureResult): UtCard[] {
-  const own = result.cards.map((c) => fromCapture(c, 'club', cardPrice(c)))
-  const listings = result.prices.flatMap((p, i) => (p.card ? [fromCapture(p.card, 'market', p.buyNow ?? p.currentBid ?? p.startingBid, `-${i}`)] : []))
-  return [...own, ...listings]
-}
 
 function coins(value?: number) {
   return value === undefined ? '—' : value.toLocaleString('tr-TR')
 }
 
+/** v2 kulüp içe aktar (v3: features/ut/import/UtImportV3Page). Akış useUtImport'ta. */
 export function UtImportPage() {
   const { authenticated } = useAuth()
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const [notice, setNotice] = useState<string>()
-  const upload = useMutation({
-    mutationFn: (captures: unknown[]) => endpoints.utCapture(captures),
-    onSuccess: async (data) => {
-      const saved = utCardStore.set(mergeCards(utCardStore.get()?.cards, toLibrary(data)))
-      utCaptureStore.set(data)
-      let placed = ''
-      if (data.activeSquad) {
-        try {
-          const formations = await queryClient.fetchQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
-          const loaded = mapActiveSquad(data.activeSquad, formations)
-          if (loaded.formationId) {
-            utSquadStore.set({ formationId: loaded.formationId, setup: DEFAULT_UT_SETUP, picked: loaded.picked, roleOverride: {}, origin: 'active-squad' })
-            placed = ` Aktif kadron kadro kurucuya yerleştirildi (${Object.keys(loaded.picked).length} kart${data.activeSquad.tactic?.tacticName ? ` · taktik: ${data.activeSquad.tactic.tacticName}` : ''}).`
-          }
-        } catch {
-          placed = ' Aktif kadro yerleştirilemedi; kadro kurucudan "Kulüp aktif kadrosunu yükle" ile dene.'
-        }
-      }
-      setNotice((saved ? 'Kulüp kartların ve gördüğün market ilanları kadro kurucuda kullanılabilir.' : 'Kartlar tarayıcıda saklanamadı (alan dolu).') + placed)
-    },
-  })
-  const result = upload.data
-  const modes = useMemo(() => [...new Set((result?.objectives ?? []).map((g) => g.gameMode).filter(Boolean))] as string[], [result])
-  const [mode, setMode] = useState('CLUB')
+  const { upload, notice, result, modes, mode, setMode, process, toPool, importObjectives } = useUtImport()
 
   // V3-06a: uzantı senkronu + yakalama dosyası VITE_EXTENSION_CAPTURE ile (varsayılan açık); HAR bölümü VITE_HAR_IMPORT ile (varsayılan kapalı).
   if (!extensionCaptureEnabled()) {
@@ -74,10 +31,10 @@ export function UtImportPage() {
 
   return (
     <div className="space-y-4">
-      {harImportEnabled() && <HarImport busy={upload.isPending} onPersonal={(captures) => { setNotice(undefined); upload.mutate(captures) }} />}
-      <ExtensionSync busy={upload.isPending} onCaptures={(captures) => { setNotice(undefined); upload.mutate(captures) }} />
+      {harImportEnabled() && <HarImport busy={upload.isPending} onPersonal={process} />}
+      <ExtensionSync busy={upload.isPending} onCaptures={process} />
       {/* V3-05c-c: uzantının dışa aktardığı dosya HAR-01 ile aynı akıştan geçer (hedef → özet → onay); ham dosya sunucuya gitmez. */}
-      <CaptureFileImport source="capture" busy={upload.isPending} onPersonal={(captures) => { setNotice(undefined); upload.mutate(captures) }} />
+      <CaptureFileImport source="capture" busy={upload.isPending} onPersonal={process} />
       {upload.isPending && <p role="status" className="text-sm text-muted">İşleniyor…</p>}
       <ErrorBox error={upload.error} />
 
@@ -85,10 +42,7 @@ export function UtImportPage() {
       {result && (
         <>
           <Summary result={result} />
-          <Club result={result} onPool={() => {
-            sbcPoolStore.set(toSbcPool(result.cards))
-            navigate('/ut/sbc')
-          }} />
+          <Club result={result} onPool={toPool} />
           <Squad result={result} />
           <Prices result={result} />
           <Objectives
@@ -96,11 +50,7 @@ export function UtImportPage() {
             modes={modes}
             mode={mode}
             onMode={setMode}
-            onImport={() => {
-              const objectives = toPlannerObjectives(result.objectives, { gameModes: mode ? [mode] : undefined })
-              objectiveStore.replaceImported(objectives)
-              setNotice(`${objectives.length} objective planlayıcıya eklendi.`)
-            }}
+            onImport={importObjectives}
           />
           <Others result={result} />
           <UnknownPaths paths={result.unknownPaths ?? []} />

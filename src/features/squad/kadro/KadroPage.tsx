@@ -60,7 +60,7 @@ function LineupHero({ careerId, squad, formations }: { careerId: number; squad: 
                   <Link to={`/players/${b.player.player.id}`} className="truncate font-medium hover:underline">{b.player.player.name}</Link>
                   <span className="text-xs text-ink-2">{b.player.player.positions[0]} · <span className="font-[var(--font-num)] tabular-nums">{b.player.player.overall}</span></span>
                   <span className="truncate text-xs text-ink-2">
-                    {b.covers.length > 0 ? `Yedeği: ${b.covers.map((c) => `${c.slotId} %${Math.round(c.score)}`).join(', ')}` : b.player.player.positions.includes('GK') ? 'Yedek kaleci' : 'İlk 11’e yedek değil'}
+                    {b.covers.length > 0 ? `Yedeği: ${b.covers.map((c) => `${c.slotId} %${c.pct}`).join(', ')}` : b.player.player.positions.includes('GK') ? 'Yedek kaleci' : 'İlk 11’e yedek değil'}
                   </span>
                 </li>
               ))}
@@ -82,7 +82,7 @@ export function KadroPage() {
   const [view, setView] = useState<View>('list')
   const players = k.squad.data ?? []
   const tabs = [
-    { id: 'kadro' as const, label: 'Kadro' },
+    { id: 'saha' as const, label: 'Saha' },
     { id: 'oyuncular' as const, label: `Oyuncular (${players.length})` },
     { id: 'hareketler' as const, label: `Hareketler (${k.events.data?.length ?? 0})` },
     { id: 'kariyer' as const, label: 'Kariyer' },
@@ -116,7 +116,7 @@ export function KadroPage() {
       </header>
       <Tabs label="Kadro sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
 
-      <TabPanel idPrefix={PREFIX} id="kadro" active={tab === 'kadro'}>
+      <TabPanel idPrefix={PREFIX} id="saha" active={tab === 'saha'}>
         <Workspace
           title="Kadro sahası"
           hero={k.squad.isLoading || k.formations.isLoading ? <Skeleton className="h-80" /> : <LineupHero careerId={career.id} squad={players} formations={k.formations.data ?? []} />}

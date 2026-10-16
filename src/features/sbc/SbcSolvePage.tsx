@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Check, CircleHelp, Copy, Lock, Timer, X } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import { useAuth } from '../../auth/AuthContext'
 import type { SbcChallenge } from '../../api/types'
@@ -17,9 +17,10 @@ import { singleItemCandidates, type SingleItemPlan } from './solve/singleItem'
 const SINGLE_ITEM_LIMIT = 30
 import { SolutionPitch } from '../squad/SolutionPitch'
 import { DEFAULT_CUSTOMIZE, type Customize, type PlanCandidate } from './solve/candidates'
+import { lockIssues, parseLockParam, type LockIssue } from './solve/lockParam'
 import { requirementStatuses, type RequirementStatus } from './solve/requirementStatus'
 import { coins, shoppingList, shoppingText } from './solve/shoppingList'
-import { useClubCards, useScorePlan, useSbcSet, useSquadPlan } from './solve/useSolvePlan'
+import { useActiveSquadCards, useClubCards, useScorePlan, useSbcSet, useSquadPlan } from './solve/useSolvePlan'
 import { countdownText } from './sbcList'
 
 const STATUS_TEXT: Record<string, string> = { COMPLETED: 'Tamamlandı' }
@@ -91,11 +92,26 @@ function ShoppingPanel({ title, picks }: { title: string; picks: (PlanCandidate 
   )
 }
 
-function CustomizePanel({ customize, set, picks }: { customize: Customize; set: (c: Customize) => void; picks: (PlanCandidate | undefined)[] }) {
+/** Kulüpten kilitli istenen ama uygulanamayan kartlar ve sebebi (V3-07c). */
+function LockIssues({ issues }: { issues: LockIssue[] }) {
+  if (issues.length === 0) {
+    return null
+  }
+  return (
+    <div role="status" className="flex flex-col gap-1 text-sm">
+      <p className="font-semibold">Uygulanamayan kartlar ({issues.length})</p>
+      <ul aria-label="Uygulanamayan kartlar" className="list-disc pl-4 text-ink-2">
+        {issues.map((i) => <li key={i.key}>{i.name ?? 'Bilinmeyen kart'}: {i.reason}</li>)}
+      </ul>
+    </div>
+  )
+}
+
+function CustomizePanel({ customize, set, picks, open }: { customize: Customize; set: (c: Customize) => void; picks: (PlanCandidate | undefined)[]; open?: boolean }) {
   const toggle = (list: string[], key: string) => (list.includes(key) ? list.filter((k) => k !== key) : [...list, key])
   const cards = picks.filter((p): p is PlanCandidate => Boolean(p))
   return (
-    <details className="text-sm">
+    <details className="text-sm" open={open}>
       <summary className="min-h-8 cursor-pointer text-xs font-semibold text-accent">Özelleştir</summary>
       <div className="flex flex-col gap-3 pt-2">
         {/* V3-06b/0: varsayılan "Önce kulüp" — kulüp yetiyorsa satın alma yok; diğeri toplam değeri en aza indirir. */}
@@ -223,15 +239,19 @@ function singleStatuses(challenge: SbcChallenge, plan: SingleItemPlan): Requirem
  */
 export function SbcSolvePage() {
   const params = useParams()
+  const [search] = useSearchParams()
   const setId = Number(params.setId)
   const { set, loading, error } = useSbcSet(setId)
   const challenge = set.challenges.find((c) => String(c.challengeId) === params.challengeId)
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
-  const [customize, setCustomize] = useState<Customize>(DEFAULT_CUSTOMIZE)
+  // V3-07c: kulüpten "Şu SBC'de kullan" seçili kartları ?kilit= ile kilitli getirir.
+  const [requestedLocks] = useState(() => parseLockParam(search))
+  const [customize, setCustomize] = useState<Customize>(() => ({ ...DEFAULT_CUSTOMIZE, locked: requestedLocks }))
   const score = challenge ? isItemScore(challenge) : false
   const single = challenge ? isSingleItem(challenge) : false
   const plan = useSquadPlan(score || single ? undefined : challenge, formations.data, customize)
   const club = useClubCards()
+  const activeSquad = useActiveSquadCards()
   const singlePlan = useMemo(() => (challenge && single ? singleItemCandidates(challenge.requirements, club) : undefined), [challenge, single, club])
   const votes = useSbcVotes()
   const now = useMemo(() => Date.now(), [])
@@ -317,7 +337,8 @@ export function SbcSolvePage() {
                 )}
                 <ShoppingPanel title={title} picks={result.picks} />
                 {result.notes.length > 0 && <p className="text-xs text-ink-2">Elle kontrol et: {result.notes.join(' · ')}</p>}
-                <CustomizePanel customize={customize} set={setCustomize} picks={result.picks} />
+                <CustomizePanel customize={customize} set={setCustomize} picks={result.picks} open={requestedLocks.length > 0} />
+                {requestedLocks.length > 0 && <LockIssues issues={lockIssues(requestedLocks.filter((k) => customize.locked.includes(k)), club, result.picks.filter((p): p is PlanCandidate => Boolean(p)), activeSquad)} />}
                 <p className="text-xs text-ink-2">Plan yalnız öneridir; görevi oyunda kendin gönder.</p>
               </div>
             ) : <Skeleton className="h-40" />}

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, Formation } from '../api/types'
 import { shortRole, useCareerLineup } from '../features/squad/kadro/useCareerLineup'
+import { fitDisplay } from '../lib/fitLabels'
 import { Pitch } from './squadBuilder/Pitch'
 import { BadgeDot, Button, Card, ErrorBox, Pill, Spinner } from './ui'
 
@@ -66,11 +67,11 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
                         <strong className="inline-block w-12">{s.slotId}</strong>
                         {s.roleFit && <BadgeDot state={s.roleFit.badge} />} {s.playerName ?? '—'}{' '}
                         <span className="text-xs text-muted">
-                          {shortRole(s.roleName)} · %{s.roleFit ? Math.round(s.roleFit.score) : 0}
+                          {shortRole(s.roleName)} · %{s.roleFit ? fitDisplay(s.roleFit).pct : 0}
                         </span>
                       </span>
                       <span className="text-xs text-muted">
-                        {s.depth === undefined ? '' : s.depth.length > 0 ? `yedek: ${s.depth.map((d) => `${d.playerName} %${Math.round(d.roleFitScore)}`).join(', ')}` : 'yedek yok'}
+                        {s.depth === undefined ? '' : s.depth.length > 0 ? `yedek: ${s.depth.map((d) => `${d.playerName} %${fitDisplay({ levelFit: d.levelFit, currentFit: d.roleFitScore }).pct}`).join(', ')}` : 'yedek yok'}
                       </span>
                     </li>
                   ))}
@@ -91,7 +92,7 @@ export function TacticLineup({ careerId, squad, formations }: Props) {
                       </span>
                       <span className="text-xs text-muted">
                         {b.covers.length > 0
-                          ? `yedeği: ${b.covers.map((c) => `${c.slotId} %${Math.round(c.score)}`).join(', ')}`
+                          ? `yedeği: ${b.covers.map((c) => `${c.slotId} %${c.pct}`).join(', ')}`
                           : b.player.player.positions.includes('GK') ? 'yedek kaleci' : 'ilk 11’e yedek değil'}
                       </span>
                     </li>

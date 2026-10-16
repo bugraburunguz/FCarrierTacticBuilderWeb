@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { API_ORIGIN } from '../api/client'
 import { endpoints } from '../api/endpoints'
 import { chromeSender, pingExtension, pullAll, savedExtensionId, saveExtensionId } from '../lib/extensionBridge'
-import { Button, Card, ErrorBox, Field, Input } from './ui'
+import { Panel } from '../design/components/primitives'
+import { Button, ErrorBox, Field, Input } from './ui'
 
 /**
  * Dosyasız kulüp senkronu (EXT-01): site extension'dan yakalanan yanıtları çeker, kendi oturumuyla sunucuya işletir.
@@ -51,7 +52,7 @@ export function ExtensionSync({ onCaptures, busy }: { onCaptures: (captures: unk
   })
 
   return (
-    <Card title="Kulübümü senkronla (dosyasız)">
+    <Panel title="Kulübümü senkronla (dosyasız)">
       <div className="grid items-end gap-3 sm:grid-cols-[1fr_auto_auto]">
         <Field label="Uzantı kimliği (uzantı penceresinde yazar, bir kez girilir)">
           <Input value={extId} onChange={(e) => setExtId(e.target.value)} placeholder="abcdefghijklmnopabcdefghijklmnop" className="font-mono" />
@@ -62,6 +63,6 @@ export function ExtensionSync({ onCaptures, busy }: { onCaptures: (captures: unk
       {progress && <p role="status" className="mt-2 text-sm text-muted">{progress}</p>}
       {notice && <p role="status" className="mt-2 text-sm text-accent">{notice}</p>}
       <div className="mt-2"><ErrorBox error={sync.error ?? link.error} /></div>
-    </Card>
+    </Panel>
   )
 }

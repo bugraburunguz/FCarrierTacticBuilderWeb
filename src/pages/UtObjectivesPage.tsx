@@ -1,27 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
-import { endpoints } from '../api/endpoints'
-import { toPlannerObjectives } from '../lib/capture'
-import { kbToCaptureGroups } from '../lib/kbObjectives'
+import { useState } from 'react'
 import { Button, Card, EmptyState, Field, Input, Pill, Select } from '../components/ui'
-import { estimateEffort, objectiveLabel, parseRequirement, planObjectives, rewardOf, xiToText, type Objective, type ObjectiveGroup, type PlanGroup, type Requirement } from '../lib/objectives'
-import { objectiveStore, useObjectives } from '../state/objectiveStore'
+import { addObjective, OBJECTIVE_GROUPS as GROUPS, useUtObjectives } from '../features/ut/objectives/useUtObjectives'
+import { estimateEffort, objectiveLabel, rewardOf, xiToText, type Objective, type ObjectiveGroup, type PlanGroup } from '../lib/objectives'
+import { objectiveStore } from '../state/objectiveStore'
 
-const GROUPS: ObjectiveGroup[] = ['Foundations', 'Milestones', 'Weekly', 'Seasonal', 'Diğer']
-
+/** v2 objective planı (v3: features/ut/objectives/UtObjectivesV3Page). Veri useUtObjectives'te. */
 export function UtObjectivesPage() {
-  const objectives = useObjectives()
-  const plan = useMemo(() => planObjectives(objectives), [objectives])
-  const { parents, singles } = useMemo(() => {
-    const map = new Map<string, { id: string; name: string; group: string; total: number; done: number; reward: number; expiresAt?: string; items: Objective[] }>()
-    objectives.filter((o) => o.parentId).forEach((o) => {
-      const entry = map.get(o.parentId!) ?? { id: o.parentId!, name: o.parentName ?? 'Grup', group: o.group, total: o.subTotal ?? 0, done: o.subDone ?? 0, reward: o.parentReward ?? 0, expiresAt: o.expiresAt, items: [] }
-      entry.items.push(o)
-      map.set(o.parentId!, entry)
-    })
-    map.forEach((e) => e.items.sort((a, b) => (a.subIndex ?? 0) - (b.subIndex ?? 0)))
-    return { parents: [...map.values()], singles: objectives.filter((o) => !o.parentId) }
-  }, [objectives])
+  const { objectives, plan, parents, singles, kb, importKb } = useUtObjectives()
   const [name, setName] = useState('')
   const [group, setGroup] = useState<ObjectiveGroup>('Weekly')
   const [requirements, setRequirements] = useState('')
@@ -33,38 +18,19 @@ export function UtObjectivesPage() {
   const [error, setError] = useState<string>()
 
   function add() {
-    const lines = requirements.split('\n').map((l) => l.trim()).filter(Boolean)
-    const parsed = lines.map(parseRequirement)
-    if (!name.trim()) {
-      setError('Objective adı gerekli.')
-      return
+    const message = addObjective({ name, group, requirements, reward, sp, effort, expires, web })
+    setError(message)
+    if (!message) {
+      setName('')
+      setRequirements('')
     }
-    if (parsed.some((p) => !p)) {
-      setError('Şart satırı biçimi: TÜR:ad:sayı (ör. XI_LEAGUE:Premier League:1) ya da TÜR:sayı (ör. GOALS:3).')
-      return
-    }
-    setError(undefined)
-    objectiveStore.add({
-      id: `${Date.now()}`,
-      name: name.trim(),
-      group,
-      requirements: parsed as Requirement[],
-      rewardValue: Number(reward) || 0,
-      sp: Number(sp) || 0,
-      effortMatches: effort === '' ? undefined : Number(effort),
-      webAppDoable: web,
-      expiresAt: expires || undefined,
-    })
-    setName('')
-    setRequirements('')
   }
 
-  const kb = useQuery({ queryKey: ['kb-objectives'], queryFn: endpoints.kbObjectives, staleTime: 60_000, retry: false })
   const groups = kb.data ?? []
   return (
     <div className="space-y-4">
       {groups.length > 0 && (
-        <Card title={`Güncel objective grupları (${groups.length})`} actions={<Button variant="secondary" onClick={() => objectiveStore.replaceImported(toPlannerObjectives(kbToCaptureGroups(groups)))}>Planlayıcıya aktar</Button>}>
+        <Card title={`Güncel objective grupları (${groups.length})`} actions={<Button variant="secondary" onClick={importKb}>Planlayıcıya aktar</Button>}>
           <ul className="grid gap-3 sm:grid-cols-2">
             {groups.map((g) => (
               <li key={g.id} className="rounded-md border border-line p-3 text-sm">

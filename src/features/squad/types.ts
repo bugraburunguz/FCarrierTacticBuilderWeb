@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { FormationSlot, WeaponState } from '../../api/types'
+import type { FitState } from '../../components/card/FitBadge'
 import type { FaceCard } from '../../lib/faceAverages'
 
 /** Kadro çekirdeği iki modda da aynıdır; modlar yalnız veri kaynağında ve bağlayıcıda (binding) ayrışır (Q16). */
@@ -16,7 +17,8 @@ export interface SlotView {
   y: number
   player?: { id: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string; faceStats?: number[]; faceLabels?: string[]; faceStatsApproximate?: boolean }
   roleLabel: string
-  fit?: { pct: number; band?: WeaponState | null }
+  /** pct ve state aynı RoleFit'ten (fitDisplay: levelFit + sunucu fitLabel); band yalnız v2 PositionCard'ın rengi için. */
+  fit?: { pct: number; state: FitState; band?: WeaponState | null }
   placeholder?: string
   sub?: string
   selected?: boolean

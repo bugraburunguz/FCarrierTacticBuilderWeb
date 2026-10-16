@@ -1,37 +1,19 @@
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
-import { useAuth } from '../auth/AuthContext'
-import { useActiveCareerId } from '../state/careerStore'
 import { AttributeRadar } from '../components/AttributeRadar'
 import { FitResultCard } from '../components/FitResultCard'
 import { RolePicker, type RoleSelection } from '../components/RolePicker'
 import { BadgeDot, Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
-import { ATTR_GROUPS, ATTR_LABELS } from '../lib/format'
+import { bestIndexes, useCompare } from '../features/compare/useCompare'
+import { ATTR_LABELS } from '../lib/format'
 import { playStyleName } from '../lib/playstyles'
-import { compareStore, MAX_COMPARE, useCompareList } from '../state/compareStore'
+import { compareStore, MAX_COMPARE } from '../state/compareStore'
 
+/** v2 karşılaştırma (v3: features/compare/CompareV3Page). Veri useCompare'de. */
 export function ComparePage() {
-  const list = useCompareList()
   const [term, setTerm] = useState('')
   const [selection, setSelection] = useState<RoleSelection>({ position: 'ST', roleId: 'advanced_forward_attack', tags: [] })
-  const search = useQuery({
-    queryKey: ['compare-search', term],
-    queryFn: () => endpoints.players({ q: term, size: 6 }),
-    enabled: term.trim().length >= 2,
-  })
-  const { authenticated } = useAuth()
-  const activeCareer = useActiveCareerId()
-  const careerId = authenticated ? activeCareer : undefined
-  const details = useQueries({ queries: list.map((c) => ({ queryKey: ['player', c.id, careerId], queryFn: () => endpoints.player(c.id, careerId) })) })
-  const loaded = details.map((d) => d.data).filter((d): d is NonNullable<typeof d> => !!d)
-  const fit = useMutation({
-    mutationFn: () => endpoints.compare({ ids: list.map((c) => c.id), roleId: selection.roleId, position: selection.position, tags: selection.tags }),
-  })
-  const names = new Map(list.map((c) => [c.id, c.name]))
-  const hasGoalkeeper = loaded.some((d) => d.summary.positions.includes('GK'))
-  const groups = ATTR_GROUPS.filter((g) => (g.title === 'Kaleci') === hasGoalkeeper || g.title !== 'Kaleci')
+  const { list, search, details, loaded, fit, names, hasGoalkeeper, groups } = useCompare(term, selection)
 
   return (
     <div className="space-y-4">
@@ -155,13 +137,6 @@ export function ComparePage() {
 }
 
 type Cell = number | string | null
-
-function bestIndexes(values: Cell[]): Set<number> {
-  const nums = values.map((v) => (typeof v === 'number' ? v : null))
-  const max = Math.max(...nums.map((n) => n ?? -Infinity))
-  const ties = nums.filter((n) => n === max).length
-  return new Set(nums.flatMap((n, i) => (n !== null && n === max && ties < nums.length ? [i] : [])))
-}
 
 function InfoRow({ label, values, highlight }: { label: string; values: Cell[]; highlight?: boolean }) {
   const best = highlight ? bestIndexes(values) : new Set<number>()

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { endpoints } from '../../../api/endpoints'
 import type { CareerPlayer, Formation } from '../../../api/types'
 import { pickBench } from '../../../lib/bench'
+import { fitDisplay } from '../../../lib/fitLabels'
 import { mirrorTactic } from '../../../lib/mirror'
 import { swapSlots } from '../../../lib/squadBuilder'
 import { lineupStore } from '../../../state/lineupStore'
@@ -51,7 +52,8 @@ export function useCareerLineup(careerId: number, squad: CareerPlayer[], formati
       y: sl.y,
       player: result?.playerName ? { id: result.playerId ?? 0, name: result.playerName, overall: result.overall ?? 0, ...cardInfo(squad, result.playerId) } : undefined,
       roleLabel: result ? roleLabelOf(result.roleName) : '…',
-      fit: result?.roleFit ? { pct: Math.round(result.roleFit.score), band: result.roleFit.badge } : undefined,
+      // V3-07c 0a: yüzde ve etiket aynı RoleFit'ten (fitDisplay); eskiden yüzde ham rol puanı (score), renk levelFit'ten geliyordu.
+      fit: result?.roleFit ? { pct: fitDisplay(result.roleFit).pct, state: fitDisplay(result.roleFit).state, band: result.roleFit.badge } : undefined,
     }
   })
 

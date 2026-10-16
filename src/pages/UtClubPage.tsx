@@ -6,9 +6,8 @@ import { PlayerAvatar } from '../components/PlayerAvatar'
 import { Card, EmptyState, Field, Input, Pill, Select } from '../components/ui'
 import { POSITIONS } from '../lib/format'
 import type { UtCard } from '../lib/utCard'
-import { useUtCapture } from '../state/utCaptureStore'
-import { utCardStore } from '../state/utCardStore'
 import { CardName } from '../components/card/CardName'
+import { useUtClub } from '../features/ut/club/useUtClub'
 
 type View = 'all' | 'club' | 'storage' | 'duplicate'
 
@@ -26,9 +25,9 @@ const inView = (card: UtCard, view: View) =>
   (view === 'club' && card.pile !== 'storage') ||
   (view === 'duplicate' && Boolean(card.duplicate))
 
+/** v2 Kadrom (v3: features/ut/club/UtClubV3Page). Veri useUtClub'da. */
 export function UtClubPage() {
-  const library = useMemo(() => utCardStore.get(), [])
-  const capture = useUtCapture()
+  const { owned, starters, missingPile } = useUtClub()
   const [view, setView] = useState<View>('all')
   const [q, setQ] = useState('')
   const [position, setPosition] = useState('')
@@ -36,8 +35,6 @@ export function UtClubPage() {
   const [limit, setLimit] = useState(PAGE)
   const [layout, setLayout] = useState<'cards' | 'table'>('cards')
 
-  const owned = useMemo(() => (library?.cards ?? []).filter((c) => c.source === 'club'), [library])
-  const starters = useMemo(() => new Set((capture?.activeSquad?.slots ?? []).filter((s) => s.card).map((s) => s.card!.instanceId)), [capture])
   const counts = useMemo(() => Object.fromEntries(VIEWS.map((v) => [v.id, owned.filter((c) => inView(c, v.id)).length])) as Record<View, number>, [owned])
   const rows = useMemo(() => {
     const needle = q.trim().toLowerCase()
@@ -57,7 +54,6 @@ export function UtClubPage() {
     )
   }
   const total = rows.reduce((sum, c) => sum + (c.price ?? 0), 0)
-  const missingPile = owned.every((c) => c.pile === undefined)
 
   return (
     <div className="matchday space-y-4">

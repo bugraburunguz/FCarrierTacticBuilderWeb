@@ -8,6 +8,9 @@ import { Chip, EmptyState, Skeleton } from '../../../design/components/primitive
 /** Rozet → uyum durumu (sahadaki rozetle aynı eşlemeler). */
 export const FIT_STATE = FIT_STATE_OF
 
+/** Uyum yüzdesinin yazı rengi rozetle aynı durumdan; "Seviyesinde" renksiz (V3-07c: önceden Sınırda gibi sarıydı). */
+const FIT_TEXT_TONE: Record<FitState, string> = { good: 'text-good', neutral: 'text-ink', ok: 'text-warn', bad: 'text-bad' }
+
 export interface PickRow {
   key: string
   name: string
@@ -115,7 +118,7 @@ export function PickList({ rows, loading, emptyText, search, onSearch, tabs, act
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-0.5 text-xs">
                   {row.fitPct !== undefined ? (
-                    <span className={`font-semibold tabular-nums ${row.fitState === 'good' ? 'text-good' : row.fitState === 'bad' ? 'text-bad' : 'text-warn'}`}>%{row.fitPct}</span>
+                    <span className={`font-semibold tabular-nums ${FIT_TEXT_TONE[row.fitState ?? 'neutral']}`}>%{row.fitPct}</span>
                   ) : (
                     <span className="text-muted">%–</span>
                   )}

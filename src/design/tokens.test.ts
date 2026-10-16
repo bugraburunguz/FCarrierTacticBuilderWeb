@@ -61,6 +61,8 @@ describe('v3 token seti (11 §3)', () => {
       '--ovr-80': '#0e9b52', '--ovr-70': '#3aa14a', '--ovr-65': '#86b81f', '--ovr-60': '#d0a022', '--ovr-low': '#d47a24',
       '--dot-green': '#2fbf71', '--dot-yellow': '#e6b325', '--dot-red': '#e5484d',
       '--drag-border': '#10b981', '--drag-bg': '#ffffff', '--drag-ink': '#0f172a', '--drag-rating': '#047857', '--drag-sub': '#64748b',
+      // V3-07c: AttributeRadar seri renkleri (renk + çizgi deseni birlikte; renk körü güvenli)
+      '--series-1': '#00b894', '--series-2': '#e17055', '--series-3': '#0984e3', '--series-4': '#c79a00', '--series-5': '#6c5ce7', '--series-6': '#e84393',
     })
   })
 

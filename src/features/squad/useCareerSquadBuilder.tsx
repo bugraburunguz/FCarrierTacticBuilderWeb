@@ -52,7 +52,7 @@ export function useCareerSquadBuilder() {
       y: slot.y,
       player: player && { id: player.id, name: player.name, overall: player.overall, faceUrl: player.faceUrl, club: player.club, league: player.league, nationality: player.nationality, faceStats: player.faceStats, faceLabels: player.faceLabels, faceStatsApproximate: player.faceStatsApproximate },
       roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : '…',
-      fit: fit && { pct: fitDisplay(fit).pct, band: fit.badge },
+      fit: fit && { pct: fitDisplay(fit).pct, state: fitDisplay(fit).state, band: fit.badge },
       selected: selection?.slotId === slot.slotId,
     }
   })

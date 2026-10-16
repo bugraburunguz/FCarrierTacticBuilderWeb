@@ -131,6 +131,27 @@ describe('SBC çözüm sayfası (V3-05d, 08 §5)', () => {
     expect(within(custom).getByLabelText('Koruma eşiği (reyting)')).toHaveValue(85)
   })
 
+  it('V3-07c: ?kilit= ile gelen kulüp kartları Özelleştir\'de kilitli; uygulanamayan kart sebebiyle yazılır', async () => {
+    renderPage('/ut/sbc/7700/77001?kilit=c%3A9005%2Cc%3A1')
+    const custom = (await screen.findByText('Özelleştir')).closest('details')!
+    expect(custom).toHaveAttribute('open')
+    const issues = await screen.findByRole('list', { name: 'Uygulanamayan kartlar' })
+    expect(issues).toHaveTextContent('Kulübünde bulunamadı')
+    // Kulüpteki kilitli kart ya çözümde kilitli görünür ya da sebebiyle listelenir; hiçbir durumda sessizce kaybolmaz.
+    await waitFor(() => {
+      const inPlan = within(custom).queryByRole('list', { name: 'Kadrodaki kartlar' })
+      const lockedInPlan = inPlan && within(inPlan).queryAllByRole('button', { name: 'Kilitle', pressed: true }).length > 0
+      expect(lockedInPlan || /Kapı Oyuncu 6/.test(issues.textContent ?? '')).toBe(true)
+    })
+  })
+
+  it('kilit parametresi yoksa Özelleştir kapalı ve uygulanamayan kart listesi yok', async () => {
+    renderPage('/ut/sbc/7700/77001')
+    const custom = (await screen.findByText('Özelleştir')).closest('details')!
+    expect(custom).not.toHaveAttribute('open')
+    expect(screen.queryByRole('list', { name: 'Uygulanamayan kartlar' })).toBeNull()
+  })
+
   it('Özelleştir kapalı başlar; yalnız kulüp seçilince yeniden çözülür', async () => {
     renderPage('/ut/sbc/7700/77001')
     const custom = (await screen.findByText('Özelleştir')).closest('details')!

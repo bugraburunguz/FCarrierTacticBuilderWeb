@@ -1,10 +1,12 @@
 import type { CareerPlayer, SquadFit } from '../api/types'
+import { fitDisplay } from './fitLabels'
 
 export const BENCH_SIZE = 7
 
 export interface BenchEntry {
   player: CareerPlayer
-  covers: { slotId: string; score: number }[]
+  /** score: seçimde kullanılan ham rol puanı; pct: gösterilen yüzde (levelFit, rozetle aynı sayı — V3-07c). */
+  covers: { slotId: string; score: number; pct: number }[]
 }
 
 /**
@@ -14,10 +16,10 @@ export interface BenchEntry {
 export function pickBench(squad: CareerPlayer[], fit: SquadFit, size = BENCH_SIZE): BenchEntry[] {
   const starters = new Set(fit.slots.map((s) => s.playerId))
   const byId = new Map(squad.map((p) => [p.player.id, p]))
-  const coverage = new Map<number, { slotId: string; score: number }[]>()
+  const coverage = new Map<number, BenchEntry['covers']>()
   fit.slots.forEach((slot) =>
     (slot.depth ?? []).forEach((d) => {
-      coverage.set(d.playerId, [...(coverage.get(d.playerId) ?? []), { slotId: slot.slotId, score: d.roleFitScore }])
+      coverage.set(d.playerId, [...(coverage.get(d.playerId) ?? []), { slotId: slot.slotId, score: d.roleFitScore, pct: fitDisplay({ levelFit: d.levelFit, currentFit: d.roleFitScore }).pct }])
     }),
   )
   const available = squad.filter((p) => !starters.has(p.player.id))

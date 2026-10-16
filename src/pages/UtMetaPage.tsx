@@ -1,16 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
 import { Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
+import { useUtMeta } from '../features/ut/meta/useUtMeta'
 import { POSITIONS } from '../lib/format'
 
 const TIER_TONE: Record<string, 'emerald' | 'sky' | 'amber' | 'slate'> = { 'A+': 'emerald', A: 'sky', B: 'amber', C: 'slate' }
 
+/** v2 UT meta (v3: features/ut/meta/UtMetaV3Page). Veri useUtMeta'da. */
 export function UtMetaPage() {
   const [position, setPosition] = useState('ST')
-  const formations = useQuery({ queryKey: ['ut-formations'], queryFn: endpoints.utFormations, staleTime: 600_000 })
-  const tier = useQuery({ queryKey: ['ut-tier', position], queryFn: () => endpoints.utTier(position, { limit: 25 }), staleTime: 300_000 })
+  const { formations, tier } = useUtMeta(position)
 
   return (
     <div className="space-y-4">
