@@ -61,6 +61,10 @@ Diğer satırlar (3, 4, 5, 6, 16 kısmen; 1, 2, 7, 9, 10, 11, 13, 14, 17 tutuyor
 
 - JWT_SECRET / ML_SHARED_SECRET / ADMIN_KEY: runbook'ta `openssl rand … | pbcopy` (ekrana basmadan), Railway'de sealed. Hiçbir dosyaya yazılmadı.
 - CI: iki repoda zaten var (Backend Test: mvn test + ml pytest; Web CI: lint + test + build); web CI'ya nginx testi eklendi. Wait for CI runbook 3. adım.
+- **Bulgu: Backend Test GitHub'da en az 6 commit'tir kırmızıydı** (yerelde yeşil; Linux dosya sırası farklı). Wait for CI açılınca hiçbir backend dağıtımı geçmezdi. CI sırası yerelde yeniden üretildi ve iki test düzeltildi (üretim kodu değişmedi):
+  - `UtItemBaseSyncIntegrationTest`: `KnowledgeBaseIntegrationTest` katalog kartına fiyat yazıp bırakıyordu → artık kendi fiyat satırlarını temizliyor.
+  - `ApiFlowIntegrationTest.lineup…`: kariyer yolu v3; seviye normları başka testten dolunca v1'e özgü `badge` yerine `fitLabel` dönüyor → iki etiket de kabul.
+  - Web CI: nginx testi Linux'ta geçici dizin izni yüzünden 500 alıyordu → düzeltildi, `main` yeşil.
 - Yedek: runbook 11. adım (günlük + haftalık).
 
 ## 8. Duman testi
