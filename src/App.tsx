@@ -43,6 +43,7 @@ const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPa
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const CareerPlayersPage = lazy(() => import('./features/careerPlayers/CareerPlayersPage').then((m) => ({ default: m.CareerPlayersPage })))
+const GrowthPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthPage })))
 const DeskPage = lazy(() => import('./features/desk/DeskPage').then((m) => ({ default: m.DeskPage })))
 const TransferCenterPage = lazy(() => import('./features/transfer/TransferCenterPage').then((m) => ({ default: m.TransferCenterPage })))
 const CareerPlayerPage = lazy(() => import('./features/player/CareerPlayerPage').then((m) => ({ default: m.CareerPlayerPage })))
@@ -113,7 +114,8 @@ export function App() {
         <Route path="career/new" element={<RequireAuth><CareerNewPage /></RequireAuth>} />
         {/* V3-06c: v3'te Transfer Merkezi (yalnız v3 uçları); v2 sayfası v2 için kalır. */}
         <Route path="career/transfer" element={<RequireAuth>{isV3() ? <TransferCenterPage /> : <CareerTransferPage />}</RequireAuth>} />
-        <Route path="career/growth" element={<RequireAuth><CareerGrowthPage /></RequireAuth>} />
+        {/* V3-06e: v3'te Gelişim (grafik, yalnız mevcut uçlar); v2 sayfası v2 için kalır. */}
+        <Route path="career/growth" element={<RequireAuth>{isV3() ? <GrowthPage /> : <CareerGrowthPage />}</RequireAuth>} />
         <Route path="teams" element={<RequireAuth><TeamsPage /></RequireAuth>} />
         <Route path="ut/players/:assetId" element={<UtPlayerPage />} />
         <Route path="ut/squad" element={<UtSquadPage />} />

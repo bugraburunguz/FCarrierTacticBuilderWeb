@@ -405,6 +405,8 @@ export interface CareerSnapshot {
   source: 'IMPORT' | 'MANUAL' | 'OCR'
   playerCount: number
   note?: string
+  /** V3-06e: kayıt anındaki oyun tarihi; yoksa alan yok. */
+  gameDate?: string
 }
 
 export interface SnapshotDiffRow {
@@ -436,6 +438,8 @@ export interface HistoryPoint {
   overall: number
   potential: number
   teamId?: number
+  /** V3-06e: kayıt anındaki oyun tarihi; yoksa alan yok (grafik içe aktarma sırasına düşer). */
+  gameDate?: string
 }
 
 export type PlayerTagKind = 'LOCKED' | 'ROTATION' | 'DEVELOPING' | 'FOR_SALE' | 'LOAN_OK'

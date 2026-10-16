@@ -15,7 +15,7 @@ import { levelText } from '../lib/fitLabels'
 import { formatEur } from '../lib/format'
 import { useActiveCareerId } from '../state/careerStore'
 
-const KIND_LABEL = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik' } as const
+const KIND_LABEL = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik', CONTRACT: 'Sözleşme' } as const
 
 function daysLeft(date?: string): number | undefined {
   return date ? Math.ceil((new Date(date).getTime() - Date.now()) / 86_400_000) : undefined

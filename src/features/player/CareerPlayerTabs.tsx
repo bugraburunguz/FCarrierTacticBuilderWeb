@@ -32,7 +32,7 @@ export function DevelopmentTab({ summary, inSquad }: { summary: PlayerSummary; i
         </p>
       )}
       {inSquad
-        ? <p className="text-sm"><Link to={`/career/growth?player=${summary.id}`} className="font-semibold text-accent underline-offset-2 hover:underline">Gelişim takibi</Link>: OVR/POT güncellemeleri ve geçmiş.</p>
+        ? <p className="text-sm"><Link to={`/career/growth?oyuncu=${summary.id}`} className="font-semibold text-accent underline-offset-2 hover:underline">Gelişim takibi</Link>: OVR/POT güncellemeleri ve geçmiş.</p>
         : <p className="text-xs text-muted">Gelişim takibi kadrondaki oyuncular içindir.</p>}
     </div>
   )

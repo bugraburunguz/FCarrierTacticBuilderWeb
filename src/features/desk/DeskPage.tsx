@@ -9,8 +9,7 @@ import { CareerSelect } from '../../components/CareerSelect'
 import { HelpPopover } from '../../components/ui'
 import { Chip, EmptyState, Skeleton, StatTile, TabPanel, Tabs } from '../../design/components/primitives'
 import { cardPlayerOfSummary } from '../../lib/cardPlayer'
-import { alerts, suggestActions, windowDaysLeft } from '../../lib/deskRules'
-import { levelText } from '../../lib/fitLabels'
+import { alerts, rankActions, windowDaysLeft } from '../../lib/deskRules'
 import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useTabParam } from '../player/playerPage'
@@ -29,7 +28,8 @@ const PREFIX = 'masa'
 const STALE_MS = 120_000
 const WEAK_SHOWN = 3
 const WEAK_CARD = 92
-const KIND_LABEL = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik' } as const
+const KIND_LABEL = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik', CONTRACT: 'Sözleşme' } as const
+const JOBS_SHOWN = 3
 
 /** Türkçe liste birleştirme: "A", "A ve B", "A, B ve C". */
 const joinTr = (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} ve ${items[items.length - 1]}`)
@@ -88,10 +88,14 @@ export function DeskPage() {
   const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
   const slots = useMemo(() => toDeskSlots(fitRows), [fitRows])
   const gameDate = career?.gameDate ?? facets.data?.gameDate
-  const actions = useMemo(() => suggestActions({ squad: players, slots, tags }), [players, slots, tags])
   const notes = useMemo(() => alerts({ squad: players, slots, tags, diffRows: diff.data?.rows ?? [], windowEndsOn: career?.windowEndsOn, gameDate }),
     [players, slots, tags, diff.data, career?.windowEndsOn, gameDate])
   const weakest = useMemo(() => needsFromFits(fitRows).slice(0, WEAK_SHOWN), [fitRows])
+  // V3-06e: "Zayıf halkalar"da gösterilen slotlar işlerde tekrar edilmez; liste sıradaki işlerle (kiralık, satış, sözleşme, derinlik) dolar. Kurallar deskRules'ta.
+  const actions = useMemo(() => {
+    const shown = new Set(weakest.map((r) => r.slotId))
+    return rankActions({ squad: players, slots, tags, gameDate }).filter((a) => !(a.kind === 'FILL' && a.slotId && shown.has(a.slotId))).slice(0, JOBS_SHOWN)
+  }, [weakest, players, slots, tags, gameDate])
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -173,10 +177,7 @@ export function DeskPage() {
                           {player && <PlayerCard player={cardPlayerOfSummary(player, r.position)} width={WEAK_CARD} />}
                           <span className="text-sm font-semibold">{r.playerName}</span>
                           <span className="text-xs text-ink-2">{r.position} · {r.roleName}</span>
-                          <span className="flex flex-wrap items-center justify-center gap-2 text-xs">
-                            <FitBadge state={r.display.state} compact />
-                            <span className="font-medium">{levelText(r.display.pct)}</span>
-                          </span>
+                          <FitBadge state={r.display.state} pct={r.display.pct} />
                           <Link to={`/career/transfer?ihtiyac=slot-${r.slotId}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-[var(--radius-sm)] bg-accent px-3 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11">
                             <Search size={14} aria-hidden="true" />Aday bul
                           </Link>

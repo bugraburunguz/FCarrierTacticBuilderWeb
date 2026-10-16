@@ -90,7 +90,7 @@ export function weakSlots(slots: DeskSlot[]): WeakSlot[] {
     .sort((a, b) => a.fit - b.fit)
 }
 
-export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH'
+export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH' | 'CONTRACT'
 
 export interface DeskAction {
   kind: ActionKind
@@ -98,13 +98,20 @@ export interface DeskAction {
   reason: string
   to: string
   priority: number
+  /** FILL işinin slotu (V3-06e: v3 Masa "Zayıf halkalar"da gösterilen slotu işlerde tekrar etmez). */
+  slotId?: string
 }
 
 interface ActionInput {
   squad: CareerPlayer[]
   slots: DeskSlot[]
   tags: Record<number, string>
+  /** Verilirse sözleşme işleri de üretilir (oyun tarihine göre, CONTRACT uyarısıyla aynı kural); v2 Masa vermez. */
+  gameDate?: string
 }
+
+/** Sözleşme işi önceliği: satışın (40+) altında, derinliğin (20 + 5·eksik) üstünde; bitime yaklaştıkça artar. */
+const CONTRACT_PRIORITY = 35
 
 const money = (value?: number) => (value === undefined ? '—' : value >= 1_000_000 ? `€${(value / 1_000_000).toFixed(1)}M` : `€${Math.round(value / 1000)}K`)
 
@@ -136,12 +143,18 @@ export function sellAdvice(c: CareerPlayer, starters: Set<number>, tags: Record<
 }
 
 /** "Bu dönemin 3 işi": SquadFit artışı, satış değeri ve genç gelişimi kurallarıyla en etkili üç eylem. */
-export function suggestActions({ squad, slots, tags }: ActionInput): DeskAction[] {
+export function suggestActions(input: ActionInput): DeskAction[] {
+  return rankActions(input).slice(0, 3)
+}
+
+/** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
+export function rankActions({ squad, slots, tags, gameDate }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))
   const actions: DeskAction[] = []
 
   weakSlots(slots).slice(0, 2).forEach((w, index) => {
     actions.push({
+      slotId: w.slotId,
       kind: 'FILL',
       title: `${w.position}: zayıf halka (${levelText(w.fit)})`,
       reason: `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
@@ -181,7 +194,22 @@ export function suggestActions({ squad, slots, tags }: ActionInput): DeskAction[
     })
   })
 
-  return actions.sort((a, b) => b.priority - a.priority).slice(0, 3)
+  if (gameDate) {
+    squad.filter((c) => !c.loanedOut).forEach((c) => {
+      const months = contractMonthsLeft(gameDate, c.player.contractUntil)
+      if (months !== undefined && months <= CONTRACT_MONTHS) {
+        actions.push({
+          kind: 'CONTRACT',
+          title: `Sözleşme: ${c.player.name}`,
+          reason: `Sözleşmesi ${months} ay içinde bitiyor (oyun tarihine göre); uzat ya da değeri düşmeden sat.`,
+          to: `/players/${c.player.id}?sekme=sozlesme`,
+          priority: CONTRACT_PRIORITY + (CONTRACT_MONTHS - months),
+        })
+      }
+    })
+  }
+
+  return actions.sort((a, b) => b.priority - a.priority)
 }
 
 export type AlertKind = 'CONTRACT' | 'PLATEAU' | 'AGE' | 'DEPTH' | 'WINDOW'
@@ -203,6 +231,12 @@ export const EVENT_LABEL: Record<RosterEventType, string> = {
 export const SNAPSHOT_LABEL: Record<CareerSnapshot['source'], string> = { IMPORT: 'İçe aktarma', MANUAL: 'Elle güncelleme', OCR: 'Ekran görüntüsü' }
 
 const WINDOW_ALERT_DAYS = 14
+const PLATEAU_MAX_AGE = 24
+
+/** Plato (tek kaynak; Masa uyarısı ve Gelişim): genç (≤ 24 yaş) oyuncu potansiyeline ulaştı (OVR ≥ POT). POT yoksa plato yok. */
+export function isPlateau(player: { overall: number; potential?: number; age?: number }): boolean {
+  return player.potential !== undefined && player.overall >= player.potential && (player.age ?? 99) <= PLATEAU_MAX_AGE
+}
 
 /** Transfer dönemi bitimine kalan gün, oyun tarihine göre (ENG-04); dönem sonu ya da oyun tarihi yoksa yok. */
 export function windowDaysLeft(windowEndsOn: string | undefined, gameDate: string | undefined): number | undefined {
@@ -224,7 +258,7 @@ export function alerts(input: ActionInput & { diffRows: { kind: string; playerId
     })
   }
   input.squad.forEach((c) => {
-    if (c.player.potential !== undefined && c.player.overall >= c.player.potential && (c.player.age ?? 99) <= 24) {
+    if (isPlateau(c.player)) {
       result.push({ kind: 'PLATEAU', tone: 'info', text: `${c.player.name} potansiyeline ulaştı (${c.player.overall}/${c.player.potential}).` })
     }
   })

@@ -159,6 +159,13 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(endpoints.development).not.toHaveBeenCalled()
   })
 
+  it('Gelişim: kadrodaki oyuncu için Gelişim sayfasına seçili oyuncuyla (?oyuncu=) bağlantı (V3-06e)', async () => {
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true, feasibility: undefined, budgetAfterPurchaseEur: undefined }))
+    renderPage('/players/7?sekme=gelisim')
+    const panel = await screen.findByRole('tabpanel')
+    expect(await within(panel).findByRole('link', { name: 'Gelişim takibi' })).toHaveAttribute('href', '/career/growth?oyuncu=7')
+  })
+
   it('kaleci: Statlar yalnız kaleci grubu', async () => {
     vi.mocked(endpoints.player).mockResolvedValue({ ...detail({ positions: ['GK'] }), attrs: { GKDiving: 70, Finishing: 10 } })
     renderPage()

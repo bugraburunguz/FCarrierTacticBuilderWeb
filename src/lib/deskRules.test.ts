@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../api/types'
 import roleIds from './roleIds.fixture.json'
-import { ageProfile, alerts, depthRows, EVENT_LABEL, sellAdvice, SNAPSHOT_LABEL, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, windowDaysLeft, type DeskSlot } from './deskRules'
+import { ageProfile, alerts, depthRows, EVENT_LABEL, rankActions, sellAdvice, SNAPSHOT_LABEL, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, windowDaysLeft, type DeskSlot } from './deskRules'
 
 function player(id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer['player']> = {}, loanedOut = false): CareerPlayer {
   return { player: { id, name: `P${id}`, overall, age, positions: [position], potential: overall + 2, valueEur: 2_000_000, ...extra } as CareerPlayer['player'], onLoan: false, loanedOut }
@@ -50,6 +50,23 @@ describe('deskRules', () => {
       windowEndsOn: '2027-01-31', today: new Date('2027-01-25'),
     })
     expect(list.map((a) => a.text)).toEqual(expect.arrayContaining([expect.stringContaining('potansiyeline ulaştı'), expect.stringContaining('düşüşte'), expect.stringContaining('6 gün')]))
+  })
+})
+
+describe('iş sıralaması (V3-06e)', () => {
+  const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000, contractUntil: '2027-03-01' }), player(4, 'CM', 60, 19, { potential: 78 })]
+  const slots = [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)]
+
+  it('rankActions tüm işleri öncelik sırasıyla verir; suggestActions = ilk 3 (v2 değişmez)', () => {
+    const all = rankActions({ squad, slots, tags: {} })
+    expect(suggestActions({ squad, slots, tags: {} })).toEqual(all.slice(0, 3))
+    expect(all.find((a) => a.kind === 'FILL')?.slotId).toBe('a')
+  })
+
+  it('sözleşme işi yalnız oyun tarihi verilince (Masa uyarısıyla aynı kural ve eşik); v2 çağrısında yok', () => {
+    expect(rankActions({ squad, slots, tags: {} }).some((a) => a.kind === 'CONTRACT')).toBe(false)
+    const withDate = rankActions({ squad, slots, tags: {}, gameDate: '2027-01-15' })
+    expect(withDate.find((a) => a.kind === 'CONTRACT')).toMatchObject({ title: 'Sözleşme: P3', reason: expect.stringContaining('1 ay içinde bitiyor') })
   })
 })
 

@@ -71,7 +71,9 @@ describe('Kariyer Masası (v3)', () => {
     const cards = await within(weak).findAllByRole('listitem')
     expect(cards).toHaveLength(2)
     expect(cards[0]).toHaveTextContent('Oyuncu 2')
-    expect(cards[0]).toHaveTextContent('Seviyesine göre %12')
+    // V3-06e/0a: düz metin yerine FitBadge (diğer ekranlarla aynı rozet, yüzdesiyle).
+    expect(within(cards[0]).getByRole('img', { name: /yüzde 12$/ })).toBeInTheDocument()
+    expect(cards[0]).not.toHaveTextContent('Seviyesine göre')
     expect(within(cards[0]).getByRole('link', { name: /Aday bul/ })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-CM2')
   })
 
@@ -112,9 +114,9 @@ describe('Kariyer Masası (v3)', () => {
   it('"3 iş" deskRules.suggestActions\'tan (satış planıyla tek kaynak)', async () => {
     renderPage()
     const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
-    // İlk 3: iki zayıf halka (öncelik 100 − %) ve kiralık (30 + 18 potansiyel farkı) > satış (40 + 3); sıra suggestActions'ın.
+    // V3-06e/0b: "Zayıf halkalar"da gösterilen iki slot tekrar edilmez; sıradaki işler (deskRules sırası): kiralık, satış, sözleşme.
     expect(await within(jobs).findByText('Süre ver ya da kirala: Oyuncu 5')).toBeInTheDocument()
-    expect(within(jobs).getAllByRole('listitem').map((li) => li.querySelector('b')?.textContent)).toEqual(['CM: zayıf halka (Seviyesine göre %12)', 'CM: zayıf halka (Seviyesine göre %38)', 'Süre ver ya da kirala: Oyuncu 5'])
+    expect(within(jobs).getAllByRole('listitem').map((li) => li.querySelector('b')?.textContent)).toEqual(['Süre ver ya da kirala: Oyuncu 5', 'Sat: Oyuncu 4', 'Sözleşme: Oyuncu 4'])
   })
 
   it('zaman çizelgesi Türkçe etiketlerle (WEB-BUG-17); başlıkta son içe aktarma tarihi', async () => {
