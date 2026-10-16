@@ -3,7 +3,7 @@
 // Çalıştır: node --test scripts/deploy/nginx.test.mjs
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, statSync, writeFileSync } from 'node:fs'
+import { chmodSync, mkdtempSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -13,6 +13,9 @@ const root = fileURLToPath(new URL('../../', import.meta.url))
 const docker = (...args) => spawnSync('docker', args, { encoding: 'utf8' })
 const html = mkdtempSync(join(tmpdir(), 'fc-nginx-'))
 writeFileSync(join(html, 'index.html'), '<!doctype html><title>t</title>')
+// mkdtemp 0700 açar; Linux'ta (CI) nginx işçi kullanıcısı okuyamaz ve 500 döner.
+chmodSync(html, 0o755)
+chmodSync(join(html, 'index.html'), 0o644)
 let id
 let port
 
