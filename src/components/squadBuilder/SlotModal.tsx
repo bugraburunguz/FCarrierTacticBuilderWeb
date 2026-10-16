@@ -1,11 +1,7 @@
-import type { ReactNode } from 'react'
+import type { SlotTab } from '../../features/squad/types'
 import { Modal } from '../Modal'
 
-export interface SlotTab {
-  id: string
-  label: string
-  node: ReactNode
-}
+export type { SlotTab }
 
 interface Props {
   title: string

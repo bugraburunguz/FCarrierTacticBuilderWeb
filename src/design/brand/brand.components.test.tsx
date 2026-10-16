@@ -35,7 +35,7 @@ describe('marka bileşenleri', () => {
 
 describe('yasal not', () => {
   it('Hakkında sayfasında EA markası notu aynen yer alır', async () => {
-    const { AboutPage } = await import('../../pages/AboutPage')
+    const { AboutPage } = await import('../../features/about/AboutPage')
     render(<MemoryRouter><AboutPage /></MemoryRouter>)
     expect(screen.getByTestId('legal-note').textContent).toBe("FC Assist, EA SPORTS veya Electronic Arts ile bağlantılı değildir. EA SPORTS FC, Electronic Arts Inc.'in ticari markasıdır.")
   })

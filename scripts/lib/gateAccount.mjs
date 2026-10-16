@@ -48,7 +48,7 @@ export async function createGateAccount(base, prefix) {
   }
   const own = exactEmailPattern(email)
   process.on('exit', () => teardownGateAccounts(base, own))
-  const reg = await post('/auth/register', { email, password })
+  const reg = await post('/auth/register', { email, password, privacyVersion: 1 })
   if (reg.status >= 300) throw new Error(`register ${reg.status}`)
   const token = (await post('/auth/login', { email, password })).body.data.accessToken
   const clubs = (await (await fetch(`${base}/api/v1/clubs?q=a&limit=20&gender=0`)).json()).data

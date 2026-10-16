@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { endpoints } from '../../api/endpoints'
 import { useAuth } from '../../auth/AuthContext'
 import { Skeleton } from '../../design/components/primitives'
+import { PRIVACY_VERSION } from '../legal/privacyVersion'
 import { CenteredCard, ErrorAlert, PasswordField, PRIMARY_BUTTON, TextField } from './AccountParts'
 
 const MIN_PASSWORD = 8
@@ -18,6 +19,7 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [acknowledged, setAcknowledged] = useState(false)
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
   const target = (location.state as { from?: string } | null)?.from ?? '/'
@@ -25,10 +27,13 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
   async function submit(event: FormEvent) {
     event.preventDefault()
+    if (!isLogin && !acknowledged) {
+      return
+    }
     setError(null)
     setBusy(true)
     try {
-      await (isLogin ? login : register)(email, password)
+      await (isLogin ? login(email, password) : register(email, password, PRIVACY_VERSION))
       navigate(target, { replace: true })
     } catch (e) {
       setError(e)
@@ -43,13 +48,17 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
         <TextField label="E-posta" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
         <PasswordField label={isLogin ? 'Şifre' : `Şifre (en az ${MIN_PASSWORD} karakter)`} required minLength={isLogin ? undefined : MIN_PASSWORD}
           autoComplete={isLogin ? 'current-password' : 'new-password'} value={password} onChange={(e) => setPassword(e.target.value)} />
+        {!isLogin && (
+          // Bilgilendirme onayı (KVKK aydınlatma); açık rıza değildir. Bağlantı yeni sekmede açılır, form kaybolmaz.
+          <label className="flex min-h-11 items-start gap-2 text-sm text-ink-2">
+            <input type="checkbox" required checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)} className="mt-1 size-4 shrink-0" />
+            <span>
+              <Link to="/privacy" target="_blank" rel="noopener" className="font-semibold text-accent underline underline-offset-2">Aydınlatma metnini</Link> okudum.
+            </span>
+          </label>
+        )}
         <ErrorAlert error={error} />
         <button type="submit" disabled={busy} className={PRIMARY_BUTTON}>{busy ? 'Bekleyin…' : isLogin ? 'Giriş yap' : 'Kayıt ol'}</button>
-        {!isLogin && (
-          <p className="text-xs text-ink-2">
-            Kayıt olarak hesabının nasıl işlendiğini kabul etmiş olursun: <Link to="/privacy" className="font-semibold text-accent underline-offset-2 hover:underline">Gizlilik ve aydınlatma metni</Link>
-          </p>
-        )}
       </form>
       <p className="text-sm text-ink-2">
         {isLogin
@@ -84,16 +93,6 @@ export function VerifyEmailPage() {
       {verify.isPending && <Skeleton className="h-6" />}
       {verify.isSuccess && <p className="text-sm">E-postan doğrulandı, günlük kredin yüklendi. <Link to="/" className="font-semibold text-accent underline-offset-2 hover:underline">Siteye dön</Link></p>}
       <ErrorAlert error={verify.error} />
-    </CenteredCard>
-  )
-}
-
-/** Yer tutucu (V3-07a): metin PROD-PREP'te (KVKK) gelecek; kayıt formundaki onay kutusu da o zaman bağlanacak. */
-export function PrivacyPage() {
-  return (
-    <CenteredCard title="Gizlilik ve aydınlatma metni">
-      <p className="text-sm text-ink-2">Hazırlanıyor. Kişisel verilerin nasıl işlendiğini anlatan metin yayına alınmadan önce burada olacak.</p>
-      <Link to="/" className="text-sm font-semibold text-accent underline-offset-2 hover:underline">Ana sayfaya dön</Link>
     </CenteredCard>
   )
 }

@@ -7,12 +7,12 @@ export interface RadarSeries {
 
 // Renk + çizgi deseni birlikte kullanılır (renk körü güvenli).
 const STYLES = [
-  { color: '#00b894', dash: undefined },
-  { color: '#e17055', dash: '6 3' },
-  { color: '#0984e3', dash: '2 3' },
-  { color: '#c79a00', dash: '8 3 2 3' },
-  { color: '#6c5ce7', dash: '12 4' },
-  { color: '#e84393', dash: '1 3' },
+  { color: 'var(--series-1)', dash: undefined },
+  { color: 'var(--series-2)', dash: '6 3' },
+  { color: 'var(--series-3)', dash: '2 3' },
+  { color: 'var(--series-4)', dash: '8 3 2 3' },
+  { color: 'var(--series-5)', dash: '12 4' },
+  { color: 'var(--series-6)', dash: '1 3' },
 ]
 
 const SIZE = 260
@@ -46,9 +46,8 @@ export function AttributeRadar({ series, goalkeeper }: { series: RadarSeries[]; 
           <polygon
             key={series[s].name}
             points={values.map((v, i) => point(i, axes.length, v).join(',')).join(' ')}
-            fill={STYLES[s % STYLES.length].color}
+            style={{ fill: STYLES[s % STYLES.length].color, stroke: STYLES[s % STYLES.length].color }}
             fillOpacity="0.14"
-            stroke={STYLES[s % STYLES.length].color}
             strokeWidth="2"
             strokeDasharray={STYLES[s % STYLES.length].dash}
             strokeLinejoin="round"
@@ -57,7 +56,7 @@ export function AttributeRadar({ series, goalkeeper }: { series: RadarSeries[]; 
         {axes.map((axis, i) => {
           const [x, y] = point(i, axes.length, 119)
           return (
-            <text key={axis.label} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="currentColor" fillOpacity="0.75">
+            <text key={axis.label} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fontSize="11" fill="currentColor" fillOpacity="0.75">
               {axis.label}
             </text>
           )
@@ -68,14 +67,16 @@ export function AttributeRadar({ series, goalkeeper }: { series: RadarSeries[]; 
           {series.map((s, i) => (
             <li key={s.name} className="flex items-center gap-1">
               <svg width="22" height="8" aria-hidden>
-                <line x1="0" y1="4" x2="22" y2="4" stroke={STYLES[i % STYLES.length].color} strokeWidth="2" strokeDasharray={STYLES[i % STYLES.length].dash} />
+                <line x1="0" y1="4" x2="22" y2="4" style={{ stroke: STYLES[i % STYLES.length].color }} strokeWidth="2" strokeDasharray={STYLES[i % STYLES.length].dash} />
               </svg>
               {s.name}
             </li>
           ))}
         </ul>
       )}
-      <table className="sr-only">
+      {/* sr-only kapta: tablo yerleşimi 1px genişliği yok sayıp sayfayı yatay taşırıyordu (V3-07c, 375). */}
+      <div className="sr-only">
+      <table>
         <caption>Profil değerleri</caption>
         <thead>
           <tr>
@@ -96,6 +97,7 @@ export function AttributeRadar({ series, goalkeeper }: { series: RadarSeries[]; 
           ))}
         </tbody>
       </table>
+      </div>
     </figure>
   )
 }

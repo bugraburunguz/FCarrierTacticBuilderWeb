@@ -1,15 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
-import { timeLeft } from '../components/KbSbcList'
 import { Card, EmptyState, Pill, Skeleton } from '../components/ui'
-import { useUtCapture } from '../state/utCaptureStore'
+import { useUtEvolutions } from '../features/ut/evo/useUtEvolutions'
+import { timeLeft } from '../lib/timeLeft'
 
-/** Evolution listesi (UT-16): herkese açık tanımlar + (varsa) senin akademi slotların. Önce/sonra kartı ve kulüp uygunluğu sonraki iş. */
+/** v2 evolution listesi (v3: features/ut/evo/UtEvolutionsV3Page). Veri useUtEvolutions'ta. */
 export function UtEvolutionsPage() {
-  const evolutions = useQuery({ queryKey: ['kb-evolutions'], queryFn: endpoints.kbEvolutions, staleTime: 60_000 })
-  const capture = useUtCapture()
-  const mine = capture?.evolutions ?? []
+  const { evolutions, mine } = useUtEvolutions()
 
   return (
     <div className="space-y-4">

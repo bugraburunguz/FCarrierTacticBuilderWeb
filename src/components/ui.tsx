@@ -112,9 +112,9 @@ export function Pill({ children, tone = 'slate' }: { children: ReactNode; tone?:
 }
 
 const DOT = {
-  GREEN: { label: 'Uygun', color: '#2fbf71', shape: 'M5 1 A4 4 0 1 1 4.99 1 Z' },
-  YELLOW: { label: 'Zayıf yön var', color: '#e6b325', shape: 'M5 1 L9 9 L1 9 Z' },
-  RED: { label: 'Rolü oynayamaz', color: '#e5484d', shape: 'M1.5 1.5 H8.5 V8.5 H1.5 Z' },
+  GREEN: { label: 'Uygun', color: 'var(--dot-green)', shape: 'M5 1 A4 4 0 1 1 4.99 1 Z' },
+  YELLOW: { label: 'Zayıf yön var', color: 'var(--dot-yellow)', shape: 'M5 1 L9 9 L1 9 Z' },
+  RED: { label: 'Rolü oynayamaz', color: 'var(--dot-red)', shape: 'M1.5 1.5 H8.5 V8.5 H1.5 Z' },
   NEUTRAL: { label: 'Seviyesinde', color: 'none', shape: 'M1.5 5 H8.5' },
 } as const
 
@@ -124,7 +124,7 @@ export function BadgeDot({ state }: { state: WeaponState | null | undefined }) {
   return (
     <svg role="img" aria-label={dot.label} width="12" height="12" viewBox="0 0 10 10" className="inline-block align-[-1px]">
       <title>{dot.label}</title>
-      <path d={dot.shape} fill={dot.color} stroke={dot.color === 'none' ? 'currentColor' : undefined} strokeWidth={dot.color === 'none' ? 1.5 : undefined} />
+      <path d={dot.shape} style={{ fill: dot.color }} stroke={dot.color === 'none' ? 'currentColor' : undefined} strokeWidth={dot.color === 'none' ? 1.5 : undefined} />
     </svg>
   )
 }

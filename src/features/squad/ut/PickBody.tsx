@@ -5,8 +5,9 @@ import { endpoints } from '../../../api/endpoints'
 import type { WeaponState } from '../../../api/types'
 import { ChemDiamonds } from '../../../components/card/ChemDiamonds'
 import type { FitState } from '../../../components/card/FitBadge'
-import { Modal } from '../../../components/Modal'
-import { BadgeDot, HelpPopover, Pill, Spinner } from '../../../components/ui'
+import { BadgeDot, HelpPopover, Spinner } from '../../../components/ui'
+import { AppDialog } from '../../../design/components/AppDialog'
+import { Chip } from '../../../design/components/primitives'
 import { cardPlayerOf } from '../../../lib/cardPlayer'
 import { coins, shortCoins } from '../../../lib/coins'
 import { fromSummary, personKey, type CardSource, type UtCard } from '../../../lib/utCard'
@@ -14,7 +15,7 @@ import { utCardStore } from '../../../state/utCardStore'
 import { CardName } from '../../../components/card/CardName'
 import { FIT_STATE, PickList, type PickRow } from '../pick/PickList'
 
-const TIER_TONE: Record<string, 'emerald' | 'sky' | 'amber' | 'slate'> = { 'A+': 'emerald', A: 'sky', B: 'amber', C: 'slate' }
+const TIER_TONE: Record<string, 'good' | 'info' | 'warn' | undefined> = { 'A+': 'good', A: 'info', B: 'warn', C: undefined }
 const SOURCE_LABEL: Record<CardSource, string> = { club: 'Kulübüm', market: 'Market', catalog: 'Katalog' }
 const MAX_LISTED = 60
 /** utSquadEvaluate bir istekte en çok 18 slot alır (backend UtSquadModels.MAX_SLOTS). */
@@ -58,7 +59,7 @@ function CurrentCard({ card, evaluation, chemLinks }: { card: UtCard; evaluation
       {evaluation ? (
         <>
           <p>
-            Meta rating* <HelpPopover label="Meta rating nedir">Meta rating platformun tahmin metriğidir: kartın rol ağırlıklı attribute'larından ve evrensel meta eğrisinden hesaplanır, EA'nın resmî bir değeri değildir. Kendi kulüp kartlarında gerçek attribute'lar kullanılır; katalog kartlarında temel kart değerleri. Rol uyumu (RoleFit) ayrı bir ölçüdür.</HelpPopover> <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Pill tone={TIER_TONE[evaluation.card.tier] ?? 'slate'}>{evaluation.card.tier}</Pill>
+            Meta rating* <HelpPopover label="Meta rating nedir">Meta rating platformun tahmin metriğidir: kartın rol ağırlıklı attribute'larından ve evrensel meta eğrisinden hesaplanır, EA'nın resmî bir değeri değildir. Kendi kulüp kartlarında gerçek attribute'lar kullanılır; katalog kartlarında temel kart değerleri. Rol uyumu (RoleFit) ayrı bir ölçüdür.</HelpPopover> <b className="text-lg tabular-nums">{evaluation.card.metaRating}</b> <Chip tone={TIER_TONE[evaluation.card.tier]}>{evaluation.card.tier}</Chip>
             {' · '}Kimya <ChemDiamonds value={links} size={12} />
           </p>
           {evaluation.roleFit !== undefined && (
@@ -187,8 +188,8 @@ export function PickBody({ position, current, evaluation, chemLinks, usedKeys, r
 
 export function PickModal({ slotId, position, onClose, ...body }: PickProps) {
   return (
-    <Modal wide title={`${slotId} · ${position} — Kart seç`} hint="Kulüp kartların, market ilanları veya katalog" onClose={onClose}>
+    <AppDialog wide title={`${slotId} · ${position} — Kart seç`} hint="Kulüp kartların, market ilanları veya katalog" onClose={onClose}>
       <PickBody position={position} {...body} />
-    </Modal>
+    </AppDialog>
   )
 }

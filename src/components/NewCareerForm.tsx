@@ -4,7 +4,8 @@ import { endpoints } from '../api/endpoints'
 import type { Club } from '../api/types'
 import { careerStore } from '../state/careerStore'
 import { MoneyInput } from './MoneyInput'
-import { Button, ErrorBox, Field, Input, Pill } from './ui'
+import { Chip } from '../design/components/primitives'
+import { Button, ErrorBox, Field, Input } from './ui'
 
 /** Veri aktarmadan yeni kariyer: kulüp ara, bütçe ve isim ver; kadro kulübün kataloğundaki oyunculardan kurulur. */
 export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
@@ -50,7 +51,7 @@ export function NewCareerForm({ onCreated }: { onCreated?: () => void }) {
           {clubs.data!.map((c) => (
             <li key={c.id}>
               <button type="button" className="flex w-full justify-between px-3 py-1.5 text-left hover:bg-surface-2" onClick={() => setClub(c)}>
-                <span>{c.name} {c.gender === 1 && <Pill tone="sky">Kadın</Pill>}</span>
+                <span>{c.name} {c.gender === 1 && <Chip tone="info">Kadın</Chip>}</span>
                 <span className="text-muted">{c.league}</span>
               </button>
             </li>

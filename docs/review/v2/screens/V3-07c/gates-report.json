@@ -1,0 +1,6029 @@
+{
+  "report": [
+    {
+      "shot": "ut-meta-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-meta-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "tier = []"
+    },
+    {
+      "shot": "ut-meta-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "meta uçları 500"
+    },
+    {
+      "shot": "ut-evo-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-evo-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-evo-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "evolutions = []"
+    },
+    {
+      "shot": "ut-evo-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "evolutions 500"
+    },
+    {
+      "shot": "ut-objectives-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-objectives-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/objectives",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "objectives 500"
+    },
+    {
+      "shot": "ut-objectives-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "KB grubu + yerel planlayıcı"
+    },
+    {
+      "shot": "ut-objectives-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-anonim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-import-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-import-ozet-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-import-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "tests/fixtures/captures/sample-captures.json (gerçek işleme)"
+    },
+    {
+      "shot": "ut-import-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/ut/capture",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "422 /ut/capture"
+    },
+    {
+      "shot": "takimlar-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "takimlar-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "içe aktarılmış takımlar"
+    },
+    {
+      "shot": "takimlar-profil-sheet-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Genel",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Takımlar",
+          "aria-hidden: + Yeni kariyer",
+          "aria-hidden: Ara",
+          "aria-hidden: Lig",
+          "aria-hidden: Sırala",
+          "aria-hidden: 5",
+          "aria-hidden: takım",
+          "aria-hidden: Takım",
+          "aria-hidden: Genel",
+          "aria-hidden: Hücum",
+          "aria-hidden: Orta saha",
+          "aria-hidden: Savunma",
+          "aria-hidden: Oyuncu",
+          "aria-hidden: Leeds United",
+          "aria-hidden: Premier League",
+          "aria-hidden: 76",
+          "aria-hidden: 77",
+          "aria-hidden: 74"
+        ]
+      },
+      "fixture": "takım profili"
+    },
+    {
+      "shot": "takimlar-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "teams 500"
+    },
+    {
+      "shot": "wonderkids-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "wonderkids-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "wonderkids-rol-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "wonderkids-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "wonderkids = []"
+    },
+    {
+      "shot": "wonderkids-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "wonderkids 500"
+    },
+    {
+      "shot": "regresyon-kadro-saha-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "regresyon-kurucu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "regresyon-masa-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-transfer-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "regresyon-oyuncu-roller-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-meta-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "tier = []"
+    },
+    {
+      "shot": "ut-meta-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "meta uçları 500"
+    },
+    {
+      "shot": "ut-evo-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-evo-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-evo-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "evolutions = []"
+    },
+    {
+      "shot": "ut-evo-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "evolutions 500"
+    },
+    {
+      "shot": "ut-objectives-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-objectives-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/objectives",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "objectives 500"
+    },
+    {
+      "shot": "ut-objectives-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "KB grubu + yerel planlayıcı"
+    },
+    {
+      "shot": "ut-objectives-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-anonim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-import-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-import-ozet-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-import-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "tests/fixtures/captures/sample-captures.json (gerçek işleme)"
+    },
+    {
+      "shot": "ut-import-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/ut/capture",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "422 /ut/capture"
+    },
+    {
+      "shot": "takimlar-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "takimlar-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "içe aktarılmış takımlar"
+    },
+    {
+      "shot": "takimlar-profil-sheet-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Genel",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Takımlar",
+          "aria-hidden: + Yeni kariyer",
+          "aria-hidden: Ara",
+          "aria-hidden: Lig",
+          "aria-hidden: Sırala",
+          "aria-hidden: 5",
+          "aria-hidden: takım",
+          "aria-hidden: Takım",
+          "aria-hidden: Genel",
+          "aria-hidden: Hücum",
+          "aria-hidden: Orta saha",
+          "aria-hidden: Savunma",
+          "aria-hidden: Oyuncu",
+          "aria-hidden: Leeds United",
+          "aria-hidden: Premier League",
+          "aria-hidden: 76",
+          "aria-hidden: 77",
+          "aria-hidden: 74"
+        ]
+      },
+      "fixture": "takım profili"
+    },
+    {
+      "shot": "takimlar-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "teams 500"
+    },
+    {
+      "shot": "wonderkids-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "wonderkids-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "wonderkids-rol-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "wonderkids-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "wonderkids = []"
+    },
+    {
+      "shot": "wonderkids-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "wonderkids 500"
+    },
+    {
+      "shot": "regresyon-kadro-saha-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "regresyon-kurucu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "regresyon-masa-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-transfer-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "regresyon-oyuncu-roller-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-meta-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tier = []"
+    },
+    {
+      "shot": "ut-meta-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "meta uçları 500"
+    },
+    {
+      "shot": "ut-evo-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-evo-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-evo-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions = []"
+    },
+    {
+      "shot": "ut-evo-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions 500"
+    },
+    {
+      "shot": "ut-objectives-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-objectives-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/objectives",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "objectives 500"
+    },
+    {
+      "shot": "ut-objectives-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "KB grubu + yerel planlayıcı"
+    },
+    {
+      "shot": "ut-objectives-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-anonim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-ozet-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tests/fixtures/captures/sample-captures.json (gerçek işleme)"
+    },
+    {
+      "shot": "ut-import-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/ut/capture",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "422 /ut/capture"
+    },
+    {
+      "shot": "takimlar-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "takimlar-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "içe aktarılmış takımlar"
+    },
+    {
+      "shot": "takimlar-profil-sheet-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Genel",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Takımlar",
+          "aria-hidden: + Yeni kariyer",
+          "aria-hidden: Ara",
+          "aria-hidden: Lig",
+          "aria-hidden: Sırala",
+          "aria-hidden: 5",
+          "aria-hidden: takım",
+          "aria-hidden: Takım",
+          "aria-hidden: Genel",
+          "aria-hidden: Hücum",
+          "aria-hidden: Orta saha",
+          "aria-hidden: Savunma",
+          "aria-hidden: Oyuncu"
+        ]
+      },
+      "fixture": "takım profili"
+    },
+    {
+      "shot": "takimlar-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "teams 500"
+    },
+    {
+      "shot": "wonderkids-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "wonderkids-rol-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids = []"
+    },
+    {
+      "shot": "wonderkids-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids 500"
+    },
+    {
+      "shot": "regresyon-kadro-saha-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-kurucu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-masa-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-transfer-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-oyuncu-roller-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-meta-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tier = []"
+    },
+    {
+      "shot": "ut-meta-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "meta uçları 500"
+    },
+    {
+      "shot": "ut-evo-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-evo-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-evo-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions = []"
+    },
+    {
+      "shot": "ut-evo-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions 500"
+    },
+    {
+      "shot": "ut-objectives-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-objectives-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/objectives",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "objectives 500"
+    },
+    {
+      "shot": "ut-objectives-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "KB grubu + yerel planlayıcı"
+    },
+    {
+      "shot": "ut-objectives-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-anonim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-ozet-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tests/fixtures/captures/sample-captures.json (gerçek işleme)"
+    },
+    {
+      "shot": "ut-import-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/ut/capture",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "422 /ut/capture"
+    },
+    {
+      "shot": "takimlar-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "takimlar-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "içe aktarılmış takımlar"
+    },
+    {
+      "shot": "takimlar-profil-sheet-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Genel",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Takımlar",
+          "aria-hidden: + Yeni kariyer",
+          "aria-hidden: Ara",
+          "aria-hidden: Lig",
+          "aria-hidden: Sırala",
+          "aria-hidden: 5",
+          "aria-hidden: takım",
+          "aria-hidden: Takım",
+          "aria-hidden: Genel",
+          "aria-hidden: Hücum",
+          "aria-hidden: Orta saha",
+          "aria-hidden: Savunma",
+          "aria-hidden: Oyuncu"
+        ]
+      },
+      "fixture": "takım profili"
+    },
+    {
+      "shot": "takimlar-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "teams 500"
+    },
+    {
+      "shot": "wonderkids-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "wonderkids-rol-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids = []"
+    },
+    {
+      "shot": "wonderkids-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids 500"
+    },
+    {
+      "shot": "regresyon-kadro-saha-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-kurucu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-masa-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-transfer-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-oyuncu-roller-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-meta-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tier = []"
+    },
+    {
+      "shot": "ut-meta-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "meta uçları 500"
+    },
+    {
+      "shot": "ut-evo-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-evo-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-evo-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions = []"
+    },
+    {
+      "shot": "ut-evo-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions 500"
+    },
+    {
+      "shot": "ut-objectives-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-objectives-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/objectives",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "objectives 500"
+    },
+    {
+      "shot": "ut-objectives-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "KB grubu + yerel planlayıcı"
+    },
+    {
+      "shot": "ut-objectives-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-anonim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-ozet-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tests/fixtures/captures/sample-captures.json (gerçek işleme)"
+    },
+    {
+      "shot": "ut-import-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/ut/capture",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "422 /ut/capture"
+    },
+    {
+      "shot": "takimlar-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "takimlar-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "içe aktarılmış takımlar"
+    },
+    {
+      "shot": "takimlar-profil-panel-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "takım profili"
+    },
+    {
+      "shot": "takimlar-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "teams 500"
+    },
+    {
+      "shot": "wonderkids-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "wonderkids-rol-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids = []"
+    },
+    {
+      "shot": "wonderkids-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids 500"
+    },
+    {
+      "shot": "regresyon-kadro-saha-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-kurucu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-masa-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-transfer-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-oyuncu-roller-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-meta-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-meta-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tier = []"
+    },
+    {
+      "shot": "ut-meta-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/formations",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/meta/tier",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "meta uçları 500"
+    },
+    {
+      "shot": "ut-evo-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-evo-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-evo-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions = []"
+    },
+    {
+      "shot": "ut-evo-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/ut/kb/evolutions",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "evolutions 500"
+    },
+    {
+      "shot": "ut-objectives-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-objectives-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/ut/kb/objectives",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "objectives 500"
+    },
+    {
+      "shot": "ut-objectives-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "KB grubu + yerel planlayıcı"
+    },
+    {
+      "shot": "ut-objectives-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-anonim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-ozet-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-import-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "tests/fixtures/captures/sample-captures.json (gerçek işleme)"
+    },
+    {
+      "shot": "ut-import-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-import-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/ut/capture",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "422 /ut/capture"
+    },
+    {
+      "shot": "takimlar-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "takimlar-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "içe aktarılmış takımlar"
+    },
+    {
+      "shot": "takimlar-profil-panel-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "takım profili"
+    },
+    {
+      "shot": "takimlar-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/careers/212/teams",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "teams 500"
+    },
+    {
+      "shot": "wonderkids-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "wonderkids-rol-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "wonderkids-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids = []"
+    },
+    {
+      "shot": "wonderkids-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/wonderkids",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "wonderkids 500"
+    },
+    {
+      "shot": "regresyon-kadro-saha-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-kurucu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-masa-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-transfer-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "regresyon-oyuncu-roller-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "UYGUN",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "karsilastir-rol-uyumu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "karsilastir-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "oyuncu detayı 500"
+    },
+    {
+      "shot": "karsilastir-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "karsilastir-rol-uyumu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "karsilastir-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "fixture": "oyuncu detayı 500"
+    },
+    {
+      "shot": "karsilastir-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "karsilastir-rol-uyumu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "oyuncu detayı 500"
+    },
+    {
+      "shot": "karsilastir-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "karsilastir-rol-uyumu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "oyuncu detayı 500"
+    },
+    {
+      "shot": "karsilastir-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "karsilastir-rol-uyumu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "oyuncu detayı 500"
+    },
+    {
+      "shot": "karsilastir-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "karsilastir-rol-uyumu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "karsilastir-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/3",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/5",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "HTTP 500 /api/v1/players/28",
+        "console: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "fixture": "oyuncu detayı 500"
+    },
+    {
+      "shot": "ut-club-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-secim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB",
+          "aria-hidden: CDM",
+          "aria-hidden: CM",
+          "aria-hidden: CAM",
+          "aria-hidden: RM"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB",
+          "aria-hidden: CDM",
+          "aria-hidden: CM",
+          "aria-hidden: CAM",
+          "aria-hidden: RM"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-secim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB",
+          "aria-hidden: CDM",
+          "aria-hidden: CM",
+          "aria-hidden: CAM",
+          "aria-hidden: RM"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB",
+          "aria-hidden: CDM",
+          "aria-hidden: CM",
+          "aria-hidden: CAM",
+          "aria-hidden: RM"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi: kopya kart ya ",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB",
+          "aria-hidden: LB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Gate-1792122505110",
+          "aria-hidden: Kart veritabanı",
+          "aria-hidden: Kadro kurucu",
+          "aria-hidden: Kadrom",
+          "aria-hidden: Meta",
+          "aria-hidden: Replikalar",
+          "aria-hidden: SBC çözücü",
+          "aria-hidden: Objective planı",
+          "aria-hidden: Evolution",
+          "aria-hidden: Kulüp içe aktar",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: 20",
+          "aria-hidden: kredi",
+          "aria-hidden: G",
+          "aria-hidden: Gate-1792122505110",
+          "aria-hidden: Kart veritabanı",
+          "aria-hidden: Kadro kurucu",
+          "aria-hidden: Kadrom",
+          "aria-hidden: Meta",
+          "aria-hidden: Replikalar",
+          "aria-hidden: SBC çözücü",
+          "aria-hidden: Objective planı",
+          "aria-hidden: Evolution",
+          "aria-hidden: Kulüp içe aktar",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?"
+        ]
+      }
+    }
+  ],
+  "note": "karsilastir-* (radar sr-only) ve ut-club-* (rozet satırı boşluğu) çekimleri son düzeltmelerden sonra yeniden alındı (--only)"
+}

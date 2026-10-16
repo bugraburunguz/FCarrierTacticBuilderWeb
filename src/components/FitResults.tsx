@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, RuleFinding, SquadFit } from '../api/types'
+import { fitDisplay } from '../lib/fitLabels'
 import { scoutLink } from '../lib/scout'
 import { computeVerdicts, VERDICT_LABEL, type Verdict } from '../lib/verdicts'
 import { BadgeDot, Card, Pill, ScoreBar } from './ui'
@@ -103,10 +104,10 @@ export function FitResults({ result, squad, budgetEur, chargedText }: Props) {
                   <td className="py-1.5 font-medium">{s.slotId}</td>
                   <td>{s.roleName}</td>
                   <td>{s.playerName ?? '—'}</td>
-                  <td>{s.roleFit ? <><BadgeDot state={s.roleFit.badge} /> %{Math.round(s.roleFit.score)}</> : '—'}</td>
+                  <td>{s.roleFit ? <><BadgeDot state={s.roleFit.badge} /> %{fitDisplay(s.roleFit).pct}</> : '—'}</td>
                   <td className="tabular-nums">{s.roleFit?.projectedRating ?? '—'}</td>
                   <td>{s.intentFit ? `%${s.intentFit.score}` : '—'}</td>
-                  <td className="text-xs text-muted">{(s.depth ?? []).map((d) => `${d.playerName} (%${Math.round(d.roleFitScore)})`).join(', ') || '—'}</td>
+                  <td className="text-xs text-muted">{(s.depth ?? []).map((d) => `${d.playerName} (%${fitDisplay({ levelFit: d.levelFit, currentFit: d.roleFitScore }).pct})`).join(', ') || '—'}</td>
                 </tr>
               ))}
             </tbody>

@@ -35,6 +35,21 @@ export function valueProxy({ rating, knownPrice, untradeable }: { rating: number
   return untradeable ? base * UNTRADEABLE_DISCOUNT : base
 }
 
+/**
+ * PROD-PREP 0 — "SBC yemi" kuralı, TEK yerde (koruma eşiği çözücünün Özelleştir varsayılanı):
+ * 1) kopya her zaman yem; 2) korunan kart (≥ eşik ya da özel) kopya değilse asla; 3) takas edilebilir kart kopya değilse değil (satılabilir);
+ * 4) kalanlar (korunmayan + takas edilemez) yem. Metin SBC_FODDER_RULES'ta (HelpPopover).
+ */
+export function sbcFodder(card: Pick<UtCard, 'rating' | 'untradeable' | 'duplicate' | 'rarityId' | 'cardType'>): 'kopya' | 'takas edilemez' | undefined {
+  if (card.duplicate) {
+    return 'kopya'
+  }
+  if (isSpecial(card) || card.rating >= DEFAULT_CUSTOMIZE.protectRatingFrom) {
+    return undefined
+  }
+  return card.untradeable ? 'takas edilemez' : undefined
+}
+
 /** Özel kart: EA rareflag > 1 (TOTW, promo…) ya da ICON/HERO/HOF. */
 export function isSpecial(card: Pick<UtCard, 'rarityId' | 'cardType'>): boolean {
   return (card.rarityId ?? 0) > 1 || card.cardType !== undefined
@@ -68,6 +83,14 @@ export interface Customize {
 }
 
 export const DEFAULT_CUSTOMIZE: Customize = { locked: [], excluded: [], onlyClub: false, protectSpecial: true, protectRatingFrom: 85, mode: 'club-first' }
+
+/** "SBC yemi" kuralının kullanıcıya gösterilen dört satırı (sbcFodder ile aynı sıra). */
+export const SBC_FODDER_RULES = [
+  'Kopya kart her zaman yem.',
+  `Korunan kart (${DEFAULT_CUSTOMIZE.protectRatingFrom}+ ya da özel) kopya değilse asla yem değil.`,
+  'Takas edilebilir kart kopya değilse yem değil (satılabilir).',
+  'Kalanlar (korunmayan ve takas edilemez) yem.',
+]
 
 type CostOptions = Pick<Customize, 'protectSpecial' | 'protectRatingFrom' | 'mode'>
 

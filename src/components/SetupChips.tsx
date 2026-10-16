@@ -1,5 +1,5 @@
+import { Chip } from '../design/components/primitives'
 import { depthBand } from '../lib/wizard'
-import { Pill } from './ui'
 
 const BUILD_UP: Record<string, string> = { Short: 'Kısa pas', Balanced: 'Dengeli', Counter: 'Kontra' }
 
@@ -17,9 +17,9 @@ export function SetupChips({ settings }: { settings?: Record<string, unknown> })
     <div className="mt-2" aria-label="FC27 kurulum">
       <p className="mb-1 text-xs font-semibold uppercase text-muted">FC27 kurulum</p>
       <div className="flex flex-wrap gap-1.5">
-        {buildUp && <Pill tone="sky">Build-Up: {BUILD_UP[buildUp] ?? buildUp}</Pill>}
-        {depth !== undefined && <Pill tone="emerald">Defensive Depth: {depth} · {depthBand(depth)}</Pill>}
-        {approach && <Pill>{approach}</Pill>}
+        {buildUp && <Chip tone="info">Build-Up: {BUILD_UP[buildUp] ?? buildUp}</Chip>}
+        {depth !== undefined && <Chip tone="good">Defensive Depth: {depth} · {depthBand(depth)}</Chip>}
+        {approach && <Chip>{approach}</Chip>}
       </div>
     </div>
   )

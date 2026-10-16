@@ -4,23 +4,10 @@ import { Link } from 'react-router-dom'
 import { endpoints } from '../api/endpoints'
 import type { KbSbcSet } from '../api/types'
 import { SbcVote, useSbcVotes } from './SbcVote'
+import { timeLeft } from '../lib/timeLeft'
 import { Card, EmptyState, Pill, Skeleton } from './ui'
 
-/** Kalan süreyi "3g 4s" ya da "5s 12dk" biçiminde verir; geçmişse undefined. */
-export function timeLeft(endsAt?: string, now: number = Date.now()): { text: string; urgent: boolean } | undefined {
-  if (!endsAt) {
-    return undefined
-  }
-  const ms = new Date(endsAt).getTime() - now
-  if (ms <= 0) {
-    return undefined
-  }
-  const minutes = Math.floor(ms / 60_000)
-  const days = Math.floor(minutes / 1440)
-  const hours = Math.floor((minutes % 1440) / 60)
-  const text = days > 0 ? `${days}g ${hours}s` : hours > 0 ? `${hours}s ${minutes % 60}dk` : `${minutes}dk`
-  return { text, urgent: ms < 24 * 3_600_000 }
-}
+export { timeLeft }
 
 type Sort = 'ends' | 'new' | 'name'
 

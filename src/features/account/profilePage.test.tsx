@@ -11,13 +11,13 @@ const logout = vi.fn()
 const refreshMe = vi.fn()
 let me: object = { id: 7, email: 'oyuncu@example.test', subscriptionType: 'FREE', creditBalance: 12, dailyCreditLimit: 20, showAds: true, emailVerified: true }
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me, logout, refreshMe }) }))
-vi.mock('../../api/endpoints', () => ({ endpoints: { changePassword: vi.fn(), subscribe: vi.fn() } }))
+vi.mock('../../api/endpoints', () => ({ endpoints: { changePassword: vi.fn(), subscribe: vi.fn(), appConfig: vi.fn(() => Promise.resolve({ freeBeta: false, dailyCredits: 30 })), deleteAccount: vi.fn() } }))
 
 function renderPage() {
   return render(
     <QueryClientProvider client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}>
       <MemoryRouter initialEntries={['/profile']}>
-        <Routes><Route path="/profile" element={<ProfilePage />} /><Route path="/login" element={<p>giriş sayfası</p>} /></Routes>
+        <Routes><Route path="/profile" element={<ProfilePage />} /><Route path="/login" element={<p>giriş sayfası</p>} /><Route path="/" element={<p>ana sayfa</p>} /></Routes>
       </MemoryRouter>
     </QueryClientProvider>,
   )
@@ -30,6 +30,17 @@ beforeEach(() => {
 })
 
 describe('Profil (v3 Pano)', () => {
+  it('PROD-PREP 2: ücretsiz beta açıkken "Beta: tüm özellikler ücretsiz"; ödeme/PREMIUM yönlendirmesi yok', async () => {
+    vi.mocked(endpoints.appConfig).mockResolvedValueOnce({ freeBeta: true, dailyCredits: 30 })
+    me = { ...me, subscriptionType: 'PREMIUM', creditBalance: undefined }
+    renderPage()
+    const plan = screen.getByRole('region', { name: 'Abonelik' })
+    expect(await within(plan).findByText('Beta: tüm özellikler ücretsiz')).toBeInTheDocument()
+    expect(within(plan).queryByText(/PREMIUM yakında|PREMIUM aktif/)).toBeNull()
+    expect(within(plan).queryByRole('button', { name: /PREMIUM/ })).toBeNull()
+    expect(within(screen.getByRole('region', { name: 'Hesap' })).getByText('Beta')).toBeInTheDocument()
+  })
+
   it('hesap bilgisi ve kredi bakiyesi', () => {
     renderPage()
     const account = screen.getByRole('region', { name: 'Hesap' })
@@ -71,6 +82,37 @@ describe('Profil (v3 Pano)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Oturumu kapat' }))
     await waitFor(() => expect(logout).toHaveBeenCalled())
     expect(await screen.findByText('giriş sayfası')).toBeInTheDocument()
+  })
+
+  it('PROD-PREP 4: hesabımı sil — şifre + e-postayı yazma onayı; eşleşmeden düğme kapalı; başarıda oturum kapanır, ana sayfa', async () => {
+    vi.mocked(endpoints.deleteAccount).mockResolvedValue(undefined as never)
+    renderPage()
+    fireEvent.click(within(screen.getByRole('region', { name: 'Hesabı sil' })).getByRole('button', { name: 'Hesabımı sil' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Hesabımı sil' })
+    expect(within(dialog).getByText(/geri alınamaz/)).toBeInTheDocument()
+    const confirm = within(dialog).getByRole('button', { name: 'Hesabı kalıcı olarak sil' })
+    expect(confirm).toBeDisabled()
+    fireEvent.change(within(dialog).getByLabelText('Mevcut şifre'), { target: { value: 'gizli-sifre-1' } })
+    fireEvent.change(within(dialog).getByLabelText('Onay için e-postanı yaz'), { target: { value: 'baska@example.test' } })
+    expect(confirm).toBeDisabled()
+    fireEvent.change(within(dialog).getByLabelText('Onay için e-postanı yaz'), { target: { value: ' Oyuncu@Example.test ' } })
+    expect(confirm).toBeEnabled()
+    fireEvent.click(confirm)
+    await waitFor(() => expect(endpoints.deleteAccount).toHaveBeenCalledWith('gizli-sifre-1', expect.stringMatching(/^\s*Oyuncu@Example\.test\s*$/)))
+    await waitFor(() => expect(logout).toHaveBeenCalled())
+    expect(await screen.findByText('ana sayfa')).toBeInTheDocument()
+  })
+
+  it('PROD-PREP 4: hesap silme hatası (yanlış şifre) sunucu metniyle; oturum kapanmaz', async () => {
+    vi.mocked(endpoints.deleteAccount).mockRejectedValue(new ApiError('Mevcut şifre hatalı.', 'fc.exception.0027', 422))
+    renderPage()
+    fireEvent.click(within(screen.getByRole('region', { name: 'Hesabı sil' })).getByRole('button', { name: 'Hesabımı sil' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Hesabımı sil' })
+    fireEvent.change(within(dialog).getByLabelText('Mevcut şifre'), { target: { value: 'yanlis-1' } })
+    fireEvent.change(within(dialog).getByLabelText('Onay için e-postanı yaz'), { target: { value: 'oyuncu@example.test' } })
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Hesabı kalıcı olarak sil' }))
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent('Mevcut şifre hatalı.')
+    expect(logout).not.toHaveBeenCalled()
   })
 
   it('abonelik: PREMIUM değilse ödeme yok, kısa metin; PREMIUM ise aktif', () => {

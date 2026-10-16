@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { endpoints } from '../api/endpoints'
 import { TagChips } from './TagChips'
-import { Field, Pill, Select } from './ui'
+import { Chip } from '../design/components/primitives'
+import { Field, Select } from './ui'
 
 export interface RoleSelection {
   position: string
@@ -60,7 +61,7 @@ export function RolePicker({ value, onChange }: Props) {
       <div>
         <p className="mb-1 text-xs font-medium text-muted">Davranışlar (isteğe bağlı)</p>
         <TagChips tags={tags.data ?? []} selected={value.tags} onChange={(next) => onChange({ ...value, tags: next })} />
-        {tags.data?.length === 0 && <Pill>Bu mevki için davranış yok</Pill>}
+        {tags.data?.length === 0 && <Chip>Bu mevki için davranış yok</Chip>}
       </div>
     </div>
   )

@@ -120,7 +120,7 @@ function playerQuery(filters: PlayerFilters) {
 }
 
 export const endpoints = {
-  register: (email: string, password: string) => api.post<TokenResponse>('/auth/register', { email, password }, false),
+  register: (email: string, password: string, privacyVersion?: number) => api.post<TokenResponse>('/auth/register', { email, password, privacyVersion }, false),
   login: (email: string, password: string) => api.post<TokenResponse>('/auth/login', { email, password }, false),
   logout: (refreshToken: string) => api.post<void>('/auth/logout', { refreshToken }, false),
   me: () => api.get<Me>('/me'),
@@ -129,6 +129,12 @@ export const endpoints = {
   verifyEmail: (token: string) => api.post<void>('/auth/verify-email', { token }, false),
   resendVerification: () => api.post<void>('/me/email/resend'),
   subscribe: () => api.post<Subscription>('/billing/subscribe'),
+  /** PROD-PREP 2: herkese açık uygulama ayarları (ücretsiz beta, günlük kredi). */
+  /** PROD-PREP 4: hesabı kalıcı siler (mevcut şifre + e-posta yazma onayı). */
+  deleteAccount: (password: string, emailConfirm: string) => api.post<void>('/me/delete', { password, emailConfirm }),
+  /** PROD-PREP 3: aydınlatma metni bilgilendirme bandı onayı. */
+  acknowledgePrivacy: (version: number) => api.post<void>('/me/privacy-ack', { version }),
+  appConfig: () => api.get<{ freeBeta: boolean; dailyCredits: number }>('/config/app'),
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),
   playerFacets: (careerId: number) => api.get<CareerPlayerFacets>('/players/facets', { career: careerId }),

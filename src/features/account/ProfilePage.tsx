@@ -5,8 +5,10 @@ import { useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import { tokens } from '../../api/tokens'
 import { useAuth } from '../../auth/AuthContext'
+import { BETA_TEXT, useAppConfig } from '../../state/appConfig'
 import { Chip, Skeleton } from '../../design/components/primitives'
-import { ErrorAlert, PasswordField, PRIMARY_BUTTON } from './AccountParts'
+import { AppDialog } from '../../design/components/AppDialog'
+import { ErrorAlert, PasswordField, PRIMARY_BUTTON, TextField } from './AccountParts'
 
 const MIN_PASSWORD = 8
 
@@ -48,17 +50,62 @@ function ChangePassword() {
 }
 
 /**
- * Profil ve abonelik (v3 Pano, V3-07a): hesap, kredi, şifre değiştir, abonelik, oturumu kapat. Ödeme yok (BILLING_STUB kapalıyken mevcut davranış);
- * hesap silme akışı yok — PROD-PREP'te KVKK ile ele alınacak.
+ * PROD-PREP 4 (KVKK): kalıcı hesap silme. Mevcut şifre + e-postayı yazma onayı; e-posta eşleşmeden düğme kapalı (sunucu da doğrular).
+ * Başarıda yerel oturum temizlenir ve ana sayfaya dönülür.
+ */
+function DeleteAccount({ email, onDeleted }: { email: string; onDeleted: () => Promise<void> }) {
+  const [open, setOpen] = useState(false)
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const remove = useMutation({ mutationFn: () => endpoints.deleteAccount(password, confirm), onSuccess: onDeleted })
+  const matches = confirm.trim().toLocaleLowerCase('en') === email.toLocaleLowerCase('en')
+  const close = () => {
+    setOpen(false)
+    setPassword('')
+    setConfirm('')
+    remove.reset()
+  }
+  const submit = (e: FormEvent) => {
+    e.preventDefault()
+    if (matches && password) {
+      remove.mutate()
+    }
+  }
+  return (
+    <>
+      <p className="text-sm text-ink-2">Hesabın, kariyerlerin ve tüm kişisel kayıtların kalıcı olarak silinir. Bilgi tabanı katkıların hesabınla bağı kaldırılarak kalır.</p>
+      <button type="button" onClick={() => setOpen(true)} className="inline-flex min-h-10 items-center justify-center self-start rounded-[var(--radius-sm)] border border-bad px-4 text-sm font-semibold text-bad hover:bg-[var(--bad-soft)] max-sm:min-h-11">Hesabımı sil</button>
+      {open && (
+        <AppDialog title="Hesabımı sil" hint="Bu işlem geri alınamaz." onClose={close}>
+          <form onSubmit={submit} className="flex flex-col gap-3">
+            <p className="text-sm text-ink-2">Devam etmek için şifreni ve <b className="text-ink">{email}</b> adresini yaz.</p>
+            <PasswordField label="Mevcut şifre" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <TextField label="Onay için e-postanı yaz" type="email" required autoComplete="off" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+            <ErrorAlert error={remove.error} />
+            <button type="submit" disabled={!matches || !password || remove.isPending} className="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-sm)] bg-bad px-4 text-sm font-semibold text-on-accent hover:opacity-90 disabled:opacity-50">
+              {remove.isPending ? 'Siliniyor…' : 'Hesabı kalıcı olarak sil'}
+            </button>
+          </form>
+        </AppDialog>
+      )}
+    </>
+  )
+}
+
+/**
+ * Profil ve abonelik (v3 Pano, V3-07a): hesap, kredi, şifre değiştir, abonelik, hesap silme (PROD-PREP 4), oturumu kapat.
+ * Ödeme yok (BILLING_STUB kapalıyken mevcut davranış).
  */
 export function ProfilePage() {
   const { me, logout, refreshMe } = useAuth()
+  const { freeBeta } = useAppConfig()
   const navigate = useNavigate()
   const subscribe = useMutation({ mutationFn: endpoints.subscribe, onSuccess: () => refreshMe() })
   if (!me) {
     return <Skeleton className="h-64" />
   }
   const premium = me.subscriptionType === 'PREMIUM'
+  const planLabel = freeBeta ? 'Beta' : premium ? 'PREMIUM' : 'FREE'
   const signOut = async () => {
     await logout()
     navigate('/login')
@@ -78,7 +125,7 @@ export function ProfilePage() {
             <dt className="text-ink-2">E-posta</dt>
             <dd className="min-w-0 break-words">{me.email}</dd>
             <dt className="text-ink-2">Plan</dt>
-            <dd><Chip>{premium ? 'PREMIUM' : 'FREE'}</Chip></dd>
+            <dd><Chip>{planLabel}</Chip></dd>
             {me.emailVerified !== undefined && (
               <>
                 <dt className="text-ink-2">Doğrulama</dt>
@@ -89,13 +136,15 @@ export function ProfilePage() {
         </Panel>
         <Panel title="Kredi">
           <p className="font-[var(--font-num)] text-3xl font-semibold tabular-nums">{premium ? 'Sınırsız' : `${me.creditBalance ?? 0} / ${me.dailyCreditLimit}`}</p>
-          <p className="text-xs text-ink-2">{premium ? 'PREMIUM üyelikte analizler kredi düşmez.' : 'Günlük kredi her gün yenilenir; ücretli analizler (öneri, kadro analizi) kredi düşer.'}</p>
+          <p className="text-xs text-ink-2">{freeBeta ? 'Beta süresince analizler kredi düşmez.' : premium ? 'PREMIUM üyelikte analizler kredi düşmez.' : 'Günlük kredi her gün yenilenir; ücretli analizler (öneri, kadro analizi) kredi düşer.'}</p>
         </Panel>
         <Panel title="Şifre değiştir">
           <ChangePassword />
         </Panel>
         <Panel title="Abonelik">
-          {premium ? (
+          {freeBeta ? (
+            <p className="text-sm text-good">{BETA_TEXT}</p>
+          ) : premium ? (
             <p className="text-sm text-good">PREMIUM aktif: sınırsız analiz, reklamsız deneyim.</p>
           ) : (
             <>
@@ -115,6 +164,9 @@ export function ProfilePage() {
               )}
             </>
           )}
+        </Panel>
+        <Panel title="Hesabı sil">
+          <DeleteAccount email={me.email} onDeleted={async () => { await logout(); navigate('/', { replace: true }) }} />
         </Panel>
       </div>
     </div>

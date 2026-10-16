@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
-import { Pill } from './ui'
+import { Chip } from '../design/components/primitives'
 
 const GROUPS: { label: string; positions: string[] }[] = [
   { label: 'Kaleciler', positions: ['GK'] },
@@ -76,8 +76,8 @@ export function SquadList({ squad, positionAdvice }: Props) {
                         <td className="pr-2 text-right font-semibold tabular-nums">{entry.player.overall}</td>
                         <td className="pr-2 text-right tabular-nums">{entry.dynamicPotential ?? entry.player.potential ?? '—'}</td>
                         <td>
-                          {entry.onLoan && <Pill tone="amber">Kiralık (bizde)</Pill>}
-                          {entry.loanedOut && <Pill tone="sky">Kiralıkta (başka takımda)</Pill>}
+                          {entry.onLoan && <Chip tone="warn">Kiralık (bizde)</Chip>}
+                          {entry.loanedOut && <Chip tone="info">Kiralıkta (başka takımda)</Chip>}
                         </td>
                       </tr>
                     )

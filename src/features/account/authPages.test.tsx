@@ -4,7 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../../api/client'
 import { endpoints } from '../../api/endpoints'
-import { LoginPage, PrivacyPage, RegisterPage, VerifyEmailPage } from './AuthPages'
+import { PRIVACY_VERSION } from '../legal/privacyVersion'
+import { LoginPage, RegisterPage, VerifyEmailPage } from './AuthPages'
 
 const login = vi.fn()
 const register = vi.fn()
@@ -20,7 +21,6 @@ function renderAt(path: string) {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/" element={<p>ana sayfa</p>} />
           <Route path="/career/desk" element={<p>masa</p>} />
         </Routes>
@@ -68,18 +68,24 @@ describe('Giriş / kayıt / doğrulama (v3)', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('E-posta veya şifre hatalı.')
   })
 
-  it('kayıt: new-password, en az 8 karakter, gizlilik metni bağlantısı (/privacy), onay kutusu yok', async () => {
+  it('kayıt: new-password, en az 8 karakter; zorunlu, işaretsiz aydınlatma onayı; sürüm gönderilir', async () => {
     renderAt('/register')
     expect(screen.getByRole('heading', { name: 'Hesap oluştur' })).toBeInTheDocument()
     const password = screen.getByLabelText('Şifre (en az 8 karakter)')
     expect(password).toHaveAttribute('autocomplete', 'new-password')
     expect(password).toHaveAttribute('minlength', '8')
-    expect(screen.getByRole('link', { name: 'Gizlilik ve aydınlatma metni' })).toHaveAttribute('href', '/privacy')
-    expect(screen.queryByRole('checkbox')).toBeNull()
+    const ack = screen.getByRole('checkbox', { name: 'Aydınlatma metnini okudum.' })
+    expect(ack).not.toBeChecked()
+    expect(ack).toBeRequired()
+    expect(screen.getByRole('link', { name: 'Aydınlatma metnini' })).toHaveAttribute('href', '/privacy')
+    expect(document.body.textContent?.toLocaleLowerCase('tr')).not.toContain('açık rıza')
     fireEvent.change(screen.getByLabelText('E-posta'), { target: { value: 'b@example.test' } })
     fireEvent.change(password, { target: { value: 'uzun-sifre-1' } })
     fireEvent.click(screen.getByRole('button', { name: 'Kayıt ol' }))
-    await waitFor(() => expect(register).toHaveBeenCalledWith('b@example.test', 'uzun-sifre-1'))
+    expect(register).not.toHaveBeenCalled()
+    fireEvent.click(ack)
+    fireEvent.click(screen.getByRole('button', { name: 'Kayıt ol' }))
+    await waitFor(() => expect(register).toHaveBeenCalledWith('b@example.test', 'uzun-sifre-1', PRIVACY_VERSION))
   })
 
   it('kayıt hatası (IP günlük sınırı dahil) sunucu metniyle', async () => {
@@ -87,6 +93,7 @@ describe('Giriş / kayıt / doğrulama (v3)', () => {
     renderAt('/register')
     fireEvent.change(screen.getByLabelText('E-posta'), { target: { value: 'b@example.test' } })
     fireEvent.change(screen.getByLabelText('Şifre (en az 8 karakter)'), { target: { value: 'uzun-sifre-1' } })
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Aydınlatma metnini okudum.' }))
     fireEvent.click(screen.getByRole('button', { name: 'Kayıt ol' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('Çok fazla istek')
   })
@@ -105,9 +112,4 @@ describe('Giriş / kayıt / doğrulama (v3)', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('süresi dolmuş')
   })
 
-  it('gizlilik: yer tutucu "Hazırlanıyor"', () => {
-    renderAt('/privacy')
-    expect(screen.getByRole('heading', { name: 'Gizlilik ve aydınlatma metni' })).toBeInTheDocument()
-    expect(screen.getByText(/Hazırlanıyor/)).toBeInTheDocument()
-  })
 })

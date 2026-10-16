@@ -10,6 +10,20 @@ describe('PickList (F3)', () => {
     expect(sorted.map((r) => r.key)).toEqual(['d', 'b', 'a', 'c'])
   })
 
+  it('V3-07c 0a: uyum yüzdesinin rengi rozetle aynı durumdan — "Seviyesinde" sarı (Sınırda) görünmez', () => {
+    const rows: PickRow[] = [
+      { ...row('a', 70, 70), fitState: 'good' },
+      { ...row('b', 70, 50), fitState: 'neutral' },
+      { ...row('c', 70, 30), fitState: 'ok' },
+      { ...row('d', 70, 10), fitState: 'bad' },
+    ]
+    render(<PickList rows={rows} search="" onSearch={() => undefined} emptyText="boş" />)
+    expect(screen.getByText('%70').className).toContain('text-good')
+    expect(screen.getByText('%50').className).not.toMatch(/text-(warn|good|bad)/)
+    expect(screen.getByText('%30').className).toContain('text-warn')
+    expect(screen.getByText('%10').className).toContain('text-bad')
+  })
+
   it('kaynak sekmeleri geçerli ARIA ile (tablist çocuksuz olamaz): düğmeler aria-pressed grubunda', () => {
     const onTab = vi.fn()
     render(<PickList rows={[]} search="" onSearch={() => undefined} tabs={[{ id: 'club', label: 'Kulübüm' }, { id: 'catalog', label: 'Katalog' }]} activeTab="club" onTab={onTab} emptyText="boş" />)

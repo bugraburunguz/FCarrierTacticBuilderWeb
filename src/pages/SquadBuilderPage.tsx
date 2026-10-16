@@ -1,10 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError, ErrorCodes } from '../api/client'
 import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
-import { useAuth } from '../auth/AuthContext'
 import { AutoFitPanel } from '../components/AutoFitPanel'
 import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
@@ -12,47 +11,23 @@ import { FormationStyleChips } from '../components/FormationStyleChips'
 import { ProtectLeadCard } from '../components/ProtectLeadCard'
 import { SetupChips } from '../components/SetupChips'
 import { TeamSetup } from '../components/TeamSetup'
-import { Pitch, pitchSlotsOf } from '../components/squadBuilder/Pitch'
-import type { SlotView } from '../components/squadBuilder/PositionCard'
-import { SlotModal, type SlotTab } from '../components/squadBuilder/SlotModal'
+import { Pitch } from '../components/squadBuilder/Pitch'
+import { SlotModal } from '../components/squadBuilder/SlotModal'
 import { SquadSummaryCard } from '../components/squadBuilder/SquadSummaryCard'
 import { Button, Card, ErrorBox, Field, Pill, Select, Spinner } from '../components/ui'
-import { Chip, Segmented, StatTile } from '../design/components/primitives'
-import { isV3 } from '../design/uiVersion'
-import { SquadRoleDialog, SquadWorkspaceView } from '../features/squad/SquadWorkspaceView'
 import { TacticCodeCard } from '../features/squad/TacticCodeCard'
 import type { SlotPanel } from '../features/squad/types'
-import { careerSlotTabs } from '../features/squad/careerSlotTabs'
-import { useCareerBinding } from '../features/squad/useCareerBinding'
-import { teamFitPct, useSlotFits } from '../features/squad/useSlotFits'
-import { fitDisplay } from '../lib/fitLabels'
-import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'
-import { canPlaySlot, formationName } from '../lib/positions'
-import { roleBaseName } from '../lib/squadBuilder'
+import { useCareerSquadBuilder } from '../features/squad/useCareerSquadBuilder'
 import { profileOf } from '../lib/wizard'
-import { useActiveCareerId } from '../state/careerStore'
-import { DEFAULT_SETUP } from '../state/tacticStore'
 
 const AUTO_FIT = '__auto_fit__'
-const pctText = (value?: number) => (value === undefined ? undefined : `%${value}`)
 
+/** v2 kariyer kadro kurucusu (v3: features/squad/CareerSquadBuilderPage). Ortak mantık useCareerSquadBuilder'da. */
 export function SquadBuilderPage() {
-  const careerId = useActiveCareerId()
-  const { authenticated } = useAuth()
   const queryClient = useQueryClient()
   const [autoFit, setAutoFit] = useState(false)
-
-  const presets = useQuery({ queryKey: ['presets'], queryFn: () => endpoints.presets() })
-  const tags = useQuery({ queryKey: ['tags-all'], queryFn: () => endpoints.behaviorTags() })
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
-  const career = careers.data?.find((c) => c.id === careerId)
-  const hasCareer = authenticated && careerId !== undefined
-  const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: hasCareer })
-  const { binding, playerById } = useCareerBinding(careerId, squad.data)
-  const ws = useSquadWorkspace('career', binding)
-  const { state, formation, roles, roleBySlot, selection, selectedSlot: dialogSlot } = ws
-  const assignments = state.assigned
-  const setup = state.setup ?? DEFAULT_SETUP
+  const { careerId, authenticated, presets, career, hasCareer, squad, binding, ws, setup, preset, views, weakReasons, autoFill, canAutoFill, changeFormation, slotTabs, resetBehaviors, pitchHint, loading } = useCareerSquadBuilder()
+  const { state, formation, roles, selection, selectedSlot: dialogSlot } = ws
 
   const analyse = useMutation({
     mutationFn: () => endpoints.fitSquad({ careerId: careerId!, tactic: ws.tactic }),
@@ -60,53 +35,6 @@ export function SquadBuilderPage() {
   })
   const analysis = analyse.data?.result
   const outOfCredit = analyse.error instanceof ApiError && analyse.error.code === ErrorCodes.insufficientCredit
-
-  const preset = presets.data?.find((p) => p.id === state.presetId)
-  const roleById = useMemo(() => new Map((roles.data ?? []).map((r) => [r.id, r])), [roles.data])
-
-  const slotRole = (slotId: string, fallback: string) => roleBySlot.get(slotId)?.roleId ?? state.roleOverride[slotId] ?? fallback
-  const slotTags = (slotId: string) => state.tags[slotId] ?? []
-
-  const { fitBySlot } = useSlotFits(ws, playerById)
-
-  const views: SlotView[] = ws.slots.map((slot) => {
-    const player = playerById.get(assignments[slot.slotId])
-    const role = roleById.get(slotRole(slot.slotId, slot.defaultRole))
-    const fit = fitBySlot.get(slot.slotId)
-    return {
-      slotId: slot.slotId,
-      position: slot.position,
-      x: slot.x,
-      y: slot.y,
-      player: player && { id: player.id, name: player.name, overall: player.overall, faceUrl: player.faceUrl, club: player.club, league: player.league, nationality: player.nationality, faceStats: player.faceStats, faceLabels: player.faceLabels, faceStatsApproximate: player.faceStatsApproximate },
-      roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : '…',
-      fit: fit && { pct: fitDisplay(fit).pct, band: fit.badge },
-      selected: selection?.slotId === slot.slotId,
-    }
-  })
-  const weakReasons = Object.fromEntries([...fitBySlot].map(([slotId, fit]) => [slotId, fit?.reasons[0]]))
-
-  const autoFill = useMutation({
-    mutationFn: () => endpoints.lineup(careerId!, ws.tactic),
-    onSuccess: (result) => {
-      const next: Record<string, number> = {}
-      result.slots.forEach((s) => {
-        if (s.playerId !== undefined) {
-          next[s.slotId] = s.playerId
-        }
-      })
-      ws.patch({ assigned: next })
-    },
-  })
-
-  const autoFilled = useRef<string>('')
-  useEffect(() => {
-    const key = `${careerId}|${formation?.id}`
-    if (hasCareer && formation && !ws.stale && (squad.data?.length ?? 0) >= 11 && Object.keys(assignments).length === 0 && autoFilled.current !== key && !autoFill.isPending) {
-      autoFilled.current = key
-      autoFill.mutate()
-    }
-  }, [hasCareer, careerId, formation, ws.stale, squad.data, assignments, autoFill])
 
   function applyPreset(p: Preset) {
     const profile = profileOf(p)
@@ -122,120 +50,11 @@ export function SquadBuilderPage() {
     ws.clearSelection()
   }
 
-  function changeFormation(id: string) {
-    ws.changeFormation(id, preset?.formation === id)
-  }
-
-  if (ws.formations.isLoading || presets.isLoading) {
+  if (loading) {
     return <Spinner />
   }
 
-  const dialogRoleId = dialogSlot ? slotRole(dialogSlot.slotId, dialogSlot.defaultRole) : ''
-  const candidates = dialogSlot ? (squad.data ?? []).filter((c) => !c.loanedOut && canPlaySlot(c.player.positions, dialogSlot.position)) : []
-  const dialogTags = dialogSlot ? (tags.data ?? []).filter((t) => t.position === dialogSlot.group) : []
-  const dialogRoles = dialogSlot ? (roles.data ?? []).filter((r) => r.positions.includes(dialogSlot.position)) : []
-
-  const slotTabs: SlotTab[] = dialogSlot
-    ? careerSlotTabs({
-        ws,
-        slot: dialogSlot,
-        hasCareer,
-        careerId: career?.id,
-        candidates,
-        roleId: dialogRoleId,
-        slotTags: slotTags(dialogSlot.slotId),
-        dialogTags,
-        dialogRoles,
-        preset,
-      })
-    : []
   const tacticCode = <TacticCodeCard mode="career" tactic={ws.tactic} resolved={ws.resolved.data} onLoaded={(r) => { setAutoFit(false); ws.applyImportedCode(r) }} />
-  const resetBehaviors = () => {
-    ws.patch({ roleOverride: {}, tags: {}, presetId: undefined })
-    ws.clearSelection()
-  }
-  const pitchHint = hasCareer
-    ? 'Oyuncuyu başka bir karta sürükle: yer değiştirirler · karta tıkla: oyuncu seç · rol etiketine tıkla: rol ve odak · ✕: oyuncuyu kaldır.'
-    : 'Oyuncu atamak için giriş yapıp bir kariyer seç; taktiği kariyersiz de kurabilirsin.'
-
-  if (isV3()) {
-    const placed = views.filter((v) => v.player)
-    const fitted = placed.filter((v) => v.fit)
-    const weakest = fitted.length ? fitted.reduce((a, b) => ((a.fit?.pct ?? 0) <= (b.fit?.pct ?? 0) ? a : b)) : undefined
-    const panel: SlotPanel | undefined = selection?.panel === 'role' ? undefined : selection?.panel
-    const current = slotTabs.find((t) => t.id === panel) ?? slotTabs[0]
-    return (
-      <>
-        <SquadWorkspaceView
-          title="Kariyer Kadro Kurucu"
-          slots={pitchSlotsOf(views)}
-          selectedSlotId={dialogSlot?.slotId}
-          onPickPlayer={(slotId) => ws.select(slotId, 'card')}
-          onPickRole={(slotId) => ws.select(slotId, 'role')}
-          onRemove={(slotId) => ws.assign(slotId, null)}
-          onSwap={hasCareer ? ws.swap : undefined}
-          pitchHint={pitchHint}
-          slotPanel={
-            dialogSlot && panel && current
-              ? {
-                  title: `${dialogSlot.position} — ${current.label}`,
-                  onClose: ws.clearSelection,
-                  body: (
-                    <div className="space-y-3">
-                      <Segmented label="Slot ayarları" value={current.id} options={slotTabs.filter((t) => t.id !== 'role').map((t) => ({ id: t.id, label: t.label }))} onChange={(id) => ws.select(dialogSlot.slotId, id as SlotPanel)} />
-                      {current.node}
-                    </div>
-                  ),
-                }
-              : undefined
-          }
-          formations={(ws.formations.data ?? []).map((f) => ({ id: f.id, label: formationName(f) }))}
-          formationsLoading={ws.formations.isLoading}
-          formationsError={ws.formations.error ? 'Formasyonlar yüklenemedi.' : undefined}
-          formationId={formation?.id}
-          onFormation={changeFormation}
-          setup={setup}
-          onSetup={(next) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_SETUP), ...next } }))}
-          squadNameKey="fc.squadName.career"
-          ratingStars={placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined}
-          allAverages={[{ label: 'Rol uyumu', value: pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : [])))) }, { label: 'Dolu', value: `${placed.length}/11` }]}
-          stats={[
-            { label: 'Ort. OVR', value: placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined },
-            { label: 'Dolu', value: placed.length, suffix: '/ 11' },
-          ]}
-          averages={ws.averages}
-          sections={
-            <section aria-label="Rol uyumu" className="space-y-2">
-              <CareerSelect />
-              <h3 className="font-display text-lg font-semibold">Rol uyumu</h3>
-              <div className="grid grid-cols-2 gap-2">
-                <StatTile label="Kadro uyumu" value={pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : []))))} />
-                <StatTile label="En zayıf" value={weakest ? `${weakest.position} %${weakest.fit?.pct}` : undefined} />
-              </div>
-              {weakest && weakReasons[weakest.slotId] && <p className="text-xs text-muted">{weakReasons[weakest.slotId]}</p>}
-              {preset && <Chip tone="info">{preset.name}</Chip>}
-              <ErrorBox error={ws.resolved.error ?? autoFill.error ?? squad.error} />
-            </section>
-          }
-          tacticCode={tacticCode}
-          onClear={() => ws.clearAssigned()}
-          clearDisabled={Object.keys(assignments).length === 0}
-          clearLabel="Oyuncuları temizle"
-          note={ws.note}
-          actions={
-            <>
-              <Button disabled={!hasCareer || autoFill.isPending || (squad.data?.length ?? 0) < 11} onClick={() => autoFill.mutate()}>
-                {autoFill.isPending ? 'Diziliyor…' : "En iyi 11'i diz"}
-              </Button>
-              <Button variant="ghost" onClick={resetBehaviors}>Davranışları sıfırla</Button>
-            </>
-          }
-          notice={!hasCareer ? { id: 'career-login', text: <>Oyuncu atamak için <Link to="/login" className="text-accent underline">giriş yap</Link> ve bir kariyer seç; taktiği kariyersiz de kurabilirsin.</> } : undefined}
-        />
-        <SquadRoleDialog ws={ws} />
-      </>
-    )
-  }
 
   return (
     <div className="space-y-4">
@@ -243,7 +62,7 @@ export function SquadBuilderPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <CareerSelect />
-        <Button variant="secondary" disabled={!hasCareer || autoFill.isPending || (squad.data?.length ?? 0) < 11} onClick={() => autoFill.mutate()}>
+        <Button variant="secondary" disabled={!canAutoFill} onClick={() => autoFill.mutate()}>
           {autoFill.isPending ? 'Diziliyor…' : "En iyi 11'i diz"}
         </Button>
         <Button variant="ghost" onClick={resetBehaviors}>

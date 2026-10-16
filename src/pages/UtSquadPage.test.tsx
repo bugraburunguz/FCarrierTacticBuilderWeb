@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../api/endpoints'
 import { utSquadStore } from '../state/utSquadStore'
+import { UtSquadBuilderPage } from '../features/squad/UtSquadBuilderPage'
 import { UtSquadPage } from './UtSquadPage'
 
 const formation = { id: '4-4-2', label: '4-4-2', slots: [{ slotId: 'GK', position: 'GK', x: 50, y: 90, defaultRole: 'goalkeeper_balanced' }, { slotId: 'ST', position: 'ST', x: 50, y: 10, defaultRole: 'poacher_attack' }] }
@@ -22,15 +23,16 @@ vi.mock('../api/endpoints', () => ({
   },
 }))
 
-function renderPage() {
-  return render(
-    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-      <MemoryRouter><UtSquadPage /></MemoryRouter>
-    </QueryClientProvider>,
-  )
-}
+// V3-07b: v2 sayfası ve v3 sayfası (features/squad/UtSquadBuilderPage) aynı hook'u kullanır; ilk yükleme davranışı ikisinde de sınanır.
+describe.each([['v2', UtSquadPage], ['v3', UtSquadBuilderPage]] as const)('UtSquadPage ilk yükleme (V3-00) — %s', (_name, Page) => {
+  function renderPage() {
+    return render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <MemoryRouter><Page /></MemoryRouter>
+      </QueryClientProvider>,
+    )
+  }
 
-describe('UtSquadPage ilk yükleme (V3-00)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     utSquadStore.clear?.()

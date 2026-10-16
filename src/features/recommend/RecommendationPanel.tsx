@@ -8,6 +8,7 @@ import { useAuth } from '../../auth/AuthContext'
 import { MoneyInput } from '../../components/MoneyInput'
 import { ErrorBox, Select } from '../../components/ui'
 import { Button, EmptyState, Segmented, Skeleton } from '../../design/components/primitives'
+import { useAppConfig } from '../../state/appConfig'
 import { RecommendationRow } from './RecommendationRow'
 
 const PROFILES: { id: RecommendProfile; label: string }[] = [
@@ -64,6 +65,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
 
   const costs = useQuery({ queryKey: ['credit-costs'], queryFn: endpoints.creditCosts, staleTime: 600_000, retry: false })
   const premium = me?.subscriptionType === 'PREMIUM'
+  const { freeBeta } = useAppConfig()
   const cost = costs.data?.recommend
 
   const run = useMutation({
@@ -102,7 +104,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
 
   const result = run.data?.result
   const outOfCredit = run.error instanceof ApiError && run.error.code === ErrorCodes.insufficientCredit
-  const priceLabel = premium ? "PREMIUM'da ücretsiz" : cost !== undefined ? `${cost} kredi` : 'kredi'
+  const priceLabel = freeBeta ? "Beta'da ücretsiz" : premium ? "PREMIUM'da ücretsiz" : cost !== undefined ? `${cost} kredi` : 'kredi'
 
   return (
     <div className="space-y-3">

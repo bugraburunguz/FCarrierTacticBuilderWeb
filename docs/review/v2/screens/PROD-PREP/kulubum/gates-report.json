@@ -1,0 +1,1084 @@
+{
+  "report": [
+    {
+      "shot": "ut-club-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-secim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-secim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo",
+          "aria-hidden: Filtreler",
+          "aria-hidden: GK",
+          "aria-hidden: RB",
+          "aria-hidden: CB"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Beta: tüm özellikler ücr",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Beta: tüm özellikler ücr",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Beta: tüm özellikler ücr",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-filtre-sheet-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "En az reyting",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Beta: tüm özellikler ücr",
+          "aria-hidden: G",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?",
+          "aria-hidden: SBC yemi",
+          "aria-hidden: Kopya kart her zaman yem",
+          "aria-hidden: Korunan kart (85+ ya da ",
+          "aria-hidden: Takas edilebilir kart ko",
+          "aria-hidden: Kalanlar (korunmayan ve ",
+          "aria-hidden: Değer: pazar ortalaması,",
+          "aria-hidden: Ara",
+          "aria-hidden: Sırala",
+          "aria-hidden: Izgara",
+          "aria-hidden: Tablo"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Beta: tüm özellikler ücr",
+          "aria-hidden: G",
+          "aria-hidden: Gate-1792154025661",
+          "aria-hidden: Kart veritabanı",
+          "aria-hidden: Kadro kurucu",
+          "aria-hidden: Kadrom",
+          "aria-hidden: Meta",
+          "aria-hidden: Replikalar",
+          "aria-hidden: SBC çözücü",
+          "aria-hidden: Objective planı",
+          "aria-hidden: Evolution",
+          "aria-hidden: Kulüp içe aktar",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ut-club-tablo-yem-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-suzgecli-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-secim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "3.200",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ut-club-sbc-sec-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "2 kart Özelleştir'de kilitli a",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Beta: tüm özellikler ücr",
+          "aria-hidden: G",
+          "aria-hidden: Gate-1792154025661",
+          "aria-hidden: Kart veritabanı",
+          "aria-hidden: Kadro kurucu",
+          "aria-hidden: Kadrom",
+          "aria-hidden: Meta",
+          "aria-hidden: Replikalar",
+          "aria-hidden: SBC çözücü",
+          "aria-hidden: Objective planı",
+          "aria-hidden: Evolution",
+          "aria-hidden: Kulüp içe aktar",
+          "aria-hidden: Kulübüm",
+          "aria-hidden: 20",
+          "aria-hidden: kulüp kartı",
+          "aria-hidden: ?"
+        ]
+      }
+    }
+  ]
+}

@@ -284,6 +284,9 @@ export interface DepthEntry {
   combined: number
   roleFitScore: number
   badge: WeaponState
+  /** v3 (V3-07c): rozetin türediği seviye yüzdesi ve etiketi. */
+  levelFit?: number
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
 }
 
 export interface SlotAssignment {
@@ -376,6 +379,9 @@ export interface Me {
   emailVerified?: boolean
   emailVerificationRequired?: boolean
   createdAt?: string
+  /** PROD-PREP 3: onaylanan aydınlatma metni sürümü; yoksa ya da güncelden küçükse bilgilendirme bandı. */
+  privacyAckVersion?: number
+  privacyAckAt?: string
 }
 
 export interface Career {
@@ -742,6 +748,14 @@ export interface Wonderkid {
   roleScore?: number
   roleBadge?: WeaponState
   projectedBadge?: WeaponState
+  /** V3-07c 0a: rozetin türediği seviye yüzdesi ve etiketi (gösterilen yüzde bu; roleScore ham rol puanı). */
+  roleLevelFit?: number
+  roleFitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  projectedFitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  /** Spoiler aralık modunda potansiyel aralığı (potential alt sınırdır). */
+  potentialRange?: string
+  /** V3-07c: kariyerde ulaşılabilirlik kovası (oyuncu sayfasıyla aynı); kadrodaki oyuncuda yok. */
+  feasibility?: FeasibilityBucket
 }
 
 export interface MetaFormation {

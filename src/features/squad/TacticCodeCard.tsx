@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { ResolvedTactic, TacticCodeImport, TacticRequest } from '../../api/types'
 import { ExportWarnings } from '../../components/ExportWarnings'
-import { Modal } from '../../components/Modal'
 import { ErrorBox, Input } from '../../components/ui'
+import { AppDialog } from '../../design/components/AppDialog'
 import type { SquadMode } from './types'
 
 const PANEL = 'rounded-md border border-line bg-surface p-3.5 text-ink'
@@ -81,7 +81,7 @@ export function TacticCodeCard({ mode, tactic, resolved, onLoaded }: { mode: Squ
         Kod mod-bağımsızdır: UT ve kariyerde aynı kod. Yüklemek formasyonu, rolleri, Build-Up'ı ve hattı değiştirir{mode === 'ut' ? ', kartları temizler' : '; oyuncu atamaların kalır'}.
       </p>
       {open && code && (
-        <Modal title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
+        <AppDialog title="Oyuna aktar" hint="Kodu oyunda içe aktar" onClose={() => setOpen(false)}>
           <div className="rounded-[10px] border border-line bg-surface-2 p-3 text-center font-mono text-2xl font-extrabold tracking-[3px] text-code">{code}</div>
           <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13px] text-ink">
             <li>Kodu kopyala.</li>
@@ -89,7 +89,7 @@ export function TacticCodeCard({ mode, tactic, resolved, onLoaded }: { mode: Squ
             <li>Kodu yapıştır; büyük/küçük harf önemlidir.</li>
           </ol>
           <button type="button" onClick={copy} className="mt-4 w-full rounded-md bg-accent-bg py-2 text-[12.5px] font-bold text-on-accent">Kopyala</button>
-        </Modal>
+        </AppDialog>
       )}
     </section>
   )

@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { CareerPlayer, Club } from '../api/types'
-import { Button, ErrorBox, Field, Input, Modal } from './ui'
+import { AppDialog } from '../design/components/AppDialog'
+import { Button, ErrorBox, Field, Input } from './ui'
 
 interface Props {
   mode: 'SELL' | 'LOAN_OUT'
@@ -26,7 +27,7 @@ export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, 
   const selling = mode === 'SELL'
 
   return (
-    <Modal title={`${entry.player.name} — ${selling ? 'Satış' : 'Kiralık verme'}`} onClose={onClose}>
+    <AppDialog title={`${entry.player.name} — ${selling ? 'Satış' : 'Kiralık verme'}`} onClose={onClose}>
       <div className="space-y-3">
         <Field label={selling ? 'Gelen bedel (€)' : 'Kiralama bedeli (€, yoksa 0)'}>
           <Input type="number" min={0} autoFocus value={fee} onChange={(e) => setFee(e.target.value)} placeholder="0" />
@@ -64,6 +65,6 @@ export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, 
           </Button>
         </div>
       </div>
-    </Modal>
+    </AppDialog>
   )
 }

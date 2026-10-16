@@ -5,12 +5,13 @@ import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { unusedPositionSuggestions, type DepthState, type PositionNeed } from '../lib/depth'
 import { setCardDragImage } from '../lib/dragCard'
 import { groupByPrimaryPosition, primaryPosition } from '../lib/positions'
-import { Button, Pill } from './ui'
+import { Chip } from '../design/components/primitives'
+import { Button } from './ui'
 
-const DEPTH_LABEL: Record<DepthState, { text: string; tone: 'rose' | 'emerald' | 'amber' }> = {
-  thin: { text: 'İnce', tone: 'rose' },
-  ok: { text: 'Dengeli', tone: 'emerald' },
-  dense: { text: 'Yoğun', tone: 'amber' },
+const DEPTH_LABEL: Record<DepthState, { text: string; tone: 'bad' | 'good' | 'warn' }> = {
+  thin: { text: 'İnce', tone: 'bad' },
+  ok: { text: 'Dengeli', tone: 'good' },
+  dense: { text: 'Yoğun', tone: 'warn' },
 }
 
 interface Props {
@@ -56,7 +57,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
         {needs.map((n) => (
           <span key={n.position} title={n.reason} className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-xs">
             <strong>{n.position}</strong> {n.natural.length}{n.flex.length > 0 ? `+${n.flex.length}` : ''} / {n.required}
-            <Pill tone={DEPTH_LABEL[n.state].tone}>{DEPTH_LABEL[n.state].text}</Pill>
+            <Chip tone={DEPTH_LABEL[n.state].tone}>{DEPTH_LABEL[n.state].text}</Chip>
           </span>
         ))}
       </div>
@@ -74,7 +75,7 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                   {g.label} <span className="text-muted">· {g.players.length}</span>
                 </h3>
                 <span title={need?.reason}>
-                  {need ? <Pill tone={DEPTH_LABEL[need.state].tone}>{DEPTH_LABEL[need.state].text}</Pill> : <Pill tone="slate">Taktikte yok</Pill>}
+                  {need ? <Chip tone={DEPTH_LABEL[need.state].tone}>{DEPTH_LABEL[need.state].text}</Chip> : <Chip>Taktikte yok</Chip>}
                 </span>
               </header>
               <ul className="divide-y divide-line">
@@ -96,8 +97,8 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                         {entry.player.age ? `${entry.player.age} yaş · ` : ''}
                         {entry.player.positions.slice(1, 3).join(', ')}
                         {(entry.onLoan || entry.loanedOut) && ' · '}
-                        {entry.onLoan && <Pill tone="amber">Kiralık (bizde)</Pill>}
-                        {entry.loanedOut && <Pill tone="sky">Kiralıkta</Pill>}
+                        {entry.onLoan && <Chip tone="warn">Kiralık (bizde)</Chip>}
+                        {entry.loanedOut && <Chip tone="info">Kiralıkta</Chip>}
                       </span>
                       <PositionHint advice={adviceById.get(entry.player.id)} />
                     </div>

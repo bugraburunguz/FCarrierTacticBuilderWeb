@@ -1,25 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
 import { CareerSelect } from '../components/CareerSelect'
 import { Card, EmptyState, ErrorBox, Field, Input, Pill, Spinner } from '../components/ui'
+import { useCareerTeams } from '../features/teams/useCareerTeams'
 import { useActiveCareerId } from '../state/careerStore'
 
+/** v2 takımlar (v3: features/teams/TeamsV3Page). Veri useCareerTeams'te. */
 export function TeamsPage() {
   const careerId = useActiveCareerId()
   const [term, setTerm] = useState('')
   const [selected, setSelected] = useState<number | undefined>()
-  const teams = useQuery({
-    queryKey: ['career-teams', careerId, term],
-    queryFn: () => endpoints.careerTeams(careerId!, term),
-    enabled: careerId !== undefined,
-  })
-  const profile = useQuery({
-    queryKey: ['career-team', careerId, selected],
-    queryFn: () => endpoints.careerTeam(careerId!, selected!),
-    enabled: careerId !== undefined && selected !== undefined,
-  })
+  const { teams, profile } = useCareerTeams(careerId, term, selected)
 
   return (
     <div className="space-y-4">

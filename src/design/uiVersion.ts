@@ -30,8 +30,20 @@ function write(storage: () => Storage, key: string, value: string | null) {
   }
 }
 
-/** Adres satırındaki `ui` parametresini oturum bayrağına yazar ve geçerli sürümü döner. */
-export function resolveUiVersion(search: string): UiVersion {
+/**
+ * PROD-PREP 1: v2'ye geçiş yalnız build bayrağı açıkken. `VITE_UI_V2=on` açar, `off` kapatır; tanımsızsa geliştirmede açık, prod build'de kapalı
+ * (prod'da yalnız v3). v2 kodu silinmez (V3-08).
+ */
+export function v2SwitchEnabled(): boolean {
+  const flag = import.meta.env.VITE_UI_V2 as string | undefined
+  return flag === 'on' || (flag !== 'off' && import.meta.env.DEV)
+}
+
+/** Adres satırındaki `ui` parametresini oturum bayrağına yazar ve geçerli sürümü döner. v2 geçişi kapalıysa her zaman v3. */
+export function resolveUiVersion(search: string, allowV2: boolean = v2SwitchEnabled()): UiVersion {
+  if (!allowV2) {
+    return 'v3'
+  }
   const requested = new URLSearchParams(search).get('ui')
   if (requested === 'v3') {
     write(() => sessionStorage, UI_KEY, 'v3')

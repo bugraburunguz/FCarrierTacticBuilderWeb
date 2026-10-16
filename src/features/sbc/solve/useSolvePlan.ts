@@ -45,6 +45,16 @@ export function useClubCards() {
   }, [library, capture])
 }
 
+/** Aktif kadrodaki kulüp kartları (anahtar → ad): çözücü havuzuna girmez; kilit isteğinde sebep için (V3-07c). */
+export function useActiveSquadCards(): Map<string, string> {
+  const library = useSyncExternalStore(bigStore.subscribe, () => utCardStore.get())
+  const capture = useUtCapture()
+  return useMemo(() => {
+    const starters = new Set((capture?.activeSquad?.slots ?? []).flatMap((s) => (s.card?.instanceId !== undefined ? [s.card.instanceId] : [])))
+    return new Map((library?.cards ?? []).filter((c) => c.source === 'club' && c.instanceId !== undefined && starters.has(c.instanceId)).map((c) => [c.key, c.name]))
+  }, [library, capture])
+}
+
 /** Kare (squad) görev planı: katalog havuzu + bilgi tabanı fiyatları + kulüp → Worker'da çözüm (kurallar GET /ut/rules'tan, ≤3 sn). */
 export function useSquadPlan(challenge: SbcChallenge | undefined, formations: Formation[] | undefined, customize: Customize) {
   const club = useClubCards()
