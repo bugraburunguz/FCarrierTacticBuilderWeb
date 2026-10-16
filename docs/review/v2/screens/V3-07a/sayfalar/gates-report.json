@@ -1,0 +1,2294 @@
+{
+  "inventory": [
+    {
+      "path": "/",
+      "file": "ana-sayfa-dark-1280.png",
+      "h1": "FC Assist"
+    },
+    {
+      "path": "/about",
+      "file": "about-dark-1280.png",
+      "h1": "Hakkında"
+    },
+    {
+      "path": "/login",
+      "file": "login-dark-1280.png",
+      "h1": "Giriş yap"
+    },
+    {
+      "path": "/register",
+      "file": "register-dark-1280.png",
+      "h1": "Hesap oluştur"
+    },
+    {
+      "path": "/verify-email",
+      "file": "verify-email-dark-1280.png",
+      "h1": "E-posta doğrulama"
+    },
+    {
+      "path": "/privacy",
+      "file": "privacy-dark-1280.png",
+      "h1": "Gizlilik ve aydınlatma metni"
+    },
+    {
+      "path": "/players",
+      "file": "players-dark-1280.png",
+      "h1": "Oyuncular"
+    },
+    {
+      "path": "/players/1",
+      "file": "players-1-dark-1280.png",
+      "h1": "Kylian Mbappé"
+    },
+    {
+      "path": "/compare",
+      "file": "compare-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/wonderkids",
+      "file": "wonderkids-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/tactics/wizard",
+      "file": "tactics-wizard-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/squad",
+      "file": "squad-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/squad/builder",
+      "file": "squad-builder-dark-1280.png",
+      "h1": "Kariyer Kadro Kurucu"
+    },
+    {
+      "path": "/replicas",
+      "file": "replicas-dark-1280.png",
+      "h1": "Replikalar"
+    },
+    {
+      "path": "/replicas/delbosque_real_2000",
+      "file": "replicas-delbosque_real_2000-dark-1280.png",
+      "h1": "Real Madrid 1999-00"
+    },
+    {
+      "path": "/career/import",
+      "file": "career-import-dark-1280.png",
+      "h1": "Kariyer verisini içe aktar"
+    },
+    {
+      "path": "/career/desk",
+      "file": "career-desk-dark-1280.png",
+      "h1": "Kariyer Masası"
+    },
+    {
+      "path": "/career/new",
+      "file": "career-new-dark-1280.png",
+      "h1": "Yeni kariyer"
+    },
+    {
+      "path": "/career/transfer",
+      "file": "career-transfer-dark-1280.png",
+      "h1": "Transfer Merkezi"
+    },
+    {
+      "path": "/career/growth",
+      "file": "career-growth-dark-1280.png",
+      "h1": "Gelişim"
+    },
+    {
+      "path": "/teams",
+      "file": "teams-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/ut/players/231747",
+      "file": "ut-players-231747-dark-1280.png",
+      "h1": "Kylian Mbappé"
+    },
+    {
+      "path": "/ut/squad",
+      "file": "ut-squad-dark-1280.png",
+      "h1": "UT Kadro Kurucu"
+    },
+    {
+      "path": "/ut/meta",
+      "file": "ut-meta-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/ut/sbc",
+      "file": "ut-sbc-dark-1280.png",
+      "h1": "SBC"
+    },
+    {
+      "path": "/ut/sbc/56",
+      "file": "ut-sbc-56-dark-1280.png",
+      "h1": "Carlos Espí"
+    },
+    {
+      "path": "/ut/objectives",
+      "file": "ut-objectives-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/ut/club",
+      "file": "ut-club-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/ut/import",
+      "file": "ut-import-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/ut/evo",
+      "file": "ut-evo-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/admin/ut",
+      "file": "admin-ut-dark-1280.png",
+      "h1": null
+    },
+    {
+      "path": "/profile",
+      "file": "profile-dark-1280.png",
+      "h1": "Profil"
+    }
+  ],
+  "report": [
+    {
+      "shot": "giris-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "giris-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 401 /api/v1/auth/login",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 401 (yanlış şifre)"
+    },
+    {
+      "shot": "kayit-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-eksik-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 400 /api/v1/auth/verify-email",
+        "console: Failed to load resource: the server responded with a status of 400 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 400 (geçersiz token)"
+    },
+    {
+      "shot": "gizlilik-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-anonim-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ana-sayfa-kariyer-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ice-aktarma-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "yeni-kariyer-kulup-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "profil-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "profil-sifre-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/me/password",
+        "console: Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "expected": "HTTP 422 (mevcut şifre yanlış)"
+    },
+    {
+      "shot": "ice-aktarma-sonuc-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + import özeti (NOT_IN_CAREER)"
+    },
+    {
+      "shot": "ice-aktarma-hata-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/careers/190/import",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + 422 import yanıtı",
+      "expected": "HTTP 422 (fikstür)"
+    },
+    {
+      "shot": "ana-sayfa-ut-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "sbcCards": 4
+    },
+    {
+      "shot": "ana-sayfa-ut-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "giris-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "giris-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 401 /api/v1/auth/login",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 401 (yanlış şifre)"
+    },
+    {
+      "shot": "kayit-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-eksik-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 400 /api/v1/auth/verify-email",
+        "console: Failed to load resource: the server responded with a status of 400 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 400 (geçersiz token)"
+    },
+    {
+      "shot": "gizlilik-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-anonim-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ana-sayfa-kariyer-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "ice-aktarma-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "yeni-kariyer-kulup-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "profil-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "profil-sifre-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/me/password",
+        "console: Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "expected": "HTTP 422 (mevcut şifre yanlış)"
+    },
+    {
+      "shot": "ice-aktarma-sonuc-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + import özeti (NOT_IN_CAREER)"
+    },
+    {
+      "shot": "ice-aktarma-hata-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/careers/190/import",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + 422 import yanıtı",
+      "expected": "HTTP 422 (fikstür)"
+    },
+    {
+      "shot": "ana-sayfa-ut-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "sbcCards": 4
+    },
+    {
+      "shot": "ana-sayfa-ut-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "giris-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "giris-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 401 /api/v1/auth/login",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 401 (yanlış şifre)"
+    },
+    {
+      "shot": "kayit-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-eksik-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 400 /api/v1/auth/verify-email",
+        "console: Failed to load resource: the server responded with a status of 400 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 400 (geçersiz token)"
+    },
+    {
+      "shot": "gizlilik-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-anonim-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-kariyer-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ice-aktarma-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-kulup-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-sifre-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/me/password",
+        "console: Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "expected": "HTTP 422 (mevcut şifre yanlış)"
+    },
+    {
+      "shot": "ice-aktarma-sonuc-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + import özeti (NOT_IN_CAREER)"
+    },
+    {
+      "shot": "ice-aktarma-hata-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/careers/190/import",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + 422 import yanıtı",
+      "expected": "HTTP 422 (fikstür)"
+    },
+    {
+      "shot": "ana-sayfa-ut-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "sbcCards": 4
+    },
+    {
+      "shot": "ana-sayfa-ut-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "giris-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "giris-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 401 /api/v1/auth/login",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 401 (yanlış şifre)"
+    },
+    {
+      "shot": "kayit-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-eksik-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 400 /api/v1/auth/verify-email",
+        "console: Failed to load resource: the server responded with a status of 400 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 400 (geçersiz token)"
+    },
+    {
+      "shot": "gizlilik-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-anonim-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-kariyer-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ice-aktarma-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-kulup-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-sifre-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/me/password",
+        "console: Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "expected": "HTTP 422 (mevcut şifre yanlış)"
+    },
+    {
+      "shot": "ice-aktarma-sonuc-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + import özeti (NOT_IN_CAREER)"
+    },
+    {
+      "shot": "ice-aktarma-hata-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/careers/190/import",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + 422 import yanıtı",
+      "expected": "HTTP 422 (fikstür)"
+    },
+    {
+      "shot": "ana-sayfa-ut-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "sbcCards": 4
+    },
+    {
+      "shot": "ana-sayfa-ut-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "giris-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "giris-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 401 /api/v1/auth/login",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 401 (yanlış şifre)"
+    },
+    {
+      "shot": "kayit-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-eksik-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 400 /api/v1/auth/verify-email",
+        "console: Failed to load resource: the server responded with a status of 400 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 400 (geçersiz token)"
+    },
+    {
+      "shot": "gizlilik-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-anonim-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-kariyer-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ice-aktarma-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-kulup-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-sifre-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/me/password",
+        "console: Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "expected": "HTTP 422 (mevcut şifre yanlış)"
+    },
+    {
+      "shot": "ice-aktarma-sonuc-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + import özeti (NOT_IN_CAREER)"
+    },
+    {
+      "shot": "ice-aktarma-hata-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/careers/190/import",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + 422 import yanıtı",
+      "expected": "HTTP 422 (fikstür)"
+    },
+    {
+      "shot": "ana-sayfa-ut-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11.5,
+        "minFontText": "ST",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "sbcCards": 4
+    },
+    {
+      "shot": "ana-sayfa-ut-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11.5,
+        "minFontText": "ST",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "giris-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "giris-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 401 /api/v1/auth/login",
+        "console: Failed to load resource: the server responded with a status of 401 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 401 (yanlış şifre)"
+    },
+    {
+      "shot": "kayit-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-eksik-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "dogrulama-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 400 /api/v1/auth/verify-email",
+        "console: Failed to load resource: the server responded with a status of 400 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      },
+      "expected": "HTTP 400 (geçersiz token)"
+    },
+    {
+      "shot": "gizlilik-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-anonim-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist"
+        ]
+      }
+    },
+    {
+      "shot": "ana-sayfa-kariyer-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "ice-aktarma-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "yeni-kariyer-kulup-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "profil-sifre-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/me/password",
+        "console: Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "expected": "HTTP 422 (mevcut şifre yanlış)"
+    },
+    {
+      "shot": "ice-aktarma-sonuc-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + import özeti (NOT_IN_CAREER)"
+    },
+    {
+      "shot": "ice-aktarma-hata-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "expectedProblems": [
+        "HTTP 422 /api/v1/careers/190/import",
+        "console: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "PREMIUM + 422 import yanıtı",
+      "expected": "HTTP 422 (fikstür)"
+    },
+    {
+      "shot": "ana-sayfa-ut-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11.5,
+        "minFontText": "ST",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "sbcCards": 4
+    },
+    {
+      "shot": "ana-sayfa-ut-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11.5,
+        "minFontText": "ST",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    }
+  ]
+}

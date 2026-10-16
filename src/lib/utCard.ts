@@ -18,6 +18,8 @@ export interface UtCard {
   price?: number
   untradeable?: boolean
   rarity?: string
+  /** V3-05d-c: EA rareflag (0 sıradan, 1 nadir, >1 özel: TOTW, promo…). */
+  rarityId?: number
   cardType?: 'ICON' | 'HERO' | 'HOF'
   playerId?: number
   /** EA varlık kimliği: aynı oyuncunun tüm versiyonları paylaşır (kart `key`'i versiyona özgüdür). */
@@ -30,6 +32,8 @@ export interface UtCard {
   faceUrl?: string
   faceStats?: number[]
   faceLabels?: string[]
+  faceStatsSource?: string
+  faceStatsApproximate?: boolean
   weakFoot?: number
   skillMoves?: number
 }
@@ -61,6 +65,7 @@ export function fromCapture(card: CaptureCard, source: Exclude<CardSource, 'cata
     price,
     untradeable: card.untradeable,
     rarity: card.rarity,
+    rarityId: card.rarityId,
     cardType: card.cardType,
     playerId: card.playerId,
     assetId: card.assetId,
@@ -89,6 +94,12 @@ export function fromSummary(player: PlayerSummary): UtCard {
     gender: player.gender,
     playerId: player.id,
     faceUrl: player.faceUrl,
+    faceStats: player.faceStats,
+    faceLabels: player.faceLabels,
+    faceStatsSource: player.faceStatsSource,
+    faceStatsApproximate: player.faceStatsApproximate,
+    weakFoot: player.weakFoot,
+    skillMoves: player.skillMoves,
   }
 }
 

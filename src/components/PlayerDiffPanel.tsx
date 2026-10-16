@@ -1,6 +1,6 @@
 import type { ChangeType, PlayerDiff } from '../api/types'
 import { ATTR_LABELS } from '../lib/format'
-import { PLAYSTYLES } from '../lib/playstyles'
+import { playStyleName } from '../lib/playstyles'
 import { Card } from './ui'
 
 const GREEN = 'text-[#1f9d63]'
@@ -45,7 +45,7 @@ export function DeltaMark({ delta }: { delta: number }) {
 function psName(label: string): string {
   const plus = label.endsWith('+')
   const id = plus ? label.slice(0, -1) : label
-  return `${PLAYSTYLES[id]?.name ?? id}${plus ? '+' : ''}`
+  return playStyleName(id, plus ? 2 : 1)
 }
 
 interface Props {

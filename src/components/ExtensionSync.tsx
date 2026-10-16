@@ -18,7 +18,7 @@ export function ExtensionSync({ onCaptures, busy }: { onCaptures: (captures: unk
     mutationFn: async () => {
       const send = chromeSender(extId.trim())
       if (!send) {
-        throw new Error('Bu özellik Chrome ve kurulu FCareer uzantısı gerektirir; uzantı kimliğini gir.')
+        throw new Error('Bu özellik Chrome ve kurulu FC Assist uzantısı gerektirir; uzantı kimliğini gir.')
       }
       saveExtensionId(extId)
       const info = await pingExtension(send)

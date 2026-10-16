@@ -56,6 +56,13 @@ export function describeRequirement(r: SbcRequirement): string {
       return `${op} ${r.value} efsane`
     case 'PLAYER_COUNT':
       return `${op} ${r.value} oyuncu`
+    // V3-05c-c: yakalamada görüldü, anlamı doğrulanmadı (05_SBC_VERI_HATTI §2.3); çözücü zorlamaz.
+    case 'PLAYER_ATTRIBUTE':
+      return `Özellik şartı (doğrulanmadı): ${op} ${r.value ?? ''}`.trim()
+    case 'ACADEMY_SLOTTING':
+      return `Evolution oyuncusu şartı (doğrulanmadı): ${op} ${r.value ?? ''}`.trim()
+    case 'UNKNOWN':
+      return `${r.eaType ?? r.raw?.[0]?.type ?? 'Şart'} ${op} ${r.value ?? ''}`.trim()
     default:
       return `Şart: ${r.raw?.[0]?.type ?? r.kind} ${op} ${r.value ?? ''}`.trim()
   }
@@ -77,6 +84,10 @@ export function findChallengeFormation(label: string | undefined, formations: Fo
     return undefined
   }
   const key = FORMATION_ALIASES[label] ?? label
+  // V3-05d-b: EA ham kodu ("f41212") yalnız tek eşlemeden (eaFormationId) çözülür; tahmin yok, eşlemesi olmayan kod bulunmaz.
+  if (/^f\d+[a-z]?$/.test(key)) {
+    return formations.find((f) => f.eaFormationId === key)
+  }
   return formations.find((f) => f.id === key) ?? formations.find((f) => f.id.startsWith(`${key} `)) ?? formations.find((f) => (f.label ?? '').startsWith(key))
 }
 

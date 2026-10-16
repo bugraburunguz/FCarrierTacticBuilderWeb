@@ -1,8 +1,14 @@
 import { api, request } from './client'
+import type { CaptureRules } from '../lib/har/harCapture'
 import type {
   BehaviorTag,
+  CareerRecommendation,
+  CareerRecommendationRequest,
+  CreditCosts,
   Career,
   CareerPlayer,
+  CareerPlayerContract,
+  CareerPlayerFacets,
   Club,
   Credited,
   Formation,
@@ -13,13 +19,16 @@ import type {
   PlayerDetail,
   PlayerSummary,
   Preset,
+  ReplicaApplyBody,
+  ReplicaApplyResult,
+  ReplicaDetail,
+  ReplicaSummary,
+  UserTactic,
   Recommendation,
   ResolvedTactic,
   Role,
   RosterEvent,
   RosterEventType,
-  ScoutingQuery,
-  ScoutingResult,
   SquadFit,
   Subscription,
   TacticRequest,
@@ -29,7 +38,6 @@ import type {
   TacticRecommendation,
   TeamProfile,
   TeamSummary,
-  TransferTargetsResult,
   SimilarPlayer,
   TacticCodeExport,
   TacticCodeImport,
@@ -46,6 +54,7 @@ import type {
   CareerBackup,
   CareerSnapshot,
   CaptureResult,
+  ContributionResult,
   HistoryPoint,
   PlayerTagKind,
   SeasonRecord,
@@ -77,6 +86,13 @@ export interface PlayerFilters {
   pot_max?: number
   age_min?: number
   age_max?: number
+  /** V3-06a, kariyer havuzu: değer aralığı, kiralık, oyun tarihine göre sözleşme (ay), ulaşılabilirlik kovası, rol sıralaması. */
+  value_min?: number
+  value_max?: number
+  on_loan?: boolean
+  contract_months?: number
+  bucket?: string[]
+  role?: string
   wf_min?: number
   sm_min?: number
   foot?: string
@@ -108,13 +124,20 @@ export const endpoints = {
   login: (email: string, password: string) => api.post<TokenResponse>('/auth/login', { email, password }, false),
   logout: (refreshToken: string) => api.post<void>('/auth/logout', { refreshToken }, false),
   me: () => api.get<Me>('/me'),
+  /** V3-07a: diğer oturumlar kapanır, bu oturum için yeni token'lar döner. */
+  changePassword: (currentPassword: string, newPassword: string) => api.post<TokenResponse>('/me/password', { currentPassword, newPassword }),
   verifyEmail: (token: string) => api.post<void>('/auth/verify-email', { token }, false),
   resendVerification: () => api.post<void>('/me/email/resend'),
   subscribe: () => api.post<Subscription>('/billing/subscribe'),
 
   players: (filters: PlayerFilters) => api.get<PageResponse<PlayerSummary>>('/players', playerQuery(filters)),
+  playerFacets: (careerId: number) => api.get<CareerPlayerFacets>('/players/facets', { career: careerId }),
   player: (id: number, careerId?: number) => api.get<PlayerDetail>(`/players/${id}`, { career: careerId }),
-  playerRoles: (id: number, careerId?: number) => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId }),
+  playerRoles: (id: number, careerId?: number, engine?: 'v1' | 'v3') => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId, engine }),
+  playerContract: (id: number, careerId: number) => api.get<CareerPlayerContract>(`/players/${id}/contract`, { career: careerId }),
+  playerByAsset: (assetId: number) => api.get<PlayerDetail>(`/players/asset/${assetId}`),
+  /** V3-05c-c: ödül kartı adı için toplu assetId → katalog adı (bilinmeyen kimlik yanıtta yok). */
+  playerAssetNames: (assetIds: number[]) => api.get<{ assetId: number; name: string }[]>('/players/assets', { id: assetIds.map(String) }),
   similarPlayers: (id: number, options: { ageMax?: number; potentialMin?: number; limit?: number } = {}) =>
     api.get<SimilarPlayer[]>(`/players/${id}/similar`, { age_max: options.ageMax, pot_min: options.potentialMin, limit: options.limit }),
   development: (id: number, body: { targetRoles?: string[]; careerId?: number } = {}) =>
@@ -138,14 +161,23 @@ export const endpoints = {
   kbObjectives: () => api.get<KbObjectiveGroup[]>('/ut/kb/objectives'),
   kbEvolutions: () => api.get<KbEvolution[]>('/ut/kb/evolutions'),
   kbPromos: () => api.get<KbPromo[]>('/ut/kb/promos'),
-  kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; limit?: number; offset?: number }) => api.get<KbItem[]>('/ut/kb/items', params),
+  /** `resource`: EA kaynak kimlikleri (ör. SBC ödül oyuncuları); yalnız bunlar döner. */
+  kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; resource?: number[]; limit?: number; offset?: number }) =>
+    api.get<KbItem[]>('/ut/kb/items', { ...params, resource: params.resource?.map(String) }),
   kbItem: (id: number) => api.get<{ item: KbItem; versions: KbItem[] }>(`/ut/kb/items/${id}`),
+  /** V3-05d: toplu son gözlenen fiyat (yalnız katkı gözlemi; gözlemi olmayan kimlik yanıtta yok). */
+  kbLatestPrices: (resourceIds: number[], platform = 'CONSOLE') =>
+    api.get<{ resourceId: number; price: number; observedAt: string; lowConfidence: boolean }[]>('/ut/kb/prices', { resource: resourceIds.map(String), platform }),
   kbPrices: (id: number, platform: string, range: string) => api.get<KbPricePoint[]>(`/ut/kb/items/${id}/prices`, { platform, range }),
   eaRoles: () => api.get<EaRoleOption[]>('/tactics/ea-roles'),
   captureLink: (mode: 'PERSONAL' | 'CONTRIB') => request<{ token: string; mode: string; expiresInSeconds: number }>('/ut/capture/link', { method: 'POST', body: {}, query: { mode } }),
   sbcVotes: () => api.get<{ sets: SbcSetVotes[] }>('/ut/sbc/votes'),
   sbcVote: (setId: number, vote: number) => request<SbcSetVotes>(`/ut/sbc/votes/${setId}`, { method: 'PUT', body: { vote } }),
   utCapture: (captures: unknown[]) => api.post<CaptureResult>('/ut/capture', { captures }),
+  /** Yakalama kuralları (uzantı ve HAR ayrıştırıcısının tek kaynağı). */
+  captureRules: () => api.get<Partial<CaptureRules>>('/ut/capture/rules'),
+  /** Bilgi tabanına katkı: uzantının CONTRIB yoluyla aynı uç; web oturumu (JWT) ile — sunucu katkıcı yetkisini ve kişisel uç süzmesini aynen uygular. */
+  contribCapture: (captures: unknown[]) => api.post<ContributionResult>('/ut/contrib/capture', { captures }),
   keyAttributes: () => api.get<{ source: string; positions: Record<string, string[]> }>('/config/key-attributes'),
   clubs: (q: string, options: { league?: number; gender?: number; limit?: number } = {}) =>
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
@@ -156,9 +188,16 @@ export const endpoints = {
   behaviorTags: (pos?: string) => api.get<BehaviorTag[]>('/behavior-tags', { pos }),
   formations: () => api.get<Formation[]>('/formations'),
   presets: (kind?: string) => api.get<Preset[]>('/presets', { kind }),
+  replicas: () => api.get<ReplicaSummary[]>('/replicas'),
+  replica: (id: string) => api.get<ReplicaDetail>(`/replicas/${id}`),
+  replicaLegacyIds: () => api.get<Record<string, string | null>>('/replicas/legacy-ids'),
+  replicaApply: (id: string, body: ReplicaApplyBody) => api.post<ReplicaApplyResult>(`/replicas/${id}/apply`, body),
+  userTactics: (careerId?: number) => api.get<UserTactic[]>('/user-tactics', { careerId }),
+  saveUserTactic: (slot: number, body: { careerId?: number; replicaId: string }) => request<UserTactic>(`/user-tactics/${slot}`, { method: 'PUT', body }),
+  deleteUserTactic: (slot: number, careerId?: number) => request<void>(`/user-tactics/${slot}`, { method: 'DELETE', query: { careerId } }),
   resolveTactic: (tactic: TacticRequest) => api.post<ResolvedTactic>('/tactics/resolve', tactic, false),
 
-  fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[] }) =>
+  fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[]; engineVersion?: 'v1' | 'v3' }) =>
     api.post<FitRoleResult>('/fit/role', body, false),
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
@@ -169,31 +208,15 @@ export const endpoints = {
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number; setup?: SetupBody }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
-  transferTargets: (body: { careerId: number; perPosition?: number; setup?: SetupBody; slots: { position: string; roleId: string; tags?: string[] }[] }) =>
-    api.post<TransferTargetsResult>('/recommend/transfer-targets', body),
-  scoutingSearch: (careerId: number, body: ScoutingQuery) => api.post<ScoutingResult>(`/scouting/${careerId}/search`, body),
   setupCheck: (body: { careerId: number; buildUp: string; depth: number }) => api.post<SetupCheck[]>('/fit/setup-check', body),
   exportTacticCode: (tactic: TacticRequest) => api.post<TacticCodeExport>('/tactics/export-code', tactic, false),
   importTacticCode: (code: string) => api.post<TacticCodeImport>('/tactics/import-code', { code }, false),
-  slotView: (body: {
-    careerId: number
-    scope: 'SQUAD' | 'LEAGUE' | 'MARKET'
-    slot: { roleId: string; position: string; tags?: string[]; leagueId?: number; limit?: number; setup?: SetupBody }
-  }) => api.post<Recommendation>('/recommend/slot-view', body),
-  recommendSlot: (body: {
-    careerId?: number
-    roleId: string
-    position: string
-    tags?: string[]
-    budgetMax?: number
-    setup?: SetupBody
-    currentPlayerId?: number
-    limit?: number
-  }) => api.post<Credited<Recommendation>>('/recommend/slot', body),
+  careerRecommendations: (careerId: number, body: CareerRecommendationRequest) => api.post<Credited<CareerRecommendation>>(`/careers/${careerId}/recommendations`, body),
+  creditCosts: () => api.get<CreditCosts>('/billing/costs'),
 
   careers: () => api.get<Career[]>('/careers'),
-  createCareer: (body: { clubId: number; budgetEur?: number; name?: string }) => api.post<Career>('/careers', body),
-  updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number; spoilerMode?: string; wageBudgetEur?: number; windowEndsOn?: string; challengeId?: string }) =>
+  createCareer: (body: { clubId: number; budgetEur?: number; name?: string; season?: number }) => api.post<Career>('/careers', body),
+  updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number; spoilerMode?: string; wageBudgetEur?: number; windowEndsOn?: string; challengeId?: string; gameDate?: string }) =>
     request<Career>(`/careers/${careerId}`, { method: 'PATCH', body }),
   importCareer: (careerId: number, form: FormData) => request<ImportSummary>(`/careers/${careerId}/import`, { method: 'POST', body: form }),
   syncSquad: (careerId: number, teamId: number) => request<{ players: number }>(`/careers/${careerId}/import/squad`, { method: 'POST', query: { teamId } }),

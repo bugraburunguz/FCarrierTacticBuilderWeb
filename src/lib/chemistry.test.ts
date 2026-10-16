@@ -78,3 +78,14 @@ describe('chemistry', () => {
     expect(Math.max(...squadChemistry(slots).perSlot)).toBe(3)
   })
 })
+
+describe('kulüp adı yedek eşleştirmesi (clubId yokken)', () => {
+  const player = (id: number, gender: number, nationality: string) => ({ id, club: 'Paris SG', league: gender === 0 ? 'Ligue 1' : 'Arkema PL', nationality, positions: ['ST'], gender })
+
+  it('erkek PSG ile kadın PSG kartı adla kulüp kimyası KURMAZ (kadın-erkek bağı yalnız affiliated club ile)', () => {
+    const mixed: ChemSlot[] = [player(1, 0, 'A'), player(2, 0, 'B'), player(3, 1, 'C'), player(4, 1, 'D')].map((c) => ({ position: 'ST', card: c }))
+    const menOnly: ChemSlot[] = [player(1, 0, 'A'), player(2, 0, 'B')].map((c) => ({ position: 'ST', card: c }))
+
+    expect(squadChemistry(mixed).perSlot[0]).toBe(squadChemistry(menOnly).perSlot[0])
+  })
+})

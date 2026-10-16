@@ -8,6 +8,7 @@ import { POSITIONS } from '../lib/format'
 import type { UtCard } from '../lib/utCard'
 import { useUtCapture } from '../state/utCaptureStore'
 import { utCardStore } from '../state/utCardStore'
+import { CardName } from '../components/card/CardName'
 
 type View = 'all' | 'club' | 'storage' | 'duplicate'
 
@@ -145,7 +146,7 @@ export function UtClubPage() {
                   <td className="py-1.5 pr-2 font-medium">
                     <span className="flex items-center gap-2">
                       <PlayerAvatar name={c.name} position={c.positions[0]} size={24} />
-                      {c.name}
+                      <CardName assetId={c.assetId} name={c.name} position={c.positions[0]} rating={c.rating} />
                     </span>
                   </td>
                   <td className="pr-2 text-right font-semibold tabular-nums">{c.rating}</td>

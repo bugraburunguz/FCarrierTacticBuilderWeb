@@ -26,7 +26,7 @@ export function UtEvolutionsPage() {
             return (
               <li key={e.id} className="rounded-md border border-line p-3">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-display text-lg font-bold uppercase leading-tight">{e.name}</h3>
+                  <h3 lang="en" className="font-display text-lg font-bold uppercase leading-tight">{e.name}</h3>
                   {e.status === 'PENDING' && <Pill tone="amber">doğrulanmamış</Pill>}
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">

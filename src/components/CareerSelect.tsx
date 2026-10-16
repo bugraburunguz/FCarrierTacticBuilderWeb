@@ -1,19 +1,23 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
+import { useAuth } from '../auth/AuthContext'
 import { careerStore, useActiveCareerId } from '../state/careerStore'
 import { formatEur } from '../lib/format'
-import { DeleteCareerButton } from './DeleteCareerButton'
 import { Modal } from './Modal'
 import { NewCareerForm } from './NewCareerForm'
 import { Button, Field, Select, Spinner } from './ui'
 
 /** Aktif kariyeri seçtirir; yeni kariyer buradan veri aktarmadan oluşturulabilir. */
 export function CareerSelect() {
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
+  const { authenticated } = useAuth()
+  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
   const activeId = useActiveCareerId()
   const [creating, setCreating] = useState(false)
 
+  if (!authenticated) {
+    return null // oturum yokken /careers istenmez; sayfa kendi giriş çağrısını gösterir
+  }
   if (careers.isLoading) {
     return <Spinner />
   }
@@ -41,7 +45,6 @@ export function CareerSelect() {
       <Button variant={selected ? 'secondary' : 'primary'} onClick={() => setCreating(true)}>
         + Yeni kariyer
       </Button>
-      {selected && <DeleteCareerButton career={selected} />}
       {creating && (
         <Modal wide title="Yeni kariyer" hint="Kulüp seç, bütçeni gir; veri aktarmak şart değil" onClose={() => setCreating(false)}>
           <NewCareerForm onCreated={() => setCreating(false)} />

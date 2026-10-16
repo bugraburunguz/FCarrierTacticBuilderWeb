@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { CaptureCard } from '../api/types'
-import { cardPrice, carryOver, fromCapture, personKey, priceSummary, type UtCard } from './utCard'
+import type { CaptureCard, PlayerSummary } from '../api/types'
+import { cardPrice, carryOver, fromCapture, fromSummary, personKey, priceSummary, type UtCard } from './utCard'
 
 function capture(patch: Partial<CaptureCard>): CaptureCard {
   return { instanceId: 1, assetId: 9, rating: 88, positions: ['ST', 'CF'], teamId: 1, leagueId: 1, nation: 1, untradeable: false, faceLabels: [], faceStats: [], duplicate: false, pile: 'club', ...patch }
@@ -49,5 +49,15 @@ describe('utCard', () => {
     const result = carryOver(oldSlots, { ST: card('striker'), GK: card('keeper'), CAM: card('ten') }, next)
     expect(Object.keys(result).sort()).toEqual(['GK', 'LST'])
     expect(result.LST.name).toBe('striker')
+  })
+})
+
+describe('fromSummary (F10)', () => {
+  it('katalog kartı yüz değerlerini, etiketlerini ve "≈" bayrağını taşır', () => {
+    const card = fromSummary({ id: 7, name: 'Test', overall: 90, positions: ['ST'], valuationEstimated: false, faceStats: [96, 91, 80, 92, 29, 76], faceLabels: ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'], faceStatsSource: 'COMPUTED', faceStatsApproximate: true } as PlayerSummary)
+
+    expect(card.faceStats).toEqual([96, 91, 80, 92, 29, 76])
+    expect(card.faceLabels?.[0]).toBe('PAC')
+    expect(card.faceStatsApproximate).toBe(true)
   })
 })

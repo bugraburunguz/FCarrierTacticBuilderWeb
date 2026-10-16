@@ -4,8 +4,8 @@ import { scoutLink } from '../lib/scout'
 import { computeVerdicts, VERDICT_LABEL, type Verdict } from '../lib/verdicts'
 import { BadgeDot, Card, Pill, ScoreBar } from './ui'
 
-const RULE_TONE: Record<RuleFinding['severity'], 'rose' | 'amber' | 'emerald'> = { RISK: 'rose', WARN: 'amber', PLUS: 'emerald' }
-const RULE_LABEL: Record<RuleFinding['severity'], string> = { RISK: 'Risk', WARN: 'Uyarı', PLUS: 'Artı' }
+const RULE_TONE: Record<RuleFinding['severity'], 'rose' | 'amber' | 'emerald' | 'sky'> = { RISK: 'rose', WARN: 'amber', INFO: 'sky', PLUS: 'emerald' }
+const RULE_LABEL: Record<RuleFinding['severity'], string> = { RISK: 'Risk', WARN: 'Uyarı', INFO: 'Bilgi', PLUS: 'Artı' }
 const VERDICT_TONE: Record<Verdict, 'emerald' | 'sky' | 'amber' | 'rose'> = { KEEP: 'emerald', DEVELOP: 'sky', LOAN: 'amber', SELL: 'rose' }
 
 interface Props {

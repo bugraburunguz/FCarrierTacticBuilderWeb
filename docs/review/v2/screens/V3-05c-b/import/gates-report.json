@@ -1,0 +1,120 @@
+[
+  {
+    "shot": "kapali-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "note": true,
+    "methodTextVisible": false
+  },
+  {
+    "shot": "kapali-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "note": true,
+    "methodTextVisible": false
+  },
+  {
+    "shot": "kapali-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "note": true,
+    "methodTextVisible": false
+  },
+  {
+    "shot": "kapali-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "note": true,
+    "methodTextVisible": false
+  },
+  {
+    "shot": "kapali-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "note": true,
+    "methodTextVisible": false
+  },
+  {
+    "shot": "kapali-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "sent": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist",
+        "aria-hidden: K"
+      ]
+    },
+    "note": true,
+    "methodTextVisible": false
+  }
+]

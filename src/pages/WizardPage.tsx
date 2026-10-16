@@ -108,7 +108,7 @@ export function WizardPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-semibold">{r.preset.name}</p>
-                      <p className="text-xs text-muted">{r.preset.formation}{r.preset.kind === 'REPLICA' ? ' · replika' : r.preset.kind === 'PERSONAL' ? ' · kişisel' : ''}</p>
+                      <p className="text-xs text-muted">{r.preset.formation}{r.preset.kind === 'PERSONAL' ? ' · kişisel' : ''}</p>
                     </div>
                     <span className="text-xl font-bold tabular-nums" aria-label={`Uyum %${r.score}`}>%{r.score}</span>
                   </div>

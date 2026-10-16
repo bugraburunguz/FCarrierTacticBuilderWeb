@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
 import { errorMessage } from '../lib/errorMessage'
+import { toneOf } from '../lib/fitTone'
 import type { WeaponState } from '../api/types'
 
 const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(' ')
@@ -38,7 +39,7 @@ export function Button({ variant = 'primary', className, ...props }: ButtonHTMLA
   const styles: Record<ButtonVariant, string> = {
     primary: 'bg-accent-bg text-on-accent hover:opacity-90 disabled:opacity-40',
     secondary: 'border border-line bg-surface text-ink hover:bg-surface-2 disabled:opacity-40',
-    danger: 'bg-danger text-surface hover:opacity-90 disabled:opacity-40',
+    danger: 'bg-danger text-on-accent hover:opacity-90 disabled:opacity-40',
     ghost: 'text-muted hover:bg-surface-2 hover:text-ink disabled:opacity-40',
   }
   return (
@@ -114,15 +115,16 @@ const DOT = {
   GREEN: { label: 'Uygun', color: '#2fbf71', shape: 'M5 1 A4 4 0 1 1 4.99 1 Z' },
   YELLOW: { label: 'Zayıf yön var', color: '#e6b325', shape: 'M5 1 L9 9 L1 9 Z' },
   RED: { label: 'Rolü oynayamaz', color: '#e5484d', shape: 'M1.5 1.5 H8.5 V8.5 H1.5 Z' },
+  NEUTRAL: { label: 'Seviyesinde', color: 'none', shape: 'M1.5 5 H8.5' },
 } as const
 
 /** Durum noktası: renk + şekil (daire / üçgen / kare) + erişilebilir ad; emoji değil. */
-export function BadgeDot({ state }: { state: WeaponState }) {
-  const dot = DOT[state]
+export function BadgeDot({ state }: { state: WeaponState | null | undefined }) {
+  const dot = DOT[toneOf(state)]
   return (
     <svg role="img" aria-label={dot.label} width="12" height="12" viewBox="0 0 10 10" className="inline-block align-[-1px]">
       <title>{dot.label}</title>
-      <path d={dot.shape} fill={dot.color} />
+      <path d={dot.shape} fill={dot.color} stroke={dot.color === 'none' ? 'currentColor' : undefined} strokeWidth={dot.color === 'none' ? 1.5 : undefined} />
     </svg>
   )
 }
@@ -177,7 +179,8 @@ export function HelpPopover({ children, label = 'Yardım' }: { children: ReactNo
   return (
     <details className="group relative inline-block align-middle">
       <summary aria-label={label} className="flex h-5 w-5 cursor-pointer list-none items-center justify-center rounded-full border border-line text-xs font-bold text-muted hover:text-ink [&::-webkit-details-marker]:hidden">?</summary>
-      <div role="note" className="absolute left-0 top-6 z-30 w-64 rounded-md border border-line bg-surface p-3 text-xs font-normal normal-case leading-snug tracking-normal text-ink">
+      {/* Dar ekranda sağ kenara yakın "?" paneli sayfayı yatay taşırıyordu: <640px sabit, kenarlardan 16px, tetikleyicinin hemen altında (top-auto = akıştaki yeri). */}
+      <div role="note" className="absolute left-0 top-6 z-30 w-64 max-sm:fixed max-sm:inset-x-4 max-sm:top-auto max-sm:w-auto rounded-md border border-line bg-surface p-3 text-xs font-normal normal-case leading-snug tracking-normal text-ink">
         {children}
       </div>
     </details>

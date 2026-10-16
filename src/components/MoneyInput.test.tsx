@@ -50,6 +50,19 @@ describe('MoneyInput', () => {
     expect(screen.getByLabelText('Birim')).toHaveValue('K')
   })
 
+  it('değer yokken alan boş, placeholder "0" değil (ENG-02: sıfır yazılmaz); boş bırakılınca tutar yok döner', async () => {
+    const user = userEvent.setup()
+    const commit = vi.fn()
+    render(<MoneyInput value={undefined} onChange={() => undefined} onCommit={commit} ariaLabel="Pazarlık tavanı" />)
+    const input = screen.getByLabelText('Pazarlık tavanı')
+    expect(input).toHaveValue('')
+    expect(input.getAttribute('placeholder')).not.toMatch(/^0$/)
+    expect(input.getAttribute('placeholder')).toBe('Örn. 2,5')
+    await user.click(input)
+    await user.tab()
+    expect(commit).toHaveBeenCalledWith(undefined)
+  })
+
   it('yazarken gelen prop güncellemesi girilen metni ezmez', async () => {
     const user = userEvent.setup()
     const { rerender } = render(<MoneyInput value={5_000_000} onChange={() => undefined} />)

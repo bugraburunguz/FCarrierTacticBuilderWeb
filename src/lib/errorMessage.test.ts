@@ -13,7 +13,7 @@ describe('errorMessage (WEB-BUG-05)', () => {
   })
 
   it('düz Error (uzantı, worker) kendi mesajını gösterir', () => {
-    expect(errorMessage(new Error('Bu özellik Chrome ve kurulu FCareer uzantısı gerektirir.')).message).toContain('uzantısı gerektirir')
+    expect(errorMessage(new Error('Bu özellik Chrome ve kurulu FC Assist uzantısı gerektirir.')).message).toContain('uzantısı gerektirir')
   })
 
   it('JSON hatası, string ve bilinmeyen değer', () => {

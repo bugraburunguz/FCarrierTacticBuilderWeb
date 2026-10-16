@@ -11,6 +11,17 @@ export interface SbcCandidate extends ChemCard {
   rarity?: string
   /** Gerçek oyuncu kimliği (katalog id ya da kart varlık id): aynı oyuncu bir kadroda iki kez seçilemez (BUG-02). Yoksa `id` kullanılır. */
   playerKey?: string
+  /** V3-05d: bilgi tabanında gözlenen fiyat (bütçe şartı yalnız bunu toplar). */
+  knownPrice?: number
+  /** V3-05d-c: EA assetId (kart adı katalogdan). */
+  assetId?: number
+}
+
+/** V3-05d: arama seçenekleri. deadlineMs aşılınca ışın daraltılır (yanıt süresi sınırlı); penaltyScale verilirse şart cezası bu katsayıyla (maliyet yalnız eşitlik bozucu). */
+export interface SolveOptions {
+  deadlineMs?: number
+  penaltyScale?: number
+  now?: () => number
 }
 
 export const playerKeyOf = (card: SbcCandidate): string => card.playerKey ?? String(card.id)
@@ -40,6 +51,8 @@ export interface SbcConstraints {
   levelCounts?: { level: 1 | 2 | 3; min: number }[]
   /** Verilen kulüp/lig/ülkelerden herhangi birinden en az N oyuncu (ör. "Liverpool veya Manchester City'den en az 2"). */
   fromAny?: { kind: 'club' | 'league' | 'nationality'; names: string[]; min: number }[]
+  /** V3-05d: alınacak kartların bilinen fiyat toplamı üst sınırı (coin). */
+  budget?: number
 }
 
 export const QUALITY_LABELS = { 1: 'Bronz', 2: 'Gümüş', 3: 'Altın' } as const
@@ -104,6 +117,12 @@ export function extraIssues(cards: SbcCandidate[], constraints: SbcConstraints):
       issues.push({ text: `En az ${r.min} ${QUALITY_LABELS[r.level]} (ya da üstü) oyuncu gerekli`, missing: r.min - have })
     }
   })
+  if (constraints.budget !== undefined) {
+    const spent = cards.filter((c) => c.source === 'market').reduce((sum, c) => sum + (c.knownPrice ?? 0), 0)
+    if (spent > constraints.budget) {
+      issues.push({ text: `Bütçe aşıldı (${spent.toLocaleString('tr-TR')} > ${constraints.budget.toLocaleString('tr-TR')})`, missing: Math.ceil((spent - constraints.budget) / 1000) })
+    }
+  }
   constraints.fromAny?.forEach((r) => {
     const names = new Set(r.names)
     const have = cards.filter((c) => {
@@ -124,9 +143,14 @@ export interface SbcSolution {
   chemistry: number
   cost: number
   violations: string[]
+  /** V3-05d: arama süresi ve zaman bütçesi aşıldı mı. */
+  elapsedMs?: number
+  timedOut?: boolean
 }
 
 const DEFAULT_BEAM = 300
+/** Zaman bütçesi aşılınca kalan adımların ışın genişliği. */
+const DEADLINE_BEAM = 24
 const CHEM_WEIGHT = 3
 const RATING_WEIGHT = 40
 const MIN_PLAYERS = 11
@@ -260,17 +284,25 @@ export function prunePool(slots: SbcSlot[], pool: SbcCandidate[], constraints: S
 }
 
 /** Beam search: slotları sırayla doldurur; maliyet (fiyat ya da yoksa rating toplamı) en düşük, kısıtları sağlayan seti arar. Yaklaşıktır; havuz önce budanır. */
-export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constraints: SbcConstraints, beam = DEFAULT_BEAM): SbcSolution {
+export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constraints: SbcConstraints, beam = DEFAULT_BEAM, options: SolveOptions = {}): SbcSolution {
+  const now = options.now ?? (() => (typeof performance !== 'undefined' ? performance.now() : Date.now()))
+  const started = now()
   const eligible = prunePool(slots, pool, constraints)
   const byPosition = new Map<string, SbcCandidate[]>()
   new Set(slots.map((s) => s.position)).forEach((position) => byPosition.set(position, eligible.filter((c) => c.positions.includes(position))))
   const order = slots.map((s, index) => ({ slot: s, index })).sort((a, b) => (byPosition.get(a.slot.position)?.length ?? 0) - (byPosition.get(b.slot.position)?.length ?? 0))
   // Ceza ağırlıkları maliyet ölçeğine göre büyür: rating bazlı maliyette ~1, coin bazlı maliyette şartlar ucuz-ama-sağlamayan çözümlere yenilmez.
-  const costScale = Math.max(1, Math.max(0, ...eligible.map(cardCost)) / PENALTY_COST_REFERENCE)
+  const costScale = options.penaltyScale ?? Math.max(1, Math.max(0, ...eligible.map(cardCost)) / PENALTY_COST_REFERENCE)
   // Büyük havuzda daha dar ışın: yanıt süresi sınırlı kalır, budama zaten çeşitliliği korur.
-  const width = eligible.length > 400 ? Math.min(beam, 160) : beam
+  let width = eligible.length > 400 ? Math.min(beam, 160) : beam
+  let timedOut = false
   let states: State[] = [{ picks: [], used: [], cost: 0, score: 0 }]
   order.forEach(({ slot }, step) => {
+    // Zaman bütçesi: kalan adımların süresi bitmeden ışın daraltılır (çözüm yine 11 kartla tamamlanır).
+    if (options.deadlineMs !== undefined && !timedOut && now() - started > options.deadlineMs * (step / order.length)) {
+      timedOut = true
+      width = Math.min(width, DEADLINE_BEAM)
+    }
     const next: State[] = []
     const candidates = byPosition.get(slot.position) ?? []
     const stepSlots = order.slice(0, step + 1).map((o) => o.slot)
@@ -300,10 +332,11 @@ export function solveTraditional(slots: SbcSlot[], pool: SbcCandidate[], constra
   })
   const feasible = evaluated.filter((e) => e.violations.length === 0).sort((a, b) => a.state.cost - b.state.cost)[0]
   const best = feasible ?? evaluated.sort((a, b) => a.violations.length - b.violations.length || a.state.cost - b.state.cost)[0]
+  const elapsedMs = Math.round(now() - started)
   if (!best) {
-    return { feasible: false, picks: slots.map(() => undefined), teamRating: 0, chemistry: 0, cost: 0, violations: ['Uygun aday bulunamadı'] }
+    return { feasible: false, picks: slots.map(() => undefined), teamRating: 0, chemistry: 0, cost: 0, violations: ['Uygun aday bulunamadı'], elapsedMs, timedOut }
   }
-  return { feasible: Boolean(feasible), picks: best.picks, teamRating: best.teamRating, chemistry: best.chemistry, cost: best.state.cost, violations: best.violations }
+  return { feasible: Boolean(feasible), picks: best.picks, teamRating: best.teamRating, chemistry: best.chemistry, cost: best.state.cost, violations: best.violations, elapsedMs, timedOut }
 }
 
 function penalty(picks: SbcCandidate[], slots: SbcSlot[], constraints: SbcConstraints): number {

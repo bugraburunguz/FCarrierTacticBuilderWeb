@@ -111,7 +111,7 @@ export function AutoFitPanel({ formations, presets, setup }: Props) {
           <Field label="Anlayışı sabitle (isteğe bağlı)">
             <Select value={lockPreset} onChange={(e) => setLockPreset(e.target.value)}>
               <option value="">Serbest — en iyisini bul</option>
-              {presets.filter((p) => p.kind !== 'REPLICA').map((p) => (
+              {presets.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
                 </option>

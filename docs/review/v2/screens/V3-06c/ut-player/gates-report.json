@@ -1,0 +1,1082 @@
+[
+  {
+    "shot": "statlar-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "sticky": {
+      "found": true,
+      "top": 46,
+      "height": 54,
+      "position": "sticky",
+      "alpha": 1,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 2,
+      "ok": true
+    },
+    "band": {
+      "bandBottom": 100,
+      "surfaces": [
+        {
+          "el": "header",
+          "top": 0,
+          "bottom": 48,
+          "alpha": 1
+        },
+        {
+          "el": "div",
+          "top": 46,
+          "bottom": 100,
+          "alpha": 1
+        }
+      ],
+      "leaks": [],
+      "leakCount": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true,
+    "roleNamesClipped": []
+  },
+  {
+    "shot": "fiyat-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
+  },
+  {
+    "shot": "alinis-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
+  },
+  {
+    "shot": "uzun-meta-dark-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "CEN",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 630,
+    "cardWidth": 180,
+    "tabTopOk": true,
+    "meta": {
+      "club": "KS Wieczysta Kraków",
+      "league": "SSE Airtricity Men's Premier Division",
+      "nationality": "Central African Republic",
+      "positions": [
+        "ST",
+        "LW",
+        "RW"
+      ]
+    }
+  },
+  {
+    "shot": "statlar-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "sticky": {
+      "found": true,
+      "top": 46,
+      "height": 54,
+      "position": "sticky",
+      "alpha": 1,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 2,
+      "ok": true
+    },
+    "band": {
+      "bandBottom": 100,
+      "surfaces": [
+        {
+          "el": "header",
+          "top": 0,
+          "bottom": 48,
+          "alpha": 1
+        },
+        {
+          "el": "div",
+          "top": 46,
+          "bottom": 100,
+          "alpha": 1
+        }
+      ],
+      "leaks": [],
+      "leakCount": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true,
+    "roleNamesClipped": []
+  },
+  {
+    "shot": "fiyat-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
+  },
+  {
+    "shot": "alinis-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 594,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "tabTopOk": true,
+    "cardWidthOk": true
+  },
+  {
+    "shot": "uzun-meta-light-375",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "CEN",
+      "below": [],
+      "belowCount": 0,
+      "excluded": []
+    },
+    "tabTop": 630,
+    "cardWidth": 180,
+    "tabTopOk": true,
+    "meta": {
+      "club": "KS Wieczysta Kraków",
+      "league": "SSE Airtricity Men's Premier Division",
+      "nationality": "Central African Republic",
+      "positions": [
+        "ST",
+        "LW",
+        "RW"
+      ]
+    }
+  },
+  {
+    "shot": "statlar-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "sticky": {
+      "found": true,
+      "top": 46,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 1,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 4,
+      "ok": true
+    },
+    "band": {
+      "bandBottom": 92,
+      "surfaces": [
+        {
+          "el": "header",
+          "top": 0,
+          "bottom": 48,
+          "alpha": 1
+        },
+        {
+          "el": "div",
+          "top": 46,
+          "bottom": 92,
+          "alpha": 1
+        }
+      ],
+      "leaks": [],
+      "leakCount": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true,
+    "roleNamesClipped": []
+  },
+  {
+    "shot": "fiyat-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "alinis-dark-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "statlar-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true,
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "sticky": {
+      "found": true,
+      "top": 46,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 1,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 4,
+      "ok": true
+    },
+    "band": {
+      "bandBottom": 92,
+      "surfaces": [
+        {
+          "el": "header",
+          "top": 0,
+          "bottom": 48,
+          "alpha": 1
+        },
+        {
+          "el": "div",
+          "top": 46,
+          "bottom": 92,
+          "alpha": 1
+        }
+      ],
+      "leaks": [],
+      "leakCount": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true,
+    "roleNamesClipped": []
+  },
+  {
+    "shot": "fiyat-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "alinis-light-768",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 580,
+    "cardWidth": 180,
+    "card": {
+      "cards": 1,
+      "minFontPx": 11,
+      "minFontText": "FRA",
+      "ovrMinPx": 46,
+      "surnamesVisible": 1
+    },
+    "cardWidthOk": true
+  },
+  {
+    "shot": "statlar-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    },
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "sticky": {
+      "found": true,
+      "top": 466,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 1,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    },
+    "band": {
+      "bandBottom": 48,
+      "surfaces": [
+        {
+          "el": "header",
+          "top": 0,
+          "bottom": 48,
+          "alpha": 1
+        }
+      ],
+      "leaks": [],
+      "leakCount": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "UYGUN",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    },
+    "roleNamesClipped": []
+  },
+  {
+    "shot": "fiyat-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    }
+  },
+  {
+    "shot": "alinis-dark-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    }
+  },
+  {
+    "shot": "statlar-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    },
+    "labels": {
+      "labels": 29,
+      "clipped": [],
+      "longest": [
+        {
+          "label": "Savunma farkındalığı",
+          "present": true,
+          "lines": 2
+        },
+        {
+          "label": "Kayarak müdahale",
+          "present": true,
+          "lines": 1
+        },
+        {
+          "label": "Ayakta müdahale",
+          "present": true,
+          "lines": 1
+        }
+      ]
+    }
+  },
+  {
+    "shot": "statlar-kaydirilmis-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "sticky": {
+      "found": true,
+      "top": 466,
+      "height": 46,
+      "position": "sticky",
+      "alpha": 1,
+      "pointsChecked": 15,
+      "notTopmost": 0,
+      "contentUnderneath": 0,
+      "ok": true
+    },
+    "band": {
+      "bandBottom": 48,
+      "surfaces": [
+        {
+          "el": "header",
+          "top": 0,
+          "bottom": 48,
+          "alpha": 1
+        }
+      ],
+      "leaks": [],
+      "leakCount": 0,
+      "ok": true
+    }
+  },
+  {
+    "shot": "roller-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 11,
+      "minFontText": "UYGUN",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    },
+    "roleNamesClipped": []
+  },
+  {
+    "shot": "fiyat-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    }
+  },
+  {
+    "shot": "alinis-light-1280",
+    "overflow": false,
+    "axeSeriousCritical": 0,
+    "axeAll": [],
+    "problems": [],
+    "text": {
+      "minFontPx": 12,
+      "minFontText": "Kariyer",
+      "below": [],
+      "belowCount": 0,
+      "excluded": [
+        "aria-hidden: FC",
+        "aria-hidden: Assist"
+      ]
+    },
+    "tabTop": 204,
+    "cardWidth": 280,
+    "card": {
+      "cards": 1,
+      "minFontPx": 12.4,
+      "minFontText": "PAC",
+      "ovrMinPx": 71.6,
+      "surnamesVisible": 1
+    }
+  }
+]

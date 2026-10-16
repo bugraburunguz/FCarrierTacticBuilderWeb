@@ -1,0 +1,114 @@
+/* Cam yüzeyler, aurora ve grain (docs/review/v2/11 §2, §4, §7). Yalnız `data-ui="v3"` iken etkin. */
+
+/* Sabit üst başlığın yüksekliği: başlık ve sayfa içi yapışkanlar (filtre çubuğu, şerit, yan panel, tablo başlığı) bunu kullanır. */
+:root { --header-h: 3rem; }
+
+/* Genel kurallar katmansız kalır: index.css'teki katmansız v2 `body` kuralını (özgüllükle) yenmeleri gerekir. */
+:root[data-ui="v3"] body {
+  background: var(--bg-base);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+:root[data-ui="v3"] #root { position: relative; z-index: 1; }
+
+/* Katman 1-2: aurora lekeleri + grain; tek sabit div, animasyonsuz */
+.v3-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 60vmax at 12% 8%, var(--aurora-1), transparent 60%),
+    radial-gradient(55vmax 55vmax at 88% 18%, var(--aurora-2), transparent 62%),
+    radial-gradient(70vmax 70vmax at 55% 105%, var(--aurora-3), transparent 62%);
+  opacity: var(--aurora-opacity);
+}
+.v3-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+:root:not([data-ui="v3"]) .v3-aurora, :root:not([data-ui="v3"]) .v3-grain { display: none; }
+
+/*
+ * Cam bileşen sınıfları `@layer components` içinde (V3-05b-c). Katmansız CSS, özgüllükten bağımsız her katmanlı kuralı yener;
+ * bu yüzden `.glass { position: relative }` Tailwind'in `sticky` utility'sini eziyordu (başlık ve sol menü yapışmıyordu).
+ * `:where(.glass)` yalnız özgüllüğü sıfırlar ama katmansız kalır ve yine kazanır; katman ise utility'lerin
+ * (`sticky`, `rounded-none`, `hover:bg-…`) kazanmasını sağlar. Sıra (theme, base, components, utilities)
+ * index.css'teki `@import "tailwindcss"` ile bu dosyadan önce kurulur.
+ */
+@layer components {
+  .glass {
+    background: var(--glass-1);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(var(--glass-blur-1)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur-1)) saturate(var(--glass-saturate));
+    box-shadow: var(--glass-shadow);
+    position: relative;
+  }
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--glass-highlight), transparent 28%);
+    opacity: 0.35;
+    mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
+    mask-composite: exclude;
+    padding: 1px;
+  }
+  .glass-2 {
+    background: var(--glass-2);
+    backdrop-filter: blur(var(--glass-blur-2)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur-2)) saturate(var(--glass-saturate));
+    border-radius: var(--radius-xl);
+  }
+  /* Panel içi alt bölümler: blur yok */
+  .glass-3 {
+    background: var(--glass-3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+  }
+  /* Yapışkan yüzey (Q5): içerik altından kayarken görünmez. Mobil sheet rengi (--sheet-bg, alfa 0,97) opak sayfa zemininin (--bg-base)
+     üstüne boyanır: görünüm aynı, sonuç tam opak (0,97'de koyu zeminde beyaz kalın yazı %3 sızarak seçilebiliyordu). .glass/.glass-3'ten sonra gelir. */
+  .glass-sticky {
+    background: linear-gradient(var(--sheet-bg, var(--glass-1)), var(--sheet-bg, var(--glass-1))), var(--bg-base);
+  }
+
+  /* Tablonun sabit ilk sütunları (OVR, Oyuncu) yalnız mobilde: yatay kaydırmada yapışkan ve opak. ≥820px'te yatay kaydırma yok;
+     sütun akışta kalır ve zemin almaz (satır tek tonlu). Yatay ofset hücrede `left-*` ile verilir. */
+  @media (max-width: 819px) {
+    .table-sticky-col {
+      position: sticky;
+      z-index: 10;
+      background: linear-gradient(var(--sheet-bg, var(--glass-1)), var(--sheet-bg, var(--glass-1))), var(--bg-base);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    .glass, .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  }
+  :root[data-ui="v3"][data-transparency="reduced"] .glass,
+  :root[data-ui="v3"][data-transparency="reduced"] .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+}
+
+/* Hareket: v3'te animasyon yalnız transform/opacity, ≤240ms; azaltılmış harekette hiç (11 §3.4, CLAUDE.md) */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-ui="v3"] *, :root[data-ui="v3"] *::before, :root[data-ui="v3"] *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Saha (11 §6 Pitch): cam panel içinde yarı saydam şeritli zemin; blur yok */
+:root[data-ui="v3"] .pitch-field {
+  background: transparent;
+  border-color: var(--glass-border);
+  border-radius: var(--radius-md);
+}

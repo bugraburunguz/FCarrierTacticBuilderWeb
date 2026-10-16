@@ -1,0 +1,2409 @@
+[
+ {
+  "id": "3-1-4-2",
+  "label": "3-1-4-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "3-4-1-2",
+  "label": "3-4-1-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "3-4-2-1",
+  "label": "3-4-2-1",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LAM",
+    "position": "CAM",
+    "x": 30,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "RAM",
+    "position": "CAM",
+    "x": 70,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "3-4-3",
+  "label": "3-4-3",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "3-5-2",
+  "label": "3-5-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-1-2-1-2",
+  "label": "4-1-2-1-2 (dar elmas)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-1-2-1-2 (geniş)",
+  "label": "4-1-2-1-2 (geniş: LM/RM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-1-3-2",
+  "label": "4-1-3-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-1-4-1",
+  "label": "4-1-4-1",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-2-2-2",
+  "label": "4-2-2-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LAM",
+    "position": "CAM",
+    "x": 30,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "RAM",
+    "position": "CAM",
+    "x": 70,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-2-3-1",
+  "label": "4-2-3-1 (LAM-CAM-RAM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LAM",
+    "position": "CAM",
+    "x": 30,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "RAM",
+    "position": "CAM",
+    "x": 70,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-2-3-1 (2)",
+  "label": "4-2-3-1 (2) (LM-CAM-RM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-2-4",
+  "label": "4-2-4",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-3-1-2",
+  "label": "4-3-1-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-3-2-1",
+  "label": "4-3-2-1",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LAM",
+    "position": "CAM",
+    "x": 30,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "RAM",
+    "position": "CAM",
+    "x": 70,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-3-3",
+  "label": "4-3-3 (1 CDM + 2 CM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "4-3-3 (3 CM)",
+  "label": "4-3-3 (3 CM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "4-3-3 (2 CDM)",
+  "label": "4-3-3 (2 CDM + CM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "4-3-3 (CAM)",
+  "label": "4-3-3 (2 CM + CAM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "4-4-2",
+  "label": "4-4-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-4-2 (2 CDM)",
+  "label": "4-4-2 (2 CDM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-5-1",
+  "label": "4-5-1 (2) (3 CM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "5-2-1-2",
+  "label": "5-2-1-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 8,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 92,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "5-2-3",
+  "label": "5-2-3",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 8,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 92,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "5-3-2",
+  "label": "5-3-2",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 8,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 92,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "CDM",
+    "position": "CDM",
+    "x": 50,
+    "y": 62,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "LST",
+    "position": "ST",
+    "x": 38,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RST",
+    "position": "ST",
+    "x": 62,
+    "y": 16,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "5-4-1",
+  "label": "5-4-1",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 8,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 28,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "CB",
+    "position": "CB",
+    "x": 50,
+    "y": 82,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 72,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 92,
+    "y": 66,
+    "defaultRole": "wingback_balanced"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-2-1-3",
+  "label": "4-2-1-3",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LDM",
+    "position": "CDM",
+    "x": 38,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "RDM",
+    "position": "CDM",
+    "x": 62,
+    "y": 60,
+    "defaultRole": "holding_defend"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 38,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "LW",
+    "position": "LW",
+    "x": 15,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   },
+   {
+    "slotId": "RW",
+    "position": "RW",
+    "x": 85,
+    "y": 25,
+    "defaultRole": "winger_balanced"
+   }
+  ]
+ },
+ {
+  "id": "4-4-1-1",
+  "label": "4-4-1-1 (2)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LCM",
+    "position": "CM",
+    "x": 32,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RCM",
+    "position": "CM",
+    "x": 68,
+    "y": 50,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CAM",
+    "position": "CAM",
+    "x": 50,
+    "y": 32,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ },
+ {
+  "id": "4-5-1 (CAM)",
+  "label": "4-5-1 (LM-CM-RM + 2 CAM)",
+  "slots": [
+   {
+    "slotId": "GK",
+    "position": "GK",
+    "x": 50,
+    "y": 95,
+    "defaultRole": "goalkeeper_defend"
+   },
+   {
+    "slotId": "LB",
+    "position": "LB",
+    "x": 12,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LCB",
+    "position": "CB",
+    "x": 37,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RCB",
+    "position": "CB",
+    "x": 63,
+    "y": 80,
+    "defaultRole": "defender_defend"
+   },
+   {
+    "slotId": "RB",
+    "position": "RB",
+    "x": 88,
+    "y": 75,
+    "defaultRole": "fullback_balanced"
+   },
+   {
+    "slotId": "LM",
+    "position": "LM",
+    "x": 10,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "CM",
+    "position": "CM",
+    "x": 50,
+    "y": 52,
+    "defaultRole": "box_to_box_balanced"
+   },
+   {
+    "slotId": "RM",
+    "position": "RM",
+    "x": 90,
+    "y": 45,
+    "defaultRole": "winger_balanced"
+   },
+   {
+    "slotId": "LAM",
+    "position": "CAM",
+    "x": 30,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "RAM",
+    "position": "CAM",
+    "x": 70,
+    "y": 34,
+    "defaultRole": "playmaker_balanced"
+   },
+   {
+    "slotId": "ST",
+    "position": "ST",
+    "x": 50,
+    "y": 14,
+    "defaultRole": "advanced_forward_attack"
+   }
+  ]
+ }
+]

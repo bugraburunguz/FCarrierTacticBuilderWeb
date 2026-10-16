@@ -3,7 +3,7 @@ import type { SbcChallenge } from '../api/types'
 import { KbSbcList } from '../components/KbSbcList'
 import { StreamlinedSolver } from '../components/StreamlinedSolver'
 import { SbcVote, useSbcVotes } from '../components/SbcVote'
-import { describeRequirement } from '../lib/sbcChallenge'
+import { RequirementItem } from '../components/RequirementItem'
 import { Card, Pill } from '../components/ui'
 import { isBeforeDailyRefresh } from '../lib/coinPrice'
 import { useUtCapture } from '../state/utCaptureStore'
@@ -36,7 +36,7 @@ function ChallengeList({ challenges }: { challenges: SbcChallenge[] }) {
             </div>
             <ul className="mt-1 flex flex-wrap gap-1">
               {c.requirements.map((r, i) => (
-                <li key={i} className="rounded border border-line bg-surface-2 px-1.5 py-0.5">{describeRequirement(r)}</li>
+                <RequirementItem key={i} requirement={r} />
               ))}
             </ul>
           </li>

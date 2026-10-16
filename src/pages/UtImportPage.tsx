@@ -5,6 +5,10 @@ import { endpoints } from '../api/endpoints'
 import type { CaptureResult } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import { ExtensionSync } from '../components/ExtensionSync'
+import { CaptureFileImport } from '../features/import/CaptureFileImport'
+import { HarImport } from '../features/import/HarImport'
+import { CaptureOnly } from '../components/CaptureOnly'
+import { extensionCaptureEnabled, harImportEnabled } from '../lib/features'
 import { Button, Card, EmptyState, ErrorBox, Pill } from '../components/ui'
 import { toPlannerObjectives, toSbcPool } from '../lib/capture'
 import { objectiveStore } from '../state/objectiveStore'
@@ -18,18 +22,6 @@ import { DEFAULT_UT_SETUP, utSquadStore } from '../state/utSquadStore'
 
 const TOP_CARDS = 25
 const TOP_PRICES = 15
-
-function parseCaptures(text: string): unknown[] {
-  const parsed = JSON.parse(text) as unknown
-  if (Array.isArray(parsed)) {
-    return parsed
-  }
-  const captures = (parsed as { captures?: unknown }).captures
-  if (Array.isArray(captures)) {
-    return captures
-  }
-  throw new Error('Dosya bir yakalama listesi değil.')
-}
 
 function toLibrary(result: CaptureResult): UtCard[] {
   const own = result.cards.map((c) => fromCapture(c, 'club', cardPrice(c)))
@@ -45,10 +37,9 @@ export function UtImportPage() {
   const { authenticated } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [fileError, setFileError] = useState<string>()
   const [notice, setNotice] = useState<string>()
   const upload = useMutation({
-    mutationFn: async (source: File | unknown[]) => endpoints.utCapture(Array.isArray(source) ? source : parseCaptures(await source.text())),
+    mutationFn: (captures: unknown[]) => endpoints.utCapture(captures),
     onSuccess: async (data) => {
       const saved = utCardStore.set(mergeCards(utCardStore.get()?.cards, toLibrary(data)))
       utCaptureStore.set(data)
@@ -67,11 +58,15 @@ export function UtImportPage() {
       }
       setNotice((saved ? 'Kulüp kartların ve gördüğün market ilanları kadro kurucuda kullanılabilir.' : 'Kartlar tarayıcıda saklanamadı (alan dolu).') + placed)
     },
-    onError: (e) => setFileError(e instanceof SyntaxError ? 'Dosya geçerli bir JSON değil.' : undefined),
   })
   const result = upload.data
   const modes = useMemo(() => [...new Set((result?.objectives ?? []).map((g) => g.gameMode).filter(Boolean))] as string[], [result])
   const [mode, setMode] = useState('CLUB')
+
+  // V3-06a: uzantı senkronu + yakalama dosyası VITE_EXTENSION_CAPTURE ile (varsayılan açık); HAR bölümü VITE_HAR_IMPORT ile (varsayılan kapalı).
+  if (!extensionCaptureEnabled()) {
+    return <CaptureOnly title="Kulüp içe aktar">{null}</CaptureOnly>
+  }
 
   if (!authenticated) {
     return <Card><EmptyState>Yakalama dosyasını işlemek için giriş yapmalısın.</EmptyState></Card>
@@ -79,29 +74,12 @@ export function UtImportPage() {
 
   return (
     <div className="space-y-4">
-      <ExtensionSync busy={upload.isPending} onCaptures={(captures) => { setFileError(undefined); setNotice(undefined); upload.mutate(captures) }} />
-      <Card title="Dosyadan içe aktar (yedek yol)">
-        <p className="mb-3 text-sm text-muted">
-          Extension'ın dışa aktardığı <span className="font-mono">fcareer-captures.json</span> dosyasını yükle. Sunucu yalnızca kulüp, kadro, piyasa, objective, SBC, Evo ve kaynak (config) yanıtlarını işler; oturum ve hesap uçlarını yoksayar. Kartlar, SBC setleri, Evo slotları ve aktif kadro tarayıcında saklanır; sunucuya kaydedilmez.
-        </p>
-        <input
-          type="file"
-          accept="application/json,.json"
-          aria-label="Yakalama dosyası"
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (file) {
-              setFileError(undefined)
-              setNotice(undefined)
-              upload.mutate(file)
-            }
-          }}
-        />
-        {upload.isPending && <p className="mt-2 text-sm text-muted">İşleniyor…</p>}
-        {fileError && <p role="alert" className="mt-2 text-sm text-danger">{fileError}</p>}
-        {!fileError && <ErrorBox error={upload.error} />}
-        <p className="mt-2 text-xs text-muted">Dosya hesap bilgisi ve coin bakiyen gibi hassas veri içerebilir; paylaşma, işin bitince sil.</p>
-      </Card>
+      {harImportEnabled() && <HarImport busy={upload.isPending} onPersonal={(captures) => { setNotice(undefined); upload.mutate(captures) }} />}
+      <ExtensionSync busy={upload.isPending} onCaptures={(captures) => { setNotice(undefined); upload.mutate(captures) }} />
+      {/* V3-05c-c: uzantının dışa aktardığı dosya HAR-01 ile aynı akıştan geçer (hedef → özet → onay); ham dosya sunucuya gitmez. */}
+      <CaptureFileImport source="capture" busy={upload.isPending} onPersonal={(captures) => { setNotice(undefined); upload.mutate(captures) }} />
+      {upload.isPending && <p role="status" className="text-sm text-muted">İşleniyor…</p>}
+      <ErrorBox error={upload.error} />
 
       {notice && <p role="status" className="text-sm text-accent">{notice}</p>}
       {result && (

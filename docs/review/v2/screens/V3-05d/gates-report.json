@@ -1,0 +1,3945 @@
+{
+  "report": [
+    {
+      "shot": "cozum-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 26,
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      },
+      "cards": 11
+    },
+    {
+      "shot": "skor-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozumsuz-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "LB",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "dogrulanamayan-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 14,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "kulup-bos-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "LB",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 8
+    },
+    {
+      "shot": "ozellestir-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 6,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14,
+        "surnamesVisible": 0
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "tek-kart-elle-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "tek-kart-uygun-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "formasyon-taninmadi-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozum-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 20,
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      },
+      "cards": 11
+    },
+    {
+      "shot": "skor-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozumsuz-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "LB",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "dogrulanamayan-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 14,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 19
+    },
+    {
+      "shot": "kulup-bos-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "LB",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 12
+    },
+    {
+      "shot": "ozellestir-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 6,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14,
+        "surnamesVisible": 0
+      },
+      "solveMs": 24
+    },
+    {
+      "shot": "tek-kart-elle-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "tek-kart-uygun-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "formasyon-taninmadi-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozum-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 6
+      },
+      "solveMs": 19,
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      },
+      "cards": 11
+    },
+    {
+      "shot": "skor-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozumsuz-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 11
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "dogrulanamayan-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 7
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "kulup-bos-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 16.4,
+        "surnamesVisible": 11
+      },
+      "solveMs": 8
+    },
+    {
+      "shot": "ozellestir-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 18,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 4
+      },
+      "solveMs": 19
+    },
+    {
+      "shot": "tek-kart-elle-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "tek-kart-uygun-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "formasyon-taninmadi-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozum-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 6
+      },
+      "solveMs": 19,
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      },
+      "cards": 11
+    },
+    {
+      "shot": "skor-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozumsuz-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 11
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "dogrulanamayan-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 7
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "kulup-bos-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 16.4,
+        "surnamesVisible": 11
+      },
+      "solveMs": 9
+    },
+    {
+      "shot": "ozellestir-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 18,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 17.9,
+        "surnamesVisible": 4
+      },
+      "solveMs": 19
+    },
+    {
+      "shot": "tek-kart-elle-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "tek-kart-uygun-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "formasyon-taninmadi-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozum-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 6
+      },
+      "solveMs": 19,
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      },
+      "cards": 11
+    },
+    {
+      "shot": "skor-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozumsuz-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "dogrulanamayan-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 7
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "kulup-bos-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 10
+    },
+    {
+      "shot": "ozellestir-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 6
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "tek-kart-elle-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "tek-kart-uygun-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "formasyon-taninmadi-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozum-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 6
+      },
+      "solveMs": 20,
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      },
+      "cards": 11
+    },
+    {
+      "shot": "skor-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "cozumsuz-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "dogrulanamayan-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Henderikx",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 7
+      },
+      "solveMs": 24
+    },
+    {
+      "shot": "kulup-bos-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "GK",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 10
+    },
+    {
+      "shot": "ozellestir-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Oyuncu",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 6
+      },
+      "solveMs": 20
+    },
+    {
+      "shot": "tek-kart-elle-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "tek-kart-uygun-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "formasyon-taninmadi-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null
+    },
+    {
+      "shot": "gercek-1-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 14,
+        "minFontPx": 11,
+        "minFontText": "Trondsen",
+        "ovrMinPx": 14,
+        "surnamesVisible": 7
+      },
+      "solveMs": 75,
+      "set": "Future Stars Challenge 2",
+      "challenge": "Future Stars Challenge 2",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 2
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-2-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 32,
+      "set": "3x 79+ Upgrade",
+      "challenge": "3x 79+ Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-3-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Çakır",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "Gómez",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 75,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-4-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Bos",
+        "ovrMinPx": 14,
+        "surnamesVisible": 10
+      },
+      "solveMs": 35,
+      "set": "Gold Upgrade",
+      "challenge": "Gold Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-5-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Small",
+        "ovrMinPx": 14,
+        "surnamesVisible": 10
+      },
+      "solveMs": 22,
+      "set": "Silver Upgrade",
+      "challenge": "Silver Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-6-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Rodríguez",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Qi",
+        "ovrMinPx": 14,
+        "surnamesVisible": 10
+      },
+      "solveMs": 57,
+      "set": "Bronze Upgrade",
+      "challenge": "Bronze Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 8,
+        "unknown": 0
+      },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-7-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Zingerle",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 14,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 7
+      },
+      "solveMs": 94,
+      "set": "Marquee Matchups",
+      "challenge": "RB Leipzig v Eintracht Frankfurt",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 3
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-8-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Pisseri",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 9,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 83,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-9-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Gulácsi",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 10,
+        "minFontPx": 11,
+        "minFontText": "Castro",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 100,
+      "set": "Marquee Matchups",
+      "challenge": "Real Madrid v Villarreal CF",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 3,
+        "unknown": 3
+      },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-10-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Butland",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 12,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 7
+      },
+      "solveMs": 77,
+      "set": "Marquee Matchups",
+      "challenge": "Liverpool v Manchester City",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 7,
+        "unknown": 7
+      },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-11-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "Carlos Espí",
+      "challenge": "Carlos Espí",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-12-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "TOTW Upgrade",
+      "challenge": "TOTW Upgrade",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-1-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 14,
+        "minFontPx": 11,
+        "minFontText": "Trondsen",
+        "ovrMinPx": 14,
+        "surnamesVisible": 7
+      },
+      "solveMs": 71,
+      "set": "Future Stars Challenge 2",
+      "challenge": "Future Stars Challenge 2",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 2
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-2-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 32,
+      "set": "3x 79+ Upgrade",
+      "challenge": "3x 79+ Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-3-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Çakır",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 16,
+        "minFontPx": 11,
+        "minFontText": "Gómez",
+        "ovrMinPx": 14,
+        "surnamesVisible": 8
+      },
+      "solveMs": 74,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-4-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Bos",
+        "ovrMinPx": 14,
+        "surnamesVisible": 10
+      },
+      "solveMs": 34,
+      "set": "Gold Upgrade",
+      "challenge": "Gold Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-5-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Small",
+        "ovrMinPx": 14,
+        "surnamesVisible": 10
+      },
+      "solveMs": 23,
+      "set": "Silver Upgrade",
+      "challenge": "Silver Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-6-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Rodríguez",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Qi",
+        "ovrMinPx": 14,
+        "surnamesVisible": 10
+      },
+      "solveMs": 56,
+      "set": "Bronze Upgrade",
+      "challenge": "Bronze Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 8,
+        "unknown": 0
+      },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-7-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Zingerle",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 14,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 7
+      },
+      "solveMs": 96,
+      "set": "Marquee Matchups",
+      "challenge": "RB Leipzig v Eintracht Frankfurt",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 3
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-8-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Pisseri",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 9,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 82,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-9-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Gulácsi",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 10,
+        "minFontPx": 11,
+        "minFontText": "Castro",
+        "ovrMinPx": 14,
+        "surnamesVisible": 6
+      },
+      "solveMs": 98,
+      "set": "Marquee Matchups",
+      "challenge": "Real Madrid v Villarreal CF",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 3,
+        "unknown": 3
+      },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-10-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Butland",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 12,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14,
+        "surnamesVisible": 7
+      },
+      "solveMs": 79,
+      "set": "Marquee Matchups",
+      "challenge": "Liverpool v Manchester City",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 7,
+        "unknown": 7
+      },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-11-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "Carlos Espí",
+      "challenge": "Carlos Espí",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-12-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "TOTW Upgrade",
+      "challenge": "TOTW Upgrade",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-1-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 74,
+      "set": "Future Stars Challenge 2",
+      "challenge": "Future Stars Challenge 2",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 2
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-2-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 34,
+      "set": "3x 79+ Upgrade",
+      "challenge": "3x 79+ Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-3-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Çakır",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Çakır",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 75,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-4-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 34,
+      "set": "Gold Upgrade",
+      "challenge": "Gold Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-5-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 22,
+      "set": "Silver Upgrade",
+      "challenge": "Silver Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-6-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Rodríguez",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Rodríguez",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 56,
+      "set": "Bronze Upgrade",
+      "challenge": "Bronze Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 8,
+        "unknown": 0
+      },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-7-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Zingerle",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Zingerle",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 96,
+      "set": "Marquee Matchups",
+      "challenge": "RB Leipzig v Eintracht Frankfurt",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 3
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-8-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Pisseri",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Petkov",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 10
+      },
+      "solveMs": 82,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-9-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Gulácsi",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Gulácsi",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 96,
+      "set": "Marquee Matchups",
+      "challenge": "Real Madrid v Villarreal CF",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 3,
+        "unknown": 3
+      },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-10-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Butland",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 10
+      },
+      "solveMs": 81,
+      "set": "Marquee Matchups",
+      "challenge": "Liverpool v Manchester City",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 7,
+        "unknown": 7
+      },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-11-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "Carlos Espí",
+      "challenge": "Carlos Espí",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-12-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "TOTW Upgrade",
+      "challenge": "TOTW Upgrade",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-1-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 73,
+      "set": "Future Stars Challenge 2",
+      "challenge": "Future Stars Challenge 2",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 2
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-2-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 33,
+      "set": "3x 79+ Upgrade",
+      "challenge": "3x 79+ Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-3-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Çakır",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Çakır",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 75,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-4-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Unsain",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 35,
+      "set": "Gold Upgrade",
+      "challenge": "Gold Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 6
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-5-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Günok",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 22,
+      "set": "Silver Upgrade",
+      "challenge": "Silver Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 11,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "73",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-6-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Rodríguez",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Rodríguez",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 57,
+      "set": "Bronze Upgrade",
+      "challenge": "Bronze Upgrade",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 8,
+        "unknown": 0
+      },
+      "clubCards": 3,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "62",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-7-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Zingerle",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 21,
+        "minFontPx": 11,
+        "minFontText": "Zingerle",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 93,
+      "set": "Marquee Matchups",
+      "challenge": "RB Leipzig v Eintracht Frankfurt",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 6,
+        "unknown": 3
+      },
+      "clubCards": 5,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-8-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Pisseri",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Petkov",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 10
+      },
+      "solveMs": 80,
+      "set": "Marquee Matchups",
+      "challenge": "Como 1907 v AS Roma",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 5,
+        "unknown": 5
+      },
+      "clubCards": 6,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-9-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Gulácsi",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 22,
+        "minFontPx": 11,
+        "minFontText": "Gulácsi",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 11
+      },
+      "solveMs": 96,
+      "set": "Marquee Matchups",
+      "challenge": "Real Madrid v Villarreal CF",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 3,
+        "unknown": 3
+      },
+      "clubCards": 8,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "76",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-10-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Butland",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 20,
+        "minFontPx": 11,
+        "minFontText": "Acuña",
+        "ovrMinPx": 14.3,
+        "surnamesVisible": 10
+      },
+      "solveMs": 80,
+      "set": "Marquee Matchups",
+      "challenge": "Liverpool v Manchester City",
+      "kind": "SQUAD",
+      "prices": {
+        "buy": 7,
+        "unknown": 7
+      },
+      "clubCards": 4,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": "78",
+      "cards": 11
+    },
+    {
+      "shot": "gercek-11-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "Carlos Espí",
+      "challenge": "Carlos Espí",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    },
+    {
+      "shot": "gercek-12-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "card": {
+        "cards": 0,
+        "minFontPx": null,
+        "minFontText": "",
+        "ovrMinPx": null,
+        "surnamesVisible": 0
+      },
+      "solveMs": null,
+      "set": "TOTW Upgrade",
+      "challenge": "TOTW Upgrade",
+      "kind": "SINGLE_ITEM",
+      "prices": {
+        "buy": 0,
+        "unknown": 0
+      },
+      "clubCards": 0,
+      "wrongNames": [],
+      "specialUsed": [],
+      "mostValuable": null,
+      "cards": 0
+    }
+  ],
+  "q17": [
+    {
+      "size": "375",
+      "formation": "3-1-4-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-4-1-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-4-2-1",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-4-3",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "3-5-2",
+      "solveMs": 18,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-1-2-1-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-1-2-1-2 (geniş)",
+      "solveMs": 23,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-1-3-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-1-4-1",
+      "solveMs": 21,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-2-2-2",
+      "solveMs": 18,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-2-3-1",
+      "solveMs": 18,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-2-3-1 (2)",
+      "solveMs": 18,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-2-4",
+      "solveMs": 24,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-3-1-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-3-2-1",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-3-3",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-3-3 (3 CM)",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-3-3 (2 CDM)",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-3-3 (CAM)",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-4-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-4-2 (2 CDM)",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-5-1",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "5-2-1-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "5-2-3",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "5-3-2",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "5-4-1",
+      "solveMs": 19,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-2-1-3",
+      "solveMs": 17,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-4-1-1",
+      "solveMs": 20,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "375",
+      "formation": "4-5-1 (CAM)",
+      "solveMs": 18,
+      "cardWidth": 48,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "3-1-4-2",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "3-4-1-2",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "3-4-2-1",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "3-4-3",
+      "solveMs": 19,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "3-5-2",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-1-2-1-2",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-1-2-1-2 (geniş)",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-1-3-2",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-1-4-1",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-2-2-2",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-2-3-1",
+      "solveMs": 18,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-2-3-1 (2)",
+      "solveMs": 18,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-2-4",
+      "solveMs": 20,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-1-2",
+      "solveMs": 21,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-2-1",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-3",
+      "solveMs": 22,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-3 (3 CM)",
+      "solveMs": 20,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-3 (2 CDM)",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-3-3 (CAM)",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-4-2",
+      "solveMs": 19,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-4-2 (2 CDM)",
+      "solveMs": 18,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-5-1",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "5-2-1-2",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "5-2-3",
+      "solveMs": 20,
+      "cardWidth": 70,
+      "minFont": 11,
+      "ovrFont": 17.9,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "5-3-2",
+      "solveMs": 20,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "5-4-1",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-2-1-3",
+      "solveMs": 18,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-4-1-1",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "768",
+      "formation": "4-5-1 (CAM)",
+      "solveMs": 19,
+      "cardWidth": 52,
+      "minFont": 11,
+      "ovrFont": 14,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "3-1-4-2",
+      "solveMs": 20,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "3-4-1-2",
+      "solveMs": 20,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "3-4-2-1",
+      "solveMs": 22,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "3-4-3",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "3-5-2",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-1-2-1-2",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-1-2-1-2 (geniş)",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-1-3-2",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-1-4-1",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-2-2-2",
+      "solveMs": 18,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-2-3-1",
+      "solveMs": 18,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-2-3-1 (2)",
+      "solveMs": 18,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-2-4",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-1-2",
+      "solveMs": 22,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-2-1",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3 (3 CM)",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3 (2 CDM)",
+      "solveMs": 24,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-3-3 (CAM)",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-4-2",
+      "solveMs": 20,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-4-2 (2 CDM)",
+      "solveMs": 18,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-5-1",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "5-2-1-2",
+      "solveMs": 20,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "5-2-3",
+      "solveMs": 24,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "5-3-2",
+      "solveMs": 20,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "5-4-1",
+      "solveMs": 19,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-2-1-3",
+      "solveMs": 18,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-4-1-1",
+      "solveMs": 23,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    },
+    {
+      "size": "1280x800",
+      "formation": "4-5-1 (CAM)",
+      "solveMs": 22,
+      "cardWidth": 56,
+      "minFont": 11,
+      "ovrFont": 14.3,
+      "problems": []
+    }
+  ],
+  "timing": {
+    "samples": 157,
+    "p50": 20,
+    "p95": 93,
+    "max": 100
+  }
+}

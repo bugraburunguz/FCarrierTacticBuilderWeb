@@ -31,6 +31,9 @@ export interface ChemManager {
 /** Kulüp, lig ve ülke anahtarı: id varsa id, yoksa ad. */
 const keyOf = (id: number | undefined, name: string | undefined): string | undefined => (id !== undefined ? `#${id}` : name)
 
+/** Kulüp anahtarı: id varsa id; yoksa ad + cinsiyet (aynı ad kadın ve erkek kulübünde bulunabilir, bunlar bağlanmaz). */
+const clubKey = (card: { clubId?: number; club?: string; gender?: number }): string | undefined => (card.clubId !== undefined ? `#${card.clubId}` : card.club ? `${card.gender ?? 0}:${card.club}` : undefined)
+
 export const MAX_PLAYER_CHEM = 3
 export const MAX_SQUAD_CHEM = 33
 
@@ -69,7 +72,7 @@ export function squadChemistry(slots: ChemSlot[], manager?: ChemManager): ChemRe
   const nations = new Map<string, number>()
   const allLeagues = new Set(cards.flatMap((c) => leagueKey(c) ?? []))
   cards.forEach((c) => {
-    add(clubs, keyOf(c.clubId, c.club), 1)
+    add(clubs, clubKey(c), 1)
     add(nations, keyOf(c.nationId, c.nationality), 1)
     if (c.cardType === 'ICON') {
       add(nations, keyOf(c.nationId, c.nationality), rules.icon.nationIncrement)
@@ -92,7 +95,7 @@ export function squadChemistry(slots: ChemSlot[], manager?: ChemManager): ChemRe
       return rules.maxPerPlayer
     }
     const points =
-      thresholdPoints(clubs.get(keyOf(card.clubId, card.club) ?? '') ?? 0, rules.thresholds.club) +
+      thresholdPoints(clubs.get(clubKey(card) ?? '') ?? 0, rules.thresholds.club) +
       thresholdPoints(leagues.get(leagueKey(card) ?? '') ?? 0, rules.thresholds.league) +
       thresholdPoints(nations.get(keyOf(card.nationId, card.nationality) ?? '') ?? 0, rules.thresholds.nation)
     const managerMatch =

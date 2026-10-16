@@ -41,8 +41,34 @@ export interface PlayerSummary {
   valuationEstimated: boolean
   faceUrl?: string
   faceAssetId?: number
+  /** Yüz istatistikleri (F10): saha PAC/SHO/PAS/DRI/DEF/PHY, kaleci DIV/HAN/KIC/REF/SPD/POS. Kaynak OFFICIAL ya da COMPUTED. */
+  faceStats?: number[]
+  faceLabels?: string[]
+  faceStatsSource?: 'OFFICIAL' | 'COMPUTED'
+  /** true: hesaplanan değer, ağırlıkları doğrulanmamış formülden (arayüzde "≈"). */
+  faceStatsApproximate?: boolean
   changed?: boolean
   changeSummary?: ChangeSummary
+  /** V3-06a, yalnız kariyer havuzu: sözleşme bitişi (kayıtta varsa), kiralık, ulaşılabilirlik kovası, seçili rol uyumu (FitEngineV3). */
+  contractUntil?: string
+  onLoan?: boolean
+  feasibility?: FeasibilityBucket
+  roleFit?: number
+}
+
+export type FeasibilityBucket = 'ALINABILIR' | 'ZOR' | 'HAYAL'
+
+/** V3-06a: kariyer listesinde hangi süzgeçlerin verisi var. Bütçe/oyun tarihi yoksa alan gelmez (0 değil, ENG-02). */
+export interface CareerPlayerFacets {
+  gameDate?: string
+  budgetEur?: number
+  contractData: boolean
+  loanData: boolean
+  /** V3-06c: kullanıcının ligi ve lig gücü (OVR) — yalnız "Lig seviyesi" göstergesi; bilinmiyorsa yok. */
+  leagueName?: string
+  leagueOvr?: number
+  /** V3-06d: kadrodaki herkesin maaşı kayıtta varsa haftalık toplam; eksikse yok (ENG-02). */
+  squadWageEur?: number
 }
 
 export type ChangeType = 'UPGRADE' | 'DOWNGRADE' | 'MIXED' | 'NEW' | 'REMOVED' | 'TRANSFER'
@@ -209,8 +235,15 @@ export interface RoleFit {
   roleName: string
   score: number
   projectedRating: number
-  badge: WeaponState
-  badgeText: string
+  badge?: WeaponState | null
+  badgeText?: string
+  /** v3 (E3-5): currentFit = score; levelFit seviye-normalize; fitLabel GOOD|AT_LEVEL|WEAK|WRONG_ROLE (AT_LEVEL → badge boş) */
+  engineVersion?: string
+  currentFit?: number
+  levelFit?: number
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  contributions?: { term: string; key: string; points: number }[]
+  narrative?: FitNarrative
   outOfPosition: boolean
   reasons: string[]
   weaponChecks: WeaponCheck[]
@@ -281,10 +314,12 @@ export interface WeakLink {
 
 export interface RuleFinding {
   ruleId: string
-  severity: 'RISK' | 'WARN' | 'PLUS'
+  severity: 'RISK' | 'WARN' | 'INFO' | 'PLUS'
   title: string
   message: string
   fix?: string
+  /** Analiz motoru (E3-7): sayısal kanıt (metrik, değer, işlem, eşik). */
+  evidence?: { metric: string; value: number; op: string; threshold: number; params?: Record<string, unknown> }[]
 }
 
 export interface SquadFit {
@@ -370,6 +405,8 @@ export interface CareerSnapshot {
   source: 'IMPORT' | 'MANUAL' | 'OCR'
   playerCount: number
   note?: string
+  /** V3-06e: kayıt anındaki oyun tarihi; yoksa alan yok. */
+  gameDate?: string
 }
 
 export interface SnapshotDiffRow {
@@ -401,6 +438,8 @@ export interface HistoryPoint {
   overall: number
   potential: number
   teamId?: number
+  /** V3-06e: kayıt anındaki oyun tarihi; yoksa alan yok (grafik içe aktarma sırasına düşer). */
+  gameDate?: string
 }
 
 export type PlayerTagKind = 'LOCKED' | 'ROTATION' | 'DEVELOPING' | 'FOR_SALE' | 'LOAN_OK'
@@ -586,10 +625,31 @@ export interface PlayerRoleFit {
   focus?: string
   score: number
   projectedRating: number
-  badge: WeaponState
+  badge?: WeaponState | null
   badgeText: string
   reasons: string[]
   gaps: { attr: string; value: number; needed: number }[]
+  levelFit?: number
+  currentFit?: number
+  engineVersion?: string
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  narrative?: FitNarrative
+}
+
+/** V3-06b: kariyer oyuncu sayfası, Sözleşme ve değer. Veri yoksa alan gelmez (0 değil, ENG-02). */
+export interface CareerPlayerContract {
+  inSquad: boolean
+  valueEur?: number
+  valuationEstimated: boolean
+  wageEur?: number
+  releaseClauseEur?: number
+  contractUntil?: string
+  gameDate?: string
+  monthsLeft?: number
+  onLoan: boolean
+  feasibility?: FeasibilityBucket
+  budgetEur?: number
+  budgetAfterPurchaseEur?: number
 }
 
 export interface SetupCheck {
@@ -817,6 +877,21 @@ export interface CaptureReward {
   type?: string
   value?: number
   count: number
+  /** V3-05c-c: ödül kartıysa EA verisinin yalnız izinli 9 alanı (sunucu allowlist'i). */
+  item?: RewardItem
+}
+
+/** EA ödül kartı (allowlist): kart örneği kimliği, sahip, fiyat, sözleşme vb. hiç gelmez. */
+export interface RewardItem {
+  resourceId?: number
+  assetId?: number
+  rating?: number
+  preferredPosition?: string
+  possiblePositions?: string[]
+  rareflag?: number
+  nation?: number
+  leagueId?: number
+  teamid?: number
 }
 
 export interface CaptureObjective {
@@ -853,8 +928,12 @@ export interface KbSbcChallenge {
   id: number
   setId: number
   name: string
+  /** Bizim formasyon kimliği (EA kodu eşlenmişse). */
   formation?: string
-  kind: 'SQUAD' | 'ITEM_SCORE' | string
+  /** V3-05d-b: EA ham formasyon kodu (eşlenmese de saklı) ve EA görev tipi (ONE_CLICK_CHALLENGE, OPEN_CHALLENGE, BRICK_CHALLENGE). */
+  eaFormation?: string
+  eaType?: string
+  kind: 'SQUAD' | 'ITEM_SCORE' | 'SINGLE_ITEM' | string
   requirements: SbcRequirement[]
   itemScoreTarget?: number
   reward?: CaptureReward[] | null
@@ -872,6 +951,10 @@ export interface KbSbcSet {
   status: 'PENDING' | 'CONFIRMED' | 'RETIRED'
   challengeCount: number
   challenges?: KbSbcChallenge[]
+  /** Set ilk görüldüğünde (V35); eski kayıtlarda ilk güncelleme anı. */
+  firstSeenAt?: string
+  /** İçerik özeti son değiştiğinde; değişmediyse yok. */
+  contentChangedAt?: string
 }
 
 export interface KbObjectiveGroup {
@@ -956,6 +1039,8 @@ export interface SbcRequirement {
   count?: number
   /** Ham elgReq girdileri; bilinmeyen şartın tipi buradadır. */
   raw?: { type?: string; eligibilityValue?: number }[]
+  /** V3-05c-c: kind UNKNOWN iken EA'nın tip adı (arayüz "Bilinmeyen şart" çipi). */
+  eaType?: string
 }
 
 export interface SbcChallenge {
@@ -976,6 +1061,16 @@ export interface SbcChallenge {
   endTime?: number
   awards: CaptureReward[]
   requirements: SbcRequirement[]
+}
+
+/** POST /ut/contrib/capture sonucu. */
+export interface ContributionResult {
+  created: number
+  updated: number
+  unchanged: number
+  queued: number
+  pricesRecorded: number
+  pricesSkipped: number
 }
 
 export interface CaptureResult {
@@ -1048,4 +1143,237 @@ export interface ScoutingQuery {
   dream?: boolean
   sort?: 'fit' | 'opportunity' | 'potential'
   limit?: number
+}
+
+/** E3-8: rol uyumu anlatımı. Cümleler sunucuda yalnız katkı/kanıt sayılarından üretilir; tailored ("Biçilmiş kaftan") kararını sunucu verir (levelFit eşiği), web eşik bilmez. */
+export interface FitNarrative {
+  headline: string
+  tailored: boolean
+  strengths: { text: string; term: string; key: string; points: number }[]
+  weaknesses: { text: string; term: string; key: string; points: number }[]
+}
+
+/** E3-6b/6c/10: kariyer öneri hattı (`POST /careers/{id}/recommendations`). */
+export type RecommendBucket = 'ALINABILIR' | 'ZOR' | 'HAYAL'
+export type RecommendProfile = 'BALANCED' | 'NOW' | 'FUTURE'
+export type RecommendRoleSource = 'TACTIC' | 'SQUAD' | 'REQUEST' | 'DEFAULT' | 'ALTERNATIVES'
+
+export interface RecommendBucketFactor {
+  name: string
+  value: string
+  points: number
+  note: string
+}
+
+export interface RecommendContribution {
+  term: string
+  key: string
+  points: number
+}
+
+export interface CareerRecommendationItem {
+  player: PlayerSummary
+  roleId: string
+  roleName: string
+  focus?: string
+  currentFit: number
+  levelFit?: number
+  fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  /** SCOUT_RANGE modunda sunucu göndermez. */
+  futureFit?: number
+  projectedRating?: number
+  deltaVsCurrent?: number
+  positionLabel?: string
+  clubStrength?: number
+  clubStrengthGap?: number
+  ovrGap?: number
+  bucket: RecommendBucket
+  bucketLabel: string
+  bucketPoints: number
+  bucketFactors: RecommendBucketFactor[]
+  narrative?: FitNarrative
+  pros: RecommendContribution[]
+  cons: RecommendContribution[]
+  tags: ('FREE' | 'YOUNG' | 'READY')[]
+  rankScore: number
+}
+
+export interface CareerRecommendation {
+  position: string
+  roleId?: string
+  roleName?: string
+  focus?: string
+  roleSource: RecommendRoleSource
+  profile: RecommendProfile
+  poolSize: number
+  scored: number
+  userClubStrength?: number
+  userFirstElevenAverage?: number
+  current?: { playerId: number; playerName: string; roleId: string; currentFit: number }
+  items: CareerRecommendationItem[]
+  longShots?: CareerRecommendationItem[]
+}
+
+export interface CareerRecommendationRequest {
+  position: string
+  slotId?: string
+  roleId?: string
+  focus?: string
+  forceRole?: boolean
+  alternativeRoles?: boolean
+  profile?: RecommendProfile
+  limit?: number
+  ageMax?: number
+  budgetEur?: number
+  budgetUnknown?: boolean
+  includeLongShots?: boolean
+}
+
+export interface CreditCosts {
+  recommend: number
+  squadFit: number
+  advisor: number
+}
+
+// ── Replikalar (E3-9 / REP-04, REP-07) ────────────────────────────────────────────────────────────────────────────────
+
+export type ReplicaCategory = 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaBuildUp = 'SHORT_PASSING' | 'BALANCED' | 'COUNTER'
+export type ReplicaApproach = 'DEEP' | 'BALANCED' | 'HIGH' | 'AGGRESSIVE'
+
+export interface ReplicaRoleSlot {
+  slotId: string
+  position: string
+  role: string
+  focus: string
+  roleId: string
+}
+
+export interface ReplicaSummary {
+  id: string
+  category: ReplicaCategory
+  club: string
+  coach: string
+  season: string
+  formationId: string
+  eaFormation: string
+  buildUp: ReplicaBuildUp
+  defensiveApproach: ReplicaApproach
+  lineHeight: number
+  fidelity: number | null
+  tacticCode: string
+  slots: ReplicaRoleSlot[]
+  eaOrderedSlots: ReplicaRoleSlot[]
+  /** Uyarı + risk bulgusu sayısı (bilgi sayılmaz). */
+  attentionCount: number
+}
+
+export interface TacticEvidence {
+  metric: string
+  params: Record<string, unknown>
+  value: number
+  op: string
+  threshold: number
+  reference?: number | null
+  margin?: number | null
+}
+
+export interface TacticFinding {
+  code: string
+  title: string
+  severity: 'INFO' | 'WARN' | 'RISK'
+  instance: { side?: string; sideTr?: string }
+  evidence: TacticEvidence[]
+  recommendation?: { code: string; text: string }
+  text: string
+}
+
+export interface TacticAnalysis {
+  metrics: { band: string; depth: number }
+  findings: TacticFinding[]
+  notEvaluated: { code: string; reason: string }[]
+  levelLabel?: string | null
+}
+
+export interface ReplicaDetailSlot {
+  slot: string
+  position: string
+  role: string
+  focus: string
+  profile?: string
+  keyAttributes?: string[]
+  keyPlayStyles?: string[]
+}
+
+export interface ReplicaDetail {
+  id: string
+  category: ReplicaCategory
+  club: string
+  coach: string
+  season: string
+  honours?: string[]
+  whyIconic?: string
+  realShape?: { inPossession?: string; outOfPossession?: string; keyMechanisms?: string[] }
+  fc27: {
+    formation: string
+    buildUp: ReplicaBuildUp
+    defensiveApproach: ReplicaApproach
+    lineHeight: number
+    slots: ReplicaDetailSlot[]
+    planB?: { label: string; formation: string; buildUp: string; defensiveApproach: string; lineHeight: number; changes: string[] }
+    smartTactics?: string[]
+  }
+  replicaFidelity?: { score: number; cannotReplicate?: string[] }
+  /** Yalnız yönetici görünümünde gelir. */
+  sources?: string[]
+  verify?: string[]
+  /** false: kaynaklar doğrulanmadı (iç notlar yalnız yönetici görünümünde). */
+  verified?: boolean
+  tacticCode: string
+  analysis: TacticAnalysis
+}
+
+export type ReplicaSlotState = 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE' | 'EMPTY'
+
+export interface ReplicaApplySlot {
+  slotId: string
+  position: string
+  roleId: string
+  roleName: string
+  focus: string
+  player: PlayerSummary | null
+  currentFit: number | null
+  levelFit: number | null
+  state: ReplicaSlotState
+  badgeText: string | null
+  suggest: boolean
+  /** Oyuncu bu mevkide doğal değil; playerPosition asıl mevkisi ("ST→LW" etiketi). */
+  outOfPosition: boolean
+  playerPosition: string | null
+}
+
+export interface ReplicaApplyResult {
+  replicaId: string
+  source: 'CAREER' | 'UT' | 'SAMPLE'
+  squadFit: number
+  slots: ReplicaApplySlot[]
+  analysis: TacticAnalysis
+}
+
+export interface ReplicaApplyBody {
+  careerId?: number
+  playerIds?: number[]
+}
+
+export interface UserTactic {
+  slot: number
+  careerId: number | null
+  name: string
+  formation: string
+  buildUp: string | null
+  defensiveApproach: string | null
+  lineHeight: number | null
+  slots: { slot: string; position: string; roleId: string; focus: string }[]
+  eaCode: string | null
+  sourceReplicaId: string | null
 }

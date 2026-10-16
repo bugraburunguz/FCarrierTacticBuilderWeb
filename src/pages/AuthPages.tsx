@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { LogoLockup } from '../design/brand/LogoLockup'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { Button, Card, ErrorBox, Field, Input } from '../components/ui'
@@ -32,6 +33,7 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
   return (
     <div className="mx-auto max-w-sm">
+      <div className="mb-4 flex justify-center"><LogoLockup size={56} /></div>
       <Card title={isLogin ? 'Giriş yap' : 'Hesap oluştur'}>
         <form onSubmit={submit} className="space-y-3">
           <Field label="E-posta">

@@ -46,6 +46,7 @@ Yöntem: Uçtan uca kod izlendi. Java testleri çalıştırılamadı (Maven Cent
 5. **Açıklama = sayı:** her cümle hesaplanmış bir katkıdan üretilir. Sayısı olmayan iddia yok.
 6. **Önce aday, sonra kesme yok:** OVR'ye göre kesme yasak. Havuz rol ön-skoruyla seçilir.
 7. **Test edilebilirlik:** saf fonksiyon, versiyonlu (`engine_version`), altın veri seti + özellik testleri.
+8. **currentFit kaliteyi değil, rolün oyuncuya oturmasını ölçer** (Buğra kararı 2026-10-14). Kalite ile rolü birlikte tartan sıralama öneri hattının işidir (§3.3). Seviye bağlamı `levelFit` ile ayrı çıktıdır (§3.2 madde 11).
 
 ---
 ## 3. SIFIRDAN TASARIM
@@ -92,9 +93,10 @@ currentFit(player, position, role, focus, ctx) ∈ [0,100]
 5. **Aşinalık:** yok / Role+ / Role++ → `{0, +f1, +f2}` config (`verified:false`, ölçülene kadar f1=2, f2=4).
 6. **Fiziksel:** `aerial = f(boy, Jumping, Heading, Strength)` rol ağırlıklı (Target Forward, CB, GK). AcceleRATE pace bileşenine sürekli çarpan (Explosive → kısa patlama rolleri, Lengthy → uzun koşu rolleri), ±3 puan. AcceleRATE oyundan geliyorsa `GAME`, türetilmişse etkisi yarıya.
 7. **Ayak/kanat:** içe kat eden roller (Inside Forward, Wide Playmaker, Inverted Wingback, Half Winger) karşı ayakta bonus; orta açan roller (Winger, Wingback, Attacking Wingback) aynı ayakta bonus; `(5 − weak_foot)/4` ile ölçekle. Dribling rollerinde küçük skill moves terimi.
-8. **Mevki uzaklığı** `posDist` (config): RB↔LB 0,97, CM↔CDM 0,93, CB→CDM 0,90, CAM↔ST 0,90, RW↔RM 0,97, diğerleri ≤ 0,75. Mevki dışında rol vektörü yerine pozisyonun genel vektörü kullanılır, aşinalık yok (FC27 "basitleştirilmiş rol").
+8. **Mevki uzaklığı** `posDist` (config): RB↔LB 0,97, CM↔CDM 0,93, CB→CDM 0,90, CAM↔ST 0,90, RW↔RM 0,97, diğerleri ≤ 0,75. **Mevki dışı = rol skoru × `posDist`** (E3-5b kararı): rol vektörü ve cezalar aynen uygulanır, sonuç mevki çarpanıyla ölçeklenir; böylece mevki dışı skor hiçbir zaman mevkideki aynı oyuncudan yüksek olamaz (jqwik özelliği). Not (açıklama): FC27 oyunda mevki dışı oyuncu "basitleştirilmiş rol" oynar; bu oyun içi davranış, skorun hesabı değildir.
 9. **Katkı çıktısı:** her terim için `w_i·(u_i − ū_i)` + temel, PS, aşinalık, ayak, mevki etkileri. Bütün açıklama metni yalnız bunlardan üretilir.
 10. **Ayrı:** `futureFit(t)` = attribute büyüme modeli (yaş eğrisi × potansiyel boşluğu × pozisyon ağırlıkları; pace erken gelişir, ~28 sonrası düşer) üstünden aynı fonksiyon; `value` = face stat özellikleri (04 ağırlıkları), lig tier'ı, kontrat, oyun tarihi.
+11. **levelFit (Buğra kararı 2026-10-14):** `currentFit` mutlaktır; öneri ve aday sıralamaları bunu kullanır. `levelFit` = aynı (mevki, rol, focus) için OVR ±3 bandındaki katalog oyuncuları arasında `currentFit` yüzdeliği. Tablo `fit_level_norms(position, role, focus, ovr_band)` seed zamanında hesaplanır; bantta 30'dan az oyuncu varsa bant genişler ve **kullanılan bant kayıtlı tutulur**. Sahadaki rozet ve "Rol uyumu" `levelFit` gösterir (iki modda aynı anlamla); kart seçme listesi `currentFit`'e göre sıralanır, iki değer de görünür; tooltip ikisini açıklar.
 
 ### 3.3 Öneri hattı
 1. **Bağlam:** `CareerContext(game_date, user_team, league, budget|null, wage_budget|null, available squad)`.
@@ -120,8 +122,9 @@ Kurallar = bu metrikler + atanan oyuncular üzerinde predikat, her biri kanıt s
 
 ### 3.5 Test stratejisi
 - **Altın veri seti:** Buğra ~60 FC27 oyuncusu seçer (arketip başına), her (pozisyon, rol, focus) için beklenen **sıralama**. Örn. Target Forward: uzun hava forveti > kısa hızlı forvet; IF-Attack: bitirici > motor; DLP: regista > yıkıcı. İkili sıra + Kendall τ ≥ 0,8.
+- **Kabul ölçütleri (Buğra kararı 2026-10-14, E3-4b sonrası):** (1) altın set kesin çiftler %100; (2) **Role++ vs rolsüz AUC ≥ 0,80** (rol bazında ++ sayısıyla ağırlıklı); (3) **oyuncu içi AUC ≥ 0,60** (aynı oyuncunun aynı mevkideki Role+/++ rolleri vs rolsüzleri; izleme metriği). (2) ve (3) `RoleSignalRegressionTest` ile regresyon olarak sabitlidir (LE dökümü yerelde varsa koşar; düşerse build kırılır; ölçülen taban ≈ 0,87 ve ≈ 0,63). Eski "oyuncu içi AUC ≥ 0,70" hedefi **kalktı**: EA Role+ etiketi rol tanımının değil EA'nın atama kuralının vekilidir (E3-4b: öğrenilen vektörler AUC artırırken futbol okumasıyla çelişti; hiçbiri seed'e yazılmadı, mevcut v3 vektörleri dondurulmuş ve `verified:false`). EA rol verisi doğrudan sinyal olarak kullanılır: kariyerde FAM terimi (Role+/++) açıktır; f1/f2 değerleri `verified:false`.
 - **Özellik testleri (jqwik):** pozitif ağırlıklı attribute +1 → skor düşmez; 1 puan değişim → skor ≤1,5 oynar; +Finishing IF-Attack'ı IF-Balanced'dan fazla artırır; kanat + ayak takası → aynı skor; potansiyel/OVR `currentFit`'i etkilemez; mevki dışı skor ≤ mevkideki skor.
-- **Veri değişmezleri:** aynı rol vektörü yok; focus kosinüs sınırı; savunma temelinde hücum attribute'u yok; her preset/replika FC27 enum'larına parse olur (REP-02).
+- **Veri değişmezleri:** hiçbir rol/focus vektöründe tek attribute ağırlığı vektör kütlesinin %25'ini geçemez (E3-6b; kaleci ailesi muaf, bkz. E3-6b_baskinlik.md); aynı rol vektörü yok; focus kosinüs sınırı; savunma temelinde hücum attribute'u yok; her preset/replika FC27 enum'larına parse olur (REP-02).
 - **Kariyer testleri:** kariyer attribute'u filtrede katalogu ezer; yaş oyun tarihinden; kiralıktakiler hariç; null bütçe ≠ 0; kendi oyuncusu hedef olmaz; cinsiyet izolasyonu; elle OVR düzenlemesi ya yayılır ya işaretlenir.
 - **Hat testleri:** "tüm tabloyu puanla" ile "SQL ön-skor top-K" arası recall@10 ≥ 0,95; hat bantları web ve backend'de aynı tablo (`ut-rules.tactics`).
 - **Taktik metrik testleri:** iki Attacking Wingback'li 5'li savunma dar 4-4-2'den geniş; AGGRESSIVE + yavaş CB → rest-defence riski; etiketsiz, yalnız rollü taktik de bulgu üretir.

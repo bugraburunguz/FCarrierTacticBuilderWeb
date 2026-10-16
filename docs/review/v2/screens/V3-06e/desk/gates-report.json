@@ -1,0 +1,1506 @@
+{
+  "careers": {
+    "full": 185,
+    "sparse": 186
+  },
+  "report": [
+    {
+      "shot": "dolu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "squadWageEur + 2 sözleşme",
+      "band": [
+        "Dönem bitimine",
+        "11 gün",
+        "11 gün",
+        "Transfer bütçesi",
+        "€5,00 Mn",
+        "€5,00 Mn",
+        "Maaş bütçesi kullanımı",
+        "%79",
+        "%79"
+      ],
+      "gauge": "Takım uyumu %57",
+      "weak": 2,
+      "contractAlerts": 2
+    },
+    {
+      "shot": "dolu-kaydirilmis-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ayarlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "eksik-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "missingNote": 1,
+      "contractAlerts": 0
+    },
+    {
+      "shot": "menu-career-desk-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "current": [
+        "Masa"
+      ],
+      "expected": "Masa",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-players-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Oyuncular"
+      ],
+      "expected": "Oyuncular",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-squad-builder-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Kadro"
+      ],
+      "expected": "Kadro",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-transfer-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Transfer"
+      ],
+      "expected": "Transfer",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-growth-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Daha fazla"
+      ],
+      "expected": "Daha fazla",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-teams-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Daha fazla"
+      ],
+      "expected": "Daha fazla",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-import-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Daha fazla"
+      ],
+      "expected": "Daha fazla",
+      "activeOk": true
+    },
+    {
+      "shot": "daha-fazla-sheet-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Gelişim",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Gelişim",
+          "aria-hidden: Oyuncu",
+          "aria-hidden: Gelişimi görmek için en ",
+          "aria-hidden: İçe aktar",
+          "aria-hidden: FC Assist, EA SPORTS vey",
+          "aria-hidden: Hakkında",
+          "aria-hidden: Masa",
+          "aria-hidden: Oyuncular",
+          "aria-hidden: Kadro",
+          "aria-hidden: Transfer",
+          "aria-hidden: Daha fazla"
+        ]
+      },
+      "items": [
+        "Gelişim",
+        "Takımlar",
+        "İçe aktar",
+        "Yeni kariyer"
+      ],
+      "sheetOk": true
+    },
+    {
+      "shot": "dolu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "squadWageEur + 2 sözleşme",
+      "band": [
+        "Dönem bitimine",
+        "11 gün",
+        "11 gün",
+        "Transfer bütçesi",
+        "€5,00 Mn",
+        "€5,00 Mn",
+        "Maaş bütçesi kullanımı",
+        "%79",
+        "%79"
+      ],
+      "gauge": "Takım uyumu %57",
+      "weak": 2,
+      "contractAlerts": 2
+    },
+    {
+      "shot": "dolu-kaydirilmis-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ayarlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      }
+    },
+    {
+      "shot": "eksik-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "missingNote": 1,
+      "contractAlerts": 0
+    },
+    {
+      "shot": "menu-career-desk-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "current": [
+        "Masa"
+      ],
+      "expected": "Masa",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-players-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Oyuncular"
+      ],
+      "expected": "Oyuncular",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-squad-builder-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Kadro"
+      ],
+      "expected": "Kadro",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-transfer-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Transfer"
+      ],
+      "expected": "Transfer",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-growth-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Daha fazla"
+      ],
+      "expected": "Daha fazla",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-teams-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Daha fazla"
+      ],
+      "expected": "Daha fazla",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-import-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "current": [
+        "Daha fazla"
+      ],
+      "expected": "Daha fazla",
+      "activeOk": true
+    },
+    {
+      "shot": "daha-fazla-sheet-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Gelişim",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: Kariyer",
+          "aria-hidden: UT",
+          "aria-hidden: Gelişim",
+          "aria-hidden: Oyuncu",
+          "aria-hidden: Gelişimi görmek için en ",
+          "aria-hidden: İçe aktar",
+          "aria-hidden: FC Assist, EA SPORTS vey",
+          "aria-hidden: Hakkında",
+          "aria-hidden: Masa",
+          "aria-hidden: Oyuncular",
+          "aria-hidden: Kadro",
+          "aria-hidden: Transfer",
+          "aria-hidden: Daha fazla"
+        ]
+      },
+      "items": [
+        "Gelişim",
+        "Takımlar",
+        "İçe aktar",
+        "Yeni kariyer"
+      ],
+      "sheetOk": true
+    },
+    {
+      "shot": "dolu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "squadWageEur + 2 sözleşme",
+      "band": [
+        "Dönem bitimine",
+        "11 gün",
+        "11 gün",
+        "Transfer bütçesi",
+        "€5,00 Mn",
+        "€5,00 Mn",
+        "Maaş bütçesi kullanımı",
+        "%79",
+        "%79"
+      ],
+      "gauge": "Takım uyumu %57",
+      "weak": 2,
+      "contractAlerts": 2
+    },
+    {
+      "shot": "dolu-kaydirilmis-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ayarlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "eksik-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "missingNote": 1,
+      "contractAlerts": 0
+    },
+    {
+      "shot": "dolu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "squadWageEur + 2 sözleşme",
+      "band": [
+        "Dönem bitimine",
+        "11 gün",
+        "11 gün",
+        "Transfer bütçesi",
+        "€5,00 Mn",
+        "€5,00 Mn",
+        "Maaş bütçesi kullanımı",
+        "%79",
+        "%79"
+      ],
+      "gauge": "Takım uyumu %57",
+      "weak": 2,
+      "contractAlerts": 2
+    },
+    {
+      "shot": "dolu-kaydirilmis-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ayarlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "eksik-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "missingNote": 1,
+      "contractAlerts": 0
+    },
+    {
+      "shot": "dolu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "squadWageEur + 2 sözleşme",
+      "band": [
+        "Dönem bitimine",
+        "11 gün",
+        "11 gün",
+        "Transfer bütçesi",
+        "€5,00 Mn",
+        "€5,00 Mn",
+        "Maaş bütçesi kullanımı",
+        "%79",
+        "%79"
+      ],
+      "gauge": "Takım uyumu %57",
+      "weak": 2,
+      "contractAlerts": 2
+    },
+    {
+      "shot": "dolu-kaydirilmis-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ayarlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "eksik-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "missingNote": 1,
+      "contractAlerts": 0
+    },
+    {
+      "shot": "menu-career-desk-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "current": [
+        "Masa"
+      ],
+      "expected": "Masa",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-players-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Oyuncular"
+      ],
+      "expected": "Oyuncular",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-squad-builder-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Taktik & Kadro"
+      ],
+      "expected": "Taktik & Kadro",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-transfer-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Transfer"
+      ],
+      "expected": "Transfer",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-growth-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Gelişim"
+      ],
+      "expected": "Gelişim",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-teams-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Takımlar"
+      ],
+      "expected": "Takımlar",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-import-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "İçe aktar"
+      ],
+      "expected": "İçe aktar",
+      "activeOk": true
+    },
+    {
+      "shot": "dolu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "fixture": "squadWageEur + 2 sözleşme",
+      "band": [
+        "Dönem bitimine",
+        "11 gün",
+        "11 gün",
+        "Transfer bütçesi",
+        "€5,00 Mn",
+        "€5,00 Mn",
+        "Maaş bütçesi kullanımı",
+        "%79",
+        "%79"
+      ],
+      "gauge": "Takım uyumu %57",
+      "weak": 2,
+      "contractAlerts": 2
+    },
+    {
+      "shot": "dolu-kaydirilmis-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "EKSİK",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 57",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "band": {
+        "bandBottom": 48,
+        "surfaces": [
+          {
+            "el": "header",
+            "top": 0,
+            "bottom": 48,
+            "alpha": 1
+          }
+        ],
+        "leaks": [],
+        "leakCount": 0,
+        "ok": true
+      }
+    },
+    {
+      "shot": "ayarlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      }
+    },
+    {
+      "shot": "eksik-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "missingNote": 1,
+      "contractAlerts": 0
+    },
+    {
+      "shot": "menu-career-desk-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "aria-allowed-role:minor:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: %",
+          "aria-hidden: 68",
+          "aria-hidden: Takım uyumu",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3"
+        ]
+      },
+      "current": [
+        "Masa"
+      ],
+      "expected": "Masa",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-players-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "FRA",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Oyuncular"
+      ],
+      "expected": "Oyuncular",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-squad-builder-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Osako",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Taktik & Kadro"
+      ],
+      "expected": "Taktik & Kadro",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-transfer-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Transfer"
+      ],
+      "expected": "Transfer",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-growth-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Gelişim"
+      ],
+      "expected": "Gelişim",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-teams-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "Takımlar"
+      ],
+      "expected": "Takımlar",
+      "activeOk": true
+    },
+    {
+      "shot": "menu-career-import-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "page-has-heading-one:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "current": [
+        "İçe aktar"
+      ],
+      "expected": "İçe aktar",
+      "activeOk": true
+    }
+  ]
+}

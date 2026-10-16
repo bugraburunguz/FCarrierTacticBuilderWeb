@@ -69,7 +69,7 @@ export function UtObjectivesPage() {
             {groups.map((g) => (
               <li key={g.id} className="rounded-md border border-line p-3 text-sm">
                 <div className="flex items-center justify-between gap-2">
-                  <b className="font-display text-base uppercase tracking-wide">{g.name}</b>
+                  <b lang="en" className="font-display text-base uppercase tracking-wide">{g.name}</b>
                   <Pill tone="slate">{g.objectives.length} alt görev</Pill>
                 </div>
                 <ol className="mt-2 list-decimal space-y-0.5 pl-5 text-xs text-muted">

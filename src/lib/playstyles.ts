@@ -17,7 +17,7 @@ export const PLAYSTYLES: Record<string, PlayStyleInfo> = {
   Enforcer: { name: 'Enforcer', effect: 'Omuz mücadelesi ve topu korumada etkinlik', plus: 'Çok daha etkili', best: 'Santrafor veya kanat, baskı altında top saklayanlar' },
   FinesseShot: { name: 'Finesse Shot', effect: 'Plase şutta hız, kavis ve isabet', plus: 'Çok daha hızlı, azami kavis, olağanüstü isabet', best: 'Bitiricilik ve falsosu yüksek hücum oyuncuları' },
   FirstTouch: { name: 'First Touch', effect: 'Topu kontrolde hata azalır, sürmeye daha hızlı geçiş', plus: 'En az hata, çok hızlı geçiş', best: 'Orta saha ve forvet, top kontrolü/dribbling yüksek' },
-  Gamechanger: { name: 'Game Changer', effect: 'Trivela ve fantezi şutlarda isabet', plus: 'Çok daha isabetli', best: 'Dar açıdan veya yaratıcı bitiren forvet/kanat' },
+  Gamechanger: { name: 'Gamechanger', effect: 'Trivela ve fantezi şutlarda isabet', plus: 'Çok daha isabetli', best: 'Dar açıdan veya yaratıcı bitiren forvet/kanat' },
   IncisivePass: { name: 'Incisive Pass', effect: 'Ara paslar isabetli, kavisli paslarda kavis, hassas paslar hızlı', plus: 'Çok isabetli ara pas, azami kavis, tam hız', best: 'Tüm mevkiler; pas oyunu ve kontra için' },
   Intercept: { name: 'Intercept', effect: 'Top kesmede menzil ve topu elde tutma', plus: 'Daha geniş menzil', best: 'Savunma farkındalığı ve ayakta müdahalesi yüksek defans oyuncuları' },
   Inventive: { name: 'Inventive', effect: 'Fantezi ve trivela paslarda isabet', plus: 'Çok daha isabetli', best: 'On numara, kenar orta saha, dış ayakla orta açan bekler' },
@@ -43,6 +43,14 @@ export const PLAYSTYLES: Record<string, PlayStyleInfo> = {
   RushOut: { name: 'Rush Out', effect: 'Kalesinden çıkış hızı ve şuta tepki', plus: 'Çok daha hızlı çıkış', best: 'Kaleci (yüksek hatta oynayan takımlarda)' },
   FarReach: { name: 'Far Reach', effect: 'Uçarak kurtarışlarda menzil', plus: 'Daha geniş menzil', best: 'Kaleci (uzaktan şut kurtarma)' },
   Deflector: { name: 'Deflector', effect: 'Şutu güvenli bölgeye çevirme', plus: 'Gerekirse boştaki takım arkadaşına yönlendirir', best: 'Kaleci (sert şutlarda dönen toplar azalır)' },
+}
+
+/**
+ * PlayStyle'ın görünen adı (tek kaynak): EA'nın resmî İngilizce adı; Türkçe resmî ad bilinmediği için çevrilmez.
+ * Düzey ≥ 2 PlayStyle+ ("+" eki). Sözlükte olmayan kimlik uydurma adla değil, kendisiyle gösterilir.
+ */
+export function playStyleName(id: string, level = 1): string {
+  return `${PLAYSTYLES[id]?.name ?? id}${level >= 2 ? '+' : ''}`
 }
 
 /**
