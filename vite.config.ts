@@ -20,6 +20,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     css: false,
     // Performans testleri ayrı koşar: npm run test:perf (ana npm test yük altında flaky olmasın)
-    exclude: [...configDefaults.exclude, '**/*.perf.test.ts'],
+    // scripts/deploy/*.test.mjs node:test + Docker ister; CI'da ayrı adım (node --test).
+    exclude: [...configDefaults.exclude, '**/*.perf.test.ts', 'scripts/deploy/**'],
   },
 })
