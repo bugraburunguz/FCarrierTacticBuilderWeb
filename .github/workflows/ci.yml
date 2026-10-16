@@ -16,3 +16,5 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      # DEPLOY-01: nginx şablonu gerçek nginx:1.27-alpine içinde (IP maskeli log, PORT/BACKEND_URL env, güvenlik başlıkları).
+      - run: node --test scripts/deploy/nginx.test.mjs

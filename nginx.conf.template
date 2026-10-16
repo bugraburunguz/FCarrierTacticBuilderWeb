@@ -1,0 +1,74 @@
+# DEPLOY-01: nginx:alpine şablonu (/etc/nginx/templates → envsubst → conf.d). Yalnız tanımlı env değişkenleri yerine konur:
+#   PORT           dinlenen port (Railway verir; yerel 80)
+#   BACKEND_URL    API hedefi (Railway: http://backend.railway.internal:<port>; yerel http://backend:8080)
+#   NGINX_LOCAL_RESOLVERS  konteynerin /etc/resolv.conf'undaki DNS (imajın 15-local-resolvers betiği, NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1;
+#                  IPv6 adres köşeli parantezli). Railway private DNS adresi dokümanda yok; sabit yazılmaz.
+# Değişkenli proxy_pass: backend adresi her istekte resolver ile çözülür (yeniden dağıtımda adres değişse de nginx yeniden başlamadan izler).
+
+#   TRUST_EDGE_REAL_IP  1: gelen X-Real-IP'ye güven (Railway edge arkasında); 0: bağlantı adresi (yerel; istemci başlığı yok sayılır)
+# PROD-PREP 6a: istemci IP'si. Railway edge istemci adresini X-Real-IP ile verir. Backend bu başlığı yalnız FCAREER_TRUST_PROXY=true iken
+# okur; X-Forwarded-For iletilmez.
+map "${TRUST_EDGE_REAL_IP}|$http_x_real_ip" $fc_client_ip {
+  "~^1\|(?<edge>.+)$"  $edge;
+  default              $remote_addr;
+}
+
+# DEPLOY-01 0b: erişim logunda IP maskeli — IPv4 son oktet 0, IPv6 ilk 48 bit kalır (son 80 bit atılır). Sorgu dizesi ve referer yazılmaz
+# (doğrulama bağlantısı token taşır). Eşleşmeyen biçim "-" yazılır.
+map $fc_client_ip $fc_log_ip {
+  "~^(?<v4>\d+\.\d+\.\d+)\.\d+$"                                         $v4.0;
+  "~^::ffff:(?<m4>\d+\.\d+\.\d+)\.\d+$"                                  ::ffff:$m4.0;
+  "~^(?<a>[0-9a-fA-F]{1,4}):(?<b>[0-9a-fA-F]{1,4}):(?<c>[0-9a-fA-F]{1,4}):"  $a:$b:$c::;
+  "~^(?<d>[0-9a-fA-F]{1,4}):(?<e>[0-9a-fA-F]{1,4})::"                     $d:$e::;
+  "~^(?<f>[0-9a-fA-F]{1,4})::"                                            $f::;
+  "~^::"                                                                  ::;
+  default                                                         -;
+}
+# İstemcinin istediği yol, sorgu dizesi olmadan ($uri try_files sonrası /index.html olur).
+map $request_uri $fc_log_path {
+  "~^(?<path>[^?]*)"  $path;
+  default             -;
+}
+log_format fc_masked '$fc_log_ip [$time_iso8601] "$request_method $fc_log_path" $status $body_bytes_sent $request_time';
+
+server {
+  listen ${PORT};
+  listen [::]:${PORT};
+  root /usr/share/nginx/html;
+  index index.html;
+  client_max_body_size 200m;
+  server_tokens off;
+  access_log /dev/stdout fc_masked;
+  resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
+  set $fc_backend ${BACKEND_URL};
+
+  # Uzun süren yönetim işlemleri (ingestion, ML valuation) için geniş zaman aşımı.
+  location /api/v1/admin/ {
+    proxy_pass $fc_backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $fc_client_ip;
+    proxy_set_header X-Forwarded-For "";
+    proxy_read_timeout 1800s;
+    include /etc/nginx/snippets/security-headers.conf;
+  }
+
+  location /api/ {
+    proxy_pass $fc_backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $fc_client_ip;
+    proxy_set_header X-Forwarded-For "";
+    include /etc/nginx/snippets/security-headers.conf;
+  }
+
+  location /assets/ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    include /etc/nginx/snippets/security-headers.conf;
+  }
+
+  location / {
+    add_header Cache-Control "no-cache";
+    include /etc/nginx/snippets/security-headers.conf;
+    try_files $uri /index.html;
+  }
+}
