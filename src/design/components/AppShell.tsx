@@ -113,12 +113,15 @@ export function AppShell() {
         />
         <div className="ml-auto flex items-center gap-2 max-[359px]:gap-1.5">
           <ThemeToggle className="max-sm:hidden" />
-          <MobileMenu loginLink={!(authenticated && me)} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
+          <MobileMenu loginLink={!authenticated} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
           {authenticated && me ? (
             <>
               <span className="hidden sm:block">{freeBeta ? <Chip tone="good">{BETA_TEXT}</Chip> : me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
               <UserMenu email={me.email} onLogout={async () => { await logout(); navigate('/login') }} />
             </>
+          ) : authenticated ? (
+            // Oturum anahtarı var, profil yükleniyor ya da geçici hata (ör. 429): "Kayıt ol" göstermek kullanıcıyı çıkış yapmış sandırıyordu.
+            <span aria-label="Hesap yükleniyor" role="status" className="glass-3 inline-block h-10 w-28 animate-pulse rounded-[var(--radius-sm)] max-sm:h-11" />
           ) : (
             <>
               <NavLink to="/login" className="glass-3 inline-flex max-[479px]:hidden min-h-10 items-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold text-ink hover:bg-[var(--glass-hover)] max-sm:min-h-11">Giriş</NavLink>

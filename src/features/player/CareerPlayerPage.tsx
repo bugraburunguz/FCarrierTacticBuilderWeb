@@ -52,7 +52,7 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   const pot = potentialText(summary)
   const card = (
     <>
-      <PlayerCard player={cardPlayerOfSummary(summary, summary.positions[0])} width={mobile ? MOBILE_CARD_WIDTH : CARD_WIDTH} />
+      <PlayerCard player={cardPlayerOfSummary(summary, summary.positions[0])} width={mobile ? MOBILE_CARD_WIDTH : CARD_WIDTH} eaCard />
       <FactGrid facts={[
         ['OVR', summary.overall],
         ...(pot !== undefined ? [['POT', pot] as [string, string]] : []),
@@ -73,7 +73,7 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   const leagueOvr = facets.data?.leagueOvr
   const badges = (
     <>
-      {inSquad && <Chip><Check size={12} aria-hidden="true" className="text-good" />Kadronda</Chip>}
+      {inSquad && (contract.data?.loanedOut ? <Chip tone="info">Kiralıkta</Chip> : <Chip><Check size={12} aria-hidden="true" className="text-good" />Kadronda</Chip>)}
       {leagueOvr !== undefined && (
         <span className="inline-flex items-center gap-1">
           <LeagueLevelChip overall={summary.overall} leagueOvr={leagueOvr} />

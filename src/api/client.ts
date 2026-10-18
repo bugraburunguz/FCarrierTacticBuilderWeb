@@ -1,5 +1,6 @@
 import { tokens } from './tokens'
 import { careerStore } from '../state/careerStore'
+import { cleanPlayerNames } from '../lib/playerName'
 import type { Envelope, TokenResponse } from './types'
 
 export const API_ORIGIN = ((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '').replace(/\/$/, '')
@@ -149,7 +150,8 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     }
     throw new ApiError(first?.message ?? envelope.message ?? 'İstek başarısız oldu.', first?.code ?? 'client.unknown', res.status)
   }
-  return envelope.data as T
+  // Adı çözülemeyen oyuncu ("Oyuncu #123") tek yerde "Adı bilinmiyor" olur (lib/playerName).
+  return cleanPlayerNames(envelope.data) as T
 }
 
 export const api = {

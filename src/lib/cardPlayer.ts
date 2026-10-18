@@ -44,6 +44,8 @@ export function cardPlayerOfRewardItem(item: RewardItem, name?: string): CardPla
 export function cardPlayerOfSummary(player: PlayerSummary, position?: string): CardPlayer {
   return {
     name: player.name,
+    // EA oyuncu kimliği: kart görseli (/img/card/{id}) ve katalog adı için.
+    assetId: player.faceAssetId,
     rating: player.overall,
     position,
     faceUrl: player.faceUrl,

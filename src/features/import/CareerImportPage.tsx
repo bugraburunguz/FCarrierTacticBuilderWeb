@@ -86,6 +86,7 @@ export function CareerImportPage() {
       setResult(summary)
       setTeamId(summary.guessedTeamId)
       await queryClient.invalidateQueries({ queryKey: ['squad'] })
+      await queryClient.invalidateQueries({ queryKey: ['career-moves'] })
     },
   })
   const teams = useQuery({ queryKey: ['career-teams', careerId, term], queryFn: () => endpoints.careerTeams(careerId!, term), enabled: careerId !== undefined && result !== null })

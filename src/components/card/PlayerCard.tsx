@@ -49,6 +49,11 @@ export interface PlayerCardProps {
   minRating?: number
   /** Yalnız ölçüm hikâyesi (card-width-probe): çip/stat genişlik eşiklerini yok sayar; yazı tabanları aynen uygulanır. */
   probe?: boolean
+  /**
+   * EA kart görseli (sunucu üzerinden /api/v1/img/card/{assetId}): yüklenince bizim tasarımın yerine geçer, yoksa (404) tasarım kalır.
+   * Yalnız katalog/kariyer ızgarasında: UT'de özel sürüm kartları taban görselle karışmasın, sahadaki küçük kartta okunmaz.
+   */
+  eaCard?: boolean
 }
 
 /** Q18: kart içi yazı ≥ 11px, OVR ≥ 14px (11 §8). */
@@ -70,9 +75,12 @@ const FRAME_PATH = 'M90 2 C122 2 160 10 176 24 L176 196 C176 214 150 232 90 248 
  * Tek oyuncu kartı (DS-05): 180×250 taban tasarım, boyut `transform: scale` ile ölçeklenir; böylece her boyutta oranlar sabit kalır.
  * Çerçeve kendi SVG'miz; portre yoksa ya da yüklenmezse silüet çizilir.
  */
-export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '', minText, minRating = CARD_MIN_RATING, probe = false }: PlayerCardProps) {
+export function PlayerCard({ player, size = 'md', width, chem, fit, price, className = '', minText, minRating = CARD_MIN_RATING, probe = false, eaCard = false }: PlayerCardProps) {
   const uid = useId().replace(/:/g, '')
   const [failed, setFailed] = useState(false)
+  const [ea, setEa] = useState<'loading' | 'loaded' | 'failed'>('loading')
+  const eaUrl = eaCard && player.assetId && ea !== 'failed' ? assetUrl(`/api/v1/img/card/${player.assetId}`) : undefined
+  const designHidden = Boolean(eaUrl) && ea === 'loaded'
   const catalogName = useAssetName(player.assetId)
   const w = width ?? SIZE_WIDTH[size]
   const scale = w / BASE_W
@@ -103,7 +111,8 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
       role="img"
       aria-label={`${shown.full ?? `${shown.strip} (ad bilinmiyor)`}, ${player.rating}${player.position ? `, ${player.position}` : ''}${player.club ? `, ${player.club}` : ''}`}
     >
-      <div className="absolute left-0 top-0 origin-top-left" style={{ width: BASE_W, height: BASE_H, transform: `scale(${scale})`, color: look.ink }}>
+      <div data-card-design className="absolute left-0 top-0 origin-top-left"
+        style={{ width: BASE_W, height: BASE_H, transform: `scale(${scale})`, color: look.ink, visibility: designHidden ? 'hidden' : undefined }}>
         <svg viewBox={`0 0 ${BASE_W} ${BASE_H}`} width={BASE_W} height={BASE_H} className="absolute inset-0" aria-hidden="true">
           <defs>
             <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0.35" y2="1">
@@ -180,7 +189,11 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
         )}
       </div>
 
-      {nameStrip && (
+      {eaUrl && (
+        <img data-ea-card src={eaUrl} alt="" loading="lazy" decoding="async" onLoad={(e) => setEa(e.currentTarget.naturalWidth > 1 ? 'loaded' : 'failed')} onError={() => setEa('failed')}
+          className={`absolute inset-0 h-full w-full object-contain motion-safe:transition-opacity motion-safe:duration-200 ${ea === 'loaded' ? 'opacity-100' : 'opacity-0'}`} />
+      )}
+      {nameStrip && !designHidden && (
         <div
           data-card-name
           lang={nameLang}

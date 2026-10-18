@@ -492,6 +492,22 @@ export interface CareerPlayer {
 
 export type RosterEventType = 'BUY' | 'SELL' | 'LOAN_IN' | 'LOAN_OUT' | 'PROMOTE'
 
+/** Kadro hareketi: son içe aktarılan kariyer kaydının oyunun ana kaydına göre farkı (GET /careers/{id}/moves). Bedel bilinmez. */
+export type CareerMoveType = 'TRANSFER_IN' | 'LOAN_IN' | 'NEW_PLAYER' | 'TRANSFER_OUT' | 'LOAN_OUT'
+export interface CareerMove {
+  type: CareerMoveType
+  playerId: number
+  eaId?: number
+  name: string
+  overall?: number
+  position?: string
+  fromClub?: string
+  toClub?: string
+  /** LOAN_IN: oyuncu ana kayıtta da bizdeydi (sezon başından kiralık). */
+  sinceStart: boolean
+  loanUntil?: string
+}
+
 export interface RosterEvent {
   id: number
   type: RosterEventType
@@ -653,6 +669,8 @@ export interface CareerPlayerContract {
   gameDate?: string
   monthsLeft?: number
   onLoan: boolean
+  /** Bizden kiralık gitti: kadromuzda sayılır ama şu an başka takımda. */
+  loanedOut?: boolean
   feasibility?: FeasibilityBucket
   budgetEur?: number
   budgetAfterPurchaseEur?: number
