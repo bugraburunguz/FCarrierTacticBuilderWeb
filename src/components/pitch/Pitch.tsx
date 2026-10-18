@@ -29,6 +29,8 @@ interface Props {
   onSwap?: (fromSlotId: string, toSlotId: string) => void
   /** Salt okunur (replika önizlemesi): slotlar etkileşimsiz, boş slot mevki yazar, rol etiketi düğme değildir. */
   readOnly?: boolean
+  /** Kariyer sahası: kartlar EA kart görseli (PlayerCard eaCard). UT'de kapalı (özel sürüm kartları taban görselle karışmasın). */
+  eaCards?: boolean
 }
 
 interface Drag {
@@ -65,7 +67,7 @@ const STRIPES = Array.from({ length: 12 }, (_, i) => i)
  * aynı kulüp/lig/ülkeyi paylaşan kartlar vurgulanır, diğerleri sönükleşir.
  * Klavye: Tab ile slot, Enter seç, M taşıma modu (oklarla hedef, Enter bırak, Esc iptal).
  */
-export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readOnly = false }: Props) {
+export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readOnly = false, eaCards = false }: Props) {
   const boxRef = useRef<HTMLDivElement>(null)
   const [fieldWidth, setFieldWidth] = useState(560)
   const [available, setAvailable] = useState<number>()
@@ -258,7 +260,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
               style={{ touchAction: slot.player && onSwap ? 'pan-y' : undefined }}
             >
               {slot.player ? (
-                <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} minText={11} minRating={14} />
+                <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} minText={11} minRating={14} eaCard={eaCards} />
               ) : (
                 <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
                   {readOnly ? <span className="font-mono text-xs">{slot.position}</span> : <span className="text-xl leading-none">+</span>}
@@ -316,7 +318,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
 
       {drag && dragged?.player && (
         <div className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-1/2 drop-shadow-xl" style={{ left: drag.x, top: drag.y }}>
-          <PlayerCard player={dragged.player} width={cardWidth} minText={11} minRating={14} />
+          <PlayerCard player={dragged.player} width={cardWidth} minText={11} minRating={14} eaCard={eaCards} />
         </div>
       )}
     </div>

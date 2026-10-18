@@ -22,6 +22,8 @@ export interface SquadViewProps {
   onRemove: (slotId: string) => void
   onSwap?: (from: string, to: string) => void
   pitchHint?: ReactNode
+  /** Kariyer: sahadaki kartlar EA kart görseli (UT'de verilmez). */
+  eaCards?: boolean
   /** Slot seçiliyken yan panelin gövdesi (UT: kart seçimi, kariyer: oyuncu/davranış/öneri sekmeleri; 08 §15). */
   slotPanel?: { title: string; onClose: () => void; body: ReactNode }
   formations: { id: string; label: string }[]
@@ -230,6 +232,7 @@ export function SquadWorkspaceView(p: SquadViewProps) {
             onPickRole={p.onPickRole}
             onRemove={p.onRemove}
             onSwap={p.onSwap}
+            eaCards={p.eaCards}
           />
           <p className="mt-2 px-1 text-xs text-muted">
             {p.pitchHint ?? (

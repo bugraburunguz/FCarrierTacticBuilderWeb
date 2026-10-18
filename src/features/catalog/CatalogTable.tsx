@@ -13,8 +13,11 @@ export interface CatalogColumn<T, K extends string> {
   cell: (item: T) => ReactNode
 }
 
-/** İlk iki sütun (OVR, Oyuncu): yalnız <820px yapışkan ve opak (glass.css `.table-sticky-col`); masaüstünde satırla aynı ton. */
-const STICKY = ['table-sticky-col left-0 w-14 min-w-14', 'table-sticky-col left-14']
+/**
+ * İlk iki sütun (Oyuncu, OVR): yalnız <820px yapışkan ve opak (glass.css `.table-sticky-col`); masaüstünde satırla aynı ton. Ad sütunu sabit
+ * genişlikte (uzun ad kısalır, tam adı title'da), OVR hemen yanında. Önceden OVR ilk sütundaydı ve ada yapışık okunup gözden kaçıyordu.
+ */
+const STICKY = ['table-sticky-col left-0 max-[819px]:w-36 max-[819px]:min-w-36 max-[819px]:max-w-36', 'table-sticky-col left-36 max-[819px]:w-14 max-[819px]:min-w-14']
 const ROW_ESTIMATE = 37
 
 /**

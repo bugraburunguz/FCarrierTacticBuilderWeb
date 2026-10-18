@@ -14,7 +14,7 @@ const MIN_SQUAD = 11
 
 function cardInfo(squad: CareerPlayer[], playerId?: number) {
   const p = squad.find((c) => c.player.id === playerId)?.player
-  return { faceUrl: p?.faceUrl, club: p?.club, league: p?.league, nationality: p?.nationality }
+  return { assetId: p?.faceAssetId, faceUrl: p?.faceUrl, club: p?.club, league: p?.league, nationality: p?.nationality }
 }
 
 export const shortRole = (name: string) => name.replace(/\s*\(.*\)/, '')
