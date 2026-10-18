@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react'
+import { ApiError } from '../api/client'
 import { endpoints } from '../api/endpoints'
 import { tokens } from '../api/tokens'
 import type { Me } from '../api/types'
@@ -20,7 +21,12 @@ const AuthContext = createContext<AuthState | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const authenticated = useSyncExternalStore(tokens.subscribe, () => tokens.authenticated)
-  const meQuery = useQuery({ queryKey: ['me'], queryFn: endpoints.me, enabled: authenticated, retry: false })
+  // Geçici hız sınırı (429) profil yüklemesini kalıcı olarak düşürmesin: 3 kez, artan aralıkla yeniden dener; diğer hatalarda denemez.
+  const meQuery = useQuery({
+    queryKey: ['me'], queryFn: endpoints.me, enabled: authenticated,
+    retry: (count, error) => error instanceof ApiError && error.status === 429 && count < 3,
+    retryDelay: (count) => 1500 * (count + 1),
+  })
 
   const login = useCallback(
     async (email: string, password: string) => {

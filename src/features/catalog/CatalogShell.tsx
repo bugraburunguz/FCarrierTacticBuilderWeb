@@ -1,5 +1,5 @@
 import { Search, SlidersHorizontal } from 'lucide-react'
-import { useRef, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { Input } from '../../components/ui'
 import { Button, Chip } from '../../design/components/primitives'
 import { POSITIONS } from '../../lib/format'
@@ -12,14 +12,28 @@ import { useElementSize } from '../cards/cardGrid'
 export function CatalogShell({ title, subtitle, bar, children }: { title: string; subtitle?: ReactNode; bar: ReactNode; children: ReactNode }) {
   const filterBox = useRef<HTMLDivElement>(null)
   const filtersHeight = useElementSize(filterBox).height
+  // "Daha fazla filtre" açıkken panel ekranın yarısından uzun: yapışkan kalınca kaydırmada sonuçları örtüyordu. Açıkken sayfayla kayar.
+  const [moreOpen, setMoreOpen] = useState(false)
+  useEffect(() => {
+    const box = filterBox.current
+    if (!box) {
+      return
+    }
+    // toggle kabarcıklanmaz: yakalama aşamasında dinlenir; iç içe bölüm (Öznitelik minimumları) de sayılır.
+    const onToggle = () => setMoreOpen(Boolean(box.querySelector('details[open]')))
+    box.addEventListener('toggle', onToggle, true)
+    return () => box.removeEventListener('toggle', onToggle, true)
+  }, [])
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 py-2" style={{ '--filters-h': `${filtersHeight}px` } as CSSProperties}>
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 py-2" style={{ '--filters-h': `${moreOpen ? 0 : filtersHeight}px` } as CSSProperties}>
       <div className="flex flex-col gap-1">
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{title}</h1>
         {subtitle}
       </div>
-      <div ref={filterBox} className="z-20 min-[820px]:sticky min-[820px]:top-[var(--header-h)]">
-        <section aria-label="Süzgeçler" className="glass glass-sticky flex flex-col gap-3 p-3 sm:px-4">
+      <div ref={filterBox} className={`z-20 ${moreOpen ? '' : 'min-[820px]:sticky min-[820px]:top-[var(--header-h)]'}`}>
+        {/* Yapışkan panel ekrandan uzun olamaz ("Daha fazla filtre" açıkken alt kısmına ulaşılamıyor, sayfayı örtüyordu): içi kayar.
+            overscroll-contain YOK: fare paneldeyken sayfa kaydırması panelde takılıyordu (ölçüldü). */}
+        <section aria-label="Süzgeçler" className="glass glass-sticky flex flex-col gap-3 p-3 sm:px-4 min-[820px]:max-h-[calc(100dvh-var(--header-h)-6rem)] min-[820px]:overflow-y-auto">
           {bar}
         </section>
       </div>

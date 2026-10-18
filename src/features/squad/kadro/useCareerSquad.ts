@@ -10,7 +10,7 @@ import { useTactic } from '../../../state/tacticStore'
 /** Kariyer verisi değişince tazelenen sorgular (kariyer listesi, kadro, hareketler). */
 export function useInvalidateCareer() {
   const queryClient = useQueryClient()
-  return () => Promise.all(['careers', 'squad', 'events'].map((k) => queryClient.invalidateQueries({ queryKey: [k] })))
+  return () => Promise.all(['careers', 'squad', 'events', 'career-moves'].map((k) => queryClient.invalidateQueries({ queryKey: [k] })))
 }
 
 export type OutMove = { mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer }

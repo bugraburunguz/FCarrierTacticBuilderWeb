@@ -28,6 +28,7 @@ import type {
   ResolvedTactic,
   Role,
   RosterEvent,
+  CareerMove,
   RosterEventType,
   SquadFit,
   Subscription,
@@ -246,6 +247,7 @@ export const endpoints = {
   careerRestore: (careerId: number, backup: CareerBackup) => request<CareerBackup>(`/careers/${careerId}/backup`, { method: 'POST', body: backup }),
   squad: (careerId: number) => api.get<CareerPlayer[]>(`/careers/${careerId}/squad`),
   events: (careerId: number) => api.get<RosterEvent[]>(`/careers/${careerId}/events`),
+  careerMoves: (careerId: number) => api.get<CareerMove[]>(`/careers/${careerId}/moves`),
   applyEvent: (
     careerId: number,
     body: { type: RosterEventType; playerId: number; feeEur?: number; toClubId?: number },

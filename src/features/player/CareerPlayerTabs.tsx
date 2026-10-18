@@ -76,7 +76,7 @@ export function ContractTab({ query }: { query: UseQueryResult<CareerPlayerContr
           )}
         </Row>
       )}
-      {c.onLoan && <Row term="Kiralık durumu">Kiralık</Row>}
+      {c.onLoan && <Row term="Kiralık durumu">{c.loanedOut ? 'Kiralık verildi' : 'Kiralık geldi'}</Row>}
       {c.releaseClauseEur !== undefined && <Row term="Serbest bırakma bedeli">{formatEur(c.releaseClauseEur)}</Row>}
       {c.feasibility !== undefined && (
         <Row term="Ulaşılabilirlik" help={<HelpPopover label="Ulaşılabilirlik"><p>Öneri hattıyla aynı sınıflandırma: bütçe oranı, kulüp gücü farkı, kadrondaki ilk 11'e göre OVR farkı ve kalan sözleşme.</p></HelpPopover>}>

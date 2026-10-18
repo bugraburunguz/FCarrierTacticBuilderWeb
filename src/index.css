@@ -95,6 +95,16 @@
 
 :root {
   color-scheme: light;
+  /* v2 yüzeyi zaten opak; v3 tokens.css kendi opak değerini verir. */
+  --option-bg: var(--surface);
+}
+
+/* Yerel açılır liste seçenekleri: select yarı saydam cam yüzeydeyken Windows Chrome listeyi beyaz zeminle çizip açık renk yazıyı
+   görünmez yapıyordu (Gelişim → Oyuncu seçici). Seçenekler her temada opak zemin + tema yazı rengi alır. */
+select option,
+select optgroup {
+  background-color: var(--option-bg);
+  color: var(--ink);
 }
 
 :root.dark {

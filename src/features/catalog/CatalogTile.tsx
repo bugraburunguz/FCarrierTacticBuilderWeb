@@ -14,7 +14,7 @@ export function CatalogTile({ player, cardWidth, href, extra }: { player: Player
   return (
     <li className="glass-3 flex min-w-0 flex-col items-center gap-2 px-2 py-3">
       <Link to={href} aria-label={`${player.name}, ${player.overall}, ${player.positions.join(' ')}`} className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
-        <PlayerCard player={cardPlayerOfSummary(player, position)} width={cardWidth} />
+        <PlayerCard player={cardPlayerOfSummary(player, position)} width={cardWidth} eaCard />
       </Link>
       <p className="w-full truncate text-center text-xs text-ink-2" title={`${player.positions.join(' / ')}${player.club ? ` · ${player.club}` : ''}`}>
         {player.positions.slice(0, 3).join(' · ')}{player.age ? ` · ${player.age}` : ''}

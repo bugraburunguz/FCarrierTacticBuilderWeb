@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, Formation } from '../../../api/types'
@@ -17,6 +18,8 @@ import { pitchSlotsOf } from '../pitchSlots'
 import { CareerSettingsPanel } from './CareerSettingsPanel'
 import { DepthMap, RegionSummary } from './DepthMap'
 import { MoveHistory, TransferMarket } from './MovesTab'
+import { SaveMoves } from './SaveMoves'
+import { careerMovesQuery } from './saveMovesQuery'
 import { useCareerLineup } from './useCareerLineup'
 import { useCareerSquad } from './useCareerSquad'
 
@@ -81,10 +84,12 @@ export function KadroPage() {
   const k = useCareerSquad()
   const [view, setView] = useState<View>('list')
   const players = k.squad.data ?? []
+  // Sekme sayısı: kayda göre hareketler (içe aktarma) + elle girilen hareketler.
+  const saveMoves = useQuery({ ...careerMovesQuery(k.career?.id ?? 0), enabled: k.career !== undefined })
   const tabs = [
     { id: 'saha' as const, label: 'Saha' },
     { id: 'oyuncular' as const, label: `Oyuncular (${players.length})` },
-    { id: 'hareketler' as const, label: `Hareketler (${k.events.data?.length ?? 0})` },
+    { id: 'hareketler' as const, label: `Hareketler (${(saveMoves.data?.length ?? 0) + (k.events.data?.length ?? 0)})` },
     { id: 'kariyer' as const, label: 'Kariyer' },
   ]
   const { tab, setTab } = useTabParam(tabs)
@@ -163,6 +168,7 @@ export function KadroPage() {
 
       <TabPanel idPrefix={PREFIX} id="hareketler" active={tab === 'hareketler'}>
         <div className="flex flex-col gap-4">
+          <SaveMoves careerId={career.id} />
           <MoveHistory careerId={career.id} events={k.events.data ?? []} />
           <TransferMarket career={career} squadIds={k.squadIds} />
         </div>

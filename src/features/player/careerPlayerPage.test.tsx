@@ -150,6 +150,13 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(screen.queryByText('Kadronda')).toBeNull()
   })
 
+  it('bizden kiralık giden oyuncu "Kadronda" değil "Kiralıkta"; sözleşmede "Kiralık verildi"', async () => {
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true, onLoan: true, loanedOut: true, feasibility: undefined, budgetAfterPurchaseEur: undefined }))
+    renderPage()
+    expect(await screen.findByText('Kiralıkta')).toBeInTheDocument()
+    expect(screen.queryByText('Kadronda')).toBeNull()
+  })
+
   it('Gelişim: OVR→POT ve gelişim payı mevcut veriden; projeksiyon ucu yok, eski gelişim ucu çağrılmaz', async () => {
     renderPage('/players/7?sekme=gelisim')
     const panel = await screen.findByRole('tabpanel')

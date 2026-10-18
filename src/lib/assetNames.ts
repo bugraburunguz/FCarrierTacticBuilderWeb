@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react'
 import { endpoints } from '../api/endpoints'
+import { isPlaceholderName } from './playerName'
 
 /** /players/assets üst sınırı (backend MAX_ASSET_IDS). */
 const BATCH = 100
@@ -71,8 +72,9 @@ export function useAssetName(assetId: number | undefined): string | null | undef
   return assetId === undefined ? undefined : assetNames.get(assetId)
 }
 
-/** Yakalanan ad gerçek mi: "#123" ya da yalnız rakam değil, en az bir harf içerir. */
-export const isRealName = (name: string | undefined): name is string => Boolean(name && /\p{L}/u.test(name) && !/^#/.test(name.trim()))
+/** Yakalanan ad gerçek mi: "#123" ya da yalnız rakam değil, en az bir harf içerir; adı çözülemeyen oyuncu ("Oyuncu #123", "Adı bilinmiyor") değil. */
+export const isRealName = (name: string | undefined): name is string =>
+  Boolean(name && /\p{L}/u.test(name) && !/^#/.test(name.trim()) && !isPlaceholderName(name))
 
 /** Ad şeridi: harf içeren son sözcük (rakamla biten adda rakam gösterilmez). */
 export function stripName(name: string): string {
