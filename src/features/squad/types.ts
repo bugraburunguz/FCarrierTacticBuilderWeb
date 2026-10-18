@@ -15,7 +15,7 @@ export interface SlotView {
   position: string
   x: number
   y: number
-  player?: { id: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string; faceStats?: number[]; faceLabels?: string[]; faceStatsApproximate?: boolean }
+  player?: { id: number; assetId?: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string; faceStats?: number[]; faceLabels?: string[]; faceStatsApproximate?: boolean }
   roleLabel: string
   /** pct ve state aynı RoleFit'ten (fitDisplay: levelFit + sunucu fitLabel); band yalnız v2 PositionCard'ın rengi için. */
   fit?: { pct: number; state: FitState; band?: WeaponState | null }

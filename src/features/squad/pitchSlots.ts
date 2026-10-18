@@ -10,6 +10,8 @@ export function pitchSlotsOf(slots: SlotView[]): PitchSlot[] {
     y: s.y,
     player: s.player && {
       name: s.player.name,
+      // EA oyuncu kimliği: kariyer sahasında EA kart görseli (Pitch eaCards).
+      assetId: s.player.assetId,
       rating: s.player.overall,
       position: s.position,
       faceUrl: s.player.faceUrl,

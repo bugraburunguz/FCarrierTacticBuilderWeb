@@ -7,8 +7,8 @@ import { playerHref } from './CardTile'
 
 const NUM = 'font-[var(--font-num)] tabular-nums'
 const COLUMNS: CatalogColumn<PlayerSummary, CardSort>[] = [
+  { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="block truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link> },
   { sort: 'overall', label: 'OVR', align: 'right', cellClassName: NUM, cell: (p) => p.overall },
-  { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="font-medium text-ink hover:underline">{p.name}</Link> },
   { sort: 'position', label: 'Mevki', cellClassName: 'font-[var(--font-num)] text-xs text-ink-2', cell: (p) => p.positions.join(' ') },
   { sort: 'age', label: 'Yaş', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.age ?? '–' },
   { sort: 'club', label: 'Kulüp', cellClassName: 'max-w-[160px] truncate text-ink-2', cell: (p) => p.club ?? '–' },

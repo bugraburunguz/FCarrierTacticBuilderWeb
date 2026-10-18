@@ -34,8 +34,8 @@ const contractText = (date?: string) => (date ? new Date(`${date}T00:00:00`).toL
 
 function columns(facets: CareerPlayerFacets | undefined, role: boolean): CatalogColumn<PlayerSummary, CareerSort>[] {
   const cols: (CatalogColumn<PlayerSummary, CareerSort> | false)[] = [
+    { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="block truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link> },
     { sort: 'overall', label: 'OVR', align: 'right', cellClassName: NUM, cell: (p) => p.overall },
-    { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="font-medium text-ink hover:underline">{p.name}</Link> },
     { sort: 'potential', label: 'POT', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.potentialRange ?? p.potential ?? '–' },
     { sort: 'age', label: 'Yaş', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.age ?? '–' },
     { sort: 'position', label: 'Mevki', cellClassName: 'font-[var(--font-num)] text-xs text-ink-2', cell: (p) => p.positions.join(' ') },

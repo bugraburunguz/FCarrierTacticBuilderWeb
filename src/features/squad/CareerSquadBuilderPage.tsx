@@ -35,6 +35,7 @@ export function CareerSquadBuilderPage() {
       <SquadWorkspaceView
         title="Kariyer Kadro Kurucu"
         slots={pitchSlotsOf(views)}
+        eaCards
         selectedSlotId={dialogSlot?.slotId}
         onPickPlayer={(slotId) => ws.select(slotId, 'card')}
         onPickRole={(slotId) => ws.select(slotId, 'role')}

@@ -53,7 +53,7 @@ function LineupHero({ careerId, squad, formations }: { careerId: number; squad: 
       <ErrorBox error={l.lineup.error} />
       {l.fit && l.formation && (
         <>
-          <Pitch slots={pitchSlotsOf(l.views)} onPickPlayer={l.openBuilder} onPickRole={l.openBuilder} onSwap={l.swap} />
+          <Pitch slots={pitchSlotsOf(l.views)} onPickPlayer={l.openBuilder} onPickRole={l.openBuilder} onSwap={l.swap} eaCards />
           <p className="px-1 text-xs text-muted">Karta tıkla: kadro kurucuda düzenle · iki kartı yer değiştirirsen diziliş kurucuya kaydedilir.</p>
           <section aria-labelledby="kadro-bench" className="flex flex-col gap-1.5">
             <h3 id="kadro-bench" className="text-sm font-semibold">Yedek kulübesi ({l.bench.length})</h3>
