@@ -21,10 +21,10 @@ describe('zayıf halkalar: sunucu etiketiyle seçilir', () => {
   })
 
   it('kartta etiket metni, levelFit yüzdesi ve ilk neden; renk tek başına sunulmaz', () => {
-    const [card] = weakLinks([row('S2', 'WRONG_ROLE', 38.4, ['Dayanıklılık düşük', 'Hız düşük'])])
+    const [card] = weakLinks([row('S2', 'WRONG_ROLE', 38.4, ['Stamina -7.5', 'SprintSpeed -2.0'])])
     expect(card.labelText).toBe('Rol için eksik')
     expect(card.pct).toBe(38)
-    expect(card.reason).toBe('Dayanıklılık düşük')
+    expect(card.reason).toBe('Dayanıklılık −7,5')
     expect(weakLinks([row('S3', 'WEAK', 50)])[0].labelText).toBe('Rol için sınırda')
     expect(weakLinks([row('S3', 'AT_LEVEL', 50)])[0].labelText).toBe('Rol için seviyesinde')
   })
@@ -37,6 +37,18 @@ describe('neden metni (motorun reasons[0]\'ı: "<anahtar> <±puan>")', () => {
     expect(reasonText('ST -6.2')).toBe('Mevki uyumu (ST) −6,2')
     expect(reasonText('Dayanıklılık düşük')).toBe('Dayanıklılık düşük')
     expect(weakLinks([row('S2', 'WEAK', 30, ['StandingTackle -14.8'])])[0].reason).toBe('Ayakta müdahale −14,8')
+  })
+
+  it('zayıf kartta en büyük negatif katkı seçilir (pozitif en büyük olsa da); negatif yoksa neden yok', () => {
+    expect(weakLinks([row('S2', 'WEAK', 30, ['SprintSpeed +12.0', 'Stamina -3.1', 'StandingTackle -9.4'])])[0].reason).toBe('Ayakta müdahale −9,4')
+    expect(weakLinks([row('S2', 'WEAK', 30, ['SprintSpeed +12.0', 'Acceleration +2.0'])])[0].reason).toBeUndefined()
+  })
+})
+
+describe('zayıf halka kartının birincil eylemi (FAZ 2 düzeltme 1)', () => {
+  it('WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir); WEAK → transferde aday', () => {
+    const cards = weakLinks([row('S1', 'WRONG_ROLE', 10), row('S2', 'WEAK', 30)])
+    expect(cards.map((c) => [c.slotId, c.primary])).toEqual([['S1', 'ROLE'], ['S2', 'TRANSFER']])
   })
 })
 

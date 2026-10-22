@@ -6,8 +6,6 @@ import { endpoints } from '../../api/endpoints'
 import type { Career } from '../../api/types'
 import { useAuth } from '../../auth/AuthContext'
 import { EmptyState, Skeleton } from '../../design/components/primitives'
-import { currentRoute } from '../../lib/deskLinks'
-import { rankActions } from '../../lib/deskRules'
 import { extensionCaptureEnabled } from '../../lib/features'
 import { useActiveCareerId } from '../../state/careerStore'
 import { bigStore } from '../../state/bigStore'
@@ -15,10 +13,9 @@ import { useMode } from '../../state/modeStore'
 import { utCardStore } from '../../state/utCardStore'
 import { SbcCard } from '../sbc/SbcCard'
 import { useActiveSbcSets, useNow } from '../sbc/useActiveSbcSets'
-import { useAutoLineup } from '../squad/useAutoLineup'
-import { useCareerBinding } from '../squad/useCareerBinding'
-import { teamFitPct, toDeskSlots, useSlotFits } from '../squad/useSlotFits'
-import { useSquadWorkspace } from '../squad/useSquadWorkspace'
+import { SeasonJobs } from '../career/SeasonJobs'
+import { useMainTacticFits } from '../career/useMainTacticFits'
+import { teamFitPct } from '../squad/useSlotFits'
 
 const SBC_SHOWN = 4
 const GRID_STYLE = { gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 15rem), 1fr))' }
@@ -37,18 +34,12 @@ function Section({ title, children, actions }: { title: string; children: ReactN
   )
 }
 
-/** "Kariyerine devam et": Masa ile aynı kaynaklar (useSlotFits v3 → teamFitPct, deskRules.rankActions), son içe aktarma tarihi. */
+/** "Kariyerine devam et": Masa ile aynı kaynaklar (ana taktik → useMainTacticFits → teamFitPct; 3 iş SeasonJobs/deskRules.seasonJobs), son içe aktarma tarihi. */
 function ContinueCareer({ career }: { career: Career }) {
   const id = career.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id) })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id), retry: false })
-  const tagList = useQuery({ queryKey: ['tags', id], queryFn: () => endpoints.playerTags(id), retry: false })
-  const { binding, playerById } = useCareerBinding(id, squad.data)
-  const ws = useSquadWorkspace('career', binding)
-  useAutoLineup(ws, id, squad.data?.length ?? 0)
-  const { rows } = useSlotFits(ws, playerById)
-  const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
-  const firstJob = useMemo(() => rankActions({ squad: squad.data ?? [], slots: toDeskSlots(rows), tags, gameDate: career.gameDate })[0], [squad.data, rows, tags, career.gameDate])
+  const { main, rows, pending } = useMainTacticFits(id, squad.data)
   const fit = teamFitPct(rows.map((r) => r.display))
   const lastImport = (snapshots.data ?? []).find((s) => s.source === 'IMPORT')
   return (
@@ -62,11 +53,9 @@ function ContinueCareer({ career }: { career: Career }) {
           <dt className="text-xs font-medium text-ink-2">Takım uyumu</dt>
           <dd className="font-[var(--font-num)] text-2xl font-semibold tabular-nums">{fit !== undefined ? `%${fit}` : squad.isLoading ? '…' : '—'}</dd>
         </div>
-        <div className="glass-3 flex min-w-0 flex-col px-3 py-2">
-          <dt className="text-xs font-medium text-ink-2">Bu dönemin ilk işi</dt>
-          <dd className="text-sm">{firstJob ? <Link to={currentRoute(firstJob.to)} className="font-semibold text-ink underline-offset-2 hover:underline">{firstJob.title}</Link> : <span className="text-ink-2">Acil iş yok.</span>}</dd>
-        </div>
       </dl>
+      <SeasonJobs careerId={id} squad={squad.data ?? []} rows={rows} tacticSource={main.source} record={lastImport && { kind: 'record', at: lastImport.takenAt }}
+        gameDate={career.gameDate} pending={main.isLoading || pending || squad.isLoading} framed={false} />
     </Section>
   )
 }

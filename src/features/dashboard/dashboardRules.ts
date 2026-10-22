@@ -26,6 +26,8 @@ export interface WeakLinkCard {
   /** Etiket her zaman metin olarak ("Rol için eksik"); renk tek başına anlam taşımaz. */
   labelText: string
   reason?: string
+  /** Birincil eylem: WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir, rol yanlış; Lab FAZ 4), WEAK/AT_LEVEL → transferde aday. */
+  primary: 'ROLE' | 'TRANSFER'
 }
 
 const REASON = /^(\S+) ([+-])(\d+(?:\.\d+)?)$/
@@ -42,6 +44,16 @@ export function reasonText(raw: string): string {
   return `${label} ${sign === '-' ? '−' : '+'}${points.replace('.', ',')}`
 }
 
+/** Zayıf kartın nedeni: motorun katkıları içinde en büyük negatif olan (pozitif katkı zayıflığı açıklamaz); yoksa yok. */
+export function worstReason(reasons: readonly string[] | undefined): string | undefined {
+  const negative = (reasons ?? []).flatMap((raw) => {
+    const m = REASON.exec(raw)
+    return m && m[2] === '-' ? [{ raw, points: Number(m[3]) }] : []
+  })
+  const worst = negative.sort((a, b) => b.points - a.points)[0]
+  return worst && reasonText(worst.raw)
+}
+
 export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[] {
   const tier = (r: SlotFitRow) => (r.fit.fitLabel ? LABEL_TIER[r.fit.fitLabel] : undefined)
   const level = (r: SlotFitRow) => r.fit.levelFit ?? r.display.pct
@@ -51,7 +63,8 @@ export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[
     .slice(0, limit)
     .map((r) => ({
       slotId: r.slotId, position: r.position, roleId: r.roleId, roleName: r.roleName, playerId: r.playerId, playerName: r.playerName,
-      pct: Math.round(level(r)), state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: r.fit.reasons?.[0] && reasonText(r.fit.reasons[0]),
+      pct: Math.round(level(r)), state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: worstReason(r.fit.reasons),
+      primary: r.fit.fitLabel === 'WRONG_ROLE' ? 'ROLE' : 'TRANSFER',
     }))
 }
 

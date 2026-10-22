@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { Button, Chip, EmptyState, ErrorState, Panel, Skeleton } from '../../design/components/primitives'
+import { LAB_AVAILABLE } from '../../lib/features'
 import { labStore, useLab } from '../../state/labStore'
 import { droppedText, useActiveTactic } from './activeTactic'
 import { MakeMainDialog } from './MakeMainDialog'
@@ -58,6 +59,9 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
 
   const auto = active.source.kind === 'auto'
   function openLab() {
+    if (!LAB_AVAILABLE) {
+      return
+    }
     const created = labStore.create(careerId, {
       name: auto ? 'Otomatik öneri' : (active!.main?.name ?? 'Ana taktik'),
       origin: auto ? { kind: 'auto' } : { kind: 'main', ref: String(active!.main?.slot) },
@@ -78,7 +82,7 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
       actions={(
         <span className="flex flex-wrap gap-2">
           {auto && <Button variant="primary" onClick={() => setDialog('active')}>Ana taktiğim yap</Button>}
-          <Button onClick={openLab}>Lab'da düzenle</Button>
+          {LAB_AVAILABLE && <Button onClick={openLab}>Lab'da düzenle</Button>}
           {auto && onDetailed && <Button variant="ghost" onClick={onDetailed}>{`Detaylı öneri${detailedCost ? ` (${detailedCost} kredi)` : ''}`}</Button>}
         </span>
       )}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../api/types'
 import roleIds from './roleIds.fixture.json'
-import { ageProfile, alerts, depthRows, EVENT_LABEL, rankActions, sellAdvice, SNAPSHOT_LABEL, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, windowDaysLeft, type DeskSlot } from './deskRules'
+import { ageProfile, alerts, depthRows, EVENT_LABEL, jobLayer, rankActions, seasonJobs, sellAdvice, SNAPSHOT_LABEL, suggestActions, TRANSFER_ROLE_BY_GROUP, weakSlots, windowDaysLeft, type DeskSlot } from './deskRules'
 
 function player(id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer['player']> = {}, loanedOut = false): CareerPlayer {
   return { player: { id, name: `P${id}`, overall, age, positions: [position], potential: overall + 2, valueEur: 2_000_000, ...extra } as CareerPlayer['player'], onLoan: false, loanedOut }
@@ -75,6 +75,22 @@ describe('iş sıralaması (V3-06e)', () => {
     expect(rankActions({ squad, slots, tags: {} }).some((a) => a.kind === 'CONTRACT')).toBe(false)
     const withDate = rankActions({ squad, slots, tags: {}, gameDate: '2027-01-15' })
     expect(withDate.find((a) => a.kind === 'CONTRACT')).toMatchObject({ title: 'Sözleşme: P3', reason: expect.stringContaining('1 ay içinde bitiyor') })
+  })
+})
+
+describe('"Bu dönemin 3 işi" tek kaynak (KARIYER-UX FAZ 2 düzeltme 3)', () => {
+  const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000, contractUntil: '2027-03-01' }), player(4, 'CM', 60, 19, { potential: 78 })]
+  const slots = [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)]
+
+  it('ilk 3 iş = rankActions sırası; Masa zayıf halkada gösterilen slotu dışarıda bırakabilir', () => {
+    const input = { squad, slots, tags: {}, gameDate: '2027-01-15' }
+    expect(seasonJobs(input)).toEqual(rankActions(input).slice(0, 3))
+    expect(seasonJobs(input, { exclude: new Set(['a']) }).some((j) => j.slotId === 'a')).toBe(false)
+  })
+
+  it('iş başına veri katmanı: diziliş/etiket kuralları taktik kaynağından, sözleşme ve derinlik kayıttan', () => {
+    expect(['FILL', 'SELL', 'LOAN'].map((k) => jobLayer(k as never))).toEqual(['tactic', 'tactic', 'tactic'])
+    expect(['DEPTH', 'CONTRACT'].map((k) => jobLayer(k as never))).toEqual(['record', 'record'])
   })
 })
 

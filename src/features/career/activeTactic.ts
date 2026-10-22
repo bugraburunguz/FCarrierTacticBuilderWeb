@@ -56,7 +56,9 @@ export function useActiveTactic(careerId: number | undefined) {
     return undefined
   }, [main.data, saved, dropped, fill.data, needStarter, starter.data])
 
-  return { active, isLoading: main.isLoading || (needStarter && starter.isLoading), error: main.error ?? starter.error }
+  // mainLoading: yalnız ana taktik sorgusu. Öneri paneli buna bağlanmalı; isLoading'e bağlanırsa öneri hatasında panel bağlanıp sökülür
+  // ve her bağlanışta istek yinelenir (döngü, FAZ 2 düzeltme).
+  return { active, isLoading: main.isLoading || (needStarter && starter.isLoading), mainLoading: main.isLoading, error: main.error ?? starter.error }
 }
 
 /**
@@ -64,7 +66,7 @@ export function useActiveTactic(careerId: number | undefined) {
  * Düzenleme yalnız Lab'da (katman 3).
  */
 export function useMainTacticBinding(careerId: number | undefined, squad: readonly CareerPlayer[] | undefined) {
-  const { active, isLoading, error } = useActiveTactic(careerId)
+  const { active, isLoading, mainLoading, error } = useActiveTactic(careerId)
   const playerById = useMemo(() => new Map((squad ?? []).map((c) => [c.player.id, c.player])), [squad])
   const binding: SquadBinding<number> = useMemo(() => ({
     state: squadStateOf(active?.tactic ?? DEFAULT_TACTIC, { ...(active?.lineup ?? {}) }),
@@ -82,7 +84,7 @@ export function useMainTacticBinding(careerId: number | undefined, squad: readon
     defaultFormation: DEFAULT_TACTIC.formation,
     keepAssignedOnImport: true,
   }), [active, playerById])
-  return { binding, source: active?.source, dropped: active?.dropped ?? 0, filled: active?.filled ?? false, active, isLoading, error, playerById }
+  return { binding, source: active?.source, dropped: active?.dropped ?? 0, filled: active?.filled ?? false, active, isLoading, mainLoading, error, playerById }
 }
 
 /** "Ana taktiğim yap": taslağı (ya da öneriyi) slota yazar, ana taktik yapar; ana taktiğe bağlı sorgular yenilenir. */

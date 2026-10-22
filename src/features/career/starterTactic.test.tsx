@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CareerPlayer, Formation, StarterTactic, UserTactic } from '../../api/types'
+import { LAB_AVAILABLE } from '../../lib/features'
 import { LAB_KEY, labStore } from '../../state/labStore'
 
 const state: { main: UserTactic | null } = { main: null }
@@ -89,13 +90,12 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     expect(endpoints.setMainTactic).toHaveBeenCalledWith(1, 7)
   })
 
-  it('"Lab\'da düzenle" öneriden auto kökenli yeni taslak açar', async () => {
-    const onOpenLab = vi.fn()
-    render(<StarterTacticPanel careerId={7} onOpenLab={onOpenLab} />, { wrapper })
-    await userEvent.click(await screen.findByRole('button', { name: "Lab'da düzenle" }))
-    expect(labStore.get(7).drafts).toHaveLength(1)
-    expect(labStore.get(7).drafts[0].origin.kind).toBe('auto')
-    expect(onOpenLab).toHaveBeenCalledWith(labStore.get(7).drafts[0].id)
+  it('LAB_AVAILABLE false iken (FAZ 4\'e kadar) "Lab\'da düzenle" yok ve taslak oluşmaz', async () => {
+    expect(LAB_AVAILABLE).toBe(false)
+    render(<StarterTacticPanel careerId={7} />, { wrapper })
+    expect(await screen.findByRole('button', { name: 'Ana taktiğim yap' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: "Lab'da düzenle" })).toBeNull()
+    expect(labStore.get(7).drafts).toHaveLength(0)
   })
 
   it('göç eden taslak varsa "Önceki taslağı ana taktik yap" kısayolu çıkar', async () => {

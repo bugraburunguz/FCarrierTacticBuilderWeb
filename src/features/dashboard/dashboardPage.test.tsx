@@ -25,10 +25,10 @@ vi.mock('../../api/endpoints', () => {
 const slot = (slotId: string) => ({ slotId, position: 'CM', defaultRole: 'box_to_box_balanced', x: 0.5, y: 0.5 })
 const member = (id: number, extra: object = {}, player: object = {}) => ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 60 + id, age: 25, ...player }, onLoan: false, ...extra })
 const FITS: Record<number, object> = {
-  1: { levelFit: 38.4, score: 65.2, fitLabel: 'WEAK', reasons: ['Pas isabeti düşük'] },
-  2: { levelFit: 12.0, score: 40, fitLabel: 'WRONG_ROLE', reasons: ['Dayanıklılık düşük'] },
+  1: { levelFit: 38.4, score: 65.2, fitLabel: 'WEAK', reasons: ['ShortPassing -6.1'] },
+  2: { levelFit: 12.0, score: 40, fitLabel: 'WRONG_ROLE', reasons: ['SprintSpeed +9.0', 'Stamina -12.5'] },
   3: { levelFit: 80, score: 90, fitLabel: 'GOOD', reasons: [] },
-  5: { levelFit: 50, score: 70, fitLabel: 'AT_LEVEL', reasons: ['Seviyesinde'] },
+  5: { levelFit: 50, score: 70, fitLabel: 'AT_LEVEL', reasons: ['Vision +1.0'] },
 }
 const CAREER = { id: 1, name: 'Crewe', clubName: 'Crewe Alexandra', season: 1, budgetEur: 5_000_000, wageBudgetEur: 20_000, gameDate: '2027-01-15', windowEndsOn: '2027-01-31', gameVersionId: 27, clubId: 9, squadSize: 5, spoilerMode: 'SHOW' }
 const MAIN: UserTactic = {
@@ -86,7 +86,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(endpoints.starterTactic).not.toHaveBeenCalled()
   })
 
-  it('zayıf halkalar: sunucu etiketi metniyle, levelFit yüzdesi ve ilk neden; çözüm bağlantıları', async () => {
+  it('zayıf halkalar: sunucu etiketi metniyle, levelFit yüzdesi ve en büyük negatif katkı; çözüm bağlantıları', async () => {
     renderPage()
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
     const cards = await within(weak).findAllByRole('listitem')
@@ -94,10 +94,40 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(cards[0]).toHaveTextContent('Oyuncu 2')
     expect(cards[0]).toHaveTextContent('Rol için eksik')
     expect(cards[0]).toHaveTextContent('%12')
-    expect(cards[0]).toHaveTextContent('Dayanıklılık düşük')
+    expect(cards[0]).toHaveTextContent('Dayanıklılık −12,5')
+    expect(cards[0]).not.toHaveTextContent('Sprint hızı')
     expect(cards[1]).toHaveTextContent('Rol için sınırda')
     expect(within(cards[0]).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-CM2&pos=CM&rol=box_to_box_balanced&role=box_to_box_balanced')
-    expect(within(cards[0]).getByRole('link', { name: /Lab'da dene/ })).toHaveAttribute('href', '/squad/builder?slot=CM2')
+  })
+
+  it('WRONG_ROLE kartı: "Rolü değiştir" FAZ 4\'e kadar yok, aday bulma ikincil; WEAK kartında aday bulma birincil; Lab hiç yok', async () => {
+    renderPage()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const [wrongRole, weakCard] = await within(weak).findAllByRole('listitem')
+    expect(within(wrongRole).queryByRole('link', { name: /Rolü değiştir/ })).toBeNull()
+    expect(within(wrongRole).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('data-variant', 'secondary')
+    expect(within(weakCard).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('data-variant', 'primary')
+    expect(screen.queryByText(/Lab'd|Lab'a/)).toBeNull()
+  })
+
+  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; iş başına kural kaynağı etiketi', async () => {
+    renderPage()
+    const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
+    const panel = screen.getByRole('tabpanel')
+    expect(panel.querySelector('section')).toBe(jobs)
+    const items = await within(jobs).findAllByRole('listitem')
+    expect(items.length).toBeGreaterThan(0)
+    expect(jobs.querySelector('header [data-source="decision"]')).not.toBeNull()
+    const contract = items.find((li) => li.textContent?.includes('Sözleşme: Oyuncu 4'))
+    expect(contract?.querySelector('[data-source="record"]')).not.toBeNull()
+  })
+
+  it('tek IMPORT varsa Δ çipi hiç gösterilmez', async () => {
+    vi.mocked(endpoints.snapshots).mockResolvedValue([{ id: 9, takenAt: '2026-10-19T12:00:00Z', source: 'IMPORT', playerCount: 30, budgetEur: 5_000_000 }] as never)
+    renderPage()
+    const box = await screen.findByRole('region', { name: 'Finansal sağlık' })
+    expect(await within(box).findByText('€5,00 Mn')).toBeInTheDocument()
+    expect(box.querySelector('[data-delta]')).toBeNull()
   })
 
   it('ana taktik yoksa: başlangıç önerisi paneli "Otomatik öneri" etiketiyle; uyum ve zayıf halka yerine boş durum', async () => {
@@ -107,10 +137,23 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
       slots: ['CM1', 'CM2', 'CM3'].map((s) => ({ slotId: s, position: 'CM', roleId: 'box_to_box_balanced', roleName: 'Box-to-Box' })),
     } as never)
     renderPage()
-    expect(await screen.findByText('Otomatik öneri · ana taktik değil')).toBeInTheDocument()
+    expect((await screen.findAllByText('Otomatik öneri · ana taktik değil')).length).toBeGreaterThan(0)
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
     expect(within(weak).getByText('Ana taktik seçilmedi')).toBeInTheDocument()
-    expect(within(weak).getByRole('link', { name: "Lab'a git" })).toBeInTheDocument()
+    expect(within(weak).queryByRole('link', { name: "Lab'a git" })).toBeNull()
+    // 3 iş başlangıç önerisine göre hesaplanır ve "Otomatik öneri" etiketi taşır.
+    const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
+    await waitFor(() => expect(jobs.querySelector('header [data-source="auto"]')).not.toBeNull())
+    expect(screen.queryByRole('button', { name: "Lab'da düzenle" })).toBeNull()
+  })
+
+  it('başlangıç önerisi hata verirse istek döngüye girmez (panel bağlanıp sökülmez)', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
+    vi.mocked(endpoints.starterTactic).mockRejectedValue(new Error('429'))
+    renderPage()
+    expect(await screen.findByText('Taktik yüklenemedi.')).toBeInTheDocument()
+    await new Promise((r) => setTimeout(r, 300))
+    expect(vi.mocked(endpoints.starterTactic).mock.calls.length).toBeLessThanOrEqual(2)
   })
 
   it('dizilişten düşen oyuncu: /fit/lineup kilitli doldurur, metin "otomatik dolduruldu"', async () => {

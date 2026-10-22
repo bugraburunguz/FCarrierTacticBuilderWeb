@@ -130,8 +130,13 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
         await page.getByText(/otomatik dolduruldu/).waitFor({ timeout: 30000 })
       }
       await page.waitForLoadState('networkidle')
+      await page.getByRole('region', { name: 'Bu dönemin 3 işi' }).getByRole('listitem').first().waitFor({ timeout: 30000 })
       const weak = await page.getByRole('region', { name: 'Zayıf halkalar' }).getByRole('listitem').allTextContents()
-      await shoot(`masa-${state}`, { sources: await sources(), weak: weak.map((t) => t.slice(0, 120)) })
+      // FAZ 2 düzeltme: "3 iş" Masa sekmesinin ilk bölümü; Lab girişleri (LAB_AVAILABLE=false) hiç görünmez.
+      const jobsFirst = await page.locator('[role="tabpanel"] section').first().getAttribute('aria-label')
+      const labEntries = await page.getByText(/Lab'd|Lab'a|Rolü değiştir/).count()
+      const jobs = await page.getByRole('region', { name: 'Bu dönemin 3 işi' }).getByRole('listitem').allTextContents()
+      await shoot(`masa-${state}`, { sources: await sources(), weak: weak.map((t) => t.slice(0, 120)), jobs: jobs.map((t) => t.slice(0, 90)), jobsFirst, labEntries })
     }
 
     await prime(withMain.id)
@@ -143,9 +148,10 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
 }
 await browser.close()
 writeFileSync(file('gates-report.json'), JSON.stringify({ careers: { none: none.id, main: withMain.id, dropped: dropped.id }, droppedOnServer: dropCheck?.lineupDropped, report }, null, 2))
-const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0))
+const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0)
+  || (r.jobsFirst !== undefined && r.jobsFirst !== 'Bu dönemin 3 işi') || r.labEntries > 0)
 console.log(`çekim ${report.length}; sorunlu ${bad.length}; sunucuda düşen oyuncu ${dropCheck?.lineupDropped}`)
 bad.forEach((r) => console.log(' ✗', r.shot, JSON.stringify({ overflow: r.overflow, axe: r.axeNodes, problems: r.problems, below: r.text?.below?.slice?.(0, 3) })))
 const mins = report.map((r) => r.text?.minFontPx).filter((v) => v !== null && v !== undefined)
 console.log(`minFont ${Math.min(...mins)}px`)
-report.filter((r) => r.shot.endsWith('dark-1280')).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ sources: r.sources, weak: r.weak, redirectedTo: r.redirectedTo })))
+report.filter((r) => r.shot.endsWith('dark-1280')).forEach((r) => console.log(' ·', r.shot, JSON.stringify({ jobsFirst: r.jobsFirst, labEntries: r.labEntries, jobs: r.jobs, weak: r.weak, redirectedTo: r.redirectedTo })))

@@ -148,6 +148,21 @@ export function suggestActions(input: ActionInput): DeskAction[] {
   return rankActions(input).slice(0, 3)
 }
 
+const SEASON_JOBS = 3
+
+/**
+ * "Bu dönemin 3 işi" TEK KAYNAK (KARIYER-UX FAZ 2): Ana sayfa ve Masa bu fonksiyonu ve `features/career/SeasonJobs` bileşenini kullanır.
+ * `exclude`: Masa'da "Zayıf halkalar" kartında zaten gösterilen slotların FILL işi tekrar edilmez (V3-06e).
+ */
+export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): DeskAction[] {
+  return rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId))).slice(0, limit)
+}
+
+/** İşin kural kaynağı (veri katmanı etiketi): diziliş ve etiketlere dayananlar taktik kaynağından (karar ya da öneri), sözleşme/derinlik kayıttan. */
+export function jobLayer(kind: ActionKind): 'tactic' | 'record' {
+  return kind === 'DEPTH' || kind === 'CONTRACT' ? 'record' : 'tactic'
+}
+
 /** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
 export function rankActions({ squad, slots, tags, gameDate }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))

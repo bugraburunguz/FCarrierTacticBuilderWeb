@@ -1,20 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, ArrowRightLeft, FlaskConical, HeartPulse, Search } from 'lucide-react'
+import { AlertTriangle, ArrowRightLeft, HeartPulse, Repeat, Search } from 'lucide-react'
 import { useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerSnapshot, RosterEvent } from '../../api/types'
 import { CareerSelect } from '../../components/CareerSelect'
 import { Chip, EmptyState, Panel, Skeleton, SourceTag, StatTile, TabPanel, Tabs, type DataSource, type StatDelta } from '../../design/components/primitives'
 import { currentRoute, deskLink } from '../../lib/deskLinks'
 import { EVENT_LABEL, SNAPSHOT_LABEL } from '../../lib/deskRules'
+import { LAB_AVAILABLE } from '../../lib/features'
 import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
-import { droppedText, useMainTacticBinding } from '../career/activeTactic'
+import { droppedText } from '../career/activeTactic'
+import { SeasonJobs } from '../career/SeasonJobs'
 import { StarterTacticPanel } from '../career/StarterTacticPanel'
+import { useMainTacticFits } from '../career/useMainTacticFits'
 import { useTabParam } from '../player/playerPage'
-import { teamFitPct, useSlotFits } from '../squad/useSlotFits'
-import { useSquadWorkspace } from '../squad/useSquadWorkspace'
+import { teamFitPct } from '../squad/useSlotFits'
 import { CareerSettings } from './CareerSettings'
 import { financeSummary, upcomingEvents, urgentAlerts, weakLinks } from './dashboardRules'
 
@@ -27,6 +29,8 @@ const STALE_MS = 120_000
 const PAST_ROWS = 6
 const ALERTS_SHOWN = 6
 const LINK = 'inline-flex min-h-10 items-center gap-1.5 rounded-[var(--radius-sm)] px-3 text-sm font-semibold max-sm:min-h-11'
+const PRIMARY = `${LINK} bg-accent text-on-accent hover:opacity-90`
+const SECONDARY = `${LINK} glass-3 hover:bg-[var(--glass-hover)]`
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 const signedEur = (value: number) => `${value > 0 ? '+' : value < 0 ? '−' : '±'}${formatEur(Math.abs(value))}`
@@ -50,7 +54,7 @@ function FitGauge({ pct }: { pct: number }) {
 
 function NoMainTactic() {
   return (
-    <EmptyState action={<Link to={currentRoute(deskLink.lab())} className={`${LINK} glass-3 hover:bg-[var(--glass-hover)]`}>Lab'a git</Link>}>
+    <EmptyState action={LAB_AVAILABLE ? <Link to={currentRoute(deskLink.lab())} className={SECONDARY}>Lab'a git</Link> : undefined}>
       Ana taktik seçilmedi
     </EmptyState>
   )
@@ -80,7 +84,6 @@ function PastTimeline({ events, snapshots }: { events: RosterEvent[]; snapshots:
  */
 export function DashboardPage() {
   const careerId = useActiveCareerId()
-  const navigate = useNavigate()
   const { tab, setTab } = useTabParam(TABS)
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
@@ -89,14 +92,13 @@ export function DashboardPage() {
   const facets = useQuery({ queryKey: ['player-facets', id], queryFn: () => endpoints.playerFacets(id!), enabled: id !== undefined, staleTime: STALE_MS })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
   const events = useQuery({ queryKey: ['events', id], queryFn: () => endpoints.events(id!), enabled: id !== undefined, retry: false })
-  const main = useMainTacticBinding(id, squad.data)
-  const ws = useSquadWorkspace('career', main.binding)
-  const { rows, pending } = useSlotFits(ws, main.playerById)
+  const { main, rows, pending } = useMainTacticFits(id, squad.data)
 
   const players = useMemo(() => squad.data ?? [], [squad.data])
   const gameDate = career?.gameDate ?? facets.data?.gameDate
   const isMain = main.source?.kind === 'decision'
   const weakest = useMemo(() => (isMain ? weakLinks(rows) : []), [isMain, rows])
+  const shownSlots = useMemo(() => new Set(weakest.map((w) => w.slotId)), [weakest])
   const alerts = useMemo(() => urgentAlerts(players, gameDate), [players, gameDate])
   const upcoming = useMemo(() => (career ? upcomingEvents(career, players, gameDate) : []), [career, players, gameDate])
 
@@ -107,7 +109,7 @@ export function DashboardPage() {
     return (
       <div className="mx-auto max-w-[1280px] py-2">
         <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Kariyer Masası</h1>
-        <EmptyState action={<Link to="/career/new" className={`${LINK} bg-accent text-on-accent hover:opacity-90`}>Yeni kariyer başlat</Link>}>
+        <EmptyState action={<Link to="/career/new" className={PRIMARY}>Yeni kariyer başlat</Link>}>
           Henüz kariyerin yok. Üç dakikada kulübünü seç, masan hazır olsun.
         </EmptyState>
       </div>
@@ -134,6 +136,8 @@ export function DashboardPage() {
       <Tabs label="Masa sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="masa" active={tab === 'masa'}>
         <div className="flex flex-col gap-3">
+          <SeasonJobs careerId={career.id} squad={players} rows={rows} tacticSource={main.source} record={record} gameDate={gameDate}
+            pending={main.isLoading || pending || squad.isLoading} exclude={shownSlots} />
           <div className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[1100px]:grid-cols-3">
             <Panel title="Finansal sağlık" label="Finansal sağlık" source={record}>
               <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-3 min-[768px]:grid-cols-1">
@@ -186,8 +190,8 @@ export function DashboardPage() {
             </Panel>
           </div>
 
-          {!main.isLoading && !isMain && (
-            <StarterTacticPanel careerId={career.id} onOpenLab={() => navigate(currentRoute(deskLink.lab()))} />
+          {!main.mainLoading && !isMain && (
+            <StarterTacticPanel careerId={career.id} />
           )}
 
           <Panel title="Zayıf halkalar" label="Zayıf halkalar" source={decision}>
@@ -205,11 +209,15 @@ export function DashboardPage() {
                     <span className="text-sm font-semibold">{w.labelText}</span>
                     {w.reason && <span className="text-sm text-ink-2">{w.reason}</span>}
                     <span className="mt-auto flex flex-wrap gap-2">
-                      <Link to={currentRoute(deskLink.candidate(w.slotId, w.position, w.roleId))} className={`${LINK} bg-accent text-on-accent hover:opacity-90`}>
+                      {/* WRONG_ROLE: birincil eylem "Rolü değiştir" (Lab, FAZ 4); o zamana kadar yalnız ikincil "Transferde aday bul". */}
+                      {w.primary === 'ROLE' && LAB_AVAILABLE && (
+                        <Link to={currentRoute(deskLink.lab(w.slotId))} data-variant="primary" className={PRIMARY}>
+                          <Repeat size={14} aria-hidden="true" />Rolü değiştir
+                        </Link>
+                      )}
+                      <Link to={currentRoute(deskLink.candidate(w.slotId, w.position, w.roleId))} data-variant={w.primary === 'TRANSFER' ? 'primary' : 'secondary'}
+                        className={w.primary === 'TRANSFER' ? PRIMARY : SECONDARY}>
                         <Search size={14} aria-hidden="true" />Transferde aday bul
-                      </Link>
-                      <Link to={currentRoute(deskLink.lab(w.slotId))} className={`${LINK} glass-3 hover:bg-[var(--glass-hover)]`}>
-                        <FlaskConical size={14} aria-hidden="true" />Lab'da dene
                       </Link>
                     </span>
                   </li>

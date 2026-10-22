@@ -1,8 +1,8 @@
 {
   "careers": {
-    "none": 296,
-    "main": 297,
-    "dropped": 298
+    "none": 304,
+    "main": 305,
+    "dropped": 306
   },
   "droppedOnServer": 1,
   "report": [
@@ -19,11 +19,18 @@
         "below": [],
         "belowCount": 0,
         "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲"
         ]
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -31,7 +38,14 @@
         "decision:Kararın",
         "record:Kayıt verisi · 19 Eki"
       ],
-      "weak": []
+      "weak": [],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorOtomatik öneri · ana taktik değil19 yaşında, pot",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiOtomatik öneri · ana taktik değil18 yaşınd",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonOtomatik öneri · ana taktik değil19 yaşında,"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-ana-dark-375",
@@ -46,6 +60,9 @@
         "below": [],
         "belowCount": 0,
         "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 57"
@@ -53,6 +70,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -60,10 +81,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonKararın19 yaşında, potansiyeli 15 puan üstün"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-dustu-dark-375",
@@ -78,6 +106,9 @@
         "below": [],
         "belowCount": 0,
         "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 56"
@@ -85,6 +116,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -92,10 +127,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Phil CrokerKararın20 yaşında, potansiyeli 14 puan üstünde a"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "ayarlar-dark-375",
@@ -126,11 +168,18 @@
         "below": [],
         "belowCount": 0,
         "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲"
         ]
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -138,7 +187,14 @@
         "decision:Kararın",
         "record:Kayıt verisi · 19 Eki"
       ],
-      "weak": []
+      "weak": [],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorOtomatik öneri · ana taktik değil19 yaşında, pot",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiOtomatik öneri · ana taktik değil18 yaşınd",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonOtomatik öneri · ana taktik değil19 yaşında,"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-ana-light-375",
@@ -153,6 +209,9 @@
         "below": [],
         "belowCount": 0,
         "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 57"
@@ -160,6 +219,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -167,10 +230,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonKararın19 yaşında, potansiyeli 15 puan üstün"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-dustu-light-375",
@@ -185,6 +255,9 @@
         "below": [],
         "belowCount": 0,
         "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 56"
@@ -192,6 +265,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -199,10 +276,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Phil CrokerKararın20 yaşında, potansiyeli 14 puan üstünde a"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "ayarlar-light-375",
@@ -236,11 +320,18 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲"
         ]
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -248,7 +339,14 @@
         "decision:Kararın",
         "record:Kayıt verisi · 19 Eki"
       ],
-      "weak": []
+      "weak": [],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorOtomatik öneri · ana taktik değil19 yaşında, pot",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiOtomatik öneri · ana taktik değil18 yaşınd",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonOtomatik öneri · ana taktik değil19 yaşında,"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-ana-dark-768",
@@ -266,6 +364,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 57"
@@ -273,6 +374,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -280,10 +385,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonKararın19 yaşında, potansiyeli 15 puan üstün"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-dustu-dark-768",
@@ -301,6 +413,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 56"
@@ -308,6 +423,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -315,10 +434,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Phil CrokerKararın20 yaşında, potansiyeli 14 puan üstünde a"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "ayarlar-dark-768",
@@ -356,11 +482,18 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲"
         ]
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -368,7 +501,14 @@
         "decision:Kararın",
         "record:Kayıt verisi · 19 Eki"
       ],
-      "weak": []
+      "weak": [],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorOtomatik öneri · ana taktik değil19 yaşında, pot",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiOtomatik öneri · ana taktik değil18 yaşınd",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonOtomatik öneri · ana taktik değil19 yaşında,"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-ana-light-768",
@@ -386,6 +526,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 57"
@@ -393,6 +536,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -400,10 +547,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonKararın19 yaşında, potansiyeli 15 puan üstün"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-dustu-light-768",
@@ -421,6 +575,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 56"
@@ -428,6 +585,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -435,10 +596,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Phil CrokerKararın20 yaşında, potansiyeli 14 puan üstünde a"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "ayarlar-light-768",
@@ -476,11 +644,18 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲"
         ]
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -488,7 +663,14 @@
         "decision:Kararın",
         "record:Kayıt verisi · 19 Eki"
       ],
-      "weak": []
+      "weak": [],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorOtomatik öneri · ana taktik değil19 yaşında, pot",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiOtomatik öneri · ana taktik değil18 yaşınd",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonOtomatik öneri · ana taktik değil19 yaşında,"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-ana-dark-1280",
@@ -506,6 +688,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 57"
@@ -513,6 +698,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -520,10 +709,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonKararın19 yaşında, potansiyeli 15 puan üstün"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-dustu-dark-1280",
@@ -541,6 +737,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 56"
@@ -548,6 +747,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -555,10 +758,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Phil CrokerKararın20 yaşında, potansiyeli 14 puan üstünde a"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "ayarlar-dark-1280",
@@ -596,11 +806,18 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲"
         ]
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
+        "auto:Otomatik öneri · ana taktik değil",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -608,7 +825,14 @@
         "decision:Kararın",
         "record:Kayıt verisi · 19 Eki"
       ],
-      "weak": []
+      "weak": [],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorOtomatik öneri · ana taktik değil19 yaşında, pot",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiOtomatik öneri · ana taktik değil18 yaşınd",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonOtomatik öneri · ana taktik değil19 yaşında,"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-ana-light-1280",
@@ -626,6 +850,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 57"
@@ -633,6 +860,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -640,10 +871,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Josh StephensonKararın19 yaşında, potansiyeli 15 puan üstün"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "masa-dustu-light-1280",
@@ -661,6 +899,9 @@
           "aria-hidden: FC",
           "aria-hidden: Assist",
           "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
           "aria-hidden: ▲",
           "aria-hidden: %",
           "aria-hidden: 56"
@@ -668,6 +909,10 @@
       },
       "sources": [
         "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
+        "decision:Kararın",
         "record:Kayıt verisi · 19 Eki",
         "record:Kayıt verisi · 19 Eki",
         "decision:Kararın",
@@ -675,10 +920,17 @@
         "record:Kayıt verisi · 19 Eki"
       ],
       "weak": [
-        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
-        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
-        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
-      ]
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bul",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bul",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bul"
+      ],
+      "jobs": [
+        "1KiralıkSüre ver ya da kirala: Owen TaylorKararın19 yaşında, potansiyeli 16 puan üstünde a",
+        "2KiralıkSüre ver ya da kirala: Patrick MlynarskiKararın18 yaşında, potansiyeli 16 puan üst",
+        "3KiralıkSüre ver ya da kirala: Phil CrokerKararın20 yaşında, potansiyeli 14 puan üstünde a"
+      ],
+      "jobsFirst": "Bu dönemin 3 işi",
+      "labEntries": 0
     },
     {
       "shot": "ayarlar-light-1280",
