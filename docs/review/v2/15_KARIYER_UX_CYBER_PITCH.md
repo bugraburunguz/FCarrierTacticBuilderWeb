@@ -840,4 +840,8 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 
 **Yerel yığın.** Backend `kariyer-ux-2` (backend'de FAZ 3 değişikliği yok), web `kariyer-ux-3` çalışma ağacından; kart vekili kapalı. Test hesapları koşu sonunda silindi.
 
+**Açık sorular (FAZ 3).**
+1. Hız sınırı: tek "api:" kovası 300/dk. Hızlı F5 yapan ya da birkaç sekmede aynı anda gezinen kullanıcı (sekmeler aynı kovayı paylaşır) dakikada ~12 tam yüklemeyi geçebilir. Ağır sayfa uçları (`/fit/role` slot başına 11 istek) için ayrı kova ya da toplu `fit/role` ucu düşünülsün mü? Sınır değiştirilmedi.
+2. Nav: "Taktik & Kadro" grubu artık Kadro'ya açılıyor; kurucu/sihirbaz aynı grupta. §3'teki ayrı "Kadro" ve "Taktik Lab" öğeleri FAZ 4'te mi ayrılsın?
+
 **Test sayıları:** web 1436/1436; backend değişmedi; lint hatasız, build yeşil, pawn-font-gate ≥ 12px, Q17 87/87.
