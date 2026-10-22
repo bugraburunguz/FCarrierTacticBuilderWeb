@@ -723,6 +723,38 @@ Her faz sonunda rapor: değişen dosyalar, D numaraları, test özeti, ekran kla
 
 **Bilinen eksikler ve sonraki fazlar**
 - **Q17 sayfa ölçümü:** `q17.mjs` sayfa üzerinde ölçüyor; piyonu kullanan sayfa FAZ 3'te (Kadro) gelecek. FAZ 1'de piyon Q17'si birim matrisinde: 29 formasyon × 4 boyut × rol var/yok (`layout.test.ts`).
-- **Redis'e bağlı betikler:** `q17.mjs` ve bazı ekran betikleri hız sınırını sıfırlamak için hâlâ Redis'i çağırıyor; Redis kalktı (OPS-02), satır işlevsiz. Ayrı küçük iş.
+- **Redis'e bağlı betikler:** 16. bölümde kapandı.
 - **Saha etiketleri:** v3 token'larına yalnız cyber sahada taşındı. Çim saha (UT) eski Matchday renklerini piksel piksel korur. UT değişmez kuralı nedeniyle bilinçli.
 - **Ana taktikte boş slot:** `lineupDropped` sonrası boşlukları `/fit/lineup` ile doldurma sayfa entegrasyonunda (FAZ 2-3). Öneri ekranı şimdilik boş slotu gösterir.
+
+## 16. FAZ 1 düzeltmeleri (Buğra incelemesi, 2026-10-22)
+
+Dört sapma (kadro listesi, önbellek anahtarı, `data: null`, koşulsuz ret) onaylandı. Düzeltmeler:
+
+1. **Boş slot metni.** "N oyuncu artık kadroda yok, slotları boş". Doldurma FAZ 2-3'te gelince "otomatik dolduruldu"ya dönülecek. Test: `starterTactic.test.tsx`.
+2. **Piyon etiket boyutu (Q18).** `scripts/pawn-font-gate.mjs` 375/768/1280'de hesaplanan yazı boyutunu ölçer (rapor `screens/KARIYER-UX-1/pawn-font-report.json`).
+   - Soyad hapı ve mevki hapı her genişlikte 12px; ihlal yok.
+   - Görüntüdeki küçüklük, 1280 görüntüsünün küçültülerek gösterilmesi ve Barlow Condensed'in dar harfinden; kod değişmedi.
+3. **Uyum rengi ile yüzde.** Gerçek veride iki ayrı kural var:
+   - Yüzde `levelFit`, yani seviyeye göre uyum.
+   - Renk sunucunun rol etiketi (`GOOD` / `AT_LEVEL` / `WEAK` / `WRONG_ROLE`). Kartlardaki FitBadge ile aynı kural (`fitDisplay`).
+   - **Karar:** renk kuralı korunur. Piyonun `title` ve erişilebilir adında yazılır: "uyum %82 · Rol için eksik (renk rol etiketinden, yüzde seviye uyumu)".
+   - Önizleme verisi tutarlı yapıldı: ≥75 uygun, 65-74 seviyesinde, 55-64 sınırda, <55 eksik. Test: `pitchPawn.test.tsx`.
+4. **`labStore.dropCareer`** `DeleteCareerButton` onSuccess'ine bağlandı. Başarısız silmede taslaklar kalır. Test: `DeleteCareerButton.test.tsx` (2).
+5. **Çok sekme.** `window` `storage` olayında `fc.lab.v1` değişince `labStore.reload()`. Başka anahtar yeniden yükleme yapmaz. Test: `labStore.test.ts` (2).
+6. **Web CI.** Sorun yok.
+   - Actions açık (`enabled: true`, `allowed_actions: all`).
+   - PR #2 için "Web CI / check" koşmuş ve geçmiş (1 dk 49 sn).
+   - Durumu PR açıldıktan hemen sonra okumuştum; koşu 3 sn sonra başlamıştı. "Çalışmıyor olabilir" notu yanlıştı.
+7. **Redis kalıntısı.** 18 betikten `resetRateLimits` tanımı ve 26 çağrısı kaldırıldı.
+   - Her dosyaya not: "koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend)".
+   - `node --check` ve oxlint temiz.
+8. **Formasyon sıralaması davranış sabitleme** (`FormationRankerCharacterizationTest`). Sentetik, tohumlu iki kadro; veritabanı kataloğu kullanılmaz, testler arası değişmez.
+   - Dengeli: 4-3-3 (2 CDM) 61,66 · 4-2-1-3 61,39 · 4-3-3 61,27.
+   - Stopersiz: 4-3-3 (CAM) 22,78 · 4-2-4 22,76 · 4-3-3 (3 CM) 22,72.
+   - Mevcut davranışı sabitleyen test; önce kırmızı görülmedi.
+9. **`career_player.available`.** `CareerSearchProfile.availableFilter` Javadoc'u: pazar/scouting filtresi ("kiralıkta olan satın alınamaz"); ilk 11 ve diziliş için kullanılmaz. Migration'a dokunulmadı.
+   - Test `LoanedInPlayersStartIntegrationTest`: tüm kadro `available=false` iken `/fit/lineup` 11 başlangıç verir ve ana taktik dizilişi oyuncu düşürmez.
+   - Koruma testi; önce kırmızı görülmedi.
+
+**Test sayıları:** web 1381/1381 (+5), backend 648/648 (+3); lint ve build yeşil.

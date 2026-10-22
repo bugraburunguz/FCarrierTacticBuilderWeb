@@ -4,8 +4,8 @@
 // bandında içerik görünmez (elementFromPoint); en uzun meta satırı (gerçek en uzun kulüp/lig/ülke adı, yalnız bu tarayıcıda API yanıtı değiştirilir).
 // Mobil (<820) çekimler tam sayfa.
 // Kullanım: node scripts/ut-player-shots.mjs [--base http://localhost:8081] [--asset 231747]   Çıktı: docs/review/v2/screens/V3-05b/
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -22,8 +22,6 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
 const out = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-05b'}/`, import.meta.url)
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 const STRIP = 'section[aria-label="Kart"] > .glass-sticky'
 const BAND = ['header', STRIP]
 const TAB_TOP_MAX = 640
@@ -37,7 +35,6 @@ const report = []
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   const mobile = w < 820
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
     await context.addInitScript((t) => { localStorage.setItem('fc.theme', t); localStorage.setItem('fc.mode', 'ut') }, theme)
     const page = await context.newPage()

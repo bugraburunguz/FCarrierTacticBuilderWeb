@@ -2,8 +2,8 @@
 // V3-05b-b ölçümleri: ızgara kartlarında en küçük yazı / OVR / soyad (Q18); 1.200px kaydırılmış ızgarada yapışkan filtre çubuğu örtmesi (Q5, ≥820px).
 // Kullanım: node scripts/card-db-shots.mjs [--base http://localhost:8081]   (oturum gerekmez: /players herkese açık)
 // Çıktı: docs/review/v2/screens/V3-05a/*.png ve gates-report.json
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -23,8 +23,6 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
 const out = new URL('../docs/review/v2/screens/V3-05a/', import.meta.url)
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
@@ -41,7 +39,6 @@ async function record(page, problems, name, extra = {}) {
 
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
     await context.addInitScript((t) => { localStorage.setItem('fc.theme', t); localStorage.setItem('fc.mode', 'ut') }, theme)
     const page = await context.newPage()

@@ -54,12 +54,19 @@ function seed(formation: Formation): QueryClient {
   return client
 }
 
+/**
+ * Örnek uyum: durum yüzdeyle tutarlı (FAZ 1 düzeltme 3). Gerçek veride renk sunucunun rol etiketinden gelir ve yüzdeden ayrışabilir;
+ * piyonun title / erişilebilir adı bunu yazar. Önizlemede yanıltıcı karışım olmasın diye tek kural kullanılır.
+ */
+function fitOf(pct: number): { pct: number; state: 'good' | 'neutral' | 'ok' | 'bad' } {
+  return { pct, state: pct >= 75 ? 'good' : pct >= 65 ? 'neutral' : pct >= 55 ? 'ok' : 'bad' }
+}
+
 function pitchSlots(formation: Formation): PitchSlot[] {
-  const states = ['good', 'ok', 'bad', 'neutral'] as const
   return formation.slots.map((s, i) => ({
     slotId: s.slotId, position: s.position, x: s.x, y: s.y,
     player: i === 4 ? undefined : { name: NAMES[i % NAMES.length], rating: OVERALLS[i % OVERALLS.length], position: s.position },
-    fit: i === 4 ? undefined : { pct: 58 + ((i * 7) % 30), state: states[i % states.length] },
+    fit: i === 4 ? undefined : fitOf(48 + ((i * 7) % 38)),
     roleLabel: roleLabel(s.defaultRole),
   }))
 }

@@ -3,8 +3,8 @@
 // Bant ekranı için /me yanıtındaki privacyAckVersion yalnız bu tarayıcıda (page.route) kaldırılır: raporda "fixture".
 // Beta etiketi için yığın FCAREER_FREE_BETA=true ile açılmış olmalı (betik /config/app'ten doğrular).
 // Kullanım: node scripts/prodprep-shots.mjs [--base http://localhost:8081]   (yerel test hesabı kurar, sonunda yalnız kendisini siler)
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -21,8 +21,6 @@ const outDir = new URL('../docs/review/v2/screens/PROD-PREP/', import.meta.url)
 mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 const MIN_FONT = 11
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 const config = (await (await fetch(`${base}/api/v1/config/app`)).json()).data
 await createGateAccount(base, 'gate-')
@@ -69,7 +67,6 @@ async function newPage(w, h, theme, { auth = true, stripAck = false } = {}) {
 
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     session = await login()
     const shoot = async (ctx, name, extra = {}) => {
       const { page, problems } = ctx

@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../api/endpoints'
 import type { Career } from '../api/types'
+import { labStore } from '../state/labStore'
 import { DeleteCareerButton } from './DeleteCareerButton'
 
 vi.mock('../api/endpoints', () => ({ endpoints: { deleteCareer: vi.fn(() => Promise.resolve()) } }))
@@ -18,7 +19,11 @@ function renderButton() {
 }
 
 describe('F9: kariyer silme onayı kariyer adını yazdırır', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+    labStore.reload()
+  })
 
   it('diyalog açılır; ad yazılana kadar silme pasif, doğru ad yazılınca çalışır', async () => {
     renderButton()
@@ -33,6 +38,32 @@ describe('F9: kariyer silme onayı kariyer adını yazdırır', () => {
 
     fireEvent.click(confirm)
     await waitFor(() => expect(endpoints.deleteCareer).toHaveBeenCalledWith(7))
+  })
+
+  /** KARIYER-UX (15 §6.2): kariyer silinince o kariyerin Lab taslakları da gider; diğer kariyerlerinkiler kalır. */
+  it('silme başarılı olunca kariyerin Lab taslakları silinir, diğerleri kalır', async () => {
+    const tactic = { formation: '4-3-3', slots: {} }
+    labStore.create(7, { name: 'A', origin: { kind: 'blank' }, tactic, lineup: {} })
+    labStore.create(8, { name: 'B', origin: { kind: 'blank' }, tactic, lineup: {} })
+    renderButton()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri sil' }))
+    fireEvent.change(await screen.findByLabelText(/Onaylamak için kariyer adını yaz/), { target: { value: 'Magdeburg Yolu' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Kalıcı olarak sil' }))
+
+    await waitFor(() => expect(labStore.get(7).drafts).toEqual([]))
+    expect(labStore.get(8).drafts).toHaveLength(1)
+  })
+
+  it('silme başarısızsa taslaklar kalır', async () => {
+    vi.mocked(endpoints.deleteCareer).mockRejectedValueOnce(new Error('ağ'))
+    labStore.create(7, { name: 'A', origin: { kind: 'blank' }, tactic: { formation: '4-3-3', slots: {} }, lineup: {} })
+    renderButton()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri sil' }))
+    fireEvent.change(await screen.findByLabelText(/Onaylamak için kariyer adını yaz/), { target: { value: 'Magdeburg Yolu' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Kalıcı olarak sil' }))
+
+    await waitFor(() => expect(endpoints.deleteCareer).toHaveBeenCalled())
+    expect(labStore.get(7).drafts).toHaveLength(1)
   })
 
   it('Vazgeç diyaloğu kapatır ve hiçbir şey silmez', async () => {

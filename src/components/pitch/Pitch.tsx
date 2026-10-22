@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { PlayerCard, type CardPlayer } from '../card/PlayerCard'
 import type { FitState } from '../card/FitBadge'
+import { FIT_STATE_TEXT } from '../../lib/fitLabels'
 import { layoutPitch, markerBox, type Marker } from './layout'
 import { shortRoleLabel } from './shortRole'
 
@@ -42,6 +43,14 @@ interface Props {
 }
 
 const FIT_RING: Record<FitState, string> = { good: 'var(--good)', ok: 'var(--warn)', bad: 'var(--bad)', neutral: 'transparent' }
+
+/**
+ * Piyon uyum metni. Halka rengi yüzdeden değil sunucunun rol etiketinden gelir (fitDisplay: GOOD / AT_LEVEL / WEAK / WRONG_ROLE); yüzde seviye
+ * uyumu (levelFit). Yüksek yüzde kırmızı olabilir: kural metinde yazılı ki kullanıcı çelişki sanmasın (KARIYER-UX FAZ 1 düzeltme 3).
+ */
+function pawnFitText(fit: { pct: number; state: FitState }): string {
+  return `uyum %${fit.pct} · ${FIT_STATE_TEXT[fit.state].label} (renk rol etiketinden, yüzde seviye uyumu)`
+}
 const surname = (name: string) => name.trim().split(/\s+/).slice(-1)[0] ?? name
 
 interface Drag {
@@ -264,7 +273,8 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
               role={readOnly && !pawnButton ? 'group' : 'button'}
               tabIndex={readOnly && !pawnButton ? undefined : 0}
               data-pitch-slot={slot.slotId}
-              aria-label={`${slot.position} — ${slot.player ? `${slot.player.name}, ${slot.player.rating}${pawn && slot.fit ? `, uyum %${slot.fit.pct}` : ''}` : 'boş'}.${readOnly ? '' : moving === slot.slotId ? ' Taşınıyor.' : ' Oyuncu seç, M ile taşı.'}`}
+              aria-label={`${slot.position} — ${slot.player ? `${slot.player.name}, ${slot.player.rating}${pawn && slot.fit ? `, ${pawnFitText(slot.fit)}` : ''}` : 'boş'}.${readOnly ? '' : moving === slot.slotId ? ' Taşınıyor.' : ' Oyuncu seç, M ile taşı.'}`}
+              title={pawn && slot.player && slot.fit ? `${slot.player.name} · ${pawnFitText(slot.fit)}` : undefined}
               aria-pressed={readOnly ? undefined : moving === slot.slotId}
               onClick={pawnButton ? () => onPickPawn?.(slot.slotId) : readOnly ? undefined : () => {
                 if (!moved.current) {

@@ -73,6 +73,27 @@ describe('Lab taslak deposu (katman 3, KARIYER-UX FAZ 1)', () => {
     expect(labStore.hasUnsaved(1)).toBe(true)
   })
 
+  /** Çok sekme (FAZ 1 düzeltme 5): diğer sekmenin yazdığı taslaklar bu sekmenin belleğine alınır; eski bellekle üzerine yazılmaz. */
+  it('başka sekme fc.lab.v1 yazınca storage olayıyla yeniden yüklenir ve onun taslağı korunur', () => {
+    labStore.create(1, { name: 'bu sekme', origin: { kind: 'blank' }, tactic: base, lineup: {} })
+    const other = JSON.parse(localStorage.getItem(LAB_KEY)!)
+    other['1'].drafts.push({ ...other['1'].drafts[0], id: 'other-tab', name: 'öbür sekme' })
+    localStorage.setItem(LAB_KEY, JSON.stringify(other))
+
+    window.dispatchEvent(new StorageEvent('storage', { key: LAB_KEY, newValue: JSON.stringify(other) }))
+    expect(labStore.get(1).drafts.map((d) => d.name)).toEqual(['bu sekme', 'öbür sekme'])
+
+    labStore.create(1, { name: 'sonra', origin: { kind: 'blank' }, tactic: base, lineup: {} })
+    expect(JSON.parse(localStorage.getItem(LAB_KEY)!)['1'].drafts.map((d: { name: string }) => d.name)).toEqual(['bu sekme', 'öbür sekme', 'sonra'])
+  })
+
+  it('başka anahtardaki storage olayı yeniden yükleme yapmaz', () => {
+    labStore.create(1, { name: 'A', origin: { kind: 'blank' }, tactic: base, lineup: {} })
+    localStorage.setItem(LAB_KEY, '{}')
+    window.dispatchEvent(new StorageEvent('storage', { key: 'fc.theme', newValue: 'dark' }))
+    expect(labStore.get(1).drafts).toHaveLength(1)
+  })
+
   it('silme ve etkin taslak', () => {
     const a = labStore.create(1, { name: 'A', origin: { kind: 'blank' }, tactic: base, lineup: {} })
     const b = labStore.create(1, { name: 'B', origin: { kind: 'blank' }, tactic: base, lineup: {} })

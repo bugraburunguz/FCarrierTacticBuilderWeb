@@ -34,9 +34,20 @@ describe('Pitch · Cyber-Pitch ve piyon', () => {
     const name = screen.getByText('Faal')
     expect(name).toHaveAttribute('title', 'Mohamadou Faal')
     expect(name.className).toContain('bg-[var(--pawn-label-bg)]')
-    expect(screen.getByLabelText(/ST — Mohamadou Faal, 63, uyum %74/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/ST — Mohamadou Faal, 63, uyum %74 · Rol için uygun/)).toBeInTheDocument()
     expect(container.querySelector('[data-card-design]')).toBeNull()
     expect(screen.queryByTitle('Advanced Forward · Attack')).toBeNull()
+  })
+
+  /**
+   * Renk yüzdeden değil sunucunun rol etiketinden gelir (fitDisplay: GOOD / AT_LEVEL / WEAK / WRONG_ROLE; yüzde levelFit). Yüksek yüzde kırmızı
+   * olabilir: kural piyonun title ve erişilebilir adında yazılı, kullanıcı çelişki sanmasın (FAZ 1 düzeltme 3).
+   */
+  it('uyum rengi kuralı title ve erişilebilir adda yazılı (yüksek yüzde + eksik rol)', () => {
+    render(<Pitch slots={[{ ...filled, fit: { pct: 82, state: 'bad' } }]} onPickPlayer={() => undefined} marker="pawn" readOnly />)
+    const label = 'ST — Mohamadou Faal, 63, uyum %82 · Rol için eksik (renk rol etiketinden, yüzde seviye uyumu)'
+    expect(screen.getByLabelText(new RegExp(label.replace(/[()]/g, '\\$&')))).toBeInTheDocument()
+    expect(screen.getByTitle(/uyum %82 · Rol için eksik/)).toBeInTheDocument()
   })
 
   it('rol etiketi yalnız showRole ile; boş piyon salt okunurda mevki yazar', () => {

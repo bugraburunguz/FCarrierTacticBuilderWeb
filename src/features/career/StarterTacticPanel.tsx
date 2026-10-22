@@ -89,7 +89,8 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
           {active.starter.alternatives.map((a) => <Chip key={a.formationId} title={`Uyum skoru ${a.score.toFixed(1)}`}>{a.formationId}</Chip>)}
         </p>
       )}
-      {active.dropped > 0 && <p role="status" className="mb-3 text-sm text-warn">{active.dropped} oyuncu kadroda yok, otomatik dolduruldu</p>}
+      {/* Doldurma (/fit/lineup) FAZ 2-3'te gelince metin "otomatik dolduruldu" olur. */}
+      {active.dropped > 0 && <p role="status" className="mb-3 text-sm text-warn">{active.dropped} oyuncu artık kadroda yok, slotları boş</p>}
       {labMessage && <p role="alert" className="mb-3 text-sm text-bad">{labMessage}</p>}
       {migrated && auto && (
         <p className="mb-3">

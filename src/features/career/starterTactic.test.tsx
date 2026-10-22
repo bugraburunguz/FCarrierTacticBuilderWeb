@@ -106,7 +106,9 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     state.main = saved(2, true, { lineupDropped: 2, lineup: { GK: 1 } })
     render(<StarterTacticPanel careerId={7} />, { wrapper })
     expect(await screen.findByText('Kararın')).toBeInTheDocument()
-    expect(screen.getByText('2 oyuncu kadroda yok, otomatik dolduruldu')).toBeInTheDocument()
+    // Doldurma (/fit/lineup) FAZ 2-3'te; o zamana kadar metin boş slotu doğru anlatır, "dolduruldu" demez.
+    expect(screen.getByText('2 oyuncu artık kadroda yok, slotları boş')).toBeInTheDocument()
+    expect(screen.queryByText(/otomatik dolduruldu/)).toBeNull()
   })
 })
 

@@ -134,6 +134,15 @@ export const labStore = {
   },
 }
 
+// Çok sekme (FAZ 1 düzeltme 5): başka sekme fc.lab.v1 yazınca bu sekmenin belleği yenilenir; eski bellekle sonraki yazma onun taslaklarını ezmez.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (event) => {
+    if (event.key === LAB_KEY) {
+      labStore.reload()
+    }
+  })
+}
+
 export function useLab(careerId: number | undefined): CareerLab {
   return useSyncExternalStore(labStore.subscribe, () => (careerId === undefined ? EMPTY : labStore.get(careerId)))
 }

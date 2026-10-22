@@ -3,8 +3,8 @@
 // Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa minFont (≥ 11px), kart içi minFont, yapışkan bant sızıntısı + alfa 1.
 // Veri: geçici test hesabı (yalnız localhost) + Crewe Alexandra kariyeri (havuz ≈ 22 bin); koşu sonunda yalnız bu hesap silinir.
 // Kullanım: node scripts/career-list-shots.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/V3-06a/career-list/
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -23,8 +23,6 @@ mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11
 const BAND = ['header', 'section[aria-label="Süzgeçler"]', 'thead']
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 await createGateAccount(base, 'gate-')
 const login = async () => (await (await fetch(`${base}/api/v1/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: process.env.GATE_EMAIL, password: process.env.GATE_PASSWORD }) })).json()).data
@@ -37,7 +35,6 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     session = await login()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
     await context.addInitScript(({ t, s, c }) => {
