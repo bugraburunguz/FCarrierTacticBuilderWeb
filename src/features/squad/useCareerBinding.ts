@@ -1,23 +1,10 @@
 import { useCallback, useMemo } from 'react'
 import type { CareerPlayer } from '../../api/types'
-import { remapAssignments, type Assignments } from '../../lib/squadBuilder'
+import { remapAssignments } from '../../lib/squadBuilder'
 import { lineupStore, useLineup } from '../../state/lineupStore'
-import { DEFAULT_TACTIC, tacticStore, useTactic, type TacticState } from '../../state/tacticStore'
-import type { SquadBinding, SquadPatch, SquadState } from './types'
-
-function stateOf(tactic: TacticState, assigned: Assignments): SquadState<number> {
-  const roleOverride: Record<string, string> = {}
-  const tags: Record<string, string[]> = {}
-  Object.entries(tactic.slots).forEach(([slotId, sel]) => {
-    if (sel.roleId !== undefined) {
-      roleOverride[slotId] = sel.roleId
-    }
-    if (sel.tags.length > 0) {
-      tags[slotId] = sel.tags
-    }
-  })
-  return { formationId: tactic.formation, presetId: tactic.presetId, setup: tactic.setup, roleOverride, tags, assigned }
-}
+import { DEFAULT_TACTIC, tacticStore, useTactic } from '../../state/tacticStore'
+import { squadStateOf as stateOf } from './tacticState'
+import type { SquadBinding, SquadPatch } from './types'
 
 /** Kariyer bağlayıcısı: taktik tacticStore'da (diğer kartlarla paylaşılır), dizilim lineupStore'da (kariyer başına, oyuncu kimliği). */
 export function useCareerBinding(careerId: number | undefined, squad: CareerPlayer[] | undefined) {

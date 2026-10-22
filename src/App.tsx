@@ -17,6 +17,8 @@ const CareerNewPage = lazy(() => import('./pages/CareerNewPage').then((m) => ({ 
 const CareerTransferPage = lazy(() => import('./pages/CareerTransferPage').then((m) => ({ default: m.CareerTransferPage })))
 const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })))
 const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ default: m.ComparePage })))
+// Yalnız geliştirme: KARIYER-UX bileşen önizlemesi (prod derlemesinde rota yok; dinamik import ağaçtan atılır).
+const KariyerUxPreview = import.meta.env.DEV ? lazy(() => import('./features/preview/KariyerUxPreview').then((m) => ({ default: m.KariyerUxPreview }))) : undefined
 const CompareV3Page = lazy(() => import('./features/compare/CompareV3Page').then((m) => ({ default: m.CompareV3Page })))
 const WizardPage = lazy(() => import('./pages/WizardPage').then((m) => ({ default: m.WizardPage })))
 const TacticWizardPage = lazy(() => import('./features/wizard/TacticWizardPage').then((m) => ({ default: m.TacticWizardPage })))
@@ -155,6 +157,7 @@ export function App() {
         <Route path="admin/ut" element={<AdminUtPage />} />
         <Route path="profile" element={<RequireAuth>{isV3() ? <ProfileV3 /> : <ProfilePage />}</RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
+        {KariyerUxPreview && <Route path="onizleme/kariyer-ux" element={<KariyerUxPreview />} />}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

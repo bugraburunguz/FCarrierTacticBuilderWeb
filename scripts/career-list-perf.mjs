@@ -2,9 +2,8 @@
 // Geçici test hesabıyla (yalnız localhost; koşu sonunda yalnız bu hesap silinir) Crewe Alexandra ve Port Vale kulüplerinde kariyer açar
 // (havuz ≈ 22 bin oyuncu, kullanıcının kendi kayıtlarıyla aynı büyüklük). Her rol ilk kez istenir (önbellek ısınmamış), sonra 2. sayfa (önbellekten).
 // Kullanım: node scripts/career-list-perf.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/V3-06a/perf-role-sort.json
-import { spawnSync } from 'node:child_process'
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { mkdirSync, writeFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import { createGateAccount } from './lib/gateAccount.mjs'
 
 const args = process.argv.slice(2)
@@ -13,8 +12,6 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 const out = new URL('../docs/review/v2/screens/V3-06a/', import.meta.url)
 mkdirSync(out, { recursive: true })
 
@@ -22,9 +19,7 @@ await createGateAccount(base, 'gate-')
 const login = await fetch(`${base}/api/v1/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: process.env.GATE_EMAIL, password: process.env.GATE_PASSWORD }) })
 const token = (await login.json()).data.accessToken
 const auth = { authorization: `Bearer ${token}` }
-let calls = 0
 async function get(path) {
-  if (++calls % 25 === 0) resetRateLimits()
   const started = performance.now()
   const res = await fetch(`${base}/api/v1${path}`, { headers: auth })
   const body = await res.json()
@@ -43,7 +38,6 @@ const pct = (xs, p) => {
 }
 const stats = (xs) => ({ n: xs.length, p50: pct(xs, 50), p95: pct(xs, 95), max: Math.round(Math.max(...xs)) })
 
-resetRateLimits()
 const roles = (await (await fetch(`${base}/api/v1/roles`)).json()).data
 const report = { base, measuredAt: new Date().toISOString(), roles: roles.length, careers: [] }
 for (const clubName of ['Crewe Alexandra', 'Port Vale']) {

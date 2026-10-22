@@ -3,8 +3,8 @@
 // Sayfa oturum ister: oturum yalnız bu test tarayıcısında taklit edilir (sahte token + /me, /careers yanıtı); gerçek hesap açılmaz.
 // Hiçbir şey gönderilmez (Gönder'e basılmaz); kurallar gerçek GET /ut/capture/rules ucundan.
 // Kullanım: node scripts/import-shots.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/HAR-01/
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -35,14 +35,11 @@ const FIXTURE = fileURLToPath(new URL(SRC.fixture, import.meta.url))
 const MIN_FONT = 11
 const ME = { id: 990_000, email: 'kapi@example.test', subscriptionType: 'FREE', creditBalance: 0, dailyCreditLimit: 0, showAds: false, role: 'USER', emailVerified: true }
 const ok = (data) => ({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data }) })
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
     await context.addInitScript((t) => { localStorage.setItem('fc.theme', t); localStorage.setItem('fc.mode', 'ut'); localStorage.setItem('fc.access', 'kapi-sahte-token') }, theme)
     await context.route(/\/api\/v1\/me(\?|$)/, (r) => r.fulfill(ok(ME)))

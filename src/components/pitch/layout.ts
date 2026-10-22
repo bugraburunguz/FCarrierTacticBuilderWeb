@@ -42,7 +42,13 @@ export interface LayoutInput {
   narrow: boolean
   /** En küçük kart genişliği (Q18): ≥1024px'te 56, 375'te 48. Sığmazsa saha uzar (sayfa kayar), kart küçülmez. */
   minCard?: number
+  /** İşaret: FC kartı (varsayılan) ya da Cyber-Pitch piyonu (KARIYER-UX). */
+  marker?: Marker
+  /** Piyonda rol etiketi (kartta her zaman var). */
+  showRole?: boolean
 }
+
+export type Marker = 'card' | 'pawn'
 
 const CARD_RATIO = 0.13
 export const MIN_CARD = 48
@@ -62,17 +68,58 @@ const PAD_Y = 8
 const LAYER_GAP_PCT = 4
 const MERGE_Y_PCT = 17
 const MIN_ASPECT = 1.35
+/** Piyon sahası daha kısa olabilir (kart yüksekliği yok); yine de dikey saha oranını korur. */
+const PAWN_MIN_ASPECT = 1.15
+
+/** Piyon: daire en az 32px (kart ≥56 iken 40), dokunma kutusu en az 44px (Q13); isim hapı 18px. */
+export const PAWN_TOUCH = 44
+const PAWN_MIN = 32
+const PAWN_MIN_WIDE = 40
+const PAWN_RATIO = 0.62
+const NAME_PILL_HEIGHT = 18
+
+export interface MarkerBox {
+  width: number
+  height: number
+  /** Piyon dairesinin çapı (kartta 0). */
+  diameter: number
+}
+
+/** İşaretin kutusu: kart = kart + zincir göstergesi; piyon = dokunma kutusu (daire içinde ortalı). */
+export function markerBox(marker: Marker, cardWidth: number): MarkerBox {
+  if (marker === 'card') {
+    return { width: cardWidth, height: Math.round(cardWidth * CARD_HEIGHT_RATIO) + CHAIN_HEIGHT, diameter: 0 }
+  }
+  const diameter = Math.max(cardWidth >= 56 ? PAWN_MIN_WIDE : PAWN_MIN, Math.round(cardWidth * PAWN_RATIO))
+  const side = Math.max(PAWN_TOUCH, diameter)
+  return { width: side, height: side, diameter }
+}
+
+interface Shape {
+  mode: LabelMode
+  marker: Marker
+  showRole: boolean
+}
+
+const CARD_SHAPE = (mode: LabelMode): Shape => ({ mode, marker: 'card', showRole: true })
 
 export function labelWidthOf(cardWidth: number, mode: LabelMode): number {
   return mode === 'one' ? ONE_LINE_LABEL_WIDTH : Math.max(FULL_LABEL_WIDTH, cardWidth)
 }
 
-export function groupWidthOf(cardWidth: number, mode: LabelMode): number {
+export function groupWidthOf(cardWidth: number, mode: LabelMode, shape: Shape = CARD_SHAPE(mode)): number {
+  if (shape.marker === 'pawn') {
+    return Math.max(markerBox('pawn', cardWidth).width, shape.showRole ? labelWidthOf(cardWidth, mode) : ONE_LINE_LABEL_WIDTH)
+  }
   return Math.max(cardWidth, labelWidthOf(cardWidth, mode))
 }
 
-export function groupHeightOf(cardWidth: number, mode: LabelMode): number {
-  return Math.round(cardWidth * CARD_HEIGHT_RATIO) + CHAIN_HEIGHT + LABEL_GAP + LABEL_HEIGHT[mode] + PILL_GAP + PILL_HEIGHT
+export function groupHeightOf(cardWidth: number, mode: LabelMode, shape: Shape = CARD_SHAPE(mode)): number {
+  const role = shape.showRole ? LABEL_GAP + LABEL_HEIGHT[mode] : 0
+  if (shape.marker === 'pawn') {
+    return markerBox('pawn', cardWidth).height + LABEL_GAP + NAME_PILL_HEIGHT + role + PILL_GAP + PILL_HEIGHT
+  }
+  return markerBox('card', cardWidth).height + role + PILL_GAP + PILL_HEIGHT
 }
 
 const usable = (width: number) => width - 2 * PAD_X
@@ -149,13 +196,13 @@ export function buildRows(slots: LayoutSlot[], groupWidth: number, width: number
   return merged.flatMap((row) => (fitsInRow([...row].sort((a, b) => a.x - b.x), groupWidth, width) ? [row] : splitRow(row, groupWidth, width)))
 }
 
-function requiredHeight(rows: number, cardWidth: number, mode: LabelMode): number {
-  return 2 * PAD_Y + rows * groupHeightOf(cardWidth, mode) + (rows - 1) * GAP_Y
+function requiredHeight(rows: number, cardWidth: number, shape: Shape): number {
+  return 2 * PAD_Y + rows * groupHeightOf(cardWidth, shape.mode, shape) + (rows - 1) * GAP_Y
 }
 
-function place(rows: LayoutSlot[][], cardWidth: number, mode: LabelMode, width: number, fieldHeight: number): GroupBox[] {
-  const gw = groupWidthOf(cardWidth, mode)
-  const gh = groupHeightOf(cardWidth, mode)
+function place(rows: LayoutSlot[][], cardWidth: number, shape: Shape, width: number, fieldHeight: number): GroupBox[] {
+  const gw = groupWidthOf(cardWidth, shape.mode, shape)
+  const gh = groupHeightOf(cardWidth, shape.mode, shape)
   const free = fieldHeight - 2 * PAD_Y - rows.length * gh
   const gap = rows.length > 1 ? Math.max(GAP_Y, free / (rows.length - 1)) : 0
   const half = gw / 2
@@ -175,27 +222,29 @@ function place(rows: LayoutSlot[][], cardWidth: number, mode: LabelMode, width: 
   })
 }
 
-export function layoutPitch({ slots, width, height, narrow, minCard = MIN_CARD }: LayoutInput): PitchLayout {
+export function layoutPitch({ slots, width, height, narrow, minCard = MIN_CARD, marker = 'card', showRole = false }: LayoutInput): PitchLayout {
   const modes: LabelMode[] = narrow ? ['one'] : ['full']
   const widthCard = Math.round(Math.min(MAX_CARD, Math.max(minCard, width * CARD_RATIO)))
+  const shapeOf = (mode: LabelMode): Shape => ({ mode, marker, showRole: marker === 'card' || showRole })
   if (height === undefined) {
-    const mode = modes[0]
-    const rows = buildRows(slots, groupWidthOf(widthCard, mode), width)
-    const fieldHeight = Math.max(requiredHeight(rows.length, widthCard, mode), Math.round(width * MIN_ASPECT))
-    return { cardWidth: widthCard, labelWidth: labelWidthOf(widthCard, mode), labelMode: mode, fieldHeight, boxes: place(rows, widthCard, mode, width, fieldHeight), fits: true }
+    const shape = shapeOf(modes[0])
+    const rows = buildRows(slots, groupWidthOf(widthCard, shape.mode, shape), width)
+    const fieldHeight = Math.max(requiredHeight(rows.length, widthCard, shape), Math.round(width * (marker === 'pawn' ? PAWN_MIN_ASPECT : MIN_ASPECT)))
+    return { cardWidth: widthCard, labelWidth: labelWidthOf(widthCard, shape.mode), labelMode: shape.mode, fieldHeight, boxes: place(rows, widthCard, shape, width, fieldHeight), fits: true }
   }
   let fallback: PitchLayout | undefined
   for (const [pass, mode] of modes.entries()) {
+    const shape = shapeOf(mode)
     for (let card = widthCard; card >= minCard; card -= 1) {
-      const rows = buildRows(slots, groupWidthOf(card, mode), width)
-      if (requiredHeight(rows.length, card, mode) <= height) {
-        return { cardWidth: card, labelWidth: labelWidthOf(card, mode), labelMode: mode, fieldHeight: height, boxes: place(rows, card, mode, width, height), fits: true }
+      const rows = buildRows(slots, groupWidthOf(card, mode, shape), width)
+      if (requiredHeight(rows.length, card, shape) <= height) {
+        return { cardWidth: card, labelWidth: labelWidthOf(card, mode), labelMode: mode, fieldHeight: height, boxes: place(rows, card, shape, width, height), fits: true }
       }
     }
     if (pass === modes.length - 1) {
-      const rows = buildRows(slots, groupWidthOf(minCard, mode), width)
-      const need = requiredHeight(rows.length, minCard, mode)
-      fallback = { cardWidth: minCard, labelWidth: labelWidthOf(minCard, mode), labelMode: mode, fieldHeight: need, boxes: place(rows, minCard, mode, width, need), fits: false }
+      const rows = buildRows(slots, groupWidthOf(minCard, mode, shape), width)
+      const need = requiredHeight(rows.length, minCard, shape)
+      fallback = { cardWidth: minCard, labelWidth: labelWidthOf(minCard, mode), labelMode: mode, fieldHeight: need, boxes: place(rows, minCard, shape, width, need), fits: false }
     }
   }
   return fallback as PitchLayout

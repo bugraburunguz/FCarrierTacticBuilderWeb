@@ -1,23 +1,14 @@
 import { useSyncExternalStore } from 'react'
-import type { SlotSelection, TacticRequest } from '../api/types'
+import { DEFAULT_TACTIC, type TacticState } from '../lib/tactic'
+
+/*
+ * Tek kopya taktik taslağı (fc.tactic). KARIYER-UX'ten beri yalnız v2 (geliştirme) sayfaları ve geçiş süresindeki v3 dosyaları (kariyerUxGates izinli listesi)
+ * kullanır; v3'te katman 2 ana taktik (sunucu), katman 3 Lab taslağı (labStore). Tip ve yardımcılar tek taktik modelinden (lib/tactic) gelir.
+ */
+export { DEFAULT_SETUP, DEFAULT_TACTIC, lockedBy, toTacticRequest } from '../lib/tactic'
+export type { TacticState, TeamSetupState } from '../lib/tactic'
 
 const KEY = 'fc.tactic'
-
-export interface TeamSetupState {
-  buildUp: 'Short' | 'Balanced' | 'Counter'
-  depth: number
-}
-
-export const DEFAULT_SETUP: TeamSetupState = { buildUp: 'Balanced', depth: 50 }
-
-export interface TacticState {
-  formation: string
-  presetId?: string
-  setup?: TeamSetupState
-  slots: Record<string, { tags: string[]; roleId?: string }>
-}
-
-export const DEFAULT_TACTIC: TacticState = { formation: '4-3-3', slots: {} }
 
 let current: TacticState = load()
 const listeners = new Set<() => void>()
@@ -66,18 +57,3 @@ export function useTactic(): TacticState {
   return useSyncExternalStore(tacticStore.subscribe, tacticStore.get)
 }
 
-export function toTacticRequest(state: TacticState): TacticRequest {
-  const slots: SlotSelection[] = Object.entries(state.slots).map(([slotId, selection]) => ({
-    slotId,
-    tags: selection.tags,
-    roleId: selection.roleId,
-  }))
-  return { formation: state.formation, presetId: state.presetId, slots, setup: state.setup }
-}
-
-/** Seçili davranışlarla çelişen tag'leri döner (client'ta kilitlenir). */
-export function lockedBy(selected: string[], conflictsOf: (id: string) => string[]): Set<string> {
-  const locked = new Set<string>()
-  selected.forEach((id) => conflictsOf(id).forEach((c) => locked.add(c)))
-  return locked
-}

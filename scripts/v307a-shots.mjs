@@ -4,8 +4,8 @@
 //     UT girişli), içe aktarma (boş; dolu ve hata durumları fikstür: yalnız bu tarayıcıda /me PREMIUM + /import yanıtı), yeni kariyer (boş, kulüp seçili),
 //     profil (dolu, şifre hatası — gerçek 422). Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx (fikstür hata durumu hariç), minFont ≥ 11, bant.
 // Kullanım: node scripts/v307a-shots.mjs [--base http://localhost:8081]
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -26,8 +26,6 @@ const dirOf = (sub) => {
 const invFile = dirOf('envanter')
 const pageFile = dirOf('sayfalar')
 const MIN_FONT = 11
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 await createGateAccount(base, 'gate-')
 const login = async () => (await (await fetch(`${base}/api/v1/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: process.env.GATE_EMAIL, password: process.env.GATE_PASSWORD }) })).json()).data
@@ -71,7 +69,6 @@ async function newPage(w, h, theme, { auth, mode }) {
 }
 
 // A) Envanter: 1280 koyu, girişli.
-resetRateLimits()
 session = await login()
 for (const path of ROUTES) {
   const ut = path.startsWith('/ut/')
@@ -88,7 +85,6 @@ for (const path of ROUTES) {
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   const mobile = w < 820
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     session = await login()
     const shoot = async (ctx, name, extra = {}, allowProblems = false) => {
       const { page, problems } = ctx

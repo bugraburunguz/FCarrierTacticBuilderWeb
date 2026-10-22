@@ -1,5 +1,5 @@
 import type { Preset } from '../api/types'
-import type { TacticState } from '../state/tacticStore'
+import type { TacticState } from './tactic'
 import { profileOf, type BuildUp, type FormationPref, type Striker, type Width, type WizardAnswers } from './wizard'
 
 export interface WizardOption<T> {

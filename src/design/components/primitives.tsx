@@ -1,3 +1,4 @@
+import { BadgeCheck, Database, PencilLine, Sparkles } from 'lucide-react'
 import { useEffect, useId, useRef, type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react'
 
 /*
@@ -6,13 +7,61 @@ import { useEffect, useId, useRef, type ButtonHTMLAttributes, type KeyboardEvent
  */
 const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(' ')
 
-/** Panel: tek `.glass` yüzey, başlık satırı (Barlow 20) + sağ eylem. İç içe `.glass` yok. */
-export function Panel({ title, actions, children, className, as: Tag = 'section' }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; as?: 'section' | 'div' }) {
+/**
+ * Veri katmanı (KARIYER-UX D-28): kayıt verisi (salt okunur içe aktarım), kariyer kararı (sunucu), Lab taslağı (yerel), otomatik öneri (ana taktik değil).
+ */
+export type DataSource =
+  | { kind: 'record'; at: string }
+  | { kind: 'decision'; label?: string }
+  | { kind: 'draft'; savedSlot?: number }
+  | { kind: 'auto' }
+
+const SHORT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short' })
+
+function sourceText(source: DataSource): string {
+  switch (source.kind) {
+    case 'record':
+      return `Kayıt verisi · ${SHORT_DATE.format(new Date(source.at))}`
+    case 'decision':
+      return source.label ?? 'Kararın'
+    case 'draft':
+      return source.savedSlot ? `Taslak · Slot ${source.savedSlot}` : 'Taslak · kaydedilmedi'
+    case 'auto':
+      return 'Otomatik öneri · ana taktik değil'
+  }
+}
+
+const SOURCE_ICON = { record: Database, decision: BadgeCheck, draft: PencilLine, auto: Sparkles } as const
+
+/** SourceTag: verinin hangi katmandan geldiği (ikon + metin; renk tek başına anlam taşımaz, ≥12px). */
+export function SourceTag({ source, className }: { source: DataSource; className?: string }) {
+  const Icon = SOURCE_ICON[source.kind]
   return (
-    <Tag className={cx('glass p-4 text-ink sm:px-5', className)}>
-      {(title || actions) && (
-        <header className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>
+    <span data-source={source.kind} className={cx('inline-flex min-h-6 items-center gap-1 whitespace-nowrap rounded-full border px-2.5 text-xs font-medium',
+      source.kind === 'draft' ? 'border-dashed border-[var(--edge-draft)] text-ink' : 'border-[var(--glass-border)] text-ink-2', 'glass-3', className)}>
+      <Icon aria-hidden="true" size={13} strokeWidth={2} />
+      {sourceText(source)}
+    </span>
+  )
+}
+
+export type PanelEdge = 'default' | 'glow' | 'draft'
+
+/**
+ * Panel: tek `.glass` yüzey, başlık satırı (Barlow 20) + kaynak etiketi + sağ eylem. İç içe `.glass` yok.
+ * edge: glow = 1px --edge-glow halka (kariyer kararı / vurgu), draft = 1px kesik --edge-draft (Lab taslağı). Animasyon yok.
+ */
+export function Panel({ title, actions, source, edge = 'default', children, className, as: Tag = 'section' }: {
+  title?: ReactNode; actions?: ReactNode; source?: DataSource; edge?: PanelEdge; children: ReactNode; className?: string; as?: 'section' | 'div'
+}) {
+  return (
+    <Tag data-edge={edge} className={cx('glass p-4 text-ink sm:px-5', edge !== 'default' && `panel-edge-${edge}`, className)}>
+      {(title || actions || source) && (
+        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <span className="flex min-w-0 flex-wrap items-center gap-2">
+            {title && <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>}
+            {source && <SourceTag source={source} />}
+          </span>
           {actions}
         </header>
       )}

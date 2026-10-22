@@ -1397,6 +1397,7 @@ export interface ReplicaApplyBody {
   playerIds?: number[]
 }
 
+/** user_tactic (V31, V43). slots satırı: replikada focus dolu, taslakta tags dolu. main: kariyerin ana taktiği (D-30). */
 export interface UserTactic {
   slot: number
   careerId: number | null
@@ -1405,7 +1406,30 @@ export interface UserTactic {
   buildUp: string | null
   defensiveApproach: string | null
   lineHeight: number | null
-  slots: { slot: string; position: string; roleId: string; focus: string }[]
+  slots: { slot: string; position: string; roleId: string | null; focus?: string | null; tags?: string[] }[]
   eaCode: string | null
   sourceReplicaId: string | null
+  main: boolean
+  /** slotId → base_player.id (/fit/lineup'ın playerId'si); boşsa /fit/lineup dizer. */
+  lineup: Record<string, number> | null
+  depth: number | null
+  presetId: string | null
+  updatedAt: string | null
+  /** Yalnız ana taktik okumasında: kadroda olmadığı için dizilişten düşen oyuncu sayısı (Q2). */
+  lineupDropped: number | null
+}
+
+/** Slota kaydet: ya replikadan ya Lab taslağından (tek taktik gövdesi TacticRequest + opsiyonel diziliş). */
+export type SaveUserTacticBody =
+  | { careerId?: number; replicaId: string }
+  | { careerId?: number; name: string; tactic: TacticRequest; lineup?: Record<string, number> }
+
+/** Ücretsiz otomatik başlangıç önerisi (D-31): ana taktik değildir. */
+export interface StarterTactic {
+  formationId: string
+  setup: { buildUp: string; depth: number }
+  slots: { slotId: string; position: string; roleId: string; roleName: string }[]
+  lineup: Record<string, number>
+  squadFit: number
+  alternatives: { formationId: string; score: number }[]
 }

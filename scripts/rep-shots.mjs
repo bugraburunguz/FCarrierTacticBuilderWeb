@@ -1,9 +1,9 @@
 // REP-04/07 ekran kapıları: replika listesi, filtreli liste, detay (4 sekme), kadromla uygula (kariyer + UT).
 // Kullanım: node scripts/rep-shots.mjs [--base http://localhost:8081]   (yerel test hesabı kurar, koşu sonunda siler)
 // Çıktı: docs/review/v2/screens/REP/*.png ve gates-report.json (axe serious/critical, yatay taşma, konsol/ağ hataları).
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
-import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
@@ -51,14 +51,7 @@ async function utCards() {
 }
 const cards = await utCards()
 
-// Yerel yığında genel API hız sınırı (dakikada 120) çok sayfalı çekimde dolar: her senaryodan önce yerel Redis sayaçları sıfırlanır (yalnız localhost).
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-function resetRateLimits() {
-  spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
-}
-
 async function setup(w, h, theme, mode) {
-  resetRateLimits()
   const context = await browser.newContext({ viewport: { width: w, height: h } })
   await context.addInitScript(
     ({ theme, mode, session }) => {
@@ -79,7 +72,6 @@ async function setup(w, h, theme, mode) {
 }
 
 async function seedUtCards(page) {
-  resetRateLimits()
   await page.goto(`${base}/`, { waitUntil: 'networkidle' })
   await page.evaluate(async (value) => {
     await new Promise((resolve, reject) => {

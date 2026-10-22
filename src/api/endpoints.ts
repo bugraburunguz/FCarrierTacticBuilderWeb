@@ -69,6 +69,8 @@ import type {
   KbPromo,
   KbSbcSet,
   SbcSetVotes,
+  SaveUserTacticBody,
+  StarterTactic,
 } from './types'
 
 export interface SetupBody {
@@ -200,7 +202,12 @@ export const endpoints = {
   replicaLegacyIds: () => api.get<Record<string, string | null>>('/replicas/legacy-ids'),
   replicaApply: (id: string, body: ReplicaApplyBody) => api.post<ReplicaApplyResult>(`/replicas/${id}/apply`, body),
   userTactics: (careerId?: number) => api.get<UserTactic[]>('/user-tactics', { careerId }),
-  saveUserTactic: (slot: number, body: { careerId?: number; replicaId: string }) => request<UserTactic>(`/user-tactics/${slot}`, { method: 'PUT', body }),
+  saveUserTactic: (slot: number, body: SaveUserTacticBody) => request<UserTactic>(`/user-tactics/${slot}`, { method: 'PUT', body }),
+  /** Kariyerin ana taktiği (D-30); yoksa null. */
+  mainTactic: (careerId: number) => api.get<UserTactic | null>('/user-tactics/main', { careerId }),
+  setMainTactic: (slot: number, careerId: number) => request<UserTactic>(`/user-tactics/${slot}/main`, { method: 'PUT', query: { careerId } }),
+  /** Ücretsiz otomatik başlangıç önerisi (D-31); kredi düşmez. */
+  starterTactic: (careerId: number) => api.get<StarterTactic>(`/careers/${careerId}/starter-tactic`),
   deleteUserTactic: (slot: number, careerId?: number) => request<void>(`/user-tactics/${slot}`, { method: 'DELETE', query: { careerId } }),
   resolveTactic: (tactic: TacticRequest) => api.post<ResolvedTactic>('/tactics/resolve', tactic, false),
 
