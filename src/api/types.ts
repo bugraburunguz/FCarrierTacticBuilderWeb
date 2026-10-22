@@ -413,6 +413,9 @@ export interface CareerSnapshot {
   note?: string
   /** V3-06e: kayıt anındaki oyun tarihi; yoksa alan yok. */
   gameDate?: string
+  /** KARIYER-UX FAZ 2 (V44): snapshot anındaki transfer bütçesi ve kadro maaş toplamı (Masa Δ); bilinmiyorsa yok. */
+  budgetEur?: number
+  squadWageEur?: number
 }
 
 export interface SnapshotDiffRow {
@@ -488,6 +491,10 @@ export interface CareerPlayer {
   valueEur?: number
   form?: number
   acquiredAt?: string
+  /** KARIYER-UX FAZ 2 (15 §7.3): kayıttaki kiralık bitişi; bilinmiyorsa yok. */
+  loanUntil?: string
+  /** Kayıttaki haftalık maaş; bilinmiyorsa yok. */
+  wageEur?: number
 }
 
 export type RosterEventType = 'BUY' | 'SELL' | 'LOAN_IN' | 'LOAN_OUT' | 'PROMOTE'

@@ -4,7 +4,7 @@ import { endpoints } from '../../api/endpoints'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { Button, Chip, EmptyState, ErrorState, Panel, Skeleton } from '../../design/components/primitives'
 import { labStore, useLab } from '../../state/labStore'
-import { useActiveTactic } from './activeTactic'
+import { droppedText, useActiveTactic } from './activeTactic'
 import { MakeMainDialog } from './MakeMainDialog'
 
 const MIGRATED_REF = 'fc.tactic'
@@ -89,8 +89,7 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
           {active.starter.alternatives.map((a) => <Chip key={a.formationId} title={`Uyum skoru ${a.score.toFixed(1)}`}>{a.formationId}</Chip>)}
         </p>
       )}
-      {/* Doldurma (/fit/lineup) FAZ 2-3'te gelince metin "otomatik dolduruldu" olur. */}
-      {active.dropped > 0 && <p role="status" className="mb-3 text-sm text-warn">{active.dropped} oyuncu artık kadroda yok, slotları boş</p>}
+      {active.dropped > 0 && <p role="status" className="mb-3 text-sm text-warn">{droppedText(active)}</p>}
       {labMessage && <p role="alert" className="mb-3 text-sm text-bad">{labMessage}</p>}
       {migrated && auto && (
         <p className="mb-3">

@@ -4,6 +4,7 @@ import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
 import { CaptureOnly } from './components/CaptureOnly'
+import { RedirectWithSearch } from './components/RedirectWithSearch'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
@@ -66,7 +67,7 @@ const ProfileV3 = lazy(() => import('./features/account/ProfilePage').then((m) =
 const CareerImportPage = lazy(() => import('./features/import/CareerImportPage').then((m) => ({ default: m.CareerImportPage })))
 const NewCareerPage = lazy(() => import('./features/career/NewCareerPage').then((m) => ({ default: m.NewCareerPage })))
 const GrowthPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthPage })))
-const DeskPage = lazy(() => import('./features/desk/DeskPage').then((m) => ({ default: m.DeskPage })))
+const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })))
 const TransferCenterPage = lazy(() => import('./features/transfer/TransferCenterPage').then((m) => ({ default: m.TransferCenterPage })))
 const CareerPlayerPage = lazy(() => import('./features/player/CareerPlayerPage').then((m) => ({ default: m.CareerPlayerPage })))
 const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
@@ -133,8 +134,9 @@ export function App() {
         <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
         <Route path="career/import" element={<RequireAuth>{isV3() ? <CareerImportPage /> : <ImportPage />}</RequireAuth>} />
-        {/* V3-06d: v3'te Kariyer Masası (yalnız v3, Ayarlar sekmesi); v2 sayfası v2 için kalır. */}
-        <Route path="career/desk" element={<RequireAuth>{isV3() ? <DeskPage /> : <CareerDeskPage />}</RequireAuth>} />
+        {/* KARIYER-UX FAZ 2: v3 Kariyer Masası /career/dashboard; eski adres sorgu dizgisiyle (?sekme=ayarlar) yönlenir. v2 sayfası v2 için kalır. */}
+        <Route path="career/dashboard" element={<RequireAuth>{isV3() ? <DashboardPage /> : <Navigate to="/career/desk" replace />}</RequireAuth>} />
+        <Route path="career/desk" element={isV3() ? <RedirectWithSearch to="/career/dashboard" /> : <RequireAuth><CareerDeskPage /></RequireAuth>} />
         <Route path="career/new" element={<RequireAuth>{isV3() ? <NewCareerPage /> : <CareerNewPage />}</RequireAuth>} />
         {/* V3-06c: v3'te Transfer Merkezi (yalnız v3 uçları); v2 sayfası v2 için kalır. */}
         <Route path="career/transfer" element={<RequireAuth>{isV3() ? <TransferCenterPage /> : <CareerTransferPage />}</RequireAuth>} />

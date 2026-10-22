@@ -21,7 +21,7 @@ beforeEach(() => modeStore.set('career'))
 
 describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
   it.each([
-    ['/career/desk', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'], ['/players', 'Oyuncular'],
+    ['/career/dashboard', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'], ['/players', 'Oyuncular'],
     ['/squad/builder', 'Taktik & Kadro'], ['/teams', 'Takımlar'], ['/career/import', 'İçe aktar'],
   ])('%s: sol menüde %s aria-current="page"; üstte Masa/Transfer/Gelişim sekmeleri yok', (path, label) => {
     renderAt(path)

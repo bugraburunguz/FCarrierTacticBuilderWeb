@@ -174,7 +174,7 @@ export function CareerImportPage() {
               {sync.isPending ? 'Kuruluyor…' : 'Kadroyu bu takımdan kur'}
             </button>
             <ErrorAlert error={sync.error} />
-            {sync.data && <p className="text-sm text-good">{sync.data.players} oyuncuyla kadro kuruldu. <Link to="/career/desk" className="font-semibold underline">Masaya git</Link></p>}
+            {sync.data && <p className="text-sm text-good">{sync.data.players} oyuncuyla kadro kuruldu. <Link to="/career/dashboard" className="font-semibold underline">Masaya git</Link></p>}
           </div>
         </section>
       )}

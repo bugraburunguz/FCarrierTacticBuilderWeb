@@ -17,6 +17,15 @@ describe('Pitch · Cyber-Pitch ve piyon', () => {
     expect(container.querySelector('[data-pitch-marker="pawn"]')).toBeNull()
   })
 
+  it('kapsayıcı henüz ölçülmeden (genişlik 0) negatif SVG ölçüsü yazılmaz (FAZ 2: Masa konsol hatası)', () => {
+    for (const field of ['grass', 'cyber'] as const) {
+      const { container, unmount } = render(<Pitch slots={[filled]} onPickPlayer={() => undefined} field={field} />)
+      const sizes = [...container.querySelectorAll('rect')].flatMap((r) => [r.getAttribute('width'), r.getAttribute('height')]).map(Number)
+      expect(sizes.filter((v) => v < 0)).toEqual([])
+      unmount()
+    }
+  })
+
   it('cyber saha neon çizgi token\'larıyla çizilir', () => {
     const { container } = render(<Pitch slots={[filled]} onPickPlayer={() => undefined} field="cyber" />)
     expect(container.querySelector('[data-field="cyber"]')).not.toBeNull()

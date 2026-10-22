@@ -1,0 +1,704 @@
+{
+  "careers": {
+    "none": 296,
+    "main": 297,
+    "dropped": 298
+  },
+  "droppedOnServer": 1,
+  "report": [
+    {
+      "shot": "masa-yok-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: ▲"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "auto:Otomatik öneri · ana taktik değil",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": []
+    },
+    {
+      "shot": "masa-ana-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 57"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "masa-dustu-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 56"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "ayarlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "redirectedTo": "/career/dashboard?sekme=ayarlar"
+    },
+    {
+      "shot": "masa-yok-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: ▲"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "auto:Otomatik öneri · ana taktik değil",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": []
+    },
+    {
+      "shot": "masa-ana-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 57"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "masa-dustu-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 56"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "ayarlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "redirectedTo": "/career/dashboard?sekme=ayarlar"
+    },
+    {
+      "shot": "masa-yok-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "auto:Otomatik öneri · ana taktik değil",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": []
+    },
+    {
+      "shot": "masa-ana-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 57"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "masa-dustu-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 56"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "ayarlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "redirectedTo": "/career/dashboard?sekme=ayarlar"
+    },
+    {
+      "shot": "masa-yok-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "auto:Otomatik öneri · ana taktik değil",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": []
+    },
+    {
+      "shot": "masa-ana-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 57"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "masa-dustu-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 56"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "ayarlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "redirectedTo": "/career/dashboard?sekme=ayarlar"
+    },
+    {
+      "shot": "masa-yok-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "auto:Otomatik öneri · ana taktik değil",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": []
+    },
+    {
+      "shot": "masa-ana-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 57"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "masa-dustu-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 56"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "ayarlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "redirectedTo": "/career/dashboard?sekme=ayarlar"
+    },
+    {
+      "shot": "masa-yok-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "auto:Otomatik öneri · ana taktik değil",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": []
+    },
+    {
+      "shot": "masa-ana-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 57"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "ST · Advanced Forward (Attack)Edson Tortolero%49Rol için seviyesindeMevki uyumu (ST) −6,2Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "masa-dustu-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: ▲",
+          "aria-hidden: %",
+          "aria-hidden: 56"
+        ]
+      },
+      "sources": [
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "record:Kayıt verisi · 19 Eki",
+        "decision:Kararın",
+        "decision:Kararın",
+        "record:Kayıt verisi · 19 Eki"
+      ],
+      "weak": [
+        "GK · Goalkeeper (Defend)Reece Hutchinson%0Rol için eksikKaleci pozisyon −25,3Transferde aday bulLab'da dene",
+        "LB · Fullback (Balanced)Keisuke Osako%0Rol için eksikAyakta müdahale −14,8Transferde aday bulLab'da dene",
+        "CB · Defender (Defend)Josh Stephenson%47Rol için seviyesindeAyakta müdahale −5,0Transferde aday bulLab'da dene"
+      ]
+    },
+    {
+      "shot": "ayarlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "redirectedTo": "/career/dashboard?sekme=ayarlar"
+    }
+  ]
+}

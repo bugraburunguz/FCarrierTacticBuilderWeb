@@ -6,6 +6,7 @@ import { endpoints } from '../../api/endpoints'
 import type { Career } from '../../api/types'
 import { useAuth } from '../../auth/AuthContext'
 import { EmptyState, Skeleton } from '../../design/components/primitives'
+import { currentRoute } from '../../lib/deskLinks'
 import { rankActions } from '../../lib/deskRules'
 import { extensionCaptureEnabled } from '../../lib/features'
 import { useActiveCareerId } from '../../state/careerStore'
@@ -51,7 +52,7 @@ function ContinueCareer({ career }: { career: Career }) {
   const fit = teamFitPct(rows.map((r) => r.display))
   const lastImport = (snapshots.data ?? []).find((s) => s.source === 'IMPORT')
   return (
-    <Section title="Kariyerine devam et" actions={<Link to="/career/desk" className={`${LINK_BUTTON} bg-accent text-on-accent hover:opacity-90`}>Masaya git</Link>}>
+    <Section title="Kariyerine devam et" actions={<Link to="/career/dashboard" className={`${LINK_BUTTON} bg-accent text-on-accent hover:opacity-90`}>Masaya git</Link>}>
       <div className="flex flex-col gap-1">
         <p className="font-display text-lg font-semibold">{career.name || career.clubName}</p>
         <p className="text-sm text-ink-2">{career.clubName}{lastImport ? ` · Son içe aktarma ${new Date(lastImport.takenAt).toLocaleDateString('tr-TR')}` : ' · Henüz içe aktarma yok'}</p>
@@ -63,7 +64,7 @@ function ContinueCareer({ career }: { career: Career }) {
         </div>
         <div className="glass-3 flex min-w-0 flex-col px-3 py-2">
           <dt className="text-xs font-medium text-ink-2">Bu dönemin ilk işi</dt>
-          <dd className="text-sm">{firstJob ? <Link to={firstJob.to} className="font-semibold text-ink underline-offset-2 hover:underline">{firstJob.title}</Link> : <span className="text-ink-2">Acil iş yok.</span>}</dd>
+          <dd className="text-sm">{firstJob ? <Link to={currentRoute(firstJob.to)} className="font-semibold text-ink underline-offset-2 hover:underline">{firstJob.title}</Link> : <span className="text-ink-2">Acil iş yok.</span>}</dd>
         </div>
       </dl>
     </Section>
@@ -93,7 +94,7 @@ function CareerHome() {
       )}
       <nav aria-label="Hızlı eylemler" className="grid grid-cols-2 gap-2 min-[820px]:grid-cols-4">
         {[
-          { to: '/career/desk', label: 'Masa', icon: LayoutDashboard },
+          { to: '/career/dashboard', label: 'Masa', icon: LayoutDashboard },
           { to: '/career/transfer', label: 'Transfer', icon: ArrowLeftRight },
           { to: '/career/import', label: 'İçe aktar', icon: Upload },
           { to: '/career/new', label: 'Yeni kariyer', icon: Plus },

@@ -67,7 +67,7 @@ describe('Ana sayfa (v3, mod başına)', () => {
     expect(await within(card).findByText(/CM: zayıf halka/)).toBeInTheDocument()
     const actions = screen.getByRole('navigation', { name: 'Hızlı eylemler' })
     expect(within(actions).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-      ['Masa', '/career/desk'], ['Transfer', '/career/transfer'], ['İçe aktar', '/career/import'], ['Yeni kariyer', '/career/new'],
+      ['Masa', '/career/dashboard'], ['Transfer', '/career/transfer'], ['İçe aktar', '/career/import'], ['Yeni kariyer', '/career/new'],
     ])
   })
 

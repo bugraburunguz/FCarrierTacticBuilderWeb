@@ -6,6 +6,7 @@ describe('modeForPath (WEB-BUG-07)', () => {
     expect(modeForPath('/ut/sbc')).toBe('ut')
     expect(modeForPath('/ut')).toBe('ut')
     expect(modeForPath('/career/desk')).toBe('career')
+    expect(modeForPath('/career/dashboard')).toBe('career')
     expect(modeForPath('/squad/builder')).toBe('career')
     expect(modeForPath('/tactics/wizard')).toBe('career')
   })

@@ -57,6 +57,14 @@ describe('iş sıralaması (V3-06e)', () => {
   const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000, contractUntil: '2027-03-01' }), player(4, 'CM', 60, 19, { potential: 78 })]
   const slots = [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)]
 
+  it('KARIYER-UX FAZ 2: bağlantılar §4.1 parametreleriyle (kırık ?sell= ve ?group= düzeldi)', () => {
+    const all = rankActions({ squad, slots, tags: {} })
+    expect(all.find((a) => a.kind === 'FILL')?.to).toBe('/career/transfer?ihtiyac=slot-a&pos=ST&rol=r')
+    expect(all.find((a) => a.title === 'Sat: P1')?.to).toBe('/career/transfer?sekme=satis&oyuncu=1')
+    expect(all.find((a) => a.kind === 'LOAN')?.to).toBe('/career/growth?oyuncu=4')
+    expect(all.find((a) => a.kind === 'DEPTH')?.to).toMatch(/^\/career\/squad\?sekme=derinlik&grup=[A-Z]+$/)
+  })
+
   it('rankActions tüm işleri öncelik sırasıyla verir; suggestActions = ilk 3 (v2 değişmez)', () => {
     const all = rankActions({ squad, slots, tags: {} })
     expect(suggestActions({ squad, slots, tags: {} })).toEqual(all.slice(0, 3))

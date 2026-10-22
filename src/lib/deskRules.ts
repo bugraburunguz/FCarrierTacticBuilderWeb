@@ -1,5 +1,6 @@
 import type { CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
+import { deskLink } from './deskLinks'
 import { isWeakFit, levelText, type FitLabel } from './fitLabels'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
@@ -158,7 +159,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       kind: 'FILL',
       title: `${w.position}: zayıf halka (${levelText(w.fit)})`,
       reason: `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
-      to: `/career/transfer?pos=${w.position}&role=${w.roleId}`,
+      to: deskLink.candidate(w.slotId, w.position, w.roleId),
       priority: 100 - w.fit - index,
     })
   })
@@ -170,7 +171,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
         kind: 'SELL',
         title: `Sat: ${c.player.name}`,
         reason: advice.reason,
-        to: `/career/transfer?sell=${c.player.id}`,
+        to: deskLink.sell(c.player.id),
         priority: 40 + (tags[c.player.id] === 'FOR_SALE' ? 25 : 0) + Math.min(20, (c.player.valueEur ?? 0) / 1_000_000),
       })
     } else if (advice.kind === 'LOAN') {
@@ -178,7 +179,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
         kind: 'LOAN',
         title: `Süre ver ya da kirala: ${c.player.name}`,
         reason: advice.reason,
-        to: `/career/growth?player=${c.player.id}`,
+        to: deskLink.growth(c.player.id),
         priority: 30 + ((c.player.potential ?? c.player.overall) - c.player.overall),
       })
     }
@@ -189,7 +190,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       kind: 'DEPTH',
       title: `Derinlik: ${GROUP_LABEL[d.group]} ${d.have}/${d.need}`,
       reason: `${GROUP_LABEL[d.group]} grubunda ${d.short} oyuncu eksik; sakatlık ve rotasyonda açık kalır.`,
-      to: `/career/transfer?group=${d.group}`,
+      to: deskLink.depth(d.group),
       priority: 20 + d.short * 5,
     })
   })
@@ -202,7 +203,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
           kind: 'CONTRACT',
           title: `Sözleşme: ${c.player.name}`,
           reason: `Sözleşmesi ${months} ay içinde bitiyor (oyun tarihine göre); uzat ya da değeri düşmeden sat.`,
-          to: `/players/${c.player.id}?sekme=sozlesme`,
+          to: deskLink.contract(c.player.id),
           priority: CONTRACT_PRIORITY + (CONTRACT_MONTHS - months),
         })
       }

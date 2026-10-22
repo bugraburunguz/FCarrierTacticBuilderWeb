@@ -20,6 +20,7 @@ import { MobileMenu, ThemeToggle } from './ThemeToggle'
 import { UserMenu } from './UserMenu'
 
 const ICONS: Record<string, LucideIcon> = {
+  '/career/dashboard': LayoutDashboard,
   '/career/desk': LayoutDashboard,
   '/career/transfer': ArrowLeftRight,
   '/career/growth': TrendingUp,
