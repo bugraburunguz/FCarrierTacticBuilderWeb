@@ -9,7 +9,7 @@ const { scan, routes } = legacyScanner(join(process.cwd(), 'src'))
 describe('eski parça kapısı (V3-07b, V3-07c)', () => {
   const all = routes() as { path: string; file?: string; v3Name?: string }[]
   it.each([
-    '/career/dashboard', '/squad', '/squad/builder', '/ut/squad', '/tactics/wizard', '/replicas/:id',
+    '/career/dashboard', '/career/squad', '/squad/builder', '/ut/squad', '/tactics/wizard', '/replicas/:id',
     '/ut/club', '/ut/evo', '/ut/objectives', '/ut/meta', '/ut/import', '/compare', '/wonderkids', '/teams',
     '/about', '/privacy',
   ])('%s: v3 sayfası ve zinciri eski parça içermez', (path) => {

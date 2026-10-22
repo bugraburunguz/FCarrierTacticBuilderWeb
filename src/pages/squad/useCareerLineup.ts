@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { endpoints } from '../../../api/endpoints'
-import type { CareerPlayer, Formation } from '../../../api/types'
-import { pickBench } from '../../../lib/bench'
-import { fitDisplay } from '../../../lib/fitLabels'
-import { mirrorTactic } from '../../../lib/mirror'
-import { swapSlots } from '../../../lib/squadBuilder'
-import { lineupStore } from '../../../state/lineupStore'
-import { tacticStore, toTacticRequest, useTactic } from '../../../state/tacticStore'
-import type { SlotView } from '../types'
+import { endpoints } from '../../api/endpoints'
+import type { CareerPlayer, Formation } from '../../api/types'
+import { pickBench } from '../../lib/bench'
+import { fitDisplay } from '../../lib/fitLabels'
+import { mirrorTactic } from '../../lib/mirror'
+import { swapSlots } from '../../lib/squadBuilder'
+import { lineupStore } from '../../state/lineupStore'
+import { tacticStore, toTacticRequest, useTactic } from '../../state/tacticStore'
+import type { SlotView } from '../../features/squad/types'
 
 const MIN_SQUAD = 11
 
@@ -26,6 +26,7 @@ export function roleLabelOf(roleName: string): string {
 }
 
 /**
+ * YALNIZ v2 (KARIYER-UX FAZ 3): v3 Kadro artık ana taktikten okur (features/careerSquad). Bu dosya v2 TacticLineup için olduğu gibi taşındı.
  * Seçili taktikte ilk 11 + yedekler (V3-07b; TacticLineup'tan çıkarıldı): tek /fit/lineup sorgusu, yedek kulübesi, aynalama.
  * Sahada karta tıklamak kadro kurucuya götürür; iki kartı yer değiştirmek dizilişi kurucuya kaydedip oraya geçer. v2 ve v3 aynı hook.
  */

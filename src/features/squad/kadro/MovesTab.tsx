@@ -6,7 +6,7 @@ import type { Career, RosterEvent, RosterEventType } from '../../../api/types'
 import { ErrorBox, Field, Input } from '../../../components/ui'
 import { Button, Chip, EmptyState, Panel } from '../../../design/components/primitives'
 import { formatEur } from '../../../lib/format'
-import { useInvalidateCareer } from './useCareerSquad'
+import { useInvalidateCareer } from '../../careerSquad/useCareerSquadData'
 
 export const EVENT_LABELS: Record<RosterEventType, string> = {
   BUY: 'Transfer',

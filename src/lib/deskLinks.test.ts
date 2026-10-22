@@ -23,9 +23,9 @@ describe('geçici eşleme: bugünkü sayfaların okuduğu parametreler', () => {
     expect(currentRoute(deskLink.sell(14))).toBe('/career/transfer?sekme=satis&oyuncu=14')
   })
 
-  it('Kadro: /career/squad henüz yok → /squad; derinlik bugün "oyuncular" sekmesindeki mevki yoğunluğunda', () => {
-    expect(currentRoute(deskLink.depth('MID'))).toBe('/squad?sekme=oyuncular&grup=MID')
-    expect(currentRoute(deskLink.loans())).toBe('/squad?sekme=hareketler')
+  it('Kadro (FAZ 3): /career/squad gerçek sayfa, eşleme yok; derinlik bağlantısı doğrudan derinlik sekmesine ve gruba', () => {
+    expect(currentRoute(deskLink.depth('MID'))).toBe('/career/squad?sekme=derinlik&grup=MID')
+    expect(currentRoute(deskLink.loans())).toBe('/career/squad?sekme=hareketler')
   })
 
   it('Lab: /career/tactics-lab henüz yok → kadro kurucu', () => {

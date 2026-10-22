@@ -1,0 +1,64 @@
+import { describe, expect, it } from 'vitest'
+import type { CareerPlayer } from '../../api/types'
+import { contractTimeline, groupRoster, legacySquadTarget, squadStats } from './careerSquadRules'
+
+const member = (id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer> = {}, player: object = {}): CareerPlayer =>
+  ({ player: { id, name: `Oyuncu ${id}`, positions: [position], overall, age, ...player }, onLoan: false, ...extra }) as CareerPlayer
+
+describe('Kadro özeti (diziliş sekmesi StatTile\'ları)', () => {
+  it('ortalama reyting ve yaş kadrodan (kiralık gönderilen hariç), oyuncu sayısı ve kiralıktaki sayısı', () => {
+    const stats = squadStats([member(1, 'GK', 70, 30), member(2, 'CB', 80, 20), member(3, 'ST', 60, 25, { loanedOut: true, onLoan: true })])
+    expect(stats).toEqual({ avgOverall: 75, avgAge: 25, count: 3, loanedOut: 1 })
+  })
+
+  it('boş kadroda değer yok (0 uydurulmaz)', () => {
+    expect(squadStats([])).toEqual({ avgOverall: undefined, avgAge: undefined, count: 0, loanedOut: 0 })
+  })
+})
+
+describe('derinlik: mevki grubunda kim var, kaç kişi', () => {
+  it('grup başına eldeki/gereken ve oyuncular reytinge göre; kiralık gönderilen sayılmaz', () => {
+    const roster = groupRoster([member(1, 'GK', 70, 30), member(2, 'GK', 64, 22), member(3, 'CM', 75, 26), member(4, 'CM', 60, 19, { loanedOut: true, onLoan: true })])
+    const gk = roster.find((g) => g.group === 'GK')!
+    expect(gk).toMatchObject({ label: 'Kaleci', have: 2, need: 2, short: 0 })
+    expect(gk.players.map((p) => p.id)).toEqual([1, 2])
+    const mid = roster.find((g) => g.group === 'MID')!
+    expect(mid).toMatchObject({ have: 1, need: 4, short: 3 })
+    expect(mid.players.map((p) => p.id)).toEqual([3])
+  })
+})
+
+describe('sözleşme bitiş zaman çizgisi', () => {
+  it('bitiş yılına göre gruplar, tarihe göre sıralı; ≤ 6 ay olanlar işaretli; tarihi olmayan ve kiralık gönderilen girmez', () => {
+    const squad = [
+      member(1, 'GK', 70, 30, {}, { contractUntil: '2028-06-30' }),
+      member(2, 'CB', 70, 30, {}, { contractUntil: '2027-05-01' }),
+      member(3, 'ST', 70, 30, {}, { contractUntil: '2027-06-30' }),
+      member(4, 'ST', 70, 30),
+      member(5, 'ST', 70, 30, { loanedOut: true, onLoan: true }, { contractUntil: '2027-02-01' }),
+    ]
+    const lanes = contractTimeline(squad, '2027-01-15')
+    expect(lanes.map((l) => [l.year, l.players.map((p) => [p.id, p.months, p.soon])])).toEqual([
+      ['2027', [[2, 3, true], [3, 5, true]]],
+      ['2028', [[1, 17, false]]],
+    ])
+  })
+
+  it('oyun tarihi yoksa ay ve "yakında" hesaplanmaz', () => {
+    const [lane] = contractTimeline([member(2, 'CB', 70, 30, {}, { contractUntil: '2027-05-01' })], undefined)
+    expect(lane.players[0]).toMatchObject({ months: undefined, soon: false })
+  })
+})
+
+describe('eski /squad adresi (15 §3)', () => {
+  it.each([
+    ['', '/career/squad'],
+    ['?sekme=saha', '/career/squad'],
+    ['?sekme=oyuncular', '/career/squad?sekme=liste'],
+    ['?sekme=hareketler', '/career/squad?sekme=hareketler'],
+    ['?sekme=kariyer', '/career/dashboard?sekme=ayarlar'],
+    ['?sekme=oyuncular&x=1', '/career/squad?sekme=liste&x=1'],
+  ])('/squad%s → %s', (search, target) => {
+    expect(legacySquadTarget(search)).toBe(target)
+  })
+})

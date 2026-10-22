@@ -30,15 +30,16 @@ export const CAREER_NAV: NavGroup[] = [
     ],
   },
   {
-    to: '/squad/builder',
+    // KARIYER-UX FAZ 3: "Kadro" yeni Kadro Analizi sayfasına (/career/squad); kurucu/sihirbaz FAZ 4'te Taktik Lab'a taşınır.
+    to: '/career/squad',
     label: 'Taktik & Kadro',
     mobileLabel: 'Kadro',
-    match: ['/tactics', '/squad', '/recommend', '/scouting', '/replicas'],
+    match: ['/career/squad', '/tactics', '/squad', '/recommend', '/scouting', '/replicas'],
     tabs: [
+      { to: '/career/squad', label: 'Kadro' },
       { to: '/squad/builder', label: 'Kadro kurucu' },
       { to: '/tactics/wizard', label: 'Taktik sihirbazı' },
       { to: '/replicas', label: 'Replikalar' },
-      { to: '/squad', label: 'Kadro' },
     ],
   },
   { to: '/career/transfer', label: 'Transfer', match: ['/career/transfer'] },

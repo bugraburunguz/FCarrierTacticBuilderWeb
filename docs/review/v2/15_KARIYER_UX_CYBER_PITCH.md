@@ -812,3 +812,36 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 **Ekranlar** yeniden çekildi (`screens/KARIYER-UX-2/`, 24): "3 iş" her durumda ilk bölüm, Lab girişi 0, taşma/axe/konsol/ağ 0, en küçük yazı 12px.
 
 **Test sayıları:** web 1417/1417; backend değişmedi (652, 0 hata, 5 atlanan); lint hatasız, build yeşil, pawn-font-gate ≥ 12px.
+
+## 19. FAZ 3 raporu: Kadro Analizi (2026-10-23)
+
+**Taban.** FAZ 1/2 birleşmediği için web `kariyer-ux-3`, `kariyer-ux-2` üstüne yığıldı. Backend değişmedi (dal yok).
+
+**Rota.** `/career/squad` → `features/careerSquad/CareerSquadPage.tsx`. v3'te `/squad` → `LegacySquadRedirect` (`careerSquadRules.legacySquadTarget`): `saha` → `dizilis` (varsayılan), `oyuncular` → `liste`, `kariyer` → `/career/dashboard?sekme=ayarlar`; diğer parametreler kalır. v2'de `/squad` eski sayfa.
+- Nav: "Taktik & Kadro" grubu (mobilde "Kadro") `/career/squad`'a gider; sayfa içi ilk sekme "Kadro". Kurucu/sihirbaz/replikalar FAZ 4'e kadar aynı grupta. Ray bağlantısı `NavLink` yerine `Link` (etkinlik grubun `match` listesinden; `NavLink` yalnız kendi `to`'su eşleşince `aria-current` yazıyordu).
+- İç bağlantılar: v3'te `/squad`'a giden tek yer `deskLinks` geçici eşlemesiydi; kaldırıldı. Masa'nın derinlik ve kiralık bağlantıları doğrudan `/career/squad?sekme=derinlik&grup=…` ve `?sekme=hareketler`'e düşer. Ana sayfa, içe aktarma (v3) ve replikalarda `/squad` bağlantısı yoktu.
+
+**Sekmeler** `dizilis · liste · derinlik · hareketler` (kariyer sekmesi kalktı).
+- Diziliş: `StarterTacticPanel` (ana taktik ya da başlangıç önerisi, FAZ 2 doldurması dahil), salt okunur Cyber-Pitch piyon, `onSwap`/sürükleme yok, piyon → `/players/{id}` (`onPickPawn`), piyonda slot uyumu (`useMainTacticFits`). Yanında Kadro özeti: ortalama reyting, oyuncu sayısı, ortalama yaş (kiralık gönderilen hariç). "Lab'da düzenle" `LAB_AVAILABLE` ile gizli. Eski "kartı değiştir → lineupStore → kurucu" akışı ve aynalama kaydı yok.
+- Liste: mevcut liste/kartlar/etiket görünümü, satış ve kiralık diyalogları; listede `wageEur` sütunu ve kiralık rozetinde `loanUntil` (`SquadList recordColumns`; v2 tablosu değişmez).
+- Derinlik (yeni): mevki grupları (kim/kaç, `deskRules.depthRows` eşiğiyle), mevki yoğunluk haritası (ana taktiğe göre), yaş profili histogramı (tek seri, `--accent`, her çubukta sayı, `title`, `role="img"` metin özeti + ekran okuyucu tablosu), sözleşme bitiş zaman çizgisi (yıl şeritleri, ≤ 6 ay simge + metin). `?grup=` o grubu açık ve odaklı getirir, diğerleri kapalı.
+- Hareketler: `SaveMoves` + `MoveHistory` + `TransferMarket`, olduğu gibi.
+- `StarterTacticPanel` taslak deposunu artık yalnız ana taktik yokken (göç kısayolu için) okur; Kadro'da ana taktik varken `labStore.get` hiç çağrılmaz (birim testi).
+
+**Ek düzeltme: mevki yoğunluk haritası.** Ekranlarda iki kusur görüldü (bileşen V3-07b'den): (1) açık temada "Çok/Az" hücreleri yarı saydam `-soft` zeminle saha üstünde okunmuyordu → yüzey opak, durum kalın kenar + metin; (2) mutlak konumda CM/CDM hücreleri çakışıyordu (4-1-3-2) → hat satırları (`squadDensity.formationRows`); 375'te 4-5'li hatlarda hücre metni kesilmez, alt satıra geçer. v2 `SquadDensity` dokunulmadı (`slotTop` kalır). Testler önce kırmızı.
+
+**Legacy temizliği.** İzinli liste 10 → **8**: `useCareerLineup.ts` ve `useCareerSquad.ts` listeden çıktı. İkisi de artık yalnız v2 tarafından kullanılıyordu; mantıkları değişmeden `src/pages/squad/`'a taşındı (v2'nin içe aktarma yolu iki satır: `pages/SquadPage.tsx`, `components/TacticLineup.tsx`; davranış aynı). v3 Kadro yeni `useCareerSquadData` ile ana taktikten okur. `KadroPage` (+ testi) silindi. Kadro zinciri için geçişli kapı eklendi (`kariyerUxGates`: tacticStore/lineupStore yok, labStore yalnız `StarterTacticPanel`, eski Kadro parçaları yok); `legacyGates`'te `/squad` yerine `/career/squad`.
+
+**Q17 (piyon, gerçek Kadro sayfası).** `scripts/q17-kadro.mjs` + `pitchGate.measurePawnPitch`: 29 formasyon × 375/768/1280; her formasyon için yerel test kariyerinde ana taktik (`/fit/lineup` dizilişi) kurulup sayfa ölçüldü. Sonuç (`screens/KARIYER-UX-3/q17-kadro-report.json`): **87/87 temiz** — kesişme 0, saha dışı 0, etiket kesilmesi/taşması 0, en küçük dokunma alanı 44px.
+
+**Hız sınırı (429) bulgusu.** `RateLimitFilter`'da auth/solver/analysis/img dışındaki tüm uçlar tek **"api:" kovası**: kullanıcı başına (oturumsuzsa IP) **dakikada 300 istek**, sabit dakika penceresi, bellek içi (`WindowCounter`). FAZ 2'de `starter-tactic` 429'u bu kovadan; çekim betiği art arda tam sayfa yüklüyordu ve o koşudaki döngü hatası (düzeltildi) isteği katlıyordu. Ölçüm (`squad-shots.mjs`, görseller hariç): tam yükleme Masa 25, Kadro 25, Transfer 25 istek; uygulama içi geçiş ilk turda 7/2/0, sonra 0 (TanStack önbelleği). Normal kullanımda 300'e ulaşmak için dakikada ~12 tam yenileme gerekir; uygulama içi gezintide risk düşük. Sınır değiştirilmedi; açık soru aşağıda.
+
+**Ekranlar** `screens/KARIYER-UX-3/` (`scripts/squad-shots.mjs`, üretim derlemesi): 4 sekme × ana taktik yok/var × 375/768/1280 × koyu/açık = 48 çekim + 6 yönlendirme kontrolü; sonuçlar `gates-report.json`. Betik 429'a takılmamak için kendi hızını ayarlar (≤ 240/dk). Taşma 0, axe serious/critical 0, konsol/ağ hatası 0, en küçük yazı 12px, Lab girişi 0; `/squad?sekme=oyuncular` → `/career/squad?sekme=liste`.
+
+**Yerel yığın.** Backend `kariyer-ux-2` (backend'de FAZ 3 değişikliği yok), web `kariyer-ux-3` çalışma ağacından; kart vekili kapalı. Test hesapları koşu sonunda silindi.
+
+**Açık sorular (FAZ 3).**
+1. Hız sınırı: tek "api:" kovası 300/dk. Hızlı F5 yapan ya da birkaç sekmede aynı anda gezinen kullanıcı (sekmeler aynı kovayı paylaşır) dakikada ~12 tam yüklemeyi geçebilir. Ağır sayfa uçları (`/fit/role` slot başına 11 istek) için ayrı kova ya da toplu `fit/role` ucu düşünülsün mü? Sınır değiştirilmedi.
+2. Nav: "Taktik & Kadro" grubu artık Kadro'ya açılıyor; kurucu/sihirbaz aynı grupta. §3'teki ayrı "Kadro" ve "Taktik Lab" öğeleri FAZ 4'te mi ayrılsın?
+
+**Test sayıları:** web 1436/1436; backend değişmedi; lint hatasız, build yeşil, pawn-font-gate ≥ 12px, Q17 87/87.
