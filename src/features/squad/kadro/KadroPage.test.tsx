@@ -180,14 +180,10 @@ describe('KadroPage (v3 /squad)', () => {
     await waitFor(() => expect(endpoints.applyEvent).toHaveBeenCalledWith(7, expect.objectContaining({ type: 'BUY', playerId: 99 })))
   })
 
-  it('Kariyer sekmesi: ad/bütçe/sezon kaydedilir; silme yalnız onaylı diyalogla', async () => {
+  it('Kariyer sekmesi (FAZ 3\'e kadar): ayarlar Masa\'ya taşındı, yalnız bağlantı', async () => {
     renderAt('/squad?sekme=kariyer')
-    const name = await screen.findByLabelText('Ad')
-    fireEvent.change(name, { target: { value: 'Yeni ad' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Kaydet' }))
-    await waitFor(() => expect(endpoints.updateCareer).toHaveBeenCalledWith(7, expect.objectContaining({ name: 'Yeni ad', season: 2 })))
-    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri sil' }))
-    expect(await screen.findByRole('dialog', { name: 'Kariyeri sil' })).toBeInTheDocument()
-    expect(endpoints.deleteCareer).not.toHaveBeenCalled()
+    expect(await screen.findByRole('link', { name: "Ayarlar Masa'ya taşındı" })).toHaveAttribute('href', '/career/dashboard?sekme=ayarlar')
+    expect(screen.queryByLabelText('Ad')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Kariyeri sil' })).toBeNull()
   })
 })

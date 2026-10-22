@@ -18,7 +18,7 @@ export interface NavGroup {
  * "Yeni kariyer" Masa'daki kariyer seçicinin yanında (ve mobil "Daha fazla" sheet'inde). Oyuncular ve Taktik & Kadro alt sekmeleri sayfa içi.
  */
 export const CAREER_NAV: NavGroup[] = [
-  { to: '/career/desk', label: 'Masa', match: ['/career/desk', '/career/new'] },
+  { to: '/career/dashboard', label: 'Masa', match: ['/career/dashboard', '/career/desk', '/career/new'] },
   {
     to: '/players',
     label: 'Oyuncular',

@@ -758,3 +758,57 @@ Dört sapma (kadro listesi, önbellek anahtarı, `data: null`, koşulsuz ret) on
    - Koruma testi; önce kırmızı görülmedi.
 
 **Test sayıları:** web 1381/1381 (+5), backend 648/648 (+3); lint ve build yeşil.
+
+## 17. FAZ 2 raporu: Kariyer Masası (2026-10-23)
+
+Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` üstünde; FAZ 1 birleşince taban `v3`/`main`'e çevrilir.
+
+**Rota ve nav.** `/career/dashboard` → `features/dashboard/DashboardPage.tsx`. `/career/desk` v3'te `RedirectWithSearch` ile sorgu dizgisini taşır (v2'de eski sayfa). Nav, AppShell ikonu, Ana sayfa, Yeni kariyer ve İçe aktar bağlantıları yeni rotada. Eski `features/desk/DeskPage.tsx` silindi; `DeskSettings`/`Timeline` yalnız v2 `CareerDeskPage` için kalır.
+
+**Ayarlar.** `features/dashboard/CareerSettings.tsx`: ad, transfer bütçesi, sezon, maaş bütçesi, dönem sonu, spoiler, challenge tek kayıtta; yedek indir/yükle ve sil ayrı panelde. `CareerSettingsPanel` silindi; Kadro › kariyer yalnız "Ayarlar Masa'ya taşındı" bağlantısı (FAZ 3'te sekme kalkar).
+
+**Ana taktik ve doldurma (Q2).** `useActiveTactic` ana taktikte `lineupDropped > 0` ise `/fit/lineup`'a `locked` (kalan dizilen oyuncular) gönderir; sonuç yalnız okunur, ana taktiğe yazılmaz. Metin `droppedText`: doldurma gelince "N oyuncu kadroda yok, otomatik dolduruldu", gelmezse "… slotları boş". Ana taktik yoksa Masa `StarterTacticPanel`'i gösterir; Takım uyumu ve Zayıf halkalar "Ana taktik seçilmedi" + "Lab'a git".
+
+**Paneller** (her başlıkta `SourceTag`):
+- Finansal sağlık (kayıt): transfer bütçesi, maaş bütçesi kullanımı (çubuk), dönem sonuna gün; `StatTile` Δ çipi önceki IMPORT snapshot'ına göre. Δ tanımı: en yeni IMPORT bugünü temsil eder, fark ondan önceki IMPORT'a göre (MANUAL/OCR atlanır). Maaşı bilinmeyen oyuncu varsa "N oyuncunun maaşı bilinmiyor" ve yüzde "–". Dönem sonu yoksa "–" + "Dönem sonunu gir" (Ayarlar).
+- Acil uyarılar (kayıt): sözleşme ≤ 6 ay (kiralık gönderilen hariç), kiralık dönüşü ≤ 30 gün (`loanUntil`, her iki yön), sakatlık "Veri yok".
+- Takım uyumu (karar): FitGauge, ana taktik adı/formasyonu, doldurma notu.
+- Zayıf halkalar (karar): sunucu etiketiyle seçim (WEAK/WRONG_ROLE aynı grup, sonra AT_LEVEL; grupta düşük levelFit önce; GOOD girmez), kartta etiket metni, levelFit %, `reasons[0]` Türkçe (`reasonText`: "GKPositioning -25.3" → "Kaleci pozisyon −25,3"). Durum `data-fit-state` ile; renk tek başına kullanılmaz.
+- Zaman çizelgesi (kayıt): Yaklaşan (istemcide türetilir: dönem sonu, kiralık bitişleri, ≤ 6 ay sözleşme bitişleri) ve Geçmiş (hamleler, içe aktarmalar).
+- "Bu dönemin 3 işi" Masa'dan çıktı (§4.1'de yok); `rankActions` Ana sayfada kullanılmaya devam eder.
+
+**Bağlantılar.** `lib/deskLinks.ts`: `deskLink` §4.1 rotaları; `deskRules` satış/derinlik/kiralık/sözleşme bağlantıları buradan (`?sell=`, `?group=` kırıkları düzeldi). **GEÇİCİ** `currentRoute` (FAZ 3/5'te kalkar, test: `deskLinks.test.ts`):
+- `/career/transfer?…rol=` → `role=` takma adı eklenir (Transfer bugün `pos`+`role` okur).
+- `/career/squad?…` → `/squad?…`; `sekme=derinlik` → `sekme=oyuncular` (mevki yoğunluğu orada).
+- `/career/tactics-lab?…` → `/squad/builder?…` (`sekme` düşer).
+
+**Karşılanmayan parametreler** (bağlantı verilir, hedef sayfa henüz okumaz): Transfer `sekme=satis`, `oyuncu`; Kadro `grup`; Lab `slot` (kurucu slot seçmez); Transfer `ihtiyac=slot-…` yalnız Transfer'in kendi dizilişinde aynı slot zayıfsa eşleşir, değilse `pos`+`role`'e düşer.
+
+**Katman 3 kapısı.** `kariyerUxGates.test`: Masa içe aktarma zincirinde `tacticStore`/`lineupStore` yok; `labStore` yalnız `StarterTacticPanel` (göç kısayolu; panel yalnız ana taktik yokken çizilir) ve `DeleteCareerButton` (yalnız `dropCareer`). Birim testi: Lab taslağı varken `labStore.get` çağrılmaz, uyum ana taktiğin oyuncularıyla hesaplanır. `legacyGates.test`'e `/career/dashboard` eklendi.
+
+**İzinli liste.** Küçülmedi. Listedeki 10 dosyanın hiçbiri Masa'ya ait değildi: eski Masa `useCareerBinding` üzerinden dolaylı okuyordu, `useCareerBinding` hâlâ Ana sayfa, Transfer ve kurucu tarafından kullanılıyor. Masa için bunun yerine geçişli kapı eklendi (yukarıda).
+
+**Ek düzeltme.** `Pitch` ölçülmeden (genişlik 0) negatif `<rect>` ölçüsü yazıyordu (Masa'da konsol hatası); W/H alt sınırı 16. Test: `pitchPawn.test.tsx`.
+
+**Backend** (API CONTRACT CHANGE): `/fit/lineup` `locked`; `/squad` `loanUntil`, `wageEur`; `/snapshots` `budgetEur`, `squadWageEur` (V44).
+
+**Ekranlar** `screens/KARIYER-UX-2/` (`scripts/dashboard-shots.mjs`, üretim derlemesi, yerel test kariyeri, koşu sonunda silinir): 3 durum × 375/768/1280 × koyu/açık + Ayarlar = 24 çekim; taşma 0, axe serious/critical 0, konsol/ağ hatası 0, en küçük yazı 12px; `/career/desk?sekme=ayarlar` → `/career/dashboard?sekme=ayarlar`. Kayıt verisi (maaş, kiralık bitişi, sözleşme, iki IMPORT snapshot'ı) LE içe aktarması gerektirdiği için yalnız tarayıcıda fikstür; ana taktik, satış ve doldurma gerçek API ile.
+
+**Test sayıları:** web 1409/1409, backend 652 (0 hata, 5 atlanan); lint hatasız, build yeşil; pawn-font-gate ≥ 12px.
+
+## 18. FAZ 2 düzeltmeleri (Buğra incelemesi, 2026-10-23)
+
+1. **Zayıf halka eylemi.** Sıralama aynı (WEAK + WRONG_ROLE tek grup, düşük `levelFit` önce). Kart `primary`: WRONG_ROLE → "Rolü değiştir" (Lab, FAZ 4) + ikincil "Transferde aday bul"; WEAK/AT_LEVEL → birincil "Transferde aday bul". `LAB_AVAILABLE=false` iken WRONG_ROLE kartında yalnız etiket metni ve ikincil aday bağlantısı.
+2. **Δ.** Son içe aktarma bir öncekiyle; tek içe aktarmada çip yok (koruma testi; davranış zaten böyleydi, önce kırmızı görülmedi).
+3. **"Bu dönemin 3 işi" Masa'nın en üstünde.** Tek kaynak: kurallar `lib/deskRules.ts` → `seasonJobs` (+ `jobLayer`), bileşen `features/career/SeasonJobs.tsx`, uyum verisi `features/career/useMainTacticFits.ts`. Ana sayfa ve Masa üçünü de kullanır; Ana sayfa artık eski `useCareerBinding`/`useAutoLineup` yerine ana taktikten okur. Başlık etiketi taktik kaynağı ("Kararın" ya da ana taktik yokken "Otomatik öneri"); iş satırı etiketi kural kaynağı (FILL/SELL/LOAN taktik, DEPTH/CONTRACT kayıt). Masa, Zayıf halkalar'da gösterilen slotların FILL işini tekrar etmez (V3-06e, `exclude`); Ana sayfa dışlamaz.
+4. **Lab girişleri gizli.** `lib/features.ts` → `LAB_AVAILABLE = false` (FAZ 4'te kaldırılır): `StarterTacticPanel` "Lab'da düzenle" (taslak da oluşmaz), zayıf kart "Lab'da dene"/"Rolü değiştir", "Ana taktik seçilmedi" boş durumundaki "Lab'a git". "Önceki taslağı ana taktik yap" kalır.
+5. **Neden satırı.** `worstReason`: katkılar içinde en büyük negatif; negatif yoksa satır yok. Biçimlendirici (`reasonText`) aynı.
+6. **v2 Masa bağlantıları.** Dokunulmadı: v2 (yalnız geliştirme) `CareerDeskPage` `deskRules`'un yeni §4.1 bağlantılarını geçici eşleme olmadan verir; satış ve derinlik bağlantıları henüz olmayan sayfalara gider.
+7. **Migration numaraları.** V43 (FAZ 1) ve V44 (FAZ 2) KARIYER-UX'e ayrıldı. **SIM-A, REP-e ve diğer işler V45'ten başlar.** Risk: yerel veritabanı V44'te; başka bir dal farklı içerikle V43/V44 kullanırsa Flyway checksum doğrulaması başlangıçta hata verir (yerel DB'de ya da birleştirmede). Yeni dal açarken `ls src/main/resources/db/migration | sort -V | tail -1` ve açık PR'lar kontrol edilir.
+8. **Yerel yığın.** Backend ve web konteynerleri `kariyer-ux-2` çalışma ağacından derlendi (kart vekili kapalı, `FCAREER_FREE_BETA` varsayılan false).
+
+**Ek bulgu (düzeltildi).** Ekran koşusunda başlangıç önerisi 429 dönünce Masa isteği döngüye soktu: öneri paneli `isLoading`'e (öneri sorgusu dahil) bağlıydı, her hata paneli söküp bağlıyor, her bağlanış isteği yineliyordu. Panel artık yalnız ana taktik sorgusunun yüklenmesine (`mainLoading`) bağlı. Test: `dashboardPage.test` "döngüye girmez" (önce kırmızı).
+
+**Ekranlar** yeniden çekildi (`screens/KARIYER-UX-2/`, 24): "3 iş" her durumda ilk bölüm, Lab girişi 0, taşma/axe/konsol/ağ 0, en küçük yazı 12px.
+
+**Test sayıları:** web 1417/1417; backend değişmedi (652, 0 hata, 5 atlanan); lint hatasız, build yeşil, pawn-font-gate ≥ 12px.

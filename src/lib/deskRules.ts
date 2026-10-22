@@ -1,5 +1,6 @@
 import type { CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
+import { deskLink } from './deskLinks'
 import { isWeakFit, levelText, type FitLabel } from './fitLabels'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
@@ -147,6 +148,21 @@ export function suggestActions(input: ActionInput): DeskAction[] {
   return rankActions(input).slice(0, 3)
 }
 
+const SEASON_JOBS = 3
+
+/**
+ * "Bu dönemin 3 işi" TEK KAYNAK (KARIYER-UX FAZ 2): Ana sayfa ve Masa bu fonksiyonu ve `features/career/SeasonJobs` bileşenini kullanır.
+ * `exclude`: Masa'da "Zayıf halkalar" kartında zaten gösterilen slotların FILL işi tekrar edilmez (V3-06e).
+ */
+export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): DeskAction[] {
+  return rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId))).slice(0, limit)
+}
+
+/** İşin kural kaynağı (veri katmanı etiketi): diziliş ve etiketlere dayananlar taktik kaynağından (karar ya da öneri), sözleşme/derinlik kayıttan. */
+export function jobLayer(kind: ActionKind): 'tactic' | 'record' {
+  return kind === 'DEPTH' || kind === 'CONTRACT' ? 'record' : 'tactic'
+}
+
 /** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
 export function rankActions({ squad, slots, tags, gameDate }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))
@@ -158,7 +174,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       kind: 'FILL',
       title: `${w.position}: zayıf halka (${levelText(w.fit)})`,
       reason: `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
-      to: `/career/transfer?pos=${w.position}&role=${w.roleId}`,
+      to: deskLink.candidate(w.slotId, w.position, w.roleId),
       priority: 100 - w.fit - index,
     })
   })
@@ -170,7 +186,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
         kind: 'SELL',
         title: `Sat: ${c.player.name}`,
         reason: advice.reason,
-        to: `/career/transfer?sell=${c.player.id}`,
+        to: deskLink.sell(c.player.id),
         priority: 40 + (tags[c.player.id] === 'FOR_SALE' ? 25 : 0) + Math.min(20, (c.player.valueEur ?? 0) / 1_000_000),
       })
     } else if (advice.kind === 'LOAN') {
@@ -178,7 +194,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
         kind: 'LOAN',
         title: `Süre ver ya da kirala: ${c.player.name}`,
         reason: advice.reason,
-        to: `/career/growth?player=${c.player.id}`,
+        to: deskLink.growth(c.player.id),
         priority: 30 + ((c.player.potential ?? c.player.overall) - c.player.overall),
       })
     }
@@ -189,7 +205,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       kind: 'DEPTH',
       title: `Derinlik: ${GROUP_LABEL[d.group]} ${d.have}/${d.need}`,
       reason: `${GROUP_LABEL[d.group]} grubunda ${d.short} oyuncu eksik; sakatlık ve rotasyonda açık kalır.`,
-      to: `/career/transfer?group=${d.group}`,
+      to: deskLink.depth(d.group),
       priority: 20 + d.short * 5,
     })
   })
@@ -202,7 +218,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
           kind: 'CONTRACT',
           title: `Sözleşme: ${c.player.name}`,
           reason: `Sözleşmesi ${months} ay içinde bitiyor (oyun tarihine göre); uzat ya da değeri düşmeden sat.`,
-          to: `/players/${c.player.id}?sekme=sozlesme`,
+          to: deskLink.contract(c.player.id),
           priority: CONTRACT_PRIORITY + (CONTRACT_MONTHS - months),
         })
       }

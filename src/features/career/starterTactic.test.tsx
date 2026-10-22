@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CareerPlayer, Formation, StarterTactic, UserTactic } from '../../api/types'
+import { LAB_AVAILABLE } from '../../lib/features'
 import { LAB_KEY, labStore } from '../../state/labStore'
 
 const state: { main: UserTactic | null } = { main: null }
@@ -42,6 +43,7 @@ const endpoints = vi.hoisted(() => ({
   userTactics: vi.fn(),
   saveUserTactic: vi.fn(),
   setMainTactic: vi.fn(),
+  lineup: vi.fn(),
 }))
 vi.mock('../../api/endpoints', () => ({ endpoints }))
 
@@ -62,6 +64,7 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     endpoints.starterTactic.mockResolvedValue(starter)
     endpoints.formations.mockResolvedValue([formation])
     endpoints.squad.mockResolvedValue(squad)
+    endpoints.lineup.mockReset().mockResolvedValue({ slots: [{ slotId: 'GK', playerId: 1 }, { slotId: 'LST', playerId: 9 }] })
     endpoints.userTactics.mockImplementation(() => Promise.resolve(state.main ? [state.main] : []))
     endpoints.saveUserTactic.mockImplementation((slot: number) => Promise.resolve(saved(slot, false)))
     endpoints.setMainTactic.mockImplementation((slot: number) => {
@@ -87,13 +90,12 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     expect(endpoints.setMainTactic).toHaveBeenCalledWith(1, 7)
   })
 
-  it('"Lab\'da düzenle" öneriden auto kökenli yeni taslak açar', async () => {
-    const onOpenLab = vi.fn()
-    render(<StarterTacticPanel careerId={7} onOpenLab={onOpenLab} />, { wrapper })
-    await userEvent.click(await screen.findByRole('button', { name: "Lab'da düzenle" }))
-    expect(labStore.get(7).drafts).toHaveLength(1)
-    expect(labStore.get(7).drafts[0].origin.kind).toBe('auto')
-    expect(onOpenLab).toHaveBeenCalledWith(labStore.get(7).drafts[0].id)
+  it('LAB_AVAILABLE false iken (FAZ 4\'e kadar) "Lab\'da düzenle" yok ve taslak oluşmaz', async () => {
+    expect(LAB_AVAILABLE).toBe(false)
+    render(<StarterTacticPanel careerId={7} />, { wrapper })
+    expect(await screen.findByRole('button', { name: 'Ana taktiğim yap' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: "Lab'da düzenle" })).toBeNull()
+    expect(labStore.get(7).drafts).toHaveLength(0)
   })
 
   it('göç eden taslak varsa "Önceki taslağı ana taktik yap" kısayolu çıkar', async () => {
@@ -102,12 +104,20 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     expect(await screen.findByRole('button', { name: 'Önceki taslağı ana taktik yap' })).toBeInTheDocument()
   })
 
-  it('ana taktikte kadrodan düşen oyuncular için not çıkar (Q2)', async () => {
+  it('ana taktikten düşen oyuncuların yeri /fit/lineup ile dolar; dizilen oyuncular kilitli kalır (Q2)', async () => {
     state.main = saved(2, true, { lineupDropped: 2, lineup: { GK: 1 } })
     render(<StarterTacticPanel careerId={7} />, { wrapper })
     expect(await screen.findByText('Kararın')).toBeInTheDocument()
-    // Doldurma (/fit/lineup) FAZ 2-3'te; o zamana kadar metin boş slotu doğru anlatır, "dolduruldu" demez.
-    expect(screen.getByText('2 oyuncu artık kadroda yok, slotları boş')).toBeInTheDocument()
+    expect(await screen.findByText('2 oyuncu kadroda yok, otomatik dolduruldu')).toBeInTheDocument()
+    expect(endpoints.lineup).toHaveBeenCalledWith(7, expect.objectContaining({ formation: '4-4-2' }), { GK: 1 })
+    expect(await screen.findByLabelText(/Mo Faal/)).toBeInTheDocument()
+  })
+
+  it('doldurma gelmezse metin boş slotu anlatır, "dolduruldu" demez', async () => {
+    endpoints.lineup.mockRejectedValue(new Error('down'))
+    state.main = saved(2, true, { lineupDropped: 2, lineup: { GK: 1 } })
+    render(<StarterTacticPanel careerId={7} />, { wrapper })
+    expect(await screen.findByText('2 oyuncu artık kadroda yok, slotları boş')).toBeInTheDocument()
     expect(screen.queryByText(/otomatik dolduruldu/)).toBeNull()
   })
 })
@@ -132,5 +142,14 @@ describe('salt okunur ana taktik bağlaması (katman 2)', () => {
     expect(result.current.binding.state.formationId).toBe('4-4-2')
     expect(JSON.stringify(localStorage)).toBe(before)
     expect(localStorage.getItem(LAB_KEY)).toBeNull()
+  })
+
+  it('düşen oyuncu varsa bağlama doldurulmuş dizilişi görür (Masa takım uyumu ve zayıf halkalar buradan)', async () => {
+    state.main = saved(2, true, { lineupDropped: 1, lineup: { GK: 1 } })
+    endpoints.lineup.mockReset().mockResolvedValue({ slots: [{ slotId: 'GK', playerId: 1 }, { slotId: 'LST', playerId: 9 }] })
+    const { result } = renderHook(() => useMainTacticBinding(7, squad), { wrapper })
+    await waitFor(() => expect(result.current.binding.state.assigned).toEqual({ GK: 1, LST: 9 }))
+    expect(result.current.filled).toBe(true)
+    expect(result.current.dropped).toBe(1)
   })
 })

@@ -6,11 +6,11 @@ describe('v3 kariyer menüsü tek (V3-06d)', () => {
 
   it('sıra: Masa · Oyuncular · Taktik & Kadro · Transfer · Gelişim · Takımlar · İçe aktar; üst sekme yok', () => {
     expect(career.map((g) => g.label)).toEqual(['Masa', 'Oyuncular', 'Taktik & Kadro', 'Transfer', 'Gelişim', 'Takımlar', 'İçe aktar'])
-    expect(career.find((g) => g.to === '/career/desk')?.tabs).toBeUndefined()
+    expect(career.find((g) => g.to === '/career/dashboard')?.tabs).toBeUndefined()
   })
 
   it.each([
-    ['/career/desk', 'Masa'], ['/career/new', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'],
+    ['/career/dashboard', 'Masa'], ['/career/desk', 'Masa'], ['/career/new', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'],
     ['/players', 'Oyuncular'], ['/players/12', 'Oyuncular'], ['/wonderkids', 'Oyuncular'], ['/compare', 'Oyuncular'],
     ['/squad/builder', 'Taktik & Kadro'], ['/squad', 'Taktik & Kadro'], ['/tactics/wizard', 'Taktik & Kadro'], ['/replicas/3', 'Taktik & Kadro'],
     ['/teams', 'Takımlar'], ['/career/import', 'İçe aktar'],

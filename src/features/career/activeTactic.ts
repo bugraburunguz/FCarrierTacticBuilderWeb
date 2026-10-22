@@ -4,7 +4,7 @@ import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer, StarterTactic, UserTactic } from '../../api/types'
 import type { DataSource } from '../../design/components/primitives'
 import { remapAssignments } from '../../lib/squadBuilder'
-import { DEFAULT_TACTIC, fromStarter, fromUserTactic, toSaveBody, type Lineup, type TacticState } from '../../lib/tactic'
+import { DEFAULT_TACTIC, fromStarter, fromUserTactic, toSaveBody, toTacticRequest, type Lineup, type TacticState } from '../../lib/tactic'
 import { squadStateOf } from '../squad/tacticState'
 import type { SquadBinding } from '../squad/types'
 
@@ -21,26 +21,44 @@ export interface ActiveTactic {
   lineup: Readonly<Lineup>
   /** Ana taktikte kadrodan düştüğü için /fit/lineup'ın dolduracağı oyuncu sayısı (Q2). */
   dropped: number
+  /** Düşen oyuncuların yeri /fit/lineup ile dolduruldu (lineup doldurulmuş hâli); gelmezse slotlar boş kalır. */
+  filled: boolean
   main?: Readonly<UserTactic>
   starter?: Readonly<StarterTactic>
 }
+
+/** Q2: doldurma (/fit/lineup) geldiyse "otomatik dolduruldu", gelmediyse boş slotu doğru anlatır. Panel ve Masa aynı metni kullanır. */
+export const droppedText = ({ dropped, filled }: Pick<ActiveTactic, 'dropped' | 'filled'>) =>
+  filled ? `${dropped} oyuncu kadroda yok, otomatik dolduruldu` : `${dropped} oyuncu artık kadroda yok, slotları boş`
 
 export function useActiveTactic(careerId: number | undefined) {
   const main = useQuery({ queryKey: mainTacticKey(careerId), queryFn: () => endpoints.mainTactic(careerId!), enabled: careerId !== undefined })
   const needStarter = main.isSuccess && main.data === null
   const starter = useQuery({ queryKey: starterTacticKey(careerId), queryFn: () => endpoints.starterTactic(careerId!), enabled: careerId !== undefined && needStarter, retry: false })
+  const saved = useMemo(() => (main.data ? fromUserTactic(main.data) : undefined), [main.data])
+  // Q2: kadrodan düşen oyuncu varsa kalan dizilen oyuncular kilitli, boş slotları sunucu doldurur (yalnız okuma; ana taktiğe yazılmaz).
+  const dropped = main.data?.lineupDropped ?? 0
+  const fill = useQuery({
+    queryKey: ['lineup', careerId, 'main-fill', main.data?.slot, main.data?.updatedAt, saved?.lineup],
+    queryFn: () => endpoints.lineup(careerId!, toTacticRequest(saved!.tactic), { ...saved!.lineup }),
+    enabled: careerId !== undefined && saved !== undefined && dropped > 0,
+    retry: false,
+  })
 
   const active = useMemo<ActiveTactic | undefined>(() => {
-    if (main.data) {
-      return { source: { kind: 'decision' }, ...fromUserTactic(main.data), dropped: main.data.lineupDropped ?? 0, main: main.data }
+    if (main.data && saved) {
+      const filledLineup = fill.data && Object.fromEntries(fill.data.slots.flatMap((s) => (s.playerId === undefined || s.playerId === null ? [] : [[s.slotId, s.playerId]])))
+      return { source: { kind: 'decision' }, tactic: saved.tactic, lineup: filledLineup ?? saved.lineup, dropped, filled: filledLineup !== undefined, main: main.data }
     }
     if (needStarter && starter.data) {
-      return { source: { kind: 'auto' }, ...fromStarter(starter.data), dropped: 0, starter: starter.data }
+      return { source: { kind: 'auto' }, ...fromStarter(starter.data), dropped: 0, filled: false, starter: starter.data }
     }
     return undefined
-  }, [main.data, needStarter, starter.data])
+  }, [main.data, saved, dropped, fill.data, needStarter, starter.data])
 
-  return { active, isLoading: main.isLoading || (needStarter && starter.isLoading), error: main.error ?? starter.error }
+  // mainLoading: yalnız ana taktik sorgusu. Öneri paneli buna bağlanmalı; isLoading'e bağlanırsa öneri hatasında panel bağlanıp sökülür
+  // ve her bağlanışta istek yinelenir (döngü, FAZ 2 düzeltme).
+  return { active, isLoading: main.isLoading || (needStarter && starter.isLoading), mainLoading: main.isLoading, error: main.error ?? starter.error }
 }
 
 /**
@@ -48,7 +66,7 @@ export function useActiveTactic(careerId: number | undefined) {
  * Düzenleme yalnız Lab'da (katman 3).
  */
 export function useMainTacticBinding(careerId: number | undefined, squad: readonly CareerPlayer[] | undefined) {
-  const { active, isLoading, error } = useActiveTactic(careerId)
+  const { active, isLoading, mainLoading, error } = useActiveTactic(careerId)
   const playerById = useMemo(() => new Map((squad ?? []).map((c) => [c.player.id, c.player])), [squad])
   const binding: SquadBinding<number> = useMemo(() => ({
     state: squadStateOf(active?.tactic ?? DEFAULT_TACTIC, { ...(active?.lineup ?? {}) }),
@@ -66,7 +84,7 @@ export function useMainTacticBinding(careerId: number | undefined, squad: readon
     defaultFormation: DEFAULT_TACTIC.formation,
     keepAssignedOnImport: true,
   }), [active, playerById])
-  return { binding, source: active?.source, dropped: active?.dropped ?? 0, active, isLoading, error, playerById }
+  return { binding, source: active?.source, dropped: active?.dropped ?? 0, filled: active?.filled ?? false, active, isLoading, mainLoading, error, playerById }
 }
 
 /** "Ana taktiğim yap": taslağı (ya da öneriyi) slota yazar, ana taktik yapar; ana taktiğe bağlı sorgular yenilenir. */

@@ -11,11 +11,11 @@ import { TransferDialog } from '../../../components/TransferDialog'
 import { ErrorBox } from '../../../components/ui'
 import { Button, Chip, EmptyState, Panel, Segmented, SidePanel, Skeleton, StatTile, TabPanel, Tabs } from '../../../design/components/primitives'
 import { Workspace } from '../../../design/components/Workspace'
+import { deskLink } from '../../../lib/deskLinks'
 import { formatEur } from '../../../lib/format'
 import { bestSquadRating, starRating } from '../../../lib/squadRating'
 import { useTabParam } from '../../player/playerPage'
 import { pitchSlotsOf } from '../pitchSlots'
-import { CareerSettingsPanel } from './CareerSettingsPanel'
 import { DepthMap, RegionSummary } from './DepthMap'
 import { MoveHistory, TransferMarket } from './MovesTab'
 import { SaveMoves } from './SaveMoves'
@@ -175,7 +175,10 @@ export function KadroPage() {
       </TabPanel>
 
       <TabPanel idPrefix={PREFIX} id="kariyer" active={tab === 'kariyer'}>
-        <CareerSettingsPanel key={career.id} career={career} />
+        {/* KARIYER-UX FAZ 2: ayarlar Masa › Ayarlar'da; sekme FAZ 3'te kalkar. */}
+        <EmptyState action={<Link to={deskLink.settings()} className="font-semibold text-accent underline-offset-2 hover:underline">Ayarlar Masa'ya taşındı</Link>}>
+          Kariyer adı, bütçe, sezon, maaş bütçesi, dönem sonu ve yedek artık tek yerde.
+        </EmptyState>
       </TabPanel>
 
       {k.dialog && (

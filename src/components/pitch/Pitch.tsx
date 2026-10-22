@@ -212,10 +212,11 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
     }
   }
 
-  const W = fieldWidth
-  const H = fieldHeight
+  // Kapsayıcı ölçülmeden (gizli sekme, ilk boyama) genişlik 0 olabilir: çizgi ölçüleri negatife düşmesin.
+  const W = Math.max(fieldWidth, 16)
+  const H = Math.max(fieldHeight, 16)
   const inset = 8
-  const boxW = Math.min(W * 0.593, W - 2 * inset)
+  const boxW = Math.max(0, Math.min(W * 0.593, W - 2 * inset))
   const boxD = Math.min(H * 0.157, H / 4)
   const goalW = W * 0.27
   const goalD = Math.min(H * 0.052, H / 8)

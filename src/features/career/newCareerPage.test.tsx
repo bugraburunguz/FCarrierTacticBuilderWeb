@@ -13,7 +13,7 @@ function renderPage() {
   return render(
     <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })}>
       <MemoryRouter initialEntries={['/career/new']}>
-        <Routes><Route path="/career/new" element={<NewCareerPage />} /><Route path="/career/desk" element={<p>masa açıldı</p>} /></Routes>
+        <Routes><Route path="/career/new" element={<NewCareerPage />} /><Route path="/career/dashboard" element={<p>masa açıldı</p>} /></Routes>
       </MemoryRouter>
     </QueryClientProvider>,
   )

@@ -51,11 +51,13 @@ export type PanelEdge = 'default' | 'glow' | 'draft'
  * Panel: tek `.glass` yüzey, başlık satırı (Barlow 20) + kaynak etiketi + sağ eylem. İç içe `.glass` yok.
  * edge: glow = 1px --edge-glow halka (kariyer kararı / vurgu), draft = 1px kesik --edge-draft (Lab taslağı). Animasyon yok.
  */
-export function Panel({ title, actions, source, edge = 'default', children, className, as: Tag = 'section' }: {
+export function Panel({ title, actions, source, edge = 'default', children, className, as: Tag = 'section', label }: {
   title?: ReactNode; actions?: ReactNode; source?: DataSource; edge?: PanelEdge; children: ReactNode; className?: string; as?: 'section' | 'div'
+  /** Bölge adı (aria-label): verilirse panel ekran okuyucuda adlı bölge olur. */
+  label?: string
 }) {
   return (
-    <Tag data-edge={edge} className={cx('glass p-4 text-ink sm:px-5', edge !== 'default' && `panel-edge-${edge}`, className)}>
+    <Tag data-edge={edge} aria-label={label} className={cx('glass p-4 text-ink sm:px-5', edge !== 'default' && `panel-edge-${edge}`, className)}>
       {(title || actions || source) && (
         <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <span className="flex min-w-0 flex-wrap items-center gap-2">
@@ -124,14 +126,30 @@ export function Chip({ children, tone, onClick, pressed, className, title }: { c
 }
 
 /** StatTile: büyük mono sayı + etiket; boş değer "–" (08 §16). */
-export function StatTile({ label, value, suffix }: { label: string; value?: ReactNode; suffix?: string }) {
+/** Δ çipi (11 §6): yön oku + işaretli metin; iyi/kötü yorumu yapılmaz (bütçe artışı iyi, maaş artışı kötü olabilir), kıyas `label`'da. */
+export interface StatDelta {
+  value: number
+  text: string
+  label: string
+}
+
+export function StatTile({ label, value, suffix, delta, children }: { label: string; value?: ReactNode; suffix?: string; delta?: StatDelta; children?: ReactNode }) {
+  const direction = delta === undefined ? undefined : delta.value > 0 ? 'up' : delta.value < 0 ? 'down' : 'flat'
   return (
     <div className="glass-3 flex min-w-[96px] flex-1 flex-col px-3 py-2">
       <span className="text-xs font-medium text-muted">{label}</span>
-      <span className="flex items-baseline gap-1">
+      <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
         <span className="font-[var(--font-num)] text-2xl font-medium tabular-nums leading-tight text-ink">{value ?? '–'}</span>
         {suffix && <span className="text-xs text-muted">{suffix}</span>}
+        {delta && (
+          <span data-delta={direction} title={delta.label} className="inline-flex min-h-6 items-center gap-1 rounded-full border border-[var(--glass-border)] px-2 font-[var(--font-num)] text-xs tabular-nums text-ink-2">
+            <span aria-hidden="true">{direction === 'up' ? '▲' : direction === 'down' ? '▼' : '='}</span>
+            <span>{delta.text}</span>
+            <span className="sr-only">{delta.label}</span>
+          </span>
+        )}
       </span>
+      {children}
     </div>
   )
 }
