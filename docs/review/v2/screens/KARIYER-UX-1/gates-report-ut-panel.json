@@ -1,0 +1,265 @@
+{
+  "taskId": "KARIYER-UX-1",
+  "route": "/onizleme/kariyer-ux?bolum=panel",
+  "mode": "ut",
+  "matrix": "full",
+  "base": "http://localhost:5173",
+  "shots": [
+    {
+      "file": "ut-dark-375-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-375-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-768-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-768-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-1280-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-reduced-motion-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-reduced-transparency-panel.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".max-w-7xl"
+          ]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "nodes": 1,
+          "sample": [
+            ".w-full"
+          ]
+        }
+      ],
+      "consoleAndNetwork": []
+    }
+  ]
+}

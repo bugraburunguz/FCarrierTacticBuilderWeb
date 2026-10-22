@@ -1,5 +1,5 @@
 import type { CareerPlayer, Formation, Role } from '../api/types'
-import type { TacticState } from '../state/tacticStore'
+import type { TacticState } from './tactic'
 import { canPlaySlot, POSITION_ORDER, primaryPosition } from './positions'
 
 export type DepthState = 'thin' | 'ok' | 'dense'

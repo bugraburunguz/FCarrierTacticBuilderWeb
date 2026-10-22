@@ -9,7 +9,7 @@
 2. **İçerik camın üstünde net:** metin asla doğrudan bulanık renk geçişinin üstünde okunmaya çalışılmaz. Camın minimum opaklığı kontrastı garanti eder (§3.3).
 3. **Kart ve saha kahraman:** EA kart render'ı ve saha camın içinde ama kendileri cam değil (kartın üstüne blur/tint uygulanmaz).
 4. **Az ama yoğun cam:** aynı anda ekranda en fazla ~6 `backdrop-filter` öğesi. Liste satırları, ızgaradaki kartlar, saha slotları blur kullanmaz (performans, §7).
-5. **Mod kimliği:** Kariyer = sıcak (amber) vurgu, UT = soğuk (iris/mavi-mor) vurgu. Arka plan renk lekeleri moda göre değişir. Aynı bileşenler.
+5. **Mod kimliği:** Kariyer = **Cyber-Pitch** (D-27, 2026-10-22; eski amber vurgunun yerine): antrasit-lacivert zemin; mor, siber mavi, neon yeşil aurora; neon yeşil vurgu; ince neon kenar. UT = soğuk (iris/mavi-mor) vurgu, değişmedi. Arka plan renk lekeleri moda göre değişir. Aynı bileşenler. Ayrıntı: 15 §8.
 6. **Erişilebilirlik önce:** `prefers-reduced-transparency`, `prefers-reduced-motion`, `prefers-contrast: more` ve `@supports not (backdrop-filter)` için düz yüzey fallback'i zorunlu.
 
 ---
@@ -29,7 +29,8 @@ Katman 2  ince saha çizgisi deseni (SVG, %4 opaklık) + film grain (SVG feTurbu
   /* zemin */
   --bg-base: #070a12;
   --aurora-1: #2b4cff;  /* UT: iris */   --aurora-2: #00c2a8;  --aurora-3: #7a2cff;
-  /* kariyerde [data-mode="career"] ile: --aurora-1:#ff9f1c; --aurora-2:#3a7d44; --aurora-3:#c2410c; */
+  /* kariyerde [data-mode="career"] ile (D-27 Cyber-Pitch): --bg-base:#090d1a; --aurora-1:#7c3aed; --aurora-2:#0ea5e9; --aurora-3:#10b981;
+     --aurora-opacity:.40; --edge-glow:rgba(62,232,168,.35); --edge-draft:rgba(56,189,248,.60). Eski amber: #ff9f1c / #3a7d44 / #c2410c. */
 
   /* cam yüzeyler (renk = beyazın düşük opaklığı + koyu taban karışımı) */
   --glass-1: rgba(18, 24, 38, 0.62);     /* paneller, sağ panel, kenar çubuğu */
@@ -47,7 +48,9 @@ Katman 2  ince saha çizgisi deseni (SVG, %4 opaklık) + film grain (SVG feTurbu
 
   /* vurgu (moda göre) */
   --accent: #8f9bff;  --accent-ink: #0b0f1d;  --accent-soft: rgba(143,155,255,0.16);
-  /* kariyer: --accent:#ffb547; --accent-soft: rgba(255,181,71,0.16); */
+  /* kariyer (D-27): --accent:#3ee8a8; --accent-ink:#06120d; --accent-soft: rgba(62,232,168,0.16); (eski amber #ffb547) */
+  /* Cyber-Pitch saha + piyon (tema bağımsız): --cyber-pitch-1:#0b1324; --cyber-pitch-2:#0e182c; --cyber-line:rgba(62,232,168,.80);
+     --cyber-line-2:rgba(56,189,248,.65); --pawn-bg:#f2f5fb; --pawn-ink:#090d1a; --pawn-label-bg:#090d1a; --pawn-label-ink:#f2f5fb */
 
   /* durum */
   --good: #4ade80;  --good-soft: rgba(74,222,128,0.14);
@@ -83,9 +86,12 @@ Saha tema bağımsız bir içerik yüzeyidir: açık temada da koyu çim kalır 
   --glass-border: rgba(10,20,40,0.10); --glass-highlight: rgba(255,255,255,0.9);
   --glass-shadow: 0 8px 28px rgba(20,30,60,0.12);
   --ink: #0d1424; --ink-2: #2b3547; --muted: #5b6577; --faint: #8b94a5;
-  --accent: #4353ff; --accent-ink: #ffffff;   /* kariyer: #c2410c */
+  --accent: #4353ff; --accent-ink: #ffffff;   /* kariyer (D-27): #0f7a55 (eski #c2410c cam üstünde 4,5:1'i geçemiyordu) */
 }
+/* açık + kariyer (D-27): --bg-base:#eaeef7; --aurora-1:#c4b5fd; --aurora-2:#7dd3fc; --aurora-3:#6ee7b7; --aurora-opacity:.30;
+   --edge-glow:rgba(15,122,85,.30); --edge-draft:#0369a1. Önceden açık temada koyu kariyer aurorası sızıyordu. */
 ```
+Kariyer token'ları `design/contrast.test.ts` ile denetlenir (§3.3). Şeffaflık azaltma / yüksek kontrastta kariyer aurorası gizlenir, `--edge-glow` kalkar, `--edge-draft` = `--ink-2`.
 ### 3.3 Kontrast kuralı
 - Metin her zaman cam yüzeyin **üstünde**; camın opaklığı koyu temada ≥ 0,62, açıkta ≥ 0,62 → `--ink` / `--ink-2` / `--muted` için WCAG AA (4,5:1) en kötü aurora rengine karşı test edilir (Playwright + axe, §8).
 - `--faint` yalnız dekoratif/devre dışı metin.
@@ -132,7 +138,8 @@ Self-host (Barlow + Plex zaten var, Inter eklenir); `font-display: swap`; latin 
 | Bileşen | Görünüm | Davranış |
 |---|---|---|
 | **AppShell** | Üstte 56px cam bar (logo + mod anahtarı Kariyer/UT segment + arama + profil); masaüstünde solda 72px cam ray (ikon + etiket), mobilde altta 64px cam tab bar | Mod = URL öneki (WEB-BUG-07). Aktif öğe vurgu rengi soft zemin |
-| **Panel** | `.glass`, başlık satırı (Barlow 20) + opsiyonel sağ eylem | Varsayılan padding 16/20 |
+| **Panel** | `.glass`, başlık satırı (Barlow 20) + opsiyonel `source` (SourceTag) + sağ eylem; `edge`: `default` / `glow` (1px `--edge-glow` halka) / `draft` (1px kesik `--edge-draft`) | Varsayılan padding 16/20; kenarda animasyon yok |
+| **SourceTag** (D-28) | Chip boyutu (≥12px), ikon + metin: "Kayıt verisi · 18 Eki" / "Kararın" / "Taslak · kaydedilmedi" / "Otomatik öneri · ana taktik değil" | Renk tek başına anlam taşımaz |
 | **SidePanel** (08 §15-16) | Sağda 380px `.glass-2`, üstten alta tam yükseklik; mobilde bottom sheet (%85 yükseklik, sürükle-kapat) | Esc / dış tık kapatır; odak tuzağı; açılış 180 ms slide+fade |
 | **Dialog / Sheet / Popover** | `.glass-2` | Radix; scroll kilidi; ilk odak ilk alan |
 | **Button** | primary: dolu `--accent`, metin `--accent-ink`; secondary: `.glass-3`; ghost: şeffaf; danger | 40px yükseklik (mobil 44), focus ring 2px `--accent` + 2px offset |
@@ -146,7 +153,8 @@ Self-host (Barlow + Plex zaten var, Inter eklenir); `font-display: swap`; latin 
 | **Skeleton** | `.glass-3` + yatay parıltı (reduced-motion'da sabit) | Her `useQuery` yükleme durumu |
 | **EmptyState / ErrorState** | Panel içinde ikon + tek cümle + eylem butonu | Hata: sebep + "Tekrar dene" (WEB-BUG-05) |
 | **HelpPopover** | lucide `CircleHelp` → `.glass-2` popover | Açıklama paragrafı yerine (G2) |
-| **Pitch** | Cam panel içinde saha: `--pitch-1/2` şeritli yarı saydam yeşil, çizgiler `--pitch-line` + 1px glow, doğru oranlar (WEB-DS-09) | Blur yok; slotlar 08 §14 |
+| **Pitch** | Cam panel içinde saha: `field="grass"` (varsayılan, UT) `--pitch-1/2` şeritli yeşil, çizgiler `--pitch-line`; `field="cyber"` (kariyer, D-27) `--cyber-pitch-1/2` lacivert şerit, ana çizgiler `--cyber-line`, ceza sahası ve orta yuvarlak `--cyber-line-2`. Doğru oranlar (WEB-DS-09) | Blur yok; slotlar 08 §14. `marker="card"` (varsayılan) / `"pawn"` |
+| **Piyon** (Pitch `marker="pawn"`) | Gölgesiz düz daire `--pawn-bg`, OVR `--pawn-ink` (mono ≥14px); uyum durumu 2px kenar (`--good/--warn/--bad`); altında opak soyad hapı `--pawn-label-*` (tam ad `title`), mevki hapı; rol etiketi `showRole` ile | Daire ≥32px (≥1024: 40), dokunma ≥44px; `readOnly` + `onPickPawn` → düğme; düzenlenebilirde sürükle/klavye taşıma aynı. Yerleşim `layout.ts markerBox` (Q17 matrisi piyon dahil) |
 | **PitchSlot** | Kart (EA render ya da kendi çerçeve) → altında rol hapı (`.glass-3`, Inter 12) → altında mevki hapı (mono 11→12, koyu) ; boş: kesikli kenarlı cam kart siluet + "+" | Tıkla → SidePanel (08 §15); boşta da rol çipi (WEB-BUG-11) |
 | **PlayerCard (OWN)** | Rarity çerçevesi + yüz + OVR/pozisyon + 6 stat; altında cam bilgi şeridi (kimya elmasları, rol uyumu, fiyat) | EA render modunda kartın üstüne hiçbir şey basılmaz (06 §2.2) |
 | **Chart** | Şeffaf zemin, ızgara `--glass-border`, seri renkleri vurgu + nötr | uPlot/Recharts lazy |

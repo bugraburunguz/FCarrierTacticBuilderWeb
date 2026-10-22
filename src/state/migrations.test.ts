@@ -42,5 +42,35 @@ describe('5-3-2 CM → CDM slot taşıması (TAC-09)', () => {
       runStorageMigrations(localStorage)
       expect(JSON.parse(localStorage.getItem('fc.lineup')!)).toEqual({ '3': { CM: 9 } })
     })
+
+    /** KARIYER-UX FAZ 1: tek kopya fc.tactic + fc.lineup → kariyere göre Lab taslağı (bir kez). Eski anahtarlar v2 için kalır. */
+    it('tek kopya taslak, dizilişi olan her kariyere "Önceki taslak" olarak bir kez taşınır', () => {
+      const tactic = { formation: '4-4-2', setup: { buildUp: 'Short', depth: 60 }, slots: { LST: { tags: [], roleId: 'poacher_attack' } } }
+      localStorage.setItem('fc.tactic', JSON.stringify(tactic))
+      localStorage.setItem('fc.lineup', JSON.stringify({ '3': { LST: 9 }, '5': { GK: 1 }, '8': {} }))
+      runStorageMigrations(localStorage)
+
+      const lab = JSON.parse(localStorage.getItem('fc.lab.v1')!)
+      expect(Object.keys(lab).sort()).toEqual(['3', '5'])
+      expect(lab['3'].drafts).toHaveLength(1)
+      expect(lab['3'].drafts[0]).toMatchObject({ name: 'Önceki taslak', origin: { kind: 'blank', ref: 'fc.tactic' }, tactic, lineup: { LST: 9 }, dirty: true })
+      expect(lab['3'].activeId).toBe(lab['3'].drafts[0].id)
+      expect(lab['5'].drafts[0].lineup).toEqual({ GK: 1 })
+      expect(localStorage.getItem('fc.tactic')).not.toBeNull()
+
+      runStorageMigrations(localStorage)
+      expect(JSON.parse(localStorage.getItem('fc.lab.v1')!)['3'].drafts).toHaveLength(1)
+    })
+
+    it('dizilişi olan kariyer yoksa yalnız etkin kariyere; taslak yoksa hiçbir şey yazılmaz', () => {
+      localStorage.setItem('fc.tactic', JSON.stringify({ formation: '4-3-3', slots: {} }))
+      localStorage.setItem('fc.career', '12')
+      runStorageMigrations(localStorage)
+      expect(Object.keys(JSON.parse(localStorage.getItem('fc.lab.v1')!))).toEqual(['12'])
+
+      localStorage.clear()
+      runStorageMigrations(localStorage)
+      expect(localStorage.getItem('fc.lab.v1')).toBeNull()
+    })
   })
 })

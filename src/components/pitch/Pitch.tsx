@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { PlayerCard, type CardPlayer } from '../card/PlayerCard'
 import type { FitState } from '../card/FitBadge'
-import { layoutPitch } from './layout'
+import { layoutPitch, markerBox, type Marker } from './layout'
 import { shortRoleLabel } from './shortRole'
 
 export interface PitchSlot {
@@ -31,7 +31,18 @@ interface Props {
   readOnly?: boolean
   /** Kariyer sahası: kartlar EA kart görseli (PlayerCard eaCard). UT'de kapalı (özel sürüm kartları taban görselle karışmasın). */
   eaCards?: boolean
+  /** Saha görünümü: çim (varsayılan, UT) ya da Cyber-Pitch (kariyer, KARIYER-UX D-27): koyu lacivert şerit, neon yeşil / siber mavi çizgi. */
+  field?: 'grass' | 'cyber'
+  /** İşaret: FC kartı (varsayılan) ya da piyon (gölgesiz düz daire, OVR içinde; altında opak soyad hapı). */
+  marker?: Marker
+  /** Piyonda rol etiketi (kartta her zaman var). */
+  showRole?: boolean
+  /** Salt okunur piyona tıklama (Kadro: oyuncu sayfası). Verilirse piyon düğme olur. */
+  onPickPawn?: (slotId: string) => void
 }
+
+const FIT_RING: Record<FitState, string> = { good: 'var(--good)', ok: 'var(--warn)', bad: 'var(--bad)', neutral: 'transparent' }
+const surname = (name: string) => name.trim().split(/\s+/).slice(-1)[0] ?? name
 
 interface Drag {
   slotId: string
@@ -67,7 +78,10 @@ const STRIPES = Array.from({ length: 12 }, (_, i) => i)
  * aynı kulüp/lig/ülkeyi paylaşan kartlar vurgulanır, diğerleri sönükleşir.
  * Klavye: Tab ile slot, Enter seç, M taşıma modu (oklarla hedef, Enter bırak, Esc iptal).
  */
-export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readOnly = false, eaCards = false }: Props) {
+export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readOnly = false, eaCards = false, field = 'grass', marker = 'card', showRole = false, onPickPawn }: Props) {
+  const cyber = field === 'cyber'
+  const pawn = marker === 'pawn'
+  const pawnButton = readOnly && pawn && Boolean(onPickPawn)
   const boxRef = useRef<HTMLDivElement>(null)
   const [fieldWidth, setFieldWidth] = useState(560)
   const [available, setAvailable] = useState<number>()
@@ -139,10 +153,14 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
 
   // Slot grubu (kart + rol + mevki) tek birimdir; bantlar formasyon katmanlarından, çakışmasız (Q17).
   const layout = useMemo(
-    () => layoutPitch({ slots: slots.map((s) => ({ slotId: s.slotId, x: s.x, y: s.y })), width: fieldWidth, height: available, narrow: fieldWidth < NARROW_PX, minCard: fieldWidth < NARROW_PX ? 48 : window.innerWidth >= 1024 ? 56 : 52 }),
-    [slots, fieldWidth, available],
+    () => layoutPitch({ slots: slots.map((s) => ({ slotId: s.slotId, x: s.x, y: s.y })), width: fieldWidth, height: available, narrow: fieldWidth < NARROW_PX, minCard: fieldWidth < NARROW_PX ? 48 : window.innerWidth >= 1024 ? 56 : 52, marker, showRole }),
+    [slots, fieldWidth, available, marker, showRole],
   )
   const { cardWidth, labelWidth, labelMode, fieldHeight } = layout
+  const pawnBox = markerBox('pawn', cardWidth)
+  const showRoleLabel = !pawn || showRole
+  // Cyber-Pitch etiketleri opak v3 token'ları (Q5: metin sahada değil, opak hap üstünde); çim saha (UT) eski görünümünü korur.
+  const pillClass = cyber ? 'bg-[var(--pawn-label-bg)] text-[var(--pawn-label-ink)]' : 'bg-ink-950/80 text-paper-50'
   const boxById = useMemo(() => new Map(layout.boxes.map((b) => [b.slotId, b])), [layout])
   const bySlot = useMemo(() => new Map(slots.map((s) => [s.slotId, s])), [slots])
   const hovered = hover ? bySlot.get(hover)?.player : undefined
@@ -195,22 +213,31 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
   const circle = Math.min(W * 0.1346, H * 0.0871)
 
   return (
-    <div ref={boxRef} className="pitch-field relative w-full" style={{ height: fieldHeight }}>
-      <div className="absolute inset-0 overflow-hidden rounded-md border border-grass-900 bg-grass-700">
+    <div ref={boxRef} data-field={field} className="pitch-field relative w-full" style={{ height: fieldHeight }}>
+      <div className={`absolute inset-0 overflow-hidden rounded-md border ${cyber ? 'border-[var(--glass-border)] bg-[var(--cyber-pitch-1)]' : 'border-grass-900 bg-grass-700'}`}>
       <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
         {STRIPES.map((i) => (
-          <rect key={i} x="0" y={(i * H) / STRIPES.length} width={W} height={H / STRIPES.length} fill={i % 2 === 0 ? 'var(--pitch-a, var(--color-grass-700))' : 'var(--pitch-b, var(--color-grass-500))'} opacity={i % 2 === 0 ? 1 : 0.85} />
+          <rect key={i} x="0" y={(i * H) / STRIPES.length} width={W} height={H / STRIPES.length}
+            fill={cyber ? (i % 2 === 0 ? 'var(--cyber-pitch-1)' : 'var(--cyber-pitch-2)') : i % 2 === 0 ? 'var(--pitch-a, var(--color-grass-700))' : 'var(--pitch-b, var(--color-grass-500))'}
+            opacity={cyber || i % 2 === 0 ? 1 : 0.85} />
         ))}
-        <g fill="none" stroke="var(--pitch-line, var(--color-chalk))" strokeWidth="2" opacity="0.8">
+        <g fill="none" stroke={cyber ? 'var(--cyber-line)' : 'var(--pitch-line, var(--color-chalk))'} strokeWidth={cyber ? 1.5 : 2} opacity={cyber ? 1 : 0.8}>
           <rect x={inset} y={inset} width={W - 2 * inset} height={H - 2 * inset} />
           <line x1={inset} y1={H / 2} x2={W - inset} y2={H / 2} />
-          <circle cx={W / 2} cy={H / 2} r={circle} />
-          <rect x={(W - boxW) / 2} y={inset} width={boxW} height={boxD} />
-          <rect x={(W - boxW) / 2} y={H - inset - boxD} width={boxW} height={boxD} />
+          {!cyber && <circle cx={W / 2} cy={H / 2} r={circle} />}
+          {!cyber && <rect x={(W - boxW) / 2} y={inset} width={boxW} height={boxD} />}
+          {!cyber && <rect x={(W - boxW) / 2} y={H - inset - boxD} width={boxW} height={boxD} />}
           <rect x={(W - goalW) / 2} y={inset} width={goalW} height={goalD} />
           <rect x={(W - goalW) / 2} y={H - inset - goalD} width={goalW} height={goalD} />
         </g>
-        <g fill="var(--pitch-line, var(--color-chalk))" opacity="0.8">
+        {cyber && (
+          <g fill="none" stroke="var(--cyber-line-2)" strokeWidth="1.5">
+            <circle cx={W / 2} cy={H / 2} r={circle} />
+            <rect x={(W - boxW) / 2} y={inset} width={boxW} height={boxD} />
+            <rect x={(W - boxW) / 2} y={H - inset - boxD} width={boxW} height={boxD} />
+          </g>
+        )}
+        <g fill={cyber ? 'var(--cyber-line)' : 'var(--pitch-line, var(--color-chalk))'} opacity={cyber ? 1 : 0.8}>
           <circle cx={W / 2} cy={H / 2} r="3" />
         </g>
       </svg>
@@ -234,17 +261,22 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
           <div key={slot.slotId} data-slot-group={slot.slotId} className="absolute flex flex-col items-center text-center" style={{ left: box.cx - box.width / 2, top: box.top, width: box.width, height: box.height, opacity: drag?.slotId === slot.slotId ? 0.35 : dimmed ? 0.45 : 1 }}>
             <div className="group relative inline-block">
             <div
-              role={readOnly ? 'group' : 'button'}
-              tabIndex={readOnly ? undefined : 0}
+              role={readOnly && !pawnButton ? 'group' : 'button'}
+              tabIndex={readOnly && !pawnButton ? undefined : 0}
               data-pitch-slot={slot.slotId}
-              aria-label={`${slot.position} — ${slot.player ? `${slot.player.name}, ${slot.player.rating}` : 'boş'}.${readOnly ? '' : moving === slot.slotId ? ' Taşınıyor.' : ' Oyuncu seç, M ile taşı.'}`}
+              aria-label={`${slot.position} — ${slot.player ? `${slot.player.name}, ${slot.player.rating}${pawn && slot.fit ? `, uyum %${slot.fit.pct}` : ''}` : 'boş'}.${readOnly ? '' : moving === slot.slotId ? ' Taşınıyor.' : ' Oyuncu seç, M ile taşı.'}`}
               aria-pressed={readOnly ? undefined : moving === slot.slotId}
-              onClick={readOnly ? undefined : () => {
+              onClick={pawnButton ? () => onPickPawn?.(slot.slotId) : readOnly ? undefined : () => {
                 if (!moved.current) {
                   onPickPlayer(slot.slotId)
                 }
               }}
-              onKeyDown={readOnly ? undefined : (e) => onKey(e, slot.slotId)}
+              onKeyDown={pawnButton ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onPickPawn?.(slot.slotId)
+                }
+              } : readOnly ? undefined : (e) => onKey(e, slot.slotId)}
               onPointerDown={slot.player && onSwap ? (e) => {
                 if (e.button !== 0) {
                   return
@@ -256,10 +288,25 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
               onMouseLeave={() => setHover(undefined)}
               onFocus={() => setHover(slot.slotId)}
               onBlur={() => setHover(undefined)}
-              className={`relative inline-block ${readOnly ? '' : 'cursor-pointer'} rounded-md outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-flood-400 ${isOver || slot.selected || moving === slot.slotId ? 'ring-2 ring-flood-400' : linked ? 'ring-2 ring-flood-400/70' : ''}`}
+              className={`relative inline-block ${readOnly && !pawnButton ? '' : 'cursor-pointer'} ${pawn ? 'rounded-full' : 'rounded-md'} outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 ${cyber ? 'focus-visible:ring-[var(--accent)]' : 'focus-visible:ring-flood-400'} ${isOver || slot.selected || moving === slot.slotId ? (cyber ? 'ring-2 ring-[var(--accent)]' : 'ring-2 ring-flood-400') : linked ? (cyber ? 'ring-2 ring-[var(--accent)]/70' : 'ring-2 ring-flood-400/70') : ''}`}
               style={{ touchAction: slot.player && onSwap ? 'pan-y' : undefined }}
             >
-              {slot.player ? (
+              {pawn ? (
+                <span data-pitch-marker="pawn" className="flex items-center justify-center" style={{ width: pawnBox.width, height: pawnBox.height }}>
+                  {slot.player ? (
+                    <span
+                      className="flex items-center justify-center rounded-full border-2 bg-[var(--pawn-bg)] font-mono text-sm font-semibold tabular-nums text-[var(--pawn-ink)]"
+                      style={{ width: pawnBox.diameter, height: pawnBox.diameter, borderColor: slot.fit ? FIT_RING[slot.fit.state] : 'transparent' }}
+                    >
+                      {slot.player.rating}
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center rounded-full border-2 border-dashed border-[var(--cyber-line)] font-mono text-xs text-[var(--pawn-label-ink)]" style={{ width: pawnBox.diameter, height: pawnBox.diameter }}>
+                      {readOnly ? slot.position : '+'}
+                    </span>
+                  )}
+                </span>
+              ) : slot.player ? (
                 <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} minText={11} minRating={14} eaCard={eaCards} />
               ) : (
                 <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
@@ -285,8 +332,14 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
               </button>
             )}
             </div>
-            {slot.roleLabel && (readOnly ? (
-              <span title={slot.roleLabel} style={{ width: labelWidth, marginTop: 12 }} className="mx-auto block rounded-sm bg-ink-950/80 px-1.5 py-0.5 text-center text-xs font-semibold leading-tight text-paper-50">
+            {pawn && slot.player && (
+              <span title={slot.player.name} style={{ maxWidth: Math.max(labelWidth, pawnBox.width), marginTop: 4 }}
+                className={`mx-auto block truncate rounded-sm bg-[var(--pawn-label-bg)] px-1.5 font-display text-xs font-semibold leading-[18px] text-[var(--pawn-label-ink)]`}>
+                {surname(slot.player.name)}
+              </span>
+            )}
+            {showRoleLabel && slot.roleLabel && (readOnly ? (
+              <span title={slot.roleLabel} style={{ width: labelWidth, marginTop: pawn ? 4 : 12 }} className={`mx-auto block rounded-sm px-1.5 py-0.5 text-center text-xs font-semibold leading-tight ${pillClass}`}>
                   {labelMode === 'one' ? (
                     <span className="block whitespace-nowrap">{shortRoleLabel(slot.roleLabel)}</span>
                   ) : (
@@ -302,7 +355,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
                   e.stopPropagation()
                   onPickRole?.(slot.slotId)
                 }}
-                style={{ width: labelWidth, marginTop: 12 }} className="mx-auto block rounded-sm bg-ink-950/80 px-1.5 py-0.5 text-center text-xs font-semibold leading-tight text-paper-50 hover:bg-ink-950"
+                style={{ width: labelWidth, marginTop: pawn ? 4 : 12 }} className={`mx-auto block rounded-sm px-1.5 py-0.5 text-center text-xs font-semibold leading-tight ${pillClass} ${cyber ? '' : 'hover:bg-ink-950'}`}
               >
                 {labelMode === 'one' ? (
                   <span className="block whitespace-nowrap">{shortRoleLabel(slot.roleLabel)}</span>
@@ -311,14 +364,20 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
                 )}
               </button>
             ))}
-            <span data-slot-pill className="mt-0.5 block rounded-sm bg-ink-950/80 px-1.5 font-mono text-xs leading-[18px] text-paper-50">{slot.position}</span>
+            <span data-slot-pill className={`mt-0.5 block rounded-sm px-1.5 font-mono text-xs leading-[18px] ${pillClass}`}>{slot.position}</span>
           </div>
         )
       })}
 
       {drag && dragged?.player && (
         <div className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-1/2 drop-shadow-xl" style={{ left: drag.x, top: drag.y }}>
-          <PlayerCard player={dragged.player} width={cardWidth} minText={11} minRating={14} eaCard={eaCards} />
+          {pawn ? (
+            <span className="flex items-center justify-center rounded-full bg-[var(--pawn-bg)] font-mono text-sm font-semibold text-[var(--pawn-ink)]" style={{ width: pawnBox.diameter, height: pawnBox.diameter }}>
+              {dragged.player.rating}
+            </span>
+          ) : (
+            <PlayerCard player={dragged.player} width={cardWidth} minText={11} minRating={14} eaCard={eaCards} />
+          )}
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 # 15 · KARİYER-UX — Kariyer modu sayfalarının yeniden yapılandırılması ("Cyber-Pitch")
 
-Durum: **FAZ 0 (yalnız doküman)**. Kod yok. Buğra onayından sonra FAZ 1'e geçilir.
-Dal: web `kariyer-ux` (v3'ten), backend `kariyer-ux` (FAZ 1'de açılır). İki tarafta da PR onaysız birleştirilmez (main → prod).
+Durum: FAZ 0 **onaylandı** (Buğra, 2026-10-22; kararlar §13, düzeltmeler §14). **FAZ 1 tamam** (rapor §15). FAZ 2 (Masa) onay bekliyor.
+Dal: web `kariyer-ux` (v3'ten), backend `kariyer-ux`. İki tarafta da PR onaysız birleştirilmez (main → prod).
 Kapsam yalnız **v3** arayüzü (prod'da tek arayüz; `uiVersion.ts:34-57`, v2 yalnız geliştirmede `VITE_UI_V2` ile). v2 sayfalarına dokunulmaz.
 
 ---
@@ -10,14 +10,15 @@ Kapsam yalnız **v3** arayüzü (prod'da tek arayüz; `uiVersion.ts:34-57`, v2 y
 
 | # | Karar / öneri | Durum |
 |---|---|---|
-| 1 | Kariyer kimliği amber → **Cyber-Pitch** (antrasit/lacivert zemin; mor, siber mavi ve neon yeşil aurora; ince neon kenar) | Öneri **D-27**. 11 güncellenir. |
-| 2 | Üç veri katmanı: **Kayıt verisi** (salt okunur), **Kariyer kararları** (sunucu), **Lab taslağı** (yerel, geçici) | Öneri **D-28** |
-| 3 | Yeni rotalar: `/career/dashboard`, `/career/squad`, `/career/tactics-lab`, `/career/transfer`. Eskiler `<Navigate replace>` | Öneri **D-29** |
-| 4 | Ana taktik sunucuda (`user_tactic.is_main`). Taslaktan kaydedilebilir (bugün yalnız replikadan). Kadro dizilişi ve davranış etiketleri de taşınır | **API CONTRACT CHANGE**, öneri **D-30** |
-| 5 | Pitch'e iki genişletme: `field="cyber"` ve `marker="pawn"` (piyon). Yeni saha bileşeni yok | FAZ 1 |
-| 6 | Tek kopya `fc.tactic` + `fc.lineup` → kariyere göre anahtarlı taslak deposu `fc.lab.v1`. Bir kez göç | FAZ 1 |
+| 1 | Kariyer kimliği amber → **Cyber-Pitch** (antrasit/lacivert zemin; mor, siber mavi ve neon yeşil aurora; ince neon kenar; neon yeşil vurgu) | **D-27** |
+| 2 | Üç veri katmanı: **Kayıt verisi** (salt okunur), **Kariyer kararları** (sunucu), **Lab taslağı** (yerel, geçici) | **D-28** |
+| 3 | Yeni rotalar: `/career/dashboard`, `/career/squad`, `/career/tactics-lab`, `/career/transfer`. Eskiler `<Navigate replace>` | **D-29** (FAZ 2-4) |
+| 4 | Ana taktik sunucuda (`user_tactic.is_main`). Taslaktan kaydedilebilir (bugün yalnız replikadan). Kadro dizilişi ve davranış etiketleri de taşınır | **D-30**, API CONTRACT CHANGE, FAZ 1 |
+| 5 | Ana taktik yokken **ücretsiz otomatik başlangıç önerisi** (`GET /careers/{id}/starter-tactic`); preset yok; "Otomatik öneri" etiketi | **D-31**, FAZ 1 |
+| 6 | Pitch'e iki genişletme: `field="cyber"` ve `marker="pawn"` (piyon). Yeni saha bileşeni yok | FAZ 1 |
+| 7 | Tek kopya `fc.tactic` + `fc.lineup` → kariyere göre anahtarlı taslak deposu `fc.lab.v1`. Bir kez göç | FAZ 1 |
 
-Not: **D-26** (görsel dil v3 = glassmorphism) 11 L4'te ayrılmış, ama karar kaydına hiç yazılmamış. FAZ 1'de D-26 ile birlikte D-27..30 eklenir.
+**D-26** (görsel dil v3 = glassmorphism) 11 L4'te ayrılmıştı ama karar kaydına hiç yazılmamıştı; FAZ 1'de D-26..D-31 birlikte eklendi.
 
 ---
 
@@ -185,7 +186,7 @@ Kaynak: kod okuması, 2026-10-22.
 
 | Sekme | İçerik |
 |---|---|
-| `kurucu` | Mevcut `SquadWorkspaceView` (sürükle-bırak, rol & odak, davranışlar, öneriler), kart modu; saha `field="cyber"` |
+| `kurucu` | Mevcut `SquadWorkspaceView` (sürükle-bırak, rol & odak, davranışlar, öneriler); saha `field="cyber"`, varsayılan **kart modu**, tek tıkla piyona geçilir (Q5) |
 | `sihirbaz` | TacticWizardPage gövdesi; "Uygula" **yeni taslak** açar (bugün tek kopyayı eziyor) |
 | `replikalar` | Replika listesi; "Klonla → taslak" (replika taktiği + `useReplicaApply` dizilişi) |
 | `kod` | TacticCodeCard + EaTacticCode: içe aktar → yeni taslak; dışa aktar → aktif taslak |
@@ -198,11 +199,11 @@ Kaynak: kod okuması, 2026-10-22.
 
 **Görsel:** çalışma alanı paneli `edge="draft"` (kesik çizgi) + SourceTag "Taslak · kaydedilmedi" / "Taslak · Slot 2'ye kaydedildi".
 
-**Çıkış koruması:** kirli taslak varken
-- rota değişiminde `useBlocker` onay diyaloğu,
-- sekme kapanırken `beforeunload`.
-
-Kirli taslak yerelde zaten saklı; uyarı yalnız "ana taktik değil" hatırlatmasıdır.
+**Kaydedilmemiş taslak göstergesi** (düzeltme 1): rota engeli ve `beforeunload` **yok**.
+- Uygulama `BrowserRouter` kullanıyor (`main.tsx:26`); `useBlocker` yalnız data router'da çalışır ve router değiştirilmez.
+- Taslak zaten yerelde saklı, veri kaybı yok. Bu yüzden iki gösterge yeter:
+  - Nav'daki "Taktik Lab" öğesinde nokta: kirli ve ana taktik olmayan taslak var (`labStore.hasUnsaved(careerId)`).
+  - Lab taslak çubuğunda `•`.
 
 ### 4.4 Transfer & Scouting — `/career/transfer`
 
@@ -361,12 +362,12 @@ Bütçe planı üstte, katlanabilir özet şerit: "Kalan €2,95M ▸". Sekmeler
 ```ts
 type LabState = Record<CareerIdString, {
   activeId: string | null
-  drafts: Draft[]              // en çok 10; en eski kirli olmayan atılır
+  drafts: Draft[]              // en çok 10; sınır dolunca yeni taslak açılmaz, hiçbiri sessizce silinmez (düzeltme 8)
 }>
 interface Draft {
   id: string                   // crypto.randomUUID()
   name: string
-  origin: { kind: 'main' | 'replica' | 'wizard' | 'code' | 'blank'; ref?: string }
+  origin: { kind: 'main' | 'replica' | 'wizard' | 'code' | 'blank' | 'auto'; ref?: string }  // auto: başlangıç önerisi (D-31); göç: blank + ref 'fc.tactic'
   tactic: TacticState          // bugünkü tacticStore şekli
   lineup: Record<string, number>
   savedTo?: { slot: number; at: string } // "ana taktiğim yap" sonrası
@@ -384,7 +385,8 @@ interface Draft {
   - Kariyer değişince `activeId` o kariyerin kaydından okunur.
   - Kariyer silinince (`deleteCareer` onSuccess) o kariyerin kaydı silinir.
 - **Boyut:** taslak başına ~2-4 KB → 10 taslak × birkaç kariyer ≪ 1 MB. 1 MB'ı geçerse IndexedDB'ye taşıma notu (CLAUDE.md: büyük veri IDB).
-- **Kirli göstergesi:** `useLabDirty(careerId)` → taslak çubuğu `•`, `useBlocker`, `beforeunload`.
+- **Sınır:** 10. Hepsi dolunca `create` reddeder: "Taslak sınırı (10). Birini sil ya da ana taktik yap." Kirli olsun olmasın hiçbir taslak sessizce silinmez.
+- **Kirli göstergesi:** `labStore.hasUnsaved(careerId)` → nav "Taktik Lab" noktası + taslak çubuğu `•`. Rota engeli / `beforeunload` yok (düzeltme 1).
 
 ### 6.3 Mevcut `tacticStore` tüketicileri nereye gider
 
@@ -405,69 +407,92 @@ interface Draft {
 
 - `fc.tactic` + `fc.lineup[careerId]` → her kariyer için bir taslak.
   - Taslağın adı "Önceki taslak".
-  - `origin.kind = 'blank'`.
+  - `origin = { kind: 'blank', ref: 'fc.tactic' }` (ana taktik panelindeki "Önceki taslağı ana taktik yap" kısayolu bununla bulur).
   - `dirty = true`.
   - `fc.tactic` globaldi; bu yüzden **lineup'ı olan her kariyere** kopyalanır. Lineup yoksa yalnız aktif kariyere (`fc.career`).
-- Eski anahtarlar silinir. Göç bayrağı `fc.migrations` içine yazılır.
-- Kullanıcı ilk açılışta Masa'da şunu görür: "Önceki taslağın Lab'da. Ana taktik yapmak ister misin?"
+- Eski anahtarlar **silinmez**: v2 (geliştirme) sayfaları hâlâ okur; v3 okumaz. Göç adımı `002-lab-drafts`, bayrak `fc.migrations`.
+- `runStorageMigrations` adım listesine çevrildi (eskiden 001 yapılmışsa hemen dönüyordu).
 
 ### 6.5 Testler (önce kırmızı)
 
 | Test | Doğrular |
 |---|---|
-| `labStore.test.ts` | Taslak düzenlemesi `['main-tactic']` ve `['squad']` önbelleğini değiştirmez (dondurulmuş önbellek + derin eşitlik); kariyerler arası sızıntı yok; 10 sınırı; silme |
-| `migrations.test.ts` | `fc.tactic` / `fc.lineup` → `fc.lab.v1`, bir kez |
-| `makeMain.test.tsx` | "Ana taktiğim yap" sonrası Masa ve Kadro yeni ana taktiği gösterir (MSW / mock endpoints + invalidate) |
-| `squadCore.test.tsx` (mevcut, `describe.each(['ut','career'])`) | Kariyer binding'i `useLabBinding`, UT değişmez |
-| `q16.test.ts`, `useUtBinding.test.tsx`, `UtSquadPage*.test.tsx` | UT regresyonu: aynı kalır, yeşil |
-| `redirects.test.tsx` | 7 eski rota + sorgu dizgisi korunur |
-| `readonlyBinding.test.ts` | Ana taktik binding'inde `patch` hiçbir depoya yazmaz |
+| `state/labStore.test.ts` (FAZ 1) | Taslak kaynaktan kopyalanır: dondurulmuş kaynak (sorgu önbelleği) değişmez, referans paylaşılmaz; kariyerler arası sızıntı yok; 10 sınırı (sessiz silme yok); kirli işareti; silme |
+| `state/migrations.test.ts` (FAZ 1) | `fc.tactic` / `fc.lineup` → `fc.lab.v1`, bir kez; dizilişi olan kariyerler ya da etkin kariyer |
+| `features/career/starterTactic.test.tsx` (FAZ 1) | Ana taktik yok → öneri ekranı + "Otomatik öneri"; "Ana taktiğim yap" → "Kararın"; Lab'da düzenle → `auto` taslağı; göç kısayolu; "2 oyuncu kadroda yok" notu; salt okunur bağlamada `patch` hiçbir depoya yazmaz |
+| `lib/tactic.test.ts` (FAZ 1) | `TacticState` → PUT → GET → `TacticState` birebir; varsayılan kurulum backend seed'iyle aynı |
+| `design/contrast.test.ts`, `design/kariyerUxGates.test.ts`, `components/pitch/pitchPawn.test.tsx`, `layout.test.ts` (FAZ 1) | Kontrast, eski depo kapısı, piyon/cyber, piyon Q17 matrisi |
+| `squadCore.test.tsx`, `q16.test.ts`, `useUtBinding.test.tsx`, `UtSquadPage*.test.tsx` (mevcut) | UT regresyonu: aynı kalır, yeşil |
+| Masa/Kadro "yeni ana taktiği gösterir" (FAZ 2-3) | Sayfa entegrasyonuyla |
+| `redirects.test.tsx` (FAZ 4) | 7 eski rota + sorgu dizgisi korunur |
 
 ---
 
 ## 7. Backend (aynı PR serisi, API CONTRACT CHANGE)
 
-### 7.1 Ana taktik — migration `V43__user_tactic_main.sql`
+### 7.1 Ana taktik — migration `V43__user_tactic_main.sql` (FAZ 1'de uygulandı)
 ```sql
 ALTER TABLE user_tactic
   ADD COLUMN is_main    BOOLEAN NOT NULL DEFAULT false,
-  ADD COLUMN lineup     JSONB,          -- {"slotId": playerEaId}  (opsiyonel; yoksa /fit/lineup otomatik dizer)
-  ADD COLUMN tags       JSONB,          -- {"slotId": ["tag", ...]} davranış etiketleri
-  ADD COLUMN depth      SMALLINT,
+  ADD COLUMN lineup     JSONB,          -- {"slotId": base_player.id}  (/fit/lineup'ın playerId'si; boşsa /fit/lineup dizer)
+  ADD COLUMN depth      SMALLINT CHECK (depth BETWEEN 0 AND 100),
   ADD COLUMN preset_id  TEXT,
   ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
-CREATE UNIQUE INDEX ux_user_tactic_main ON user_tactic (user_id, COALESCE(career_id, 0)) WHERE is_main;
+CREATE UNIQUE INDEX ux_user_tactic_main ON user_tactic (user_id, career_id) WHERE is_main;
+ALTER TABLE user_tactic ADD CONSTRAINT ck_user_tactic_main_career CHECK (NOT is_main OR career_id IS NOT NULL);
 ```
+- **`tags` kolonu yok** (düzeltme 2): etiketler `slots` JSONB satırının `tags: []` alanında. Replika kayıtlarında `tags` boş dizi.
+- **Diziliş kimliği** (düzeltme 7): `base_player.id`, yani `career_player.player_id` (`/fit/lineup`'ın döndürdüğü `playerId`). Ayrı bir EA id kullanılmıyor.
+- **Migration numarası** (düzeltme 9): V43. Kontrol 2026-10-22: `git branch -a` yalnız `main`, `gh pr list` boş, yerelde başka worktree yok; SIM-A / REP-e dalları görünmüyordu.
 
-**Uçlar** (`UserTacticController`, hepsi `careerId` doluysa `requireOwned`)
+**Uçlar** (`UserTacticController`)
 
 | Uç | Davranış |
 |---|---|
-| `PUT /user-tactics/{slot}` | Gövde ya `{careerId, replicaId}` (bugünkü) ya `{careerId, name, tactic:{formation, buildUp, depth, presetId, slots:[{slotId, position, roleId, focus, tags[]}]}, lineup?}`. İkisi birden → 400. |
-| `PUT /user-tactics/{slot}/main?careerId` | Tek transaction: aynı kullanıcı+kariyerde diğerlerini `false`, bunu `true`. Slot boşsa 404. |
-| `GET /user-tactics/main?careerId` | 200 `UserTactic` ya da 204 (ana taktik yok) |
-| `DELETE /user-tactics/{slot}` | Ana taktikse işaret de gider. Sonrasında ana taktik yok. |
+| `PUT /user-tactics/{slot}` | Gövde ya `{careerId, replicaId}` (bugünkü) ya `{careerId, name, tactic: TacticRequest, lineup?}`. İkisi birden ya da hiçbiri → 400. Tek taktik gövdesi = mevcut `TacticRequest` (düzeltme 10). Taslakta `ea_code` codec'le üretilir (`TacticCodeService.export`, düzeltme 3); formasyonun EA karşılığı yoksa boş kalır. |
+| `PUT /user-tactics/{slot}/main?careerId` | Önce eski işaret düşer, sonra bu slot ana olur (kısmi unique). Slot boşsa 404. `careerId` zorunlu → yoksa 400 (düzeltme 5). |
+| `GET /user-tactics/main?careerId` | 200 `UserTactic` ya da 200 + `data: null` (düzeltme 6). `careerId` zorunlu. Diziliş okuma anında süzülür (Q2): kadroda olmayan ya da bizden kiralıkta olan oyuncu düşer, `lineupDropped` sayısı döner. |
+| `DELETE /user-tactics/{slot}` | Ana taktikse işaret de gider. |
 
-- **`UserTactic` yanıtı:** + `main`, `lineup`, `tags`, `depth`, `presetId`, `updatedAt`.
-- **`TacticSlotLookup`:** önce `is_main`, yoksa bugünkü en küçük slot (geri uyum).
+- **Upsert `is_main`'i korur** (düzeltme 4): ana slotun üzerine kayıt işareti düşürmez.
+- **`UserTactic` yanıtı:** + `main`, `lineup`, `depth`, `presetId`, `updatedAt`, `lineupDropped`.
+- **`TacticSlotLookup`:** önce `is_main`, yoksa en küçük slot (geri uyum).
+- **Zarf:** `ApiResponse.data` artık her zaman yazılır (null dahil). Önceden `NON_NULL` yüzünden null `data` alanı hiç gelmiyordu.
+- **Q2 notu:** "müsait" ölçütü olarak `career_player.available` **kullanılmadı**. O sütun `loan_from_team_id IS NULL`, yani bize kiralık gelen oyuncuları da düşürürdü. Ölçüt dizilişin kullandığı kadro: `squadPlayerIds` = kadrodaki ve bizden kiralıkta olmayan oyuncular.
 
-**Testler (backend)**
+### 7.4 Başlangıç önerisi — `GET /careers/{id}/starter-tactic` (D-31, FAZ 1'de uygulandı)
+- Ücretsiz; kredi düşmez; preset taraması ve ücretli içgörü yok (D-01). `requireOwned` (404); kadro < 11 → 422 (`fc.exception.0030`).
+- **Hesap:**
+  - `FormationRanker.rank` birincisi. Bu, `TacticRecommenderService.searchFormations` içindeki formasyon-only sıralamadan refactor ile çıkarıldı; iki servis aynı metodu çağırır.
+  - Varsayılan kurulum: `TacticDefaults` (`seed/tactic-defaults.json`, web `src/lib/tacticDefaults.json` ile birebir; iki tarafta parite testi).
+  - Diziliş: kredisiz `FitService.lineup`.
+- **Yanıt:** `{formationId, setup, slots[slotId, position, roleId, roleName], lineup, squadFit, alternatives[2]}`.
+- **Önbellek:** bellek içi LRU (256).
+  - Anahtar = kariyer + son IMPORT anlık görüntüsü + **son kadro hamlesi**. Brief'te yalnız ilk ikisi vardı; alım/satış kadroyu içe aktarma olmadan da değiştirdiği için son hamle eklendi.
 
-| Test | Doğrular |
-|---|---|
-| `UserTacticMainIntegrationTest` | Tek ana taktik (kısmi unique); `/main` değiştirince diğeri düşer; başka kullanıcının kariyeri 404; replika ve taslak gövdesi; ikisi birden 400; silince ana yok |
-| `TacticSlotLookupTest` | `is_main` önceliği |
+**Testler (backend):**
+- `UserTacticMainIntegrationTest` (6):
+  - gidiş-dönüş + EA kodu,
+  - replika/taslak dışlayıcılığı ve replikada boş `tags`,
+  - tek ana taktik ve upsert'in işareti koruması,
+  - `careerId` zorunlu (400) ve sahiplik (404),
+  - dizilişin süzülmesi,
+  - öneri motorunda ana taktik önceliği.
+- `StarterTacticIntegrationTest` (3):
+  - ücretsiz, ilk formasyon ve 11 kişilik diziliş,
+  - 404 / 422,
+  - içe aktarmaya kadar önbellek (sıralayıcı spy).
+- `TacticDefaultsParityTest`.
+- Refactor: mevcut advisor testleri (`ApiFlowIntegrationTest` `/advisor/tactic` dahil) yeşil. Refactor'dan önce davranışı sabitleyen ayrı bir karakterizasyon testi **yazılmadı**.
 
-### 7.2 Satış planı kalıcılığı
-- `career_player_tag` (`FOR_SALE` / `LOAN_OK`) + yeni kolon `asking_price_eur BIGINT NULL` (V44).
+### 7.2 Satış planı kalıcılığı (FAZ 5)
+- Etiket + `asking_price_eur` yeterli, ayrı tablo yok (Q3).
+- `career_player_tag` (`FOR_SALE` / `LOAN_OK`) + `asking_price_eur BIGINT NULL`. Migration V44 ya da o an boş olan sıradaki numara.
 - `PUT /careers/{id}/tags/{pid}` gövdesine `askingPriceEur`.
 - Bütçe planı "satış planı geliri" = Σ(`FOR_SALE` için `askingPriceEur ?? valueEur`).
-- Açık soru Q3.
 
-### 7.3 Eksik kayıt verisi (FAZ 2'nin bağımlılığı)
-- **Sakatlık:** LE `teamplayerlinks.injury` → içe aktarmada `career_player.injury_until` (ya da `injured` boolean; alanın anlamı LE'de doğrulanacak).
-  - `PlayerSummary.injured` / `injuredUntil` olarak döner.
-  - Doğrulanana kadar Masa uyarısında sakatlık satırı "Veri yok" gösterir. Uydurma yok.
+### 7.3 Eksik kayıt verisi
+- **Sakatlık: BEKLEMEDE** (Q6). Şimdilik kariyer log'u yok; `injury_until` için kod yazılmaz. Masa'da sakatlık satırı "Veri yok" gösterir; uydurma yok.
 - **Kiralık dönüşü:** `CareerPlayerResponse.loanUntil`, `career_player.loan_until`'dan doğrudan. `/moves`'a bağımlılık kalkar.
 - **Maaş:** `CareerPlayerResponse.wageEur`. Maaş etkisi ve kullanımı için kadro satırında gerekir.
 - **Sezon sonu:** kolon eklenmez. "Dönem bitişi" = `windowEndsOn` (kullanıcı). Boşsa StatTile "–" + Ayarlar bağlantısı.
@@ -506,7 +531,7 @@ Bugün aurora ezilmiyor; düzeltilir.
 | `--accent-ink` | `#fff` | `#ffffff` |
 | `--accent-soft` | `rgba(194,65,12,.12)` | `rgba(15,122,85,.12)` |
 | `--edge-glow` | — | `rgba(15,122,85,.30)` |
-| `--edge-draft` | — | `rgba(3,105,161,.60)` |
+| `--edge-draft` | — | `#0369a1` (yarı saydam öneri açık camda ~2,5:1 kalıyordu; kontrast testi) |
 
 ### 8.3 Cyber-Pitch saha
 Tema bağımsız; 11 §3.2 ilkesi saha her temada koyu.
@@ -576,6 +601,7 @@ type DataSource =
   | { kind: 'record'; at: string }        // "Kayıt verisi · 18 Eki"
   | { kind: 'decision'; label?: string }  // "Kararın" / "Ana taktik"
   | { kind: 'draft'; savedSlot?: number } // "Taslak · kaydedilmedi" | "Taslak · Slot 2"
+  | { kind: 'auto' }                      // "Otomatik öneri · ana taktik değil" (D-31)
 interface PanelProps {
   // mevcut: title?, actions?, children, className?, as?
   edge?: 'default' | 'glow' | 'draft'     // glow: 1px --edge-glow halka; draft: 1px kesik --edge-draft
@@ -617,7 +643,8 @@ interface PanelProps {
 | Piyon ölçüleri (Q17/Q18) | Etiket kesilmesi / çakışma | q17 matrisi + piyon; ≥ 44px dokunma |
 | Sakatlık alanı LE'de belirsiz | Yanlış uyarı | Doğrulanana kadar "Veri yok"; uydurma yok |
 | Prod'a erken çıkış | Kullanıcı bozulması | Ayrı dallar; PR onaysız birleşmez; backend V43 geriye uyumlu (yalnız ekleme) |
-| Kirli taslak uyarısı can sıkıcı | UX | Yalnız "ana taktik değil" ve gerçekten kirli olunca; taslak yerelde zaten saklı |
+| Kaydedilmemiş taslak fark edilmez (rota engeli yok) | UX | Nav noktası + taslak çubuğu `•`; taslak yerelde zaten saklı, veri kaybı yok (düzeltme 1) |
+| Öneri önbelleği bayatlar (Lab'da düzenleme, ayar değişikliği) | Masa eski öneri gösterir | Anahtar içe aktarma + kadro hamlesi; öneri kadroya bağlı, Lab taslağından etkilenmez (katman 3 ayrı) |
 | Eski yer imleri / paylaşılan linkler | 404 | Yönlendirmeler sorgu dizgisini taşır; `*` → `/` zaten var |
 
 ---
@@ -637,18 +664,65 @@ Her faz sonunda rapor: değişen dosyalar, D numaraları, test özeti, ekran kla
 
 ---
 
-## 13. Açık sorular (Buğra)
+## 13. Kararlar (Buğra, 2026-10-22)
 
-- **Q1 · Ana taktik yokken.**
-  - (a) Boş durum + CTA (önerim).
-  - (b) Otomatik en küçük slot.
-  - (c) Otomatik en iyi 11 + varsayılan formasyon.
-- **Q2 · Ana taktik dizilişi sabitlesin mi?**
-  - (a) Evet, kullanıcının dizdiği 11 saklanır (`lineup`).
-  - (b) Hayır, her zaman `/fit/lineup` en iyi 11'i dizer.
+- **Q1 · Ana taktik yokken → otomatik başlangıç önerisi (D-31).**
+  - Masa, Kadro ve Transfer boş kalmaz: kadroya en uygun formasyon ve en iyi 11 gösterilir (§7.4).
+  - Görünüm: Cyber-Pitch piyon, `SourceTag kind="auto"`, `edge="default"`.
+  - Eylemler: "Ana taktiğim yap", "Lab'da düzenle" (`origin.kind='auto'`), "Detaylı öneri (8 kredi)" (mevcut `/advisor/tactic`).
+  - Göç varsa ek kısayol: "Önceki taslağı ana taktik yap".
+  - Ana taktik seçilince etiket "Kararın" olur.
+- **Q2 · Diziliş:** (a) ve (b) birlikte. `lineup` opsiyonel; boşsa `/fit/lineup` dizer. Okuma anında kadroda olmayan oyuncu düşer, boşluğu `/fit/lineup` doldurur. UI notu: "2 oyuncu kadroda yok, otomatik dolduruldu".
+- **Q3 · Satış planı:** etiket + `asking_price_eur` yeterli; FAZ 5.
+- **Q4 · Vurgu:** neon yeşil (`#3ee8a8` koyu, `#0f7a55` açık); kontrast testiyle doğrulandı (§15).
+- **Q5 · Lab varsayılanı:** kart modu; piyona tek tıkla geçilir.
+- **Q6 · Sakatlık:** beklemede; "Veri yok".
 
-  Önerim: (a) opsiyonel. Boşsa (b).
-- **Q3 · Satış planı kalıcılığı.** Etiket + `asking_price_eur` yeterli mi, yoksa ayrı `career_sale_plan` tablosu mu?
-- **Q4 · Kariyer accent rengi.** Neon yeşil mi (önerim; saha çizgisiyle aynı aile), siber mavi mi?
-- **Q5 · Lab varsayılan işareti.** Kurucu kart modunda mı açılsın (önerim; rol uyumu ve kart bilgisi), piyon mu?
-- **Q6 · Sakatlık için LE betiği.** `teamplayerlinks.injury`'nin anlamı (gün mü, tür mü) bir kariyer log'uyla doğrulanacak. 2.0.4 gerekebilir.
+## 14. FAZ 0 düzeltmeleri (Buğra, 2026-10-22)
+
+1. `useBlocker` kalktı (`BrowserRouter`); yerine nav noktası + `•` (§4.3, §6.2, §11).
+2. V43'te `tags` kolonu yok; etiketler `slots[].tags` (§7.1).
+3. Taslaktan kayıtta `ea_code` codec'le (§7.1).
+4. Upsert `is_main`'i korur (§7.1).
+5. `/main` yalnız kariyer; `careerId` yoksa 400 (§7.1).
+6. Ana taktik yoksa 200 + `data: null` (§7.1).
+7. `lineup` anahtarı `base_player.id` (§7.1).
+8. 10 taslak sınırı: sessiz silme yok, mesaj (§6.2).
+9. Migration numarası kontrolü (§7.1).
+10. Tek taktik modeli: `lib/tactic.ts` ↔ backend `TacticRequest` (§6.3, §7.1).
+
+## 15. FAZ 1 raporu (2026-10-22)
+
+**Backend** (`kariyer-ux`, migration **V43**)
+- V43 + kullanıcı taktiği uçları (§7.1).
+- `FormationRanker` + `StarterTacticService` / `Controller` + `TacticDefaults` (§7.4).
+- `SquadTooSmallException` (422).
+- `ApiResponse.data` her zaman yazılır.
+- Testler: `mvn test` 645/645 yeşil.
+
+**Web** (`kariyer-ux`)
+- **Tek taktik modeli:** `lib/tactic.ts` + `tacticDefaults.json`. `tacticStore` tip ve yardımcıları buradan yeniden dışa verir (v2 davranışı aynı).
+- **API:** `api/types.ts` (`UserTactic` genişledi, `StarterTactic`, `SaveUserTacticBody`); `api/endpoints.ts` (`mainTactic`, `setMainTactic`, `starterTactic`).
+- **Depo ve göç:** `state/labStore.ts`; `state/migrations.ts` (002, adım listesi).
+- **Kariyer kancaları:** `features/career/activeTactic.ts` (`useActiveTactic`, `useMainTacticBinding` salt okunur, `useMakeMainTactic`).
+- **Öneri ekranı:** `features/career/StarterTacticPanel.tsx`, `MakeMainDialog.tsx`.
+- **Kadro çekirdeği:** `features/squad/tacticState.ts` (ortak `squadStateOf`).
+- **Primitives:** `design/components/primitives.tsx`; `SourceTag` (`record | decision | draft | auto`), Panel `edge` / `source`.
+- **Pitch:** `components/pitch/Pitch.tsx` (`field`, `marker`, `showRole`, `onPickPawn`) ve `layout.ts` (`markerBox`, piyon yerleşimi).
+- **Stil:** `design/tokens.css` (8.1-8.4), `design/glass.css` (`panel-edge-*`, kariyer aurora fallback'i).
+- **Önizleme:** `features/preview/KariyerUxPreview.tsx`, yalnız geliştirmede (`/onizleme/kariyer-ux?bolum=oneri|saha|panel`); prod derlemesine girmediği doğrulandı.
+- **Tip importları:** `lib/depth`, `lib/mirror`, `lib/wizardQuestions`, `components/TagChips` artık `lib/tactic`'ten alıyor.
+- **Kapı:** `design/kariyerUxGates.test.ts`. v3 kodu `tacticStore` / `lineupStore` import etmez. Geçiş için 10 dosyalık izinli liste var; liste yalnız küçülür ve FAZ 2-4'te boşalır.
+- **Testler:** `npm test` 1376/1376 (UT regresyonu dahil: `squadCore`, `q16`, `useUtBinding`, `UtSquadPage*`). `npm run lint` hatasız (yalnız önceden var olan uyarılar). `npm run build` yeşil; giriş JS gzip 169 KB (Q10 ≤ 250).
+- **Kontrast** (`design/contrast.test.ts`, koyu + açık kariyer): `--ink`, `--ink-2`, `--muted`, `--accent` en kötü aurora + cam üstünde ≥ 4,5:1; `--accent-ink`/`--accent`, piyon rakamı ve isim hapı ≥ 4,5:1; saha çizgileri, piyon/saha ve taslak kenarı ≥ 3:1.
+  - Açık temada taslak kenarı önerilen yarı saydam değerle ~2,5:1 kalıyordu; düz `#0369a1` yapıldı.
+  - Eski açık tema amber vurgusu (`#c2410c`) aynı testte cam üstünde 4,5:1'i geçemiyordu (yeni renkle kapandı).
+- **Ekran görüntüleri:** `screens/KARIYER-UX-1/`, 48 görüntü.
+  - Matris: öneri / saha / panel × kariyer / UT × 375/768/1280 × koyu / açık, + reduced-motion + reduced-transparency.
+  - Hepsinde yatay taşma 0, axe serious/critical 0, konsol/ağ hatası 0 (`gates-report-*.json`).
+
+**Bilinen eksikler ve sonraki fazlar**
+- **Q17 sayfa ölçümü:** `q17.mjs` sayfa üzerinde ölçüyor; piyonu kullanan sayfa FAZ 3'te (Kadro) gelecek. FAZ 1'de piyon Q17'si birim matrisinde: 29 formasyon × 4 boyut × rol var/yok (`layout.test.ts`).
+- **Redis'e bağlı betikler:** `q17.mjs` ve bazı ekran betikleri hız sınırını sıfırlamak için hâlâ Redis'i çağırıyor; Redis kalktı (OPS-02), satır işlevsiz. Ayrı küçük iş.
+- **Saha etiketleri:** v3 token'larına yalnız cyber sahada taşındı. Çim saha (UT) eski Matchday renklerini piksel piksel korur. UT değişmez kuralı nedeniyle bilinçli.
+- **Ana taktikte boş slot:** `lineupDropped` sonrası boşlukları `/fit/lineup` ile doldurma sayfa entegrasyonunda (FAZ 2-3). Öneri ekranı şimdilik boş slotu gösterir.
