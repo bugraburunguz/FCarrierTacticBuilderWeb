@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { endpoints } from '../../../api/endpoints'
-import type { CareerPlayer, RosterEventType } from '../../../api/types'
-import { analyzeDepth } from '../../../lib/depth'
-import { useActiveCareerId } from '../../../state/careerStore'
-import { useUtRules } from '../../../state/rulesStore'
-import { useTactic } from '../../../state/tacticStore'
+import { endpoints } from '../../api/endpoints'
+import type { CareerPlayer, RosterEventType } from '../../api/types'
+import { analyzeDepth } from '../../lib/depth'
+import { useActiveCareerId } from '../../state/careerStore'
+import { useUtRules } from '../../state/rulesStore'
+import { useTactic } from '../../state/tacticStore'
 
 /** Kariyer verisi değişince tazelenen sorgular (kariyer listesi, kadro, hareketler). */
 export function useInvalidateCareer() {
@@ -16,6 +16,7 @@ export function useInvalidateCareer() {
 export type OutMove = { mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer }
 
 /**
+ * YALNIZ v2 (KARIYER-UX FAZ 3): v3 Kadro features/careerSquad/useCareerSquadData kullanır. Bu dosya v2 SquadPage için olduğu gibi taşındı.
  * Kadro sayfasının ortak verisi (V3-07b; SquadPage'den çıkarıldı): aktif kariyer, kadro, hareketler, mevki önerileri, seçili taktiğe göre
  * derinlik ihtiyacı ve satış/kiralık verme akışı. v2 SquadPage ve v3 KadroPage aynı hook'u kullanır.
  */

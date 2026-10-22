@@ -1,6 +1,6 @@
 import { ArrowLeftRight, Database, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Sparkles, Swords, Target, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../../api/client'
 import { useAuth } from '../../auth/AuthContext'
 import { CompareTray } from '../../components/CompareTray'
@@ -26,6 +26,7 @@ const ICONS: Record<string, LucideIcon> = {
   '/career/growth': TrendingUp,
   '/career/new': Plus,
   '/players': Users,
+  '/career/squad': Swords,
   '/squad/builder': Swords,
   '/teams': Shield,
   '/career/import': Upload,
@@ -45,10 +46,11 @@ const railTone = (active: boolean) => (active ? 'bg-[var(--accent-soft)] text-ac
 function RailLink({ group, active, short = false, onNavigate }: { group: NavGroup; active: boolean; short?: boolean; onNavigate?: () => void }) {
   const Icon = ICONS[group.to] ?? Database
   return (
-    <NavLink to={group.to} aria-current={active ? 'page' : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)}`}>
+    // Etkinlik grubun `match` listesinden (activeNav); NavLink yalnız kendi `to`'su eşleşince aria-current yazar, grup başka alt rotadayken (/squad/builder) yanlış olur.
+    <Link to={group.to} aria-current={active ? 'page' : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)}`}>
       <Icon size={20} aria-hidden="true" />
       <span className="max-w-full break-words">{short ? group.mobileLabel ?? group.label : group.label}</span>
-    </NavLink>
+    </Link>
   )
 }
 

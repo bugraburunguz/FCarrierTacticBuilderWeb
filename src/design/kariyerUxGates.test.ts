@@ -17,8 +17,6 @@ const ALLOWED_UNTIL_FAZ_4 = new Set([
   'components/ProtectLeadCard.tsx',
   'components/TeamSetup.tsx',
   'features/squad/CareerSquadBuilderPage.tsx',
-  'features/squad/kadro/useCareerLineup.ts',
-  'features/squad/kadro/useCareerSquad.ts',
   'features/squad/useCareerBinding.ts',
   'features/squad/useCareerSquadBuilder.tsx',
   'features/wizard/TacticWizardPage.tsx',
@@ -83,5 +81,23 @@ describe('Masa zinciri taslak ve eski depo okumaz (FAZ 2)', () => {
   it('labStore yalnız başlangıç önerisi panelinin göç kısayolunda ve kariyer silmede', () => {
     expect(importing('labStore').sort()).toEqual(['components/DeleteCareerButton.tsx', 'features/career/StarterTacticPanel.tsx'])
     expect(readFileSync(join(ROOT, 'components/DeleteCareerButton.tsx'), 'utf8').match(/labStore\.\w+/g)).toEqual(['labStore.dropCareer'])
+  })
+})
+
+/* KARIYER-UX FAZ 3: Kadro Analizi de yalnız katman 1-2 okur; tek istisna Masa'daki gibi öneri panelinin göç kısayolu. Birim testi: careerSquadPage.test. */
+describe('Kadro zinciri taslak ve eski depo okumaz (FAZ 3)', () => {
+  const files = chain(join(ROOT, 'features/careerSquad/CareerSquadPage.tsx'))
+  const importing = (store: string) => files.filter((f) => new RegExp(`from\\s+['"][./]*state/${store}['"]`).test(readFileSync(join(ROOT, f), 'utf8')))
+
+  it('tacticStore / lineupStore zincirde yok', () => {
+    expect(importing('(tacticStore|lineupStore)')).toEqual([])
+  })
+
+  it('labStore yalnız başlangıç önerisi panelinin göç kısayolunda', () => {
+    expect(importing('labStore')).toEqual(['features/career/StarterTacticPanel.tsx'])
+  })
+
+  it('eski Kadro parçaları (useCareerLineup, useCareerSquad, KadroPage) zincirde yok', () => {
+    expect(files.filter((f) => /useCareerLineup|kadro\/useCareerSquad|KadroPage/.test(f))).toEqual([])
   })
 })

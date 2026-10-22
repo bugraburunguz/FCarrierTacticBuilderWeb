@@ -4,7 +4,7 @@ import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
 import { CaptureOnly } from './components/CaptureOnly'
-import { RedirectWithSearch } from './components/RedirectWithSearch'
+import { LegacySquadRedirect, RedirectWithSearch } from './components/RedirectWithSearch'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
@@ -36,7 +36,7 @@ const SquadBuilderPage = lazy(() => import('./pages/SquadBuilderPage').then((m) 
 const CareerSquadBuilderPage = lazy(() => import('./features/squad/CareerSquadBuilderPage').then((m) => ({ default: m.CareerSquadBuilderPage })))
 const UtSquadBuilderPage = lazy(() => import('./features/squad/UtSquadBuilderPage').then((m) => ({ default: m.UtSquadBuilderPage })))
 const SquadPage = lazy(() => import('./pages/SquadPage').then((m) => ({ default: m.SquadPage })))
-const KadroPage = lazy(() => import('./features/squad/kadro/KadroPage').then((m) => ({ default: m.KadroPage })))
+const CareerSquadPage = lazy(() => import('./features/careerSquad/CareerSquadPage').then((m) => ({ default: m.CareerSquadPage })))
 const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default: m.TeamsPage })))
 const TeamsV3Page = lazy(() => import('./features/teams/TeamsV3Page').then((m) => ({ default: m.TeamsV3Page })))
 const UtMetaPage = lazy(() => import('./pages/UtMetaPage').then((m) => ({ default: m.UtMetaPage })))
@@ -126,7 +126,9 @@ export function App() {
         <Route path="wonderkids" element={isV3() ? <WonderkidsV3Page /> : <WonderkidsPage />} />
         <Route path="tactics/builder" element={<Navigate to="/squad/builder" replace />} />
         <Route path="tactics/wizard" element={isV3() ? <TacticWizardPage /> : <WizardPage />} />
-        <Route path="squad" element={<RequireAuth>{isV3() ? <KadroPage /> : <SquadPage />}</RequireAuth>} />
+        {/* KARIYER-UX FAZ 3: v3 Kadro Analizi /career/squad; eski /squad sekme eşlemesiyle yönlenir (kariyer → Masa › Ayarlar). v2 sayfası v2 için kalır. */}
+        <Route path="career/squad" element={<RequireAuth>{isV3() ? <CareerSquadPage /> : <Navigate to="/squad" replace />}</RequireAuth>} />
+        <Route path="squad" element={isV3() ? <LegacySquadRedirect /> : <RequireAuth><SquadPage /></RequireAuth>} />
         <Route path="squad/builder" element={isV3() ? <CareerSquadBuilderPage /> : <SquadBuilderPage />} />
         <Route path="replicas" element={<ReplicasPage />} />
         <Route path="replicas/:id" element={<ReplicaDetailPage />} />

@@ -71,6 +71,43 @@ export function measurePitch({ formationId, expected, longest }) {
   return { formationId, problems: [...new Set(problems)], pageOverflowY: root.scrollHeight - window.innerHeight, fieldBottom: field.bottom, fieldWidth: field.width, innerHeight: window.innerHeight, cardWidth, minFont, ovrFont }
 }
 
+/**
+ * Q17 piyon sahası (KARIYER-UX FAZ 3, gerçek Kadro sayfası): slot grupları kesişmez ve saha içinde; piyon dokunma alanı ≥ 44px (PAWN_TOUCH);
+ * soyad/mevki etiketi kesilmez (scrollWidth) ve grup kutusundan taşmaz. Tarayıcıda çalışır.
+ */
+export function measurePawnPitch({ formationId, expected, minTouch }) {
+  const groups = [...document.querySelectorAll('[data-slot-group]')]
+  const rect = (el) => el.getBoundingClientRect()
+  const field = rect(document.querySelector('.pitch-field'))
+  const problems = []
+  if (groups.length !== expected) problems.push(`slot grubu sayısı ${groups.length} ≠ ${expected}`)
+  if (document.querySelectorAll('[data-pitch-marker="pawn"]').length !== expected) problems.push('piyon sayısı slot sayısına eşit değil')
+  const boxes = groups.map((g) => ({ id: g.dataset.slotGroup, ...rect(g).toJSON() }))
+  boxes.forEach((a, i) => {
+    boxes.slice(i + 1).forEach((b) => {
+      if (a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5) problems.push(`${a.id} × ${b.id} kesişiyor`)
+    })
+    if (a.left < field.left - 0.5 || a.right > field.right + 0.5 || a.top < field.top - 0.5 || a.bottom > field.bottom + 0.5) problems.push(`${a.id} saha dışında`)
+  })
+  let minTarget = Infinity
+  groups.forEach((g) => {
+    const gr = rect(g)
+    const target = g.querySelector('[data-pitch-slot]')
+    if (target) {
+      const tr = rect(target)
+      minTarget = Math.min(minTarget, tr.width, tr.height)
+      if (tr.width < minTouch - 0.5 || tr.height < minTouch - 0.5) problems.push(`${g.dataset.slotGroup}: dokunma alanı ${Math.round(tr.width)}×${Math.round(tr.height)} < ${minTouch}`)
+    }
+    g.querySelectorAll('span').forEach((label) => {
+      if (!label.textContent.trim() || label.children.length) return
+      const lr = rect(label)
+      if (label.scrollWidth > label.clientWidth + 1 && getComputedStyle(label).display !== 'inline') problems.push(`${g.dataset.slotGroup}: etiket kesiliyor ("${label.textContent.trim()}")`)
+      if (lr.width > 0 && (lr.right > gr.right + 1 || lr.left < gr.left - 1 || lr.bottom > gr.bottom + 1)) problems.push(`${g.dataset.slotGroup}: etiket grup kutusundan taşıyor ("${label.textContent.trim()}")`)
+    })
+  })
+  return { formationId, problems: [...new Set(problems)], fieldWidth: field.width, minTarget: Number.isFinite(minTarget) ? minTarget : null }
+}
+
 /** Q18 eşikleri (Node): ≥1024px'te kart ≥56px, <480px'te ≥48px; kart içi yazı ≥11px, OVR ≥14px. report.problems'a ekler. */
 export function q18Problems(report, viewportWidth) {
   const minCard = viewportWidth < 480 ? 48 : viewportWidth >= 1024 ? 56 : 0

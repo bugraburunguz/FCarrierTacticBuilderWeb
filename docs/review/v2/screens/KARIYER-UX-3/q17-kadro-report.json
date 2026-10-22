@@ -1,0 +1,615 @@
+{
+ "total": 87,
+ "failed": 0,
+ "results": [
+  {
+   "formation": "3-1-4-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "3-1-4-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "3-1-4-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "3-4-1-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "3-4-1-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "3-4-1-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "3-4-2-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "3-4-2-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "3-4-2-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "3-4-3",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "3-4-3",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "3-4-3",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "3-5-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "3-5-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "3-5-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-1-2-1-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-1-2-1-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-1-2-1-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-1-2-1-2 (geniş)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-1-2-1-2 (geniş)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-1-2-1-2 (geniş)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-1-3-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-1-3-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-1-3-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-1-4-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-1-4-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-1-4-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-2-2-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-2-2-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-2-2-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-2-3-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-2-3-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-2-3-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-2-3-1 (2)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-2-3-1 (2)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-2-3-1 (2)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-2-4",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-2-4",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-2-4",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-3-1-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-3-1-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-3-1-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-3-2-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-3-2-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-3-2-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (3 CM)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (3 CM)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (3 CM)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (2 CDM)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (2 CDM)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (2 CDM)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (CAM)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (CAM)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-3-3 (CAM)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-4-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-4-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-4-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-4-2 (2 CDM)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-4-2 (2 CDM)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-4-2 (2 CDM)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-5-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-5-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-5-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "5-2-1-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "5-2-1-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "5-2-1-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "5-2-3",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "5-2-3",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "5-2-3",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "5-3-2",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "5-3-2",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "5-3-2",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "5-4-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "5-4-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "5-4-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-2-1-3",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-2-1-3",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-2-1-3",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 52,
+   "problems": []
+  },
+  {
+   "formation": "4-4-1-1",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-4-1-1",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-4-1-1",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  },
+  {
+   "formation": "4-5-1 (CAM)",
+   "width": 375,
+   "fieldWidth": 309,
+   "minTarget": 44,
+   "problems": []
+  },
+  {
+   "formation": "4-5-1 (CAM)",
+   "width": 768,
+   "fieldWidth": 694,
+   "minTarget": 56,
+   "problems": []
+  },
+  {
+   "formation": "4-5-1 (CAM)",
+   "width": 1280,
+   "fieldWidth": 786,
+   "minTarget": 60,
+   "problems": []
+  }
+ ]
+}

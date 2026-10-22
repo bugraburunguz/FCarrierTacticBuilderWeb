@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, Formation } from '../api/types'
-import { shortRole, useCareerLineup } from '../features/squad/kadro/useCareerLineup'
+import { shortRole, useCareerLineup } from '../pages/squad/useCareerLineup'
 import { fitDisplay } from '../lib/fitLabels'
 import { Pitch } from './squadBuilder/Pitch'
 import { BadgeDot, Button, Card, ErrorBox, Pill, Spinner } from './ui'

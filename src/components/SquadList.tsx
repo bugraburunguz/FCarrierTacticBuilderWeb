@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { Chip } from '../design/components/primitives'
+import { formatEur } from '../lib/format'
 
 const GROUPS: { label: string; positions: string[] }[] = [
   { label: 'Kaleciler', positions: ['GK'] },
@@ -14,9 +15,14 @@ const ORDER = GROUPS.flatMap((g) => g.positions)
 interface Props {
   squad: CareerPlayer[]
   positionAdvice: PlayerPositionAdvice[]
+  /** KARIYER-UX FAZ 3: kayıttaki haftalık maaş sütunu ve kiralık bitiş tarihi (v3 Kadro); v2 vermez, tablo değişmez. */
+  recordColumns?: boolean
 }
 
-export function SquadList({ squad, positionAdvice }: Props) {
+const DAY = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+const loanDate = (date?: string) => (date ? ` · ${DAY.format(new Date(`${date.slice(0, 10)}T00:00:00Z`))}` : '')
+
+export function SquadList({ squad, positionAdvice, recordColumns = false }: Props) {
   const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
   const placed = new Set<number>()
   const groups = GROUPS.map((group) => {
@@ -51,6 +57,7 @@ export function SquadList({ squad, positionAdvice }: Props) {
                     <th className="pr-2">En iyi mevki</th>
                     <th className="pr-2 text-right">OVR</th>
                     <th className="pr-2 text-right">POT</th>
+                    {recordColumns && <th className="pr-2 text-right">Maaş (hafta)</th>}
                     <th>Durum</th>
                   </tr>
                 </thead>
@@ -75,9 +82,10 @@ export function SquadList({ squad, positionAdvice }: Props) {
                         </td>
                         <td className="pr-2 text-right font-semibold tabular-nums">{entry.player.overall}</td>
                         <td className="pr-2 text-right tabular-nums">{entry.dynamicPotential ?? entry.player.potential ?? '—'}</td>
+                        {recordColumns && <td className="pr-2 text-right tabular-nums">{entry.wageEur !== undefined && entry.wageEur !== null ? formatEur(entry.wageEur) : '—'}</td>}
                         <td>
-                          {entry.onLoan && <Chip tone="warn">Kiralık (bizde)</Chip>}
-                          {entry.loanedOut && <Chip tone="info">Kiralıkta (başka takımda)</Chip>}
+                          {entry.onLoan && <Chip tone="warn">Kiralık (bizde){recordColumns ? loanDate(entry.loanUntil) : ''}</Chip>}
+                          {entry.loanedOut && <Chip tone="info">Kiralıkta (başka takımda){recordColumns ? loanDate(entry.loanUntil) : ''}</Chip>}
                         </td>
                       </tr>
                     )

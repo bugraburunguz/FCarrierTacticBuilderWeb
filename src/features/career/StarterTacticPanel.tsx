@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
+import type { FitState } from '../../components/card/FitBadge'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { Button, Chip, EmptyState, ErrorState, Panel, Skeleton } from '../../design/components/primitives'
 import { LAB_AVAILABLE } from '../../lib/features'
@@ -14,8 +15,14 @@ const MIGRATED_REF = 'fc.tactic'
  * Ana taktik paneli (KARIYER-UX D-30/D-31): ana taktik varsa "Kararın", yoksa ücretsiz otomatik başlangıç önerisi ("Otomatik öneri · ana taktik değil").
  * Saha salt okunur Cyber-Pitch, piyon modu. Masa, Kadro ve Transfer (FAZ 2-5) bunu kullanır; düzenleme yalnız Lab'da.
  */
-export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCost }: {
+export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCost, onPickPlayer, fits, title }: {
   careerId: number
+  /** Piyona tıklama (Kadro: oyuncu sayfası). Verilmezse piyon tıklanmaz. */
+  onPickPlayer?: (playerId: number) => void
+  /** Slot başına uyum (Kadro: useMainTacticFits); piyonun erişilebilir adında ve renginde. */
+  fits?: ReadonlyMap<string, { pct: number; state: FitState }>
+  /** Panel başlığı; verilmezse formasyon. */
+  title?: string
   /** Lab'da düzenle: yeni taslağın kimliği (Lab sayfası FAZ 4). */
   onOpenLab?: (draftId: string) => void
   /** Detaylı (ücretli) taktik önerisi: mevcut /advisor/tactic. */
@@ -25,7 +32,8 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
   const { active, isLoading, error } = useActiveTactic(careerId)
   const formations = useQuery({ queryKey: ['formations'], queryFn: () => endpoints.formations() })
   const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId) })
-  const lab = useLab(careerId)
+  // Taslak deposu yalnız göç kısayolu için ve yalnız ana taktik yokken okunur (katman 3, D-28); ana taktik varken hiç okunmaz.
+  const lab = useLab(active?.source.kind === 'auto' ? careerId : undefined)
   const migrated = lab.drafts.find((d) => d.origin.ref === MIGRATED_REF && d.dirty)
   const [dialog, setDialog] = useState<'active' | 'migrated'>()
   const [labMessage, setLabMessage] = useState<string>()
@@ -43,9 +51,10 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
         slotId: s.slotId, position: s.position, x: s.x, y: s.y,
         player: player && { name: player.name, rating: player.overall, position: s.position },
         roleLabel: roleNames.get(s.slotId) ?? active.tactic.slots[s.slotId]?.roleId ?? s.defaultRole,
+        fit: player ? fits?.get(s.slotId) : undefined,
       }
     })
-  }, [formations.data, squad.data, active])
+  }, [formations.data, squad.data, active, fits])
 
   if (isLoading || formations.isLoading) {
     return <Panel title="Ana taktik"><Skeleton className="h-64 w-full" /></Panel>
@@ -77,7 +86,7 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
 
   return (
     <Panel
-      title={active.tactic.formation}
+      title={title ?? active.tactic.formation}
       source={active.source}
       actions={(
         <span className="flex flex-wrap gap-2">
@@ -100,7 +109,8 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
           <Button variant="secondary" onClick={() => setDialog('migrated')}>Önceki taslağı ana taktik yap</Button>
         </p>
       )}
-      <Pitch slots={slots} onPickPlayer={() => undefined} readOnly field="cyber" marker="pawn" />
+      <Pitch slots={slots} onPickPlayer={() => undefined} readOnly field="cyber" marker="pawn"
+        onPickPawn={onPickPlayer ? (slotId) => { const id = active.lineup[slotId]; if (id !== undefined) onPickPlayer(id) } : undefined} />
       {dialog === 'active' && (
         <MakeMainDialog careerId={careerId} name={auto ? 'Otomatik öneri' : (active.main?.name ?? 'Ana taktik')} tactic={active.tactic} lineup={active.lineup} onClose={() => setDialog(undefined)} />
       )}
