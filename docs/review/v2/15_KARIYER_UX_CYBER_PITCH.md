@@ -134,7 +134,7 @@ Kaynak: kod okuması, 2026-10-22.
 - Transfer
 - Oyuncular (sekmeler: Oyuncu ara, Wonderkids, Karşılaştır)
 - Mobil "Daha fazla": Gelişim, Takımlar, İçe aktar, Yeni kariyer.
-- Mobil alt çubuk: Masa · Kadro · Lab · Transfer · Oyuncular (5).
+- Mobil alt çubuk: Masa · Kadro · Lab · Transfer · Oyuncu (5; "Oyuncular" mobilde kısa etiketle, 375'te kelime bölünmesin diye — FAZ 4a).
 
 ---
 
@@ -845,3 +845,42 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 2. Nav: "Taktik & Kadro" grubu artık Kadro'ya açılıyor; kurucu/sihirbaz aynı grupta. §3'teki ayrı "Kadro" ve "Taktik Lab" öğeleri FAZ 4'te mi ayrılsın?
 
 **Test sayıları:** web 1436/1436; backend değişmedi; lint hatasız, build yeşil, pawn-font-gate ≥ 12px, Q17 87/87.
+
+## 20. FAZ 4a raporu: Taktik Laboratuvarı (kabuk, kurucu, ana taktik) (2026-10-23)
+
+**Merge (Buğra onayı).** Merge commit ile, sırayla: backend #1 → `main` (`1500ad8`), #2 → `main` (`6c283f7`); web #2 → `v3` (`12c9881`), #3 → `v3` (`ebb33f5`), #4 → `v3` (`9bf53c5`). Her alt PR'ın tabanı elle değiştirildi, çakışma yok, dal silinmedi; her PR'da CI yeşil, backend `main` push CI'ı iki merge'den sonra da yeşil. **Prod doğrulanamadı:** bilinen Railway alanları merge'den önce ve sonra `404 "Application not found"` (`x-railway-fallback`) döndü (proje durdurulmuş); deploy, Flyway V43/V44 ve health kontrolü yapılamadı, Railway'e erişilmedi (kural). Railway web servisinin hangi dalı izlediği bilinmiyor; GitHub Pages iş akışı `main`'den, `v3` henüz `main`'e birleşmedi.
+
+**Rota.** `/career/tactics-lab` → `features/lab/TacticsLabPage.tsx`. v3'te `/squad/builder`, `/tactics/builder`, `/fit` → `/career/tactics-lab?sekme=kurucu` (`RedirectWithSearch` artık hedefin sorgusunu korur, gelen parametreleri ekler). `/tactics/wizard` bugünkü sayfada (4b). v2 rotaları değişmedi.
+
+**Kurucu.** `LabBuilder` = ortak çekirdek (`SquadWorkspaceView` + `useCareerSquadBuilder(useLabBinding)`); `useCareerSquadBuilder` artık bağlamayı parametre alır (v2 `useCareerBinding` verir). Saha `field="cyber"`, varsayılan kart, "Kart / Piyon" geçişi (`SquadWorkspaceView` `field`/`marker`; UT vermez). `useLabBinding` aktif taslağa yazar (`tacticOf` = `squadStateOf` tersi, gidiş-dönüş testli). `?slot=` temiz bir ana taktik taslağı yoksa ana taktikten yeni taslak açar, slot paneli açık gelir, parametre adresten düşer. `deskLinks` Lab eşlemesi kalktı (kalan geçici eşleme yalnız Transfer `rol` → `role`).
+
+**Taslak çubuğu** (`DraftBar`, panel `edge="draft"` + SourceTag "Taslak · kaydedilmedi" / "Taslak · Slot N"): seçici (ad + kirli "•"), Yeni (ana taktikten, yoksa başlangıç önerisinden) · Kopyala · Yeniden adlandır · Sil (onaylı; kirli taslakta "Yine de sil" ikinci onayı). Sınır mesajı labStore'dan (FAZ 1). Taslak yokken boş durum + "Yeni taslak".
+
+**"Ana taktiğim yap".** `MakeMainDialog` (FAZ 1) → `PUT /user-tactics/{slot}` (taslak taktiği + dizilişi) → `PUT /{slot}/main` → `labStore.markSaved` (kirli kalkar, `savedTo`). Yenilenenler: `main-tactic`, `user-tactics`, `lineup`, **`starter-tactic`**, **`slot-fit`** (Masa/Kadro rol uyumu). Test: kayıttan sonra aynı istemcide Kadro yeni ana taktiği gösterir.
+
+**`LAB_AVAILABLE` kaldırıldı.** "Lab'da düzenle" (öneri paneli; Masa ve Kadro'da Lab'a gider), "Lab'a git" (Masa boş durum), zayıf kart: WRONG_ROLE birincil "Rolü değiştir" (`/career/tactics-lab?sekme=kurucu&slot=…`) + ikincil aday; WEAK birincil aday + ikincil "Lab'da dene".
+
+**Nav.** Masa · Kadro · Taktik Lab · Transfer · Oyuncular (+ Gelişim, Takımlar, İçe aktar). Mobil alt çubuk 5 öğe (Masa, Kadro, Lab, Transfer, Oyuncu) + "Daha fazla"; 375'te "Oyuncular" kelime ortasından bölündüğü için mobil etiketi "Oyuncu". Taktik Lab sekmeleri: Kurucu · Sihirbaz · Replikalar. Aktif kariyerde kirli taslak varsa "Taktik Lab"/"Lab" öğesinde nokta ve `aria-label` "… · kaydedilmemiş taslak var"; nokta yokken işaretleme öncekiyle birebir (UT piksel kontrolü).
+
+**Transfer.** İhtiyaçlar artık ana taktikten (`useMainTacticFits`, 15 §4.4); eski tek kopya diziliş okunmaz (test, eski depoya çelişen değer yazarak doğrular).
+
+**Legacy temizliği.** İzinli liste **8 → 2**: kalanlar `components/EaTacticCode.tsx` (şu an kullanılmıyor, Kod sekmesi) ve `features/wizard/TacticWizardPage.tsx` (Sihirbaz) — ikisi de 4b. `useCareerBinding`, `AutoFitPanel`, `ProtectLeadCard`, `TeamSetup` yalnız v2 kullandığı için mantık değişmeden `src/pages/squad/`'a taşındı; v2'de içe aktarma yolları ve `SquadBuilderPage`'de `useCareerSquadBuilder(useCareerBinding)` argümanı değişti (davranış aynı). `CareerSquadBuilderPage` silindi (yerine `LabBuilder`). Kapı: Lab zinciri tacticStore/lineupStore içermez; labStore yalnız `features/lab/` içinden; eski kurucu parçaları zincirde yok. `legacyGates`'te `/squad/builder` yerine `/career/tactics-lab`.
+
+**UT regresyonu.** `squadCore` (`describe.each`), q16, `useUtBinding`, `UtSquadPage*` yeşil. UT kurucusu önce/sonra (`screens/KARIYER-UX-4a/ut-once`, `ut-sonra`, 8'er çekim) `scripts/png-diff.mjs` ile piksel karşılaştırması: 6/8 birebir; `dark-1280-reduced-transparency` 8 piksel (kadro adı alanının yuvarlak kenarında kenar yumuşatma, görsel fark yok), `light-768` 1 piksel. Aynı kodla iki koşu arasında da 1 piksellik fark çıktı (gürültü tabanı). İlk "sonra" koşusunda ray/alt çubuk ikonunu saran öğe 375'te ~1.475 piksel kaydırıyordu; nokta yokken işaretleme eskiye döndürüldü.
+
+**İstek ölçümü (madde 9).** Taslağı (boş diziliş) olan Lab kurucusu tam yükleme: **26 API isteği**; bunların **11'i `/fit/role`** (slot başına), 1 `/fit/lineup` (ilk dizme), gerisi tek seferlik (careers, squad, formations, roles, ea-roles, presets, behavior-tags, resolve, export-code, main-tactic, ut/rules, config, me, players/assets). Uygulama içi tekrar açılışta `slot-fit` önbellekten gelir.
+- `POST /fit/squad` bunun yerine geçemez: ücretli (`CreditGuard`, SQUAD_FIT), kendi atamasını çözer (kullanıcının dizilişini kilitlemez) ve kurallar/NLG üretir.
+- `POST /fit/lineup` + `locked` = mevcut 11'in tamamı: tek istekte aynı motorla (kariyer v3) slot başına `levelFit`, `fitLabel`, rozet döner; **eksik: `reasons`** (`withoutPaidInsights` atıyor) — kurucunun "en zayıf" nedeni ve Masa `worstReason` bunu kullanıyor. `/fit/role` nedenleri zaten ücretsiz verdiği için 4b'de `lineup` yanıtına `reasons` eklenip 11 istek 1'e indirilebilir (API CONTRACT CHANGE, ayrı hız sınırı sayacı yok).
+
+**Sihirbaz boşluğu (4a kapanışında kapandı).** v3 Sihirbaz "Uygula" artık yeni Lab taslağı açar (`origin: {kind: 'wizard', ref: presetId}`, aktif) ve `/career/tactics-lab?sekme=kurucu`'ya gider; sınır doluysa mesaj, yönlendirme yok. Eski depoya yazılmaz; izinli liste 2 → 1 (`EaTacticCode`, 4b).
+
+**Ekranlar** `screens/KARIYER-UX-4a/` (`scripts/lab-shots.mjs`, üretim derlemesi, durumlar arayüzden): taslak yok / kirli taslak / ana taktik yapıldı × 375/768/1280 × koyu/açık = 18 çekim, sorun 0 (taşma, axe serious/critical, konsol/ağ), en küçük yazı 11px. Q17/Q18 Lab (`scripts/q17-lab.mjs`, 29 formasyon × 375/768/1280 × kart + piyon = 174 ölçüm): sorun 0; en küçük kart 48px, kart içi yazı 11px, piyon dokunma alanı 44px. pawn-font-gate ≥ 11px.
+
+**Yerel yığın.** Backend `main` (`6c283f7`, V44), web `kariyer-ux-4` çalışma ağacından; kart vekili kapalı. Test hesapları koşu sonunda silindi.
+
+**Test sayıları:** web 1460/1460; backend değişmedi (merge sonrası `main` CI yeşil); lint hatasız, build yeşil.
+
+**Açık sorular (FAZ 4a).**
+1. Railway: servis durdurulmuş görünüyor; yeniden kurulunca web servisinin `v3`'ü mü `main`'i mi izleyeceği ve `v3` → `main` birleşmesi ne zaman?
+2. Toplu uyum (4b): `/fit/lineup` yanıtına `reasons` eklenip kurucu/Masa/Kadro/Transfer'in 11 `/fit/role` isteği tek isteğe indirilsin mi?
+3. Mobil "Oyuncular" etiketi "Oyuncu" oldu (375'te kelime bölünmesi); doküman §3 metni güncellensin mi?

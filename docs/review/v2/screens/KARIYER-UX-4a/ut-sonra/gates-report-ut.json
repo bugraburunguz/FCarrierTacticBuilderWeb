@@ -1,0 +1,65 @@
+{
+  "taskId": "KARIYER-UX-4a/ut-sonra",
+  "route": "/ut/squad",
+  "mode": "ut",
+  "matrix": "full",
+  "base": "http://localhost:8081",
+  "shots": [
+    {
+      "file": "ut-dark-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-375.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-768.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-768.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-light-1280.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-reduced-motion.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "ut-dark-1280-reduced-transparency.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    }
+  ]
+}

@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom'
 import { ApiError, ErrorCodes } from '../api/client'
 import { endpoints } from '../api/endpoints'
 import type { Preset } from '../api/types'
-import { AutoFitPanel } from '../components/AutoFitPanel'
+import { AutoFitPanel } from './squad/AutoFitPanel'
 import { CareerSelect } from '../components/CareerSelect'
 import { FitResults } from '../components/FitResults'
 import { FormationStyleChips } from '../components/FormationStyleChips'
-import { ProtectLeadCard } from '../components/ProtectLeadCard'
+import { ProtectLeadCard } from './squad/ProtectLeadCard'
 import { SetupChips } from '../components/SetupChips'
-import { TeamSetup } from '../components/TeamSetup'
+import { TeamSetup } from './squad/TeamSetup'
+import { useCareerBinding } from './squad/useCareerBinding'
 import { Pitch } from '../components/squadBuilder/Pitch'
 import { SlotModal } from '../components/squadBuilder/SlotModal'
 import { SquadSummaryCard } from '../components/squadBuilder/SquadSummaryCard'
@@ -26,7 +27,7 @@ const AUTO_FIT = '__auto_fit__'
 export function SquadBuilderPage() {
   const queryClient = useQueryClient()
   const [autoFit, setAutoFit] = useState(false)
-  const { careerId, authenticated, presets, career, hasCareer, squad, binding, ws, setup, preset, views, weakReasons, autoFill, canAutoFill, changeFormation, slotTabs, resetBehaviors, pitchHint, loading } = useCareerSquadBuilder()
+  const { careerId, authenticated, presets, career, hasCareer, squad, binding, ws, setup, preset, views, weakReasons, autoFill, canAutoFill, changeFormation, slotTabs, resetBehaviors, pitchHint, loading } = useCareerSquadBuilder(useCareerBinding)
   const { state, formation, roles, selection, selectedSlot: dialogSlot } = ws
 
   const analyse = useMutation({

@@ -3,8 +3,8 @@ import type { CareerPlayer } from '../../api/types'
 import { remapAssignments } from '../../lib/squadBuilder'
 import { lineupStore, useLineup } from '../../state/lineupStore'
 import { DEFAULT_TACTIC, tacticStore, useTactic } from '../../state/tacticStore'
-import { squadStateOf as stateOf } from './tacticState'
-import type { SquadBinding, SquadPatch } from './types'
+import { squadStateOf as stateOf } from '../../features/squad/tacticState'
+import type { SquadBinding, SquadPatch } from '../../features/squad/types'
 
 /** Kariyer bağlayıcısı: taktik tacticStore'da (diğer kartlarla paylaşılır), dizilim lineupStore'da (kariyer başına, oyuncu kimliği). */
 export function useCareerBinding(careerId: number | undefined, squad: CareerPlayer[] | undefined) {

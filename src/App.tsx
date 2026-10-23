@@ -5,6 +5,8 @@ import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
 import { CaptureOnly } from './components/CaptureOnly'
 import { LegacySquadRedirect, RedirectWithSearch } from './components/RedirectWithSearch'
+
+const LAB_BUILDER = '/career/tactics-lab?sekme=kurucu'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
@@ -33,7 +35,7 @@ const PlayerDetailPage = lazy(() => import('./pages/PlayerDetailPage').then((m) 
 const PlayersPage = lazy(() => import('./pages/PlayersPage').then((m) => ({ default: m.PlayersPage })))
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
 const SquadBuilderPage = lazy(() => import('./pages/SquadBuilderPage').then((m) => ({ default: m.SquadBuilderPage })))
-const CareerSquadBuilderPage = lazy(() => import('./features/squad/CareerSquadBuilderPage').then((m) => ({ default: m.CareerSquadBuilderPage })))
+const TacticsLabPage = lazy(() => import('./features/lab/TacticsLabPage').then((m) => ({ default: m.TacticsLabPage })))
 const UtSquadBuilderPage = lazy(() => import('./features/squad/UtSquadBuilderPage').then((m) => ({ default: m.UtSquadBuilderPage })))
 const SquadPage = lazy(() => import('./pages/SquadPage').then((m) => ({ default: m.SquadPage })))
 const CareerSquadPage = lazy(() => import('./features/careerSquad/CareerSquadPage').then((m) => ({ default: m.CareerSquadPage })))
@@ -124,16 +126,18 @@ export function App() {
         <Route path="players/:id" element={<PlayerDetailRoute />} />
         <Route path="compare" element={isV3() ? <CompareV3Page /> : <ComparePage />} />
         <Route path="wonderkids" element={isV3() ? <WonderkidsV3Page /> : <WonderkidsPage />} />
-        <Route path="tactics/builder" element={<Navigate to="/squad/builder" replace />} />
+        {/* KARIYER-UX FAZ 4a: v3'te kurucu Taktik Laboratuvarı'nda; eski kurucu adresleri sorgu dizgisiyle oraya. v2 eski kurucuda kalır. */}
+        <Route path="career/tactics-lab" element={<RequireAuth>{isV3() ? <TacticsLabPage /> : <Navigate to="/squad/builder" replace />}</RequireAuth>} />
+        <Route path="tactics/builder" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <Navigate to="/squad/builder" replace />} />
         <Route path="tactics/wizard" element={isV3() ? <TacticWizardPage /> : <WizardPage />} />
         {/* KARIYER-UX FAZ 3: v3 Kadro Analizi /career/squad; eski /squad sekme eşlemesiyle yönlenir (kariyer → Masa › Ayarlar). v2 sayfası v2 için kalır. */}
         <Route path="career/squad" element={<RequireAuth>{isV3() ? <CareerSquadPage /> : <Navigate to="/squad" replace />}</RequireAuth>} />
         <Route path="squad" element={isV3() ? <LegacySquadRedirect /> : <RequireAuth><SquadPage /></RequireAuth>} />
-        <Route path="squad/builder" element={isV3() ? <CareerSquadBuilderPage /> : <SquadBuilderPage />} />
+        <Route path="squad/builder" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <SquadBuilderPage />} />
         <Route path="replicas" element={<ReplicasPage />} />
         <Route path="replicas/:id" element={<ReplicaDetailPage />} />
         <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
-        <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
+        <Route path="fit" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
         <Route path="career/import" element={<RequireAuth>{isV3() ? <CareerImportPage /> : <ImportPage />}</RequireAuth>} />
         {/* KARIYER-UX FAZ 2: v3 Kariyer Masası /career/dashboard; eski adres sorgu dizgisiyle (?sekme=ayarlar) yönlenir. v2 sayfası v2 için kalır. */}

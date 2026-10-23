@@ -82,6 +82,7 @@ export function CareerSquadPage() {
           <div className="min-w-0 flex-1">
             {k.squad.isLoading ? <Skeleton className="h-80" /> : (
               <StarterTacticPanel careerId={career.id} fits={fitsBySlot} onPickPlayer={(id) => navigate(`/players/${id}`)}
+                onOpenLab={() => navigate('/career/tactics-lab?sekme=kurucu')}
                 title={k.fits.main.active?.main?.name ? `${k.fits.main.active.main.name}` : undefined} />
             )}
           </div>

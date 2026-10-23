@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import type { ResolvedSlot, Role } from '../api/types'
-import { protectLead } from '../lib/protectLead'
-import { tacticStore, useTactic, type TacticState } from '../state/tacticStore'
-import { Button, Card } from './ui'
+import type { ResolvedSlot, Role } from '../../api/types'
+import { protectLead } from '../../lib/protectLead'
+import { tacticStore, useTactic, type TacticState } from '../../state/tacticStore'
+import { Button, Card } from '../../components/ui'
 
 interface Props {
   slots: ResolvedSlot[]

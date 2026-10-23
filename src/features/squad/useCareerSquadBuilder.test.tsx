@@ -5,7 +5,9 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
-import { CareerSquadBuilderPage } from './CareerSquadBuilderPage'
+import { labStore } from '../../state/labStore'
+import { LabBuilder } from '../lab/LabBuilder'
+import { useLabBinding } from '../lab/useLabBinding'
 import { useCareerSquadBuilder } from './useCareerSquadBuilder'
 
 const slot = (slotId: string, position: string) => ({ slotId, position, x: 50, y: 50, defaultRole: 'r', group: position })
@@ -39,16 +41,18 @@ const wrapper = ({ children }: { children: ReactNode }) => (
   </QueryClientProvider>
 )
 
-/** V3-07b: kariyer kurucu mantığı tek hook'ta; v2 ve v3 sayfası aynı davranışı alır. */
+/** V3-07b: kariyer kurucu mantığı tek hook'ta; v2 ve v3 Lab aynı davranışı alır (FAZ 4a: durum kaynağı bağlama parametresi, burada Lab taslağı). */
 describe('useCareerSquadBuilder', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
+    labStore.reload()
     careerStore.set(7)
+    labStore.create(7, { name: 'Deneme', origin: { kind: 'blank' }, tactic: { formation: '4-4-2', slots: {} }, lineup: {} })
   })
 
   it('boş kadroyla ilk açılışta bir kez otomatik dizer; "En iyi 11\'i diz" yeniden dizer', async () => {
-    const { result } = renderHook(() => useCareerSquadBuilder(), { wrapper })
+    const { result } = renderHook(() => useCareerSquadBuilder(useLabBinding), { wrapper })
     await waitFor(() => expect(Object.keys(result.current.ws.state.assigned)).toHaveLength(11))
     expect(endpoints.lineup).toHaveBeenCalledTimes(1)
     expect(vi.mocked(endpoints.lineup).mock.calls[0][0]).toBe(7)
@@ -59,8 +63,8 @@ describe('useCareerSquadBuilder', () => {
     await waitFor(() => expect(endpoints.lineup).toHaveBeenCalledTimes(2))
   })
 
-  it('v3 sayfası: "En iyi 11\'i diz" düğmesi dizer; taktik kodu tek bileşende', async () => {
-    render(<CareerSquadBuilderPage />, { wrapper })
+  it('v3 Lab kurucusu: "En iyi 11\'i diz" düğmesi dizer; taktik kodu tek bileşende', async () => {
+    render(<LabBuilder />, { wrapper })
     const button = await screen.findByRole('button', { name: "En iyi 11'i diz" })
     await waitFor(() => expect(button).toBeEnabled())
     const before = vi.mocked(endpoints.lineup).mock.calls.length
@@ -71,7 +75,7 @@ describe('useCareerSquadBuilder', () => {
   })
 
   it('slot seçilince kariyer slot sekmeleri gelir; davranışları sıfırla seçimi kapatır', async () => {
-    const { result } = renderHook(() => useCareerSquadBuilder(), { wrapper })
+    const { result } = renderHook(() => useCareerSquadBuilder(useLabBinding), { wrapper })
     await waitFor(() => expect(result.current.ws.formation?.id).toBe('4-4-2'))
     act(() => result.current.ws.select('GK', 'card'))
     expect(result.current.slotTabs.map((t) => t.id)).toContain('card')

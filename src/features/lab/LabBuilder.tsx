@@ -1,23 +1,36 @@
-import { Link } from 'react-router-dom'
-import { CareerSelect } from '../../components/CareerSelect'
+import { useEffect, useState } from 'react'
 import { ErrorBox, Spinner } from '../../components/ui'
 import { Button, Chip, Segmented, StatTile } from '../../design/components/primitives'
 import { formationName } from '../../lib/positions'
-import { DEFAULT_SETUP } from '../../state/tacticStore'
-import { pitchSlotsOf } from './pitchSlots'
-import { SquadRoleDialog, SquadWorkspaceView } from './SquadWorkspaceView'
-import { TacticCodeCard } from './TacticCodeCard'
-import type { SlotPanel } from './types'
-import { useCareerSquadBuilder } from './useCareerSquadBuilder'
-import { teamFitPct } from './useSlotFits'
+import { DEFAULT_SETUP } from '../../lib/tactic'
+import { pitchSlotsOf } from '../squad/pitchSlots'
+import { SquadRoleDialog, SquadWorkspaceView } from '../squad/SquadWorkspaceView'
+import { TacticCodeCard } from '../squad/TacticCodeCard'
+import type { SlotPanel } from '../squad/types'
+import { useCareerSquadBuilder } from '../squad/useCareerSquadBuilder'
+import { teamFitPct } from '../squad/useSlotFits'
+import { useLabBinding } from './useLabBinding'
 
 const pctText = (value?: number) => (value === undefined ? undefined : `%${value}`)
+type MarkerMode = 'card' | 'pawn'
+const MARKERS: { id: MarkerMode; label: string }[] = [{ id: 'card', label: 'Kart' }, { id: 'pawn', label: 'Piyon' }]
 
-/** v3 kariyer kadro kurucusu (/squad/builder): ortak kadro çekirdeği (08 §3 + §14-16: saha kahraman, sağda yapışkan panel). Mantık useCareerSquadBuilder'da. */
-export function CareerSquadBuilderPage() {
-  const b = useCareerSquadBuilder()
+/**
+ * Lab › Kurucu (KARIYER-UX FAZ 4a, 15 §4.3): ortak kadro çekirdeği (SquadWorkspaceView + useCareerSquadBuilder) aktif taslağa yazar (useLabBinding).
+ * Saha Cyber-Pitch, varsayılan kart, tek tıkla piyon (Q5). `initialSlot` (?slot=) slot paneli açık gelir.
+ */
+export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string; onSlotOpened?: () => void }) {
+  const b = useCareerSquadBuilder(useLabBinding)
   const { ws, views, slotTabs, setup, preset, weakReasons, autoFill, hasCareer } = b
   const { selection, selectedSlot: dialogSlot, formation } = ws
+  const [marker, setMarker] = useState<MarkerMode>('card')
+
+  useEffect(() => {
+    if (initialSlot && ws.slots.some((s) => s.slotId === initialSlot)) {
+      ws.select(initialSlot, 'card')
+      onSlotOpened?.()
+    }
+  }, [initialSlot, ws, onSlotOpened])
 
   if (b.loading) {
     return <Spinner />
@@ -33,9 +46,11 @@ export function CareerSquadBuilderPage() {
   return (
     <>
       <SquadWorkspaceView
-        title="Kariyer Kadro Kurucu"
+        title="Kurucu"
         slots={pitchSlotsOf(views)}
         eaCards
+        field="cyber"
+        marker={marker}
         selectedSlotId={dialogSlot?.slotId}
         onPickPlayer={(slotId) => ws.select(slotId, 'card')}
         onPickRole={(slotId) => ws.select(slotId, 'role')}
@@ -73,7 +88,6 @@ export function CareerSquadBuilderPage() {
         averages={ws.averages}
         sections={
           <section aria-label="Rol uyumu" className="space-y-2">
-            <CareerSelect />
             <h3 className="font-display text-lg font-semibold">Rol uyumu</h3>
             <div className="grid grid-cols-2 gap-2">
               <StatTile label="Kadro uyumu" value={pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : []))))} />
@@ -91,13 +105,13 @@ export function CareerSquadBuilderPage() {
         note={ws.note}
         actions={
           <>
+            <Segmented label="Saha görünümü" value={marker} options={MARKERS} onChange={setMarker} />
             <Button disabled={!b.canAutoFill} onClick={() => autoFill.mutate()}>
               {autoFill.isPending ? 'Diziliyor…' : "En iyi 11'i diz"}
             </Button>
             <Button variant="ghost" onClick={b.resetBehaviors}>Davranışları sıfırla</Button>
           </>
         }
-        notice={!hasCareer ? { id: 'career-login', text: <>Oyuncu atamak için <Link to="/login" className="text-accent underline">giriş yap</Link> ve bir kariyer seç; taktiği kariyersiz de kurabilirsin.</> } : undefined}
       />
       <SquadRoleDialog ws={ws} />
     </>

@@ -4,6 +4,8 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { Preset } from '../../api/types'
+import { careerStore } from '../../state/careerStore'
+import { LAB_DRAFT_LIMIT, labStore } from '../../state/labStore'
 import { tacticStore } from '../../state/tacticStore'
 import { TacticWizardPage } from './TacticWizardPage'
 
@@ -18,7 +20,7 @@ vi.mock('../../api/endpoints', () => ({ endpoints: { presets: vi.fn() } }))
 
 function Where() {
   const location = useLocation()
-  return <output data-testid="where">{location.pathname}</output>
+  return <output data-testid="where">{location.pathname + location.search}</output>
 }
 
 function renderPage() {
@@ -41,6 +43,9 @@ const next = () => fireEvent.click(screen.getByRole('button', { name: 'İleri' }
 describe('TacticWizardPage (v3 Akış)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
+    labStore.reload()
+    careerStore.set(7)
     vi.mocked(endpoints.presets).mockResolvedValue(PRESETS as never)
   })
 
@@ -64,9 +69,7 @@ describe('TacticWizardPage (v3 Akış)', () => {
     expect(screen.getByRole('radio', { name: /Kontra/ })).toBeChecked()
   })
 
-  it('Sonuç: cevaplara en yakın taktikler; "Bu taktiği kur" taktiği yazar ve mevcut yoldan kadro kurucuya geçer', async () => {
-    const set = vi.spyOn(tacticStore, 'set')
-    renderPage()
+  const toResults = async () => {
     fireEvent.click(screen.getByRole('radio', { name: /Kontra/ }))
     next()
     fireEvent.click(screen.getByRole('radio', { name: /Geride bekle/ }))
@@ -77,13 +80,32 @@ describe('TacticWizardPage (v3 Akış)', () => {
     next()
     next()
     const results = await screen.findByRole('list', { name: 'Sana en yakın taktikler' })
-    const first = within(results).getAllByRole('listitem')[0]
+    return within(results).getAllByRole('listitem')[0]
+  }
+
+  it('Sonuç: "Bu taktiği kur" yeni Lab taslağı (sihirbaz kökenli) açar, aktif yapar ve Lab kurucusuna geçer; eski depoya yazmaz', async () => {
+    const set = vi.spyOn(tacticStore, 'set')
+    renderPage()
+    const first = await toResults()
     expect(first).toHaveTextContent('Blok')
     expect(screen.queryByRole('button', { name: 'İleri' })).toBeNull()
     fireEvent.click(within(first).getByRole('button', { name: 'Bu taktiği kur' }))
-    expect(set).toHaveBeenCalledWith(expect.objectContaining({ formation: '4-4-2', presetId: 'Blok', setup: { buildUp: 'Counter', depth: 30 } }))
-    expect(screen.getByTestId('where')).toHaveTextContent('/tactics/builder')
+    const lab = labStore.get(7)
+    expect(lab.drafts).toHaveLength(1)
+    expect(lab.drafts[0]).toMatchObject({ name: 'Blok', origin: { kind: 'wizard', ref: 'Blok' }, tactic: { formation: '4-4-2', presetId: 'Blok', setup: { buildUp: 'Counter', depth: 30 } }, lineup: {} })
+    expect(lab.activeId).toBe(lab.drafts[0].id)
+    expect(set).not.toHaveBeenCalled()
+    expect(screen.getByTestId('where')).toHaveTextContent('/career/tactics-lab?sekme=kurucu')
     set.mockRestore()
+  })
+
+  it('taslak sınırı doluysa sınır mesajı, yönlendirme yok', async () => {
+    for (let i = 0; i < LAB_DRAFT_LIMIT; i += 1) labStore.create(7, { name: `T${i}`, origin: { kind: 'blank' }, tactic: { formation: '4-4-2', slots: {} }, lineup: {} })
+    renderPage()
+    fireEvent.click(within(await toResults()).getByRole('button', { name: 'Bu taktiği kur' }))
+    expect(screen.getByRole('alert')).toHaveTextContent(`Taslak sınırı (${LAB_DRAFT_LIMIT})`)
+    expect(labStore.get(7).drafts).toHaveLength(LAB_DRAFT_LIMIT)
+    expect(screen.getByTestId('where')).toHaveTextContent('/tactics/wizard')
   })
 
   it('taktik listesi alınamazsa sebep ve yeniden dene', async () => {

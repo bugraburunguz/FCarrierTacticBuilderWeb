@@ -5,7 +5,6 @@ import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CareerPlayer, Formation, StarterTactic, UserTactic } from '../../api/types'
-import { LAB_AVAILABLE } from '../../lib/features'
 import { LAB_KEY, labStore } from '../../state/labStore'
 
 const state: { main: UserTactic | null } = { main: null }
@@ -48,7 +47,7 @@ const endpoints = vi.hoisted(() => ({
 vi.mock('../../api/endpoints', () => ({ endpoints }))
 
 import { StarterTacticPanel } from './StarterTacticPanel'
-import { useMainTacticBinding } from './activeTactic'
+import { useMainTacticBinding, useMakeMainTactic } from './activeTactic'
 
 function wrapper({ children }: { children: ReactNode }) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
@@ -90,12 +89,13 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     expect(endpoints.setMainTactic).toHaveBeenCalledWith(1, 7)
   })
 
-  it('LAB_AVAILABLE false iken (FAZ 4\'e kadar) "Lab\'da düzenle" yok ve taslak oluşmaz', async () => {
-    expect(LAB_AVAILABLE).toBe(false)
-    render(<StarterTacticPanel careerId={7} />, { wrapper })
-    expect(await screen.findByRole('button', { name: 'Ana taktiğim yap' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: "Lab'da düzenle" })).toBeNull()
-    expect(labStore.get(7).drafts).toHaveLength(0)
+  it('"Lab\'da düzenle" (FAZ 4a açık) öneriden auto kökenli yeni taslak açar', async () => {
+    const onOpenLab = vi.fn()
+    render(<StarterTacticPanel careerId={7} onOpenLab={onOpenLab} />, { wrapper })
+    await userEvent.click(await screen.findByRole('button', { name: "Lab'da düzenle" }))
+    expect(labStore.get(7).drafts).toHaveLength(1)
+    expect(labStore.get(7).drafts[0].origin.kind).toBe('auto')
+    expect(onOpenLab).toHaveBeenCalledWith(labStore.get(7).drafts[0].id)
   })
 
   it('göç eden taslak varsa "Önceki taslağı ana taktik yap" kısayolu çıkar', async () => {
@@ -119,6 +119,21 @@ describe('ana taktik yokken otomatik başlangıç önerisi (D-31)', () => {
     render(<StarterTacticPanel careerId={7} />, { wrapper })
     expect(await screen.findByText('2 oyuncu artık kadroda yok, slotları boş')).toBeInTheDocument()
     expect(screen.queryByText(/otomatik dolduruldu/)).toBeNull()
+  })
+})
+
+describe('"Ana taktiğim yap" sonrası yenilenen sorgular (FAZ 4a)', () => {
+  it('main-tactic, user-tactics, lineup, starter-tactic ve Masa/Kadro rol uyumu (slot-fit) yenilenir', async () => {
+    endpoints.saveUserTactic.mockResolvedValue(saved(1, false))
+    endpoints.setMainTactic.mockResolvedValue(saved(1, true))
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const spy = vi.spyOn(client, 'invalidateQueries')
+    const { result } = renderHook(() => useMakeMainTactic(7), {
+      wrapper: ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>,
+    })
+    await act(() => result.current.mutateAsync({ slot: 1, name: 'T', tactic: { formation: '4-4-2', slots: {} }, lineup: {} }))
+    const keys = spy.mock.calls.map(([f]) => JSON.stringify((f as { queryKey: unknown }).queryKey))
+    expect(keys).toEqual(expect.arrayContaining([JSON.stringify(['main-tactic', 7]), JSON.stringify(['user-tactics', 7]), JSON.stringify(['lineup', 7]), JSON.stringify(['starter-tactic', 7]), JSON.stringify(['slot-fit'])]))
   })
 })
 

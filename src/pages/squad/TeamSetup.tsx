@@ -1,12 +1,12 @@
 import { Check, X } from 'lucide-react'
 import { useMutation } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { endpoints } from '../api/endpoints'
-import { useAuth } from '../auth/AuthContext'
-import type { WeaponState } from '../api/types'
-import { depthBand, type BuildUp } from '../lib/wizard'
-import { DEFAULT_SETUP, tacticStore, useTactic } from '../state/tacticStore'
-import { BadgeDot, Button, Card, ErrorBox, Pill } from './ui'
+import { endpoints } from '../../api/endpoints'
+import { useAuth } from '../../auth/AuthContext'
+import type { WeaponState } from '../../api/types'
+import { depthBand, type BuildUp } from '../../lib/wizard'
+import { DEFAULT_SETUP, tacticStore, useTactic } from '../../state/tacticStore'
+import { BadgeDot, Button, Card, ErrorBox, Pill } from '../../components/ui'
 
 const BUILD_UP: { value: BuildUp; label: string; hint: string }[] = [
   { value: 'Short', label: 'Kısa pas', hint: 'Defanstan kısa paslarla kur' },

@@ -168,7 +168,7 @@ await load.close()
 await browser.close()
 
 writeFileSync(file('gates-report.json'), JSON.stringify({ careers: { none: none.id, main: withMain.id }, rateLimit: { bucket: 'api', perMinute: 300, loads, got429: statuses }, report }, null, 2))
-const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0) || r.labEntries > 0
+const bad = report.filter((r) => r.overflow || r.axeSeriousCritical || r.problems.length || (r.text && r.text.belowCount > 0)
   || (r.redirectedTo !== undefined && r.redirectedTo !== '/career/squad?sekme=liste'))
 console.log(`çekim ${report.length}; sorunlu ${bad.length}`)
 bad.forEach((r) => console.log(' ✗', r.shot, JSON.stringify({ overflow: r.overflow, axe: r.axeNodes, problems: r.problems?.slice(0, 4), below: r.text?.below?.slice?.(0, 3), labEntries: r.labEntries, redirectedTo: r.redirectedTo })))

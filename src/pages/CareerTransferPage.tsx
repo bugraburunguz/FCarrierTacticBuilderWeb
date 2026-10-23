@@ -10,7 +10,7 @@ import { Button, Card, EmptyState, Field, HelpPopover, Skeleton, Stat } from '..
 import { RecommendationPanel } from '../features/recommend/RecommendationPanel'
 import { FitBadge } from '../components/card/FitBadge'
 import { Chip } from '../design/components/primitives'
-import { useCareerBinding } from '../features/squad/useCareerBinding'
+import { useCareerBinding } from './squad/useCareerBinding'
 import { useAutoLineup } from '../features/squad/useAutoLineup'
 import { useSlotFits } from '../features/squad/useSlotFits'
 import { useSquadWorkspace } from '../features/squad/useSquadWorkspace'

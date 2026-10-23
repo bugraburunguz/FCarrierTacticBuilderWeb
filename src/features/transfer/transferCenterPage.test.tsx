@@ -12,7 +12,7 @@ vi.mock('../../api/endpoints', () => {
   const none = () => Promise.resolve([])
   return {
     endpoints: {
-      careers: vi.fn(), squad: vi.fn(), lineup: vi.fn(() => Promise.resolve({ slots: [] })), playerTags: vi.fn(), shortlist: vi.fn(), shortlistAdd: vi.fn(() => Promise.resolve()),
+      careers: vi.fn(), squad: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), lineup: vi.fn(() => Promise.resolve({ slots: [] })), playerTags: vi.fn(), shortlist: vi.fn(), shortlistAdd: vi.fn(() => Promise.resolve()),
       shortlistRemove: vi.fn(() => Promise.resolve()), formations: vi.fn(), roles: none, eaRoles: none, resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })),
       fitRole: vi.fn(), careerRecommendations: vi.fn(), creditCosts: vi.fn(() => Promise.resolve({ recommend: 3, squadFit: 5, advisor: 8 })), playerFacets: vi.fn(),
       recommendTactic: vi.fn(), previewSlot: vi.fn(), development: vi.fn(), fitSquad: vi.fn(),
@@ -49,7 +49,13 @@ beforeEach(() => {
   vi.mocked(endpoints.careers).mockResolvedValue([{ id: 1, clubName: 'Crewe', budgetEur: 5_000_000 }] as never)
   vi.mocked(endpoints.formations).mockResolvedValue([{ id: '4-3-3', name: '4-3-3', slots: [slot('CM1'), slot('CM2'), slot('CM3')] }] as never)
   vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2), member(3), member(4, { age: 32, valueEur: 3_000_000, contractUntil: '2027-08-15' }), member(5, { age: 19, overall: 58, potential: 76 })] as never)
-  lineupStore.set(1, { CM1: 1, CM2: 2, CM3: 3 })
+  // KARIYER-UX FAZ 4a: İhtiyaçlar ana taktikten (15 §4.4); eski tek kopya diziliş deposu okunmaz.
+  lineupStore.set(1, { CM1: 3, CM2: 3, CM3: 3 })
+  vi.mocked(endpoints.mainTactic).mockResolvedValue({
+    slot: 1, careerId: 1, name: 'Ana', formation: '4-3-3', buildUp: 'Balanced', defensiveApproach: null, lineHeight: null, eaCode: 'X', sourceReplicaId: null,
+    slots: ['CM1', 'CM2', 'CM3'].map((s) => ({ slot: s, position: 'CM', roleId: 'box_to_box_balanced', tags: [] })), main: true, lineup: { CM1: 1, CM2: 2, CM3: 3 },
+    depth: 50, presetId: null, updatedAt: '2026-10-20T10:00:00Z', lineupDropped: 0,
+  } as never)
   vi.mocked(endpoints.fitRole).mockReset().mockImplementation(((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, playerName: `Oyuncu ${b.playerId}`, roleId: 'box_to_box_balanced', roleName: 'Box-to-Box (Balanced)', projectedRating: 70, outOfPosition: false, reasons: [], weaponChecks: [], ...FITS[b.playerId] } })) as never)
   vi.mocked(endpoints.shortlist).mockReset().mockResolvedValue([])
   vi.mocked(endpoints.shortlistAdd).mockClear()
