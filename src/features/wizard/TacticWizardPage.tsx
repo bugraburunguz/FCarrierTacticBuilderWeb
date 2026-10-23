@@ -8,8 +8,11 @@ import { SetupChips } from '../../components/SetupChips'
 import { HelpPopover } from '../../components/ui'
 import { Button, Chip, ErrorState, Skeleton } from '../../design/components/primitives'
 import { DEFAULT_ANSWERS, recommend, type WizardAnswers } from '../../lib/wizard'
-import { tacticFromPreset, WIZARD_QUESTIONS, WIZARD_RESULT_PATH, type WizardQuestion } from '../../lib/wizardQuestions'
-import { tacticStore } from '../../state/tacticStore'
+import { tacticFromPreset, WIZARD_QUESTIONS, type WizardQuestion } from '../../lib/wizardQuestions'
+import { useActiveCareerId } from '../../state/careerStore'
+import { labStore } from '../../state/labStore'
+
+const LAB_BUILDER_PATH = '/career/tactics-lab?sekme=kurucu'
 
 const STEPS = [...WIZARD_QUESTIONS.map((q) => q.short), 'Sonuç']
 const RESULT_STEP = WIZARD_QUESTIONS.length
@@ -94,10 +97,12 @@ function Results({ answers, onApply }: { answers: WizardAnswers; onApply: (prese
 
 /**
  * v3 taktik sihirbazı (/tactics/wizard, V3-07b; 11 §9 Akış şablonu): ortada tek cam panel, adım göstergesi, her adımda tek karar, geri/ileri.
- * Sorular ve sonuç v2 ile aynı (lib/wizardQuestions, lib/wizard); seçilen taktik mevcut yoldan (/tactics/builder → kadro kurucu) açılır.
+ * Sorular ve sonuç v2 ile aynı (lib/wizardQuestions, lib/wizard); seçilen taktik yeni Lab taslağı olarak Lab kurucusunda açılır.
  */
 export function TacticWizardPage() {
   const navigate = useNavigate()
+  const careerId = useActiveCareerId()
+  const [message, setMessage] = useState<string>()
   const [answers, setAnswers] = useState<WizardAnswers>(DEFAULT_ANSWERS)
   const [step, setStep] = useState(0)
   const heading = useRef<HTMLHeadingElement>(null)
@@ -112,9 +117,19 @@ export function TacticWizardPage() {
     heading.current?.focus()
   }, [step])
 
+  // KARIYER-UX 4a kapanışı: "Uygula" yeni Lab taslağı açar (aktif olur) ve Lab kurucusuna geçer; eski tek kopya depoya yazılmaz.
+  // Sınır doluysa mesaj gösterilir ve yönlendirme yapılmaz. Diziliş boş: kurucu ilk açılışta kadrodan dizer.
   function apply(preset: Preset) {
-    tacticStore.set(tacticFromPreset(preset))
-    navigate(WIZARD_RESULT_PATH)
+    if (careerId === undefined) {
+      setMessage('Taslak açmak için önce bir kariyer seç.')
+      return
+    }
+    const created = labStore.create(careerId, { name: preset.name, origin: { kind: 'wizard', ref: preset.id }, tactic: tacticFromPreset(preset), lineup: {} })
+    if (!created.ok) {
+      setMessage(created.message)
+      return
+    }
+    navigate(LAB_BUILDER_PATH)
   }
 
   return (
@@ -137,6 +152,7 @@ export function TacticWizardPage() {
           )}
         </div>
         {question ? <QuestionStep question={question} answers={answers} onAnswer={setAnswers} /> : <Results answers={answers} onApply={apply} />}
+        {message && <p role="alert" className="text-sm text-bad">{message}</p>}
         <div className="flex items-center justify-between gap-2 border-t border-[var(--glass-border)] pt-3">
           <Button variant="ghost" disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}>Geri</Button>
           <span className="text-xs text-ink-2">Adım {step + 1} / {STEPS.length}</span>

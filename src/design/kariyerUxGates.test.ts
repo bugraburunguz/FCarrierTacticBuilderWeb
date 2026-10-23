@@ -11,10 +11,9 @@ const ROOT = join(process.cwd(), 'src')
 const V3_DIRS = ['features', 'components', 'design', 'lib']
 const LEGACY = /from\s+['"][./]*(?:\.\.\/)*state\/(tacticStore|lineupStore)['"]/
 
-// FAZ 4a: kalanlar 4b'nin (Sihirbaz ve Kod sekmeleri).
+// FAZ 4a: kalan 4b'nin (Kod sekmesi). Sihirbaz 4a kapanışında taslağa yazmaya geçti.
 const ALLOWED_UNTIL_FAZ_4 = new Set([
   'components/EaTacticCode.tsx',
-  'features/wizard/TacticWizardPage.tsx',
 ])
 
 function files(dir: string): string[] {

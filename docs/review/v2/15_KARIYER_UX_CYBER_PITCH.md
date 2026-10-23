@@ -134,7 +134,7 @@ Kaynak: kod okuması, 2026-10-22.
 - Transfer
 - Oyuncular (sekmeler: Oyuncu ara, Wonderkids, Karşılaştır)
 - Mobil "Daha fazla": Gelişim, Takımlar, İçe aktar, Yeni kariyer.
-- Mobil alt çubuk: Masa · Kadro · Lab · Transfer · Oyuncular (5).
+- Mobil alt çubuk: Masa · Kadro · Lab · Transfer · Oyuncu (5; "Oyuncular" mobilde kısa etiketle, 375'te kelime bölünmesin diye — FAZ 4a).
 
 ---
 
@@ -872,7 +872,7 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 - `POST /fit/squad` bunun yerine geçemez: ücretli (`CreditGuard`, SQUAD_FIT), kendi atamasını çözer (kullanıcının dizilişini kilitlemez) ve kurallar/NLG üretir.
 - `POST /fit/lineup` + `locked` = mevcut 11'in tamamı: tek istekte aynı motorla (kariyer v3) slot başına `levelFit`, `fitLabel`, rozet döner; **eksik: `reasons`** (`withoutPaidInsights` atıyor) — kurucunun "en zayıf" nedeni ve Masa `worstReason` bunu kullanıyor. `/fit/role` nedenleri zaten ücretsiz verdiği için 4b'de `lineup` yanıtına `reasons` eklenip 11 istek 1'e indirilebilir (API CONTRACT CHANGE, ayrı hız sınırı sayacı yok).
 
-**Bilinen boşluk (4b).** v3 Sihirbaz "Uygula" hâlâ eski tek kopya taktik deposuna yazıp kurucuya gidiyor; kurucu artık Lab'da ve taslak okuduğu için sihirbaz sonucu Lab'da görünmez. 4b'de "Uygula → yeni taslak" ile kapanır.
+**Sihirbaz boşluğu (4a kapanışında kapandı).** v3 Sihirbaz "Uygula" artık yeni Lab taslağı açar (`origin: {kind: 'wizard', ref: presetId}`, aktif) ve `/career/tactics-lab?sekme=kurucu`'ya gider; sınır doluysa mesaj, yönlendirme yok. Eski depoya yazılmaz; izinli liste 2 → 1 (`EaTacticCode`, 4b).
 
 **Ekranlar** `screens/KARIYER-UX-4a/` (`scripts/lab-shots.mjs`, üretim derlemesi, durumlar arayüzden): taslak yok / kirli taslak / ana taktik yapıldı × 375/768/1280 × koyu/açık = 18 çekim, sorun 0 (taşma, axe serious/critical, konsol/ağ), en küçük yazı 11px. Q17/Q18 Lab (`scripts/q17-lab.mjs`, 29 formasyon × 375/768/1280 × kart + piyon = 174 ölçüm): sorun 0; en küçük kart 48px, kart içi yazı 11px, piyon dokunma alanı 44px. pawn-font-gate ≥ 11px.
 
