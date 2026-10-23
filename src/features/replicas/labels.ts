@@ -1,15 +1,31 @@
-import type { ReplicaApproach, ReplicaBuildUp, ReplicaCategory, ReplicaSlotState } from '../../api/types'
+import type { ReplicaApproach, ReplicaBuildUp, ReplicaCategory, ReplicaLeague, ReplicaSlotState } from '../../api/types'
 
-/** Replika ekranlarının tek sözlüğü (kategori, build-up, hat, slot durumu). */
-export const CATEGORY_ORDER: ReplicaCategory[] = ['UCL_WINNER', 'LEGENDARY_SQUAD', 'LEGENDARY_COACH', 'UNDERRATED_COACH', 'TURKISH_BIG4', 'TURKISH_CHAMPION']
+/** Replika ekranlarının tek sözlüğü (kategori, lig, build-up, hat, slot durumu). */
+export const CATEGORY_ORDER: ReplicaCategory[] = ['CURRENT', 'UCL_WINNER', 'LEGENDARY_SQUAD', 'LEGENDARY_COACH', 'UNDERRATED_COACH', 'TURKISH_BIG4', 'TURKISH_CHAMPION']
 
 export const CATEGORY_LABEL: Record<ReplicaCategory, string> = {
+  CURRENT: 'Güncel',
   UCL_WINNER: 'UCL şampiyonu',
   LEGENDARY_SQUAD: 'Efsane kadro',
   LEGENDARY_COACH: 'Efsane hoca',
   UNDERRATED_COACH: 'Gözden kaçan hoca',
   TURKISH_BIG4: 'Türk 4 büyükler',
   TURKISH_CHAMPION: 'Türk şampiyonlar',
+}
+
+export const LEAGUE_LABEL: Record<ReplicaLeague, string> = {
+  TR_SUPER_LIG: 'Süper Lig',
+  EN_PREMIER_LEAGUE: 'Premier League',
+  EN_CHAMPIONSHIP: 'Championship',
+  ES_LALIGA: 'LaLiga',
+  IT_SERIE_A: 'Serie A',
+  IT_SERIE_B: 'Serie B',
+  DE_BUNDESLIGA: 'Bundesliga',
+  FR_LIGUE_1: 'Ligue 1',
+  NL_EREDIVISIE: 'Eredivisie',
+  PT_LIGA: 'Liga Portugal',
+  SCO_PREMIERSHIP: 'Scottish Premiership',
+  AT_BUNDESLIGA: 'Avusturya Bundesliga',
 }
 
 export const BUILD_UP_LABEL: Record<ReplicaBuildUp, string> = {

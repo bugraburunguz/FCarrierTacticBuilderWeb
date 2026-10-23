@@ -1276,7 +1276,21 @@ export interface CreditCosts {
 
 // ── Replikalar (E3-9 / REP-04, REP-07) ────────────────────────────────────────────────────────────────────────────────
 
-export type ReplicaCategory = 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaCategory = 'CURRENT' | 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+/** Kulübün o sezon oynadığı lig (REP-c). */
+export type ReplicaLeague =
+  | 'TR_SUPER_LIG'
+  | 'EN_PREMIER_LEAGUE'
+  | 'EN_CHAMPIONSHIP'
+  | 'ES_LALIGA'
+  | 'IT_SERIE_A'
+  | 'IT_SERIE_B'
+  | 'DE_BUNDESLIGA'
+  | 'FR_LIGUE_1'
+  | 'NL_EREDIVISIE'
+  | 'PT_LIGA'
+  | 'SCO_PREMIERSHIP'
+  | 'AT_BUNDESLIGA'
 export type ReplicaBuildUp = 'SHORT_PASSING' | 'BALANCED' | 'COUNTER'
 export type ReplicaApproach = 'DEEP' | 'BALANCED' | 'HIGH' | 'AGGRESSIVE'
 
@@ -1294,6 +1308,7 @@ export interface ReplicaSummary {
   club: string
   coach: string
   season: string
+  league: ReplicaLeague
   formationId: string
   eaFormation: string
   buildUp: ReplicaBuildUp
@@ -1350,6 +1365,7 @@ export interface ReplicaDetail {
   club: string
   coach: string
   season: string
+  league: ReplicaLeague
   honours?: string[]
   whyIconic?: string
   realShape?: { inPossession?: string; outOfPossession?: string; keyMechanisms?: string[] }
