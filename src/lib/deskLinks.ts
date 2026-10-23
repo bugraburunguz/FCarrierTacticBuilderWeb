@@ -15,9 +15,9 @@ export const deskLink = {
 }
 
 /**
- * GEÇİCİ eşleme — FAZ 4-5 (Lab, Transfer parametreleri) gelince kaldırılacak. Kadro eşlemesi FAZ 3'te kalktı (/career/squad gerçek sayfa, `grup` okunur).
+ * GEÇİCİ eşleme — FAZ 5 (Transfer parametreleri) gelince kaldırılacak. Kadro (FAZ 3) ve Lab (FAZ 4a: /career/tactics-lab gerçek sayfa, `slot` okunur) eşlemeleri kalktı.
  * Yeni sayfalar yokken §4.1 bağlantısını bugünkü sayfanın okuduğu rota ve parametreye çevirir; okunmayan parametre zarar vermediği için kalır.
- * Bugün karşılanmayanlar: Transfer `sekme`, `oyuncu`; Lab `sekme`, `slot` (kurucu slot seçmez).
+ * Bugün karşılanmayanlar: Transfer `sekme`, `oyuncu`.
  */
 export function currentRoute(to: string): string {
   const [path, search = ''] = to.split('?')
@@ -25,10 +25,6 @@ export function currentRoute(to: string): string {
   if (path === '/career/transfer' && params.has('rol')) {
     params.set('role', params.get('rol')!)
     return `${path}?${params}`
-  }
-  if (path === '/career/tactics-lab') {
-    params.delete('sekme')
-    return params.size ? `/squad/builder?${params}` : '/squad/builder'
   }
   return to
 }

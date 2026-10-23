@@ -8,7 +8,9 @@ import { describe, expect, it } from 'vitest'
  * V3-07b: sayfa mantığı mod başına tek hook'ta (useCareerSquadBuilder / useUtSquadBuilder); v2 ve v3 sayfası aynı hook'u kullanır.
  */
 const HOOKS = { career: 'src/features/squad/useCareerSquadBuilder.tsx', ut: 'src/features/squad/useUtSquadBuilder.tsx' }
-const V3_PAGES = { career: 'src/features/squad/CareerSquadBuilderPage.tsx', ut: 'src/features/squad/UtSquadBuilderPage.tsx' }
+// KARIYER-UX FAZ 4a: v3 kariyer kurucusu Taktik Lab'ın Kurucu sekmesi (features/lab/LabBuilder).
+const V3_PAGES = { career: 'src/features/lab/LabBuilder.tsx', ut: 'src/features/squad/UtSquadBuilderPage.tsx' }
+const V3_SQUAD = { career: '../squad/', ut: './' }
 const V2_PAGES = { career: 'src/pages/SquadBuilderPage.tsx', ut: 'src/pages/UtSquadPage.tsx' }
 const ALL = [...Object.values(HOOKS), ...Object.values(V3_PAGES), ...Object.values(V2_PAGES)]
 const FORBIDDEN = ['endpoints.resolveTactic', 'endpoints.exportTacticCode', 'endpoints.importTacticCode', 'endpoints.formations', 'endpoints.roles', 'utSquadStore.set', 'tacticStore.set', 'lineupStore.set']
@@ -21,11 +23,11 @@ describe('Q16: kadro sayfaları çekirdeği kullanır', () => {
 
   it.each(['career', 'ut'] as const)('%s: v2 ve v3 sayfası aynı hook\'u ve aynı taktik kodu bileşenini kullanır', (mode) => {
     const hookName = mode === 'career' ? 'useCareerSquadBuilder' : 'useUtSquadBuilder'
-    expect(read(V3_PAGES[mode])).toContain(`from './${hookName}'`)
+    expect(read(V3_PAGES[mode])).toContain(`from '${V3_SQUAD[mode]}${hookName}'`)
     expect(read(V2_PAGES[mode])).toContain(`from '../features/squad/${hookName}'`)
-    expect(read(V3_PAGES[mode])).toContain("from './TacticCodeCard'")
+    expect(read(V3_PAGES[mode])).toContain(`from '${V3_SQUAD[mode]}TacticCodeCard'`)
     expect(read(V2_PAGES[mode])).toContain("from '../features/squad/TacticCodeCard'")
-    expect(read(V3_PAGES[mode])).toContain("from './SquadWorkspaceView'")
+    expect(read(V3_PAGES[mode])).toContain(`from '${V3_SQUAD[mode]}SquadWorkspaceView'`)
   })
 
   it.each(ALL)('%s çekirdeğin işini kendi içinde yapmaz', (file) => {

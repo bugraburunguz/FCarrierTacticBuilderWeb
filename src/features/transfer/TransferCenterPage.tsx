@@ -15,10 +15,7 @@ import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
 import { LeagueLevelChip } from '../careerPlayers/LeagueLevelChip'
 import { RecommendationPanel } from '../recommend/RecommendationPanel'
-import { useAutoLineup } from '../squad/useAutoLineup'
-import { useCareerBinding } from '../squad/useCareerBinding'
-import { useSlotFits } from '../squad/useSlotFits'
-import { useSquadWorkspace } from '../squad/useSquadWorkspace'
+import { useMainTacticFits } from '../career/useMainTacticFits'
 import { budgetAfterPurchase, contractMonthsLeft, shortlistCost, transferNeeds } from './transferPlan'
 
 const STALE_MS = 120_000
@@ -89,10 +86,8 @@ export function TransferCenterPage() {
   const id = career?.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const facets = useQuery({ queryKey: ['player-facets', id], queryFn: () => endpoints.playerFacets(id!), enabled: id !== undefined, staleTime: STALE_MS })
-  const { binding, playerById } = useCareerBinding(id, squad.data)
-  const ws = useSquadWorkspace('career', binding)
-  const { rows: fitRows, pending: fitsPending } = useSlotFits(ws, playerById)
-  useAutoLineup(ws, id, squad.data?.length ?? 0)
+  // KARIYER-UX FAZ 4a (15 §4.4): İhtiyaçlar ana taktikten (yoksa başlangıç önerisi); eski tek kopya diziliş deposu ve taslak okunmaz.
+  const { rows: fitRows, pending: fitsPending } = useMainTacticFits(id, squad.data)
   const shortlist = useQuery({ queryKey: ['shortlist', id], queryFn: () => endpoints.shortlist(id!), enabled: id !== undefined, retry: false })
   const tagList = useQuery({ queryKey: ['tags', id], queryFn: () => endpoints.playerTags(id!), enabled: id !== undefined, retry: false })
 

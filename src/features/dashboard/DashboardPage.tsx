@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, ArrowRightLeft, HeartPulse, Repeat, Search } from 'lucide-react'
+import { AlertTriangle, ArrowRightLeft, FlaskConical, HeartPulse, Repeat, Search } from 'lucide-react'
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerSnapshot, RosterEvent } from '../../api/types'
 import { CareerSelect } from '../../components/CareerSelect'
 import { Chip, EmptyState, Panel, Skeleton, SourceTag, StatTile, TabPanel, Tabs, type DataSource, type StatDelta } from '../../design/components/primitives'
 import { currentRoute, deskLink } from '../../lib/deskLinks'
 import { EVENT_LABEL, SNAPSHOT_LABEL } from '../../lib/deskRules'
-import { LAB_AVAILABLE } from '../../lib/features'
 import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
 import { droppedText } from '../career/activeTactic'
@@ -54,7 +53,7 @@ function FitGauge({ pct }: { pct: number }) {
 
 function NoMainTactic() {
   return (
-    <EmptyState action={LAB_AVAILABLE ? <Link to={currentRoute(deskLink.lab())} className={SECONDARY}>Lab'a git</Link> : undefined}>
+    <EmptyState action={<Link to={deskLink.lab()} className={SECONDARY}>Lab'a git</Link>}>
       Ana taktik seçilmedi
     </EmptyState>
   )
@@ -84,6 +83,7 @@ function PastTimeline({ events, snapshots }: { events: RosterEvent[]; snapshots:
  */
 export function DashboardPage() {
   const careerId = useActiveCareerId()
+  const navigate = useNavigate()
   const { tab, setTab } = useTabParam(TABS)
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
@@ -191,7 +191,7 @@ export function DashboardPage() {
           </div>
 
           {!main.mainLoading && !isMain && (
-            <StarterTacticPanel careerId={career.id} />
+            <StarterTacticPanel careerId={career.id} onOpenLab={() => navigate(`${deskLink.lab()}?sekme=kurucu`)} />
           )}
 
           <Panel title="Zayıf halkalar" label="Zayıf halkalar" source={decision}>
@@ -209,9 +209,9 @@ export function DashboardPage() {
                     <span className="text-sm font-semibold">{w.labelText}</span>
                     {w.reason && <span className="text-sm text-ink-2">{w.reason}</span>}
                     <span className="mt-auto flex flex-wrap gap-2">
-                      {/* WRONG_ROLE: birincil eylem "Rolü değiştir" (Lab, FAZ 4); o zamana kadar yalnız ikincil "Transferde aday bul". */}
-                      {w.primary === 'ROLE' && LAB_AVAILABLE && (
-                        <Link to={currentRoute(deskLink.lab(w.slotId))} data-variant="primary" className={PRIMARY}>
+                      {/* WRONG_ROLE: birincil "Rolü değiştir" (Lab'da ana taktikten yeni taslak, slot seçili), ikincil aday. WEAK: birincil aday, ikincil "Lab'da dene". */}
+                      {w.primary === 'ROLE' && (
+                        <Link to={deskLink.lab(w.slotId)} data-variant="primary" className={PRIMARY}>
                           <Repeat size={14} aria-hidden="true" />Rolü değiştir
                         </Link>
                       )}
@@ -219,6 +219,11 @@ export function DashboardPage() {
                         className={w.primary === 'TRANSFER' ? PRIMARY : SECONDARY}>
                         <Search size={14} aria-hidden="true" />Transferde aday bul
                       </Link>
+                      {w.primary === 'TRANSFER' && (
+                        <Link to={deskLink.lab(w.slotId)} data-variant="secondary" className={SECONDARY}>
+                          <FlaskConical size={14} aria-hidden="true" />Lab'da dene
+                        </Link>
+                      )}
                     </span>
                   </li>
                 ))}

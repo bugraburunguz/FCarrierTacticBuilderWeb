@@ -4,27 +4,28 @@ import { activeNav, CAREER_MORE, mobileBar, NAV, UT_NAV, navFor } from './navCon
 describe('v3 kariyer menüsü tek (V3-06d)', () => {
   const career = navFor('career', true, true)
 
-  it('sıra: Masa · Oyuncular · Taktik & Kadro · Transfer · Gelişim · Takımlar · İçe aktar; üst sekme yok', () => {
-    expect(career.map((g) => g.label)).toEqual(['Masa', 'Oyuncular', 'Taktik & Kadro', 'Transfer', 'Gelişim', 'Takımlar', 'İçe aktar'])
+  it('KARIYER-UX FAZ 4a sıra: Masa · Kadro · Taktik Lab · Transfer · Oyuncular, sonra Gelişim · Takımlar · İçe aktar', () => {
+    expect(career.map((g) => g.label)).toEqual(['Masa', 'Kadro', 'Taktik Lab', 'Transfer', 'Oyuncular', 'Gelişim', 'Takımlar', 'İçe aktar'])
     expect(career.find((g) => g.to === '/career/dashboard')?.tabs).toBeUndefined()
+    expect(career.find((g) => g.label === 'Kadro')?.tabs).toBeUndefined()
   })
 
   it.each([
     ['/career/dashboard', 'Masa'], ['/career/desk', 'Masa'], ['/career/new', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'],
     ['/players', 'Oyuncular'], ['/players/12', 'Oyuncular'], ['/wonderkids', 'Oyuncular'], ['/compare', 'Oyuncular'],
-    ['/squad/builder', 'Taktik & Kadro'], ['/squad', 'Taktik & Kadro'], ['/career/squad', 'Taktik & Kadro'], ['/tactics/wizard', 'Taktik & Kadro'], ['/replicas/3', 'Taktik & Kadro'],
+    ['/career/squad', 'Kadro'],
+    ['/career/tactics-lab', 'Taktik Lab'], ['/squad/builder', 'Taktik Lab'], ['/tactics/wizard', 'Taktik Lab'], ['/replicas/3', 'Taktik Lab'],
     ['/teams', 'Takımlar'], ['/career/import', 'İçe aktar'],
   ])('%s → %s aktif', (path, label) => {
     expect(activeNav(career, path)?.label).toBe(label)
   })
 
-  it('mobil alt çubuk en çok 5: Masa, Oyuncular, Kadro, Transfer + Daha fazla (Gelişim, Takımlar, İçe aktar, Yeni kariyer)', () => {
+  it('mobil alt çubuk 5 öğe: Masa, Kadro, Lab, Transfer, Oyuncular + Daha fazla (Gelişim, Takımlar, İçe aktar, Yeni kariyer)', () => {
     const bar = mobileBar('career', career)
-    expect(bar.items.map((g) => g.mobileLabel ?? g.label)).toEqual(['Masa', 'Oyuncular', 'Kadro', 'Transfer'])
-    // KARIYER-UX FAZ 3: "Kadro" yeni Kadro Analizi sayfasına gider (mobil öğe ve sayfa içi ilk sekme).
-    const squadGroup = career.find((g) => g.mobileLabel === 'Kadro')!
-    expect(squadGroup.to).toBe('/career/squad')
-    expect(squadGroup.tabs?.find((t) => t.label === 'Kadro')?.to).toBe('/career/squad')
+    expect(bar.items.map((g) => g.mobileLabel ?? g.label)).toEqual(['Masa', 'Kadro', 'Lab', 'Transfer', 'Oyuncu'])
+    expect(career.find((g) => g.label === 'Kadro')?.to).toBe('/career/squad')
+    expect(career.find((g) => g.label === 'Taktik Lab')?.to).toBe('/career/tactics-lab')
+    expect(career.find((g) => g.label === 'Taktik Lab')?.tabs?.map((t) => t.to)).toEqual(['/career/tactics-lab', '/tactics/wizard', '/replicas'])
     expect(bar.more.map((g) => g.label)).toEqual(['Gelişim', 'Takımlar', 'İçe aktar', 'Yeni kariyer'])
     expect(CAREER_MORE.map((g) => g.to)).toEqual(['/career/new'])
   })

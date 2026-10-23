@@ -100,14 +100,16 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(cards[0]).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-CM2&pos=CM&rol=box_to_box_balanced&role=box_to_box_balanced')
   })
 
-  it('WRONG_ROLE kartı: "Rolü değiştir" FAZ 4\'e kadar yok, aday bulma ikincil; WEAK kartında aday bulma birincil; Lab hiç yok', async () => {
+  it('WRONG_ROLE kartı: birincil "Rolü değiştir" (Lab, slot seçili), ikincil aday; WEAK kartı: birincil aday, ikincil "Lab\'da dene"', async () => {
     renderPage()
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
     const [wrongRole, weakCard] = await within(weak).findAllByRole('listitem')
-    expect(within(wrongRole).queryByRole('link', { name: /Rolü değiştir/ })).toBeNull()
+    const change = within(wrongRole).getByRole('link', { name: /Rolü değiştir/ })
+    expect(change).toHaveAttribute('data-variant', 'primary')
+    expect(change).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu&slot=CM2')
     expect(within(wrongRole).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('data-variant', 'secondary')
     expect(within(weakCard).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('data-variant', 'primary')
-    expect(screen.queryByText(/Lab'd|Lab'a/)).toBeNull()
+    expect(within(weakCard).getByRole('link', { name: /Lab'da dene/ })).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu&slot=CM1')
   })
 
   it('"Bu dönemin 3 işi" Masa\'nın en üstünde; iş başına kural kaynağı etiketi', async () => {
@@ -140,11 +142,11 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect((await screen.findAllByText('Otomatik öneri · ana taktik değil')).length).toBeGreaterThan(0)
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
     expect(within(weak).getByText('Ana taktik seçilmedi')).toBeInTheDocument()
-    expect(within(weak).queryByRole('link', { name: "Lab'a git" })).toBeNull()
+    expect(within(weak).getByRole('link', { name: "Lab'a git" })).toHaveAttribute('href', '/career/tactics-lab')
     // 3 iş başlangıç önerisine göre hesaplanır ve "Otomatik öneri" etiketi taşır.
     const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
     await waitFor(() => expect(jobs.querySelector('header [data-source="auto"]')).not.toBeNull())
-    expect(screen.queryByRole('button', { name: "Lab'da düzenle" })).toBeNull()
+    expect(screen.getByRole('button', { name: "Lab'da düzenle" })).toBeInTheDocument()
   })
 
   it('başlangıç önerisi hata verirse istek döngüye girmez (panel bağlanıp sökülmez)', async () => {

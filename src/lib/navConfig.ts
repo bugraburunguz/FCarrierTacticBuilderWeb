@@ -14,14 +14,30 @@ export interface NavGroup {
 }
 
 /**
- * v3 kariyer menüsü (V3-06d): tek menü — masaüstünde sol ray, mobilde alt çubuk (en çok 5: dördü + "Daha fazla"). Üstte kariyer sekmeleri yok;
- * "Yeni kariyer" Masa'daki kariyer seçicinin yanında (ve mobil "Daha fazla" sheet'inde). Oyuncular ve Taktik & Kadro alt sekmeleri sayfa içi.
+ * v3 kariyer menüsü (V3-06d, KARIYER-UX FAZ 4a §3): Masa · Kadro · Taktik Lab · Transfer · Oyuncular; masaüstünde sol ray, mobilde alt çubukta bu 5 öğe
+ * + "Daha fazla" (Gelişim, Takımlar, İçe aktar, Yeni kariyer). Üstte kariyer sekmeleri yok; Oyuncular ve Taktik Lab alt sekmeleri sayfa içi.
+ * Eski kurucu/sihirbaz adresleri (/squad/builder, /tactics, /fit) Taktik Lab'da sayılır; Kadro yalnız /career/squad (/squad v3'te hemen yönlenir).
  */
 export const CAREER_NAV: NavGroup[] = [
   { to: '/career/dashboard', label: 'Masa', match: ['/career/dashboard', '/career/desk', '/career/new'] },
+  { to: '/career/squad', label: 'Kadro', match: ['/career/squad'] },
+  {
+    to: '/career/tactics-lab',
+    label: 'Taktik Lab',
+    mobileLabel: 'Lab',
+    match: ['/career/tactics-lab', '/tactics', '/squad', '/fit', '/recommend', '/scouting', '/replicas'],
+    tabs: [
+      { to: '/career/tactics-lab', label: 'Kurucu' },
+      { to: '/tactics/wizard', label: 'Sihirbaz' },
+      { to: '/replicas', label: 'Replikalar' },
+    ],
+  },
+  { to: '/career/transfer', label: 'Transfer', match: ['/career/transfer'] },
   {
     to: '/players',
     label: 'Oyuncular',
+    // 375'te 6 hücreli çubukta "Oyuncular" kelime ortasından bölünüyordu (FAZ 4a ekranları); mobilde kısa etiket (Taktik Lab → Lab gibi).
+    mobileLabel: 'Oyuncu',
     match: ['/players', '/compare', '/wonderkids'],
     tabs: [
       { to: '/players', label: 'Oyuncu ara' },
@@ -29,20 +45,6 @@ export const CAREER_NAV: NavGroup[] = [
       { to: '/compare', label: 'Karşılaştır' },
     ],
   },
-  {
-    // KARIYER-UX FAZ 3: "Kadro" yeni Kadro Analizi sayfasına (/career/squad); kurucu/sihirbaz FAZ 4'te Taktik Lab'a taşınır.
-    to: '/career/squad',
-    label: 'Taktik & Kadro',
-    mobileLabel: 'Kadro',
-    match: ['/career/squad', '/tactics', '/squad', '/recommend', '/scouting', '/replicas'],
-    tabs: [
-      { to: '/career/squad', label: 'Kadro' },
-      { to: '/squad/builder', label: 'Kadro kurucu' },
-      { to: '/tactics/wizard', label: 'Taktik sihirbazı' },
-      { to: '/replicas', label: 'Replikalar' },
-    ],
-  },
-  { to: '/career/transfer', label: 'Transfer', match: ['/career/transfer'] },
   { to: '/career/growth', label: 'Gelişim', match: ['/career/growth'], mobile: 'more' },
   { to: '/teams', label: 'Takımlar', match: ['/teams'], mobile: 'more' },
   { to: '/career/import', label: 'İçe aktar', match: ['/career/import'], mobile: 'more' },

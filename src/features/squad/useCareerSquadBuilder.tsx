@@ -6,18 +6,22 @@ import { fitDisplay } from '../../lib/fitLabels'
 import { canPlaySlot } from '../../lib/positions'
 import { roleBaseName } from '../../lib/squadBuilder'
 import { useActiveCareerId } from '../../state/careerStore'
-import { DEFAULT_SETUP } from '../../state/tacticStore'
+import type { CareerPlayer, PlayerSummary } from '../../api/types'
+import { DEFAULT_SETUP } from '../../lib/tactic'
 import { careerSlotTabs } from './careerSlotTabs'
-import type { SlotTab, SlotView } from './types'
-import { useCareerBinding } from './useCareerBinding'
+import type { SlotTab, SlotView, SquadBinding } from './types'
 import { useSlotFits } from './useSlotFits'
 import { useSquadWorkspace } from './useSquadWorkspace'
 
+/** Kurucunun durum kaynağı: v3 Lab `useLabBinding` (aktif taslak), v2 `useCareerBinding` (eski tek kopya depo). Kararlı (modül düzeyi) bir hook olmalı. */
+export type CareerBuilderBinding = (careerId: number | undefined, squad: CareerPlayer[] | undefined) => { binding: SquadBinding<number>; playerById: Map<number, PlayerSummary> }
+
 /**
  * Kariyer kadro kurucusunun ortak mantığı (V3-07b; SquadBuilderPage'den çıkarıldı): aktif kariyer, kadro, çalışma alanı (tek çözüm sorgusu),
- * slot görünümleri, rol uyumu, otomatik diziliş ("En iyi 11'i diz" + boş kadroda ilk açılışta) ve slot paneli sekmeleri. v2 ve v3 sayfası bunu kullanır.
+ * slot görünümleri, rol uyumu, otomatik diziliş ("En iyi 11'i diz" + boş kadroda ilk açılışta) ve slot paneli sekmeleri. v2 ve v3 Lab bunu kullanır;
+ * nereye yazıldığını yalnız bağlama (`useBind`) belirler (KARIYER-UX FAZ 4a).
  */
-export function useCareerSquadBuilder() {
+export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
   const careerId = useActiveCareerId()
   const { authenticated } = useAuth()
 
@@ -27,7 +31,7 @@ export function useCareerSquadBuilder() {
   const career = careers.data?.find((c) => c.id === careerId)
   const hasCareer = authenticated && careerId !== undefined
   const squad = useQuery({ queryKey: ['squad', careerId], queryFn: () => endpoints.squad(careerId!), enabled: hasCareer })
-  const { binding, playerById } = useCareerBinding(careerId, squad.data)
+  const { binding, playerById } = useBind(careerId, squad.data)
   const ws = useSquadWorkspace('career', binding)
   const { state, formation, roles, roleBySlot, selection, selectedSlot: dialogSlot } = ws
   const assignments = state.assigned

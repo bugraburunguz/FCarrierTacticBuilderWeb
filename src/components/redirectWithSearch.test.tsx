@@ -27,6 +27,25 @@ describe('eski /squad → /career/squad (FAZ 3, sekme eşlemesiyle)', () => {
   })
 })
 
+describe('kurucu adresleri → Taktik Lab (FAZ 4a): hedefin sorgusu korunur, gelen parametreler eklenir', () => {
+  it.each([
+    ['/squad/builder', '/career/tactics-lab?sekme=kurucu'],
+    ['/squad/builder?slot=LCM', '/career/tactics-lab?sekme=kurucu&slot=LCM'],
+    ['/tactics/builder?x=1', '/career/tactics-lab?sekme=kurucu&x=1'],
+    ['/fit', '/career/tactics-lab?sekme=kurucu'],
+  ])('%s → %s', (from, to) => {
+    render(
+      <MemoryRouter initialEntries={[from]}>
+        <Routes>
+          {['/squad/builder', '/tactics/builder', '/fit'].map((p) => <Route key={p} path={p} element={<RedirectWithSearch to="/career/tactics-lab?sekme=kurucu" />} />)}
+          <Route path="/career/tactics-lab" element={<Where />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expect(screen.getByTestId('where').textContent).toBe(to)
+  })
+})
+
 describe('RedirectWithSearch (15 §3)', () => {
   it.each([
     ['/career/desk', '/career/dashboard'],

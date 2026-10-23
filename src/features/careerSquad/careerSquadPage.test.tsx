@@ -92,7 +92,7 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(document.querySelector('[data-field="cyber"]')).not.toBeNull()
     expect(screen.getAllByText('Kararın').length).toBeGreaterThan(0)
     expect(screen.queryByLabelText(/M ile taşı/)).toBeNull()
-    expect(screen.queryByRole('button', { name: "Lab'da düzenle" })).toBeNull()
+    expect(screen.getByRole('button', { name: "Lab'da düzenle" })).toBeInTheDocument()
     fireEvent.click(pawn)
     expect(screen.getByTestId('where')).toHaveTextContent('/players/1')
     expect(endpoints.lineup).not.toHaveBeenCalled()

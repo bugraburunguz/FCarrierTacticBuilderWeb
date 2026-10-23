@@ -11,14 +11,9 @@ const ROOT = join(process.cwd(), 'src')
 const V3_DIRS = ['features', 'components', 'design', 'lib']
 const LEGACY = /from\s+['"][./]*(?:\.\.\/)*state\/(tacticStore|lineupStore)['"]/
 
+// FAZ 4a: kalanlar 4b'nin (Sihirbaz ve Kod sekmeleri).
 const ALLOWED_UNTIL_FAZ_4 = new Set([
-  'components/AutoFitPanel.tsx',
   'components/EaTacticCode.tsx',
-  'components/ProtectLeadCard.tsx',
-  'components/TeamSetup.tsx',
-  'features/squad/CareerSquadBuilderPage.tsx',
-  'features/squad/useCareerBinding.ts',
-  'features/squad/useCareerSquadBuilder.tsx',
   'features/wizard/TacticWizardPage.tsx',
 ])
 
@@ -81,6 +76,28 @@ describe('Masa zinciri taslak ve eski depo okumaz (FAZ 2)', () => {
   it('labStore yalnız başlangıç önerisi panelinin göç kısayolunda ve kariyer silmede', () => {
     expect(importing('labStore').sort()).toEqual(['components/DeleteCareerButton.tsx', 'features/career/StarterTacticPanel.tsx'])
     expect(readFileSync(join(ROOT, 'components/DeleteCareerButton.tsx'), 'utf8').match(/labStore\.\w+/g)).toEqual(['labStore.dropCareer'])
+  })
+})
+
+/*
+ * KARIYER-UX FAZ 4a: Taktik Lab zinciri eski tek kopya depoyu (tacticStore/lineupStore) hiç kullanmaz; taslak deposu (katman 3) Lab'da.
+ * Zincirdeki labStore içe aktaranları yalnız Lab dosyaları (features/lab).
+ */
+describe('Lab zinciri eski depoyu kullanmaz; taslak deposu yalnız Lab\'da (FAZ 4a)', () => {
+  const files = chain(join(ROOT, 'features/lab/TacticsLabPage.tsx'))
+  const importing = (store: string) => files.filter((f) => new RegExp(`from\\s+['"][./]*state/${store}['"]`).test(readFileSync(join(ROOT, f), 'utf8')))
+
+  it('tacticStore / lineupStore zincirde yok', () => {
+    expect(importing('(tacticStore|lineupStore)')).toEqual([])
+  })
+
+  it('labStore yalnız features/lab içinden içe aktarılır', () => {
+    expect(importing('labStore').length).toBeGreaterThan(0)
+    expect(importing('labStore').filter((f) => !f.startsWith('features/lab/'))).toEqual([])
+  })
+
+  it('eski kurucu parçaları (useCareerBinding, AutoFitPanel, ProtectLeadCard, TeamSetup) zincirde yok', () => {
+    expect(files.filter((f) => /useCareerBinding|AutoFitPanel|ProtectLeadCard|TeamSetup/.test(f))).toEqual([])
   })
 })
 

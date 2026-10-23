@@ -99,6 +99,9 @@ export function useMakeMainTactic(careerId: number) {
       void client.invalidateQueries({ queryKey: mainTacticKey(careerId) })
       void client.invalidateQueries({ queryKey: ['user-tactics', careerId] })
       void client.invalidateQueries({ queryKey: ['lineup', careerId] })
+      // FAZ 4a: ana taktik varken öneri gösterilmez ama önbellekte eski kalmasın; Masa/Kadro rol uyumu yeni dizilişten yeniden hesaplanır.
+      void client.invalidateQueries({ queryKey: starterTacticKey(careerId) })
+      void client.invalidateQueries({ queryKey: ['slot-fit'] })
     },
   })
 }

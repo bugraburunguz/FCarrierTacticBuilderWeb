@@ -28,8 +28,9 @@ describe('geçici eşleme: bugünkü sayfaların okuduğu parametreler', () => {
     expect(currentRoute(deskLink.loans())).toBe('/career/squad?sekme=hareketler')
   })
 
-  it('Lab: /career/tactics-lab henüz yok → kadro kurucu', () => {
-    expect(currentRoute(deskLink.lab('CM2'))).toBe('/squad/builder?slot=CM2')
+  it('Lab (FAZ 4a): /career/tactics-lab gerçek sayfa, eşleme yok; slot okunur', () => {
+    expect(currentRoute(deskLink.lab('CM2'))).toBe('/career/tactics-lab?sekme=kurucu&slot=CM2')
+    expect(currentRoute(deskLink.lab())).toBe('/career/tactics-lab')
   })
 
   it('eşlemesi olmayan yol değişmez', () => {
