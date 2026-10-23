@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { Chip } from '../design/components/primitives'
 import { formatEur } from '../lib/format'
+import { squadGroups, type SquadGrouping } from '../lib/squadGroups'
 
 const GROUPS: { label: string; positions: string[] }[] = [
   { label: 'Kaleciler', positions: ['GK'] },
@@ -17,12 +18,18 @@ interface Props {
   positionAdvice: PlayerPositionAdvice[]
   /** KARIYER-UX FAZ 3: kayıttaki haftalık maaş sütunu ve kiralık bitiş tarihi (v3 Kadro); v2 vermez, tablo değişmez. */
   recordColumns?: boolean
+  /** KARIYER-UX FAZ 3.1 (v3): tek tablo, gruplar tbody; v2 vermez, eski grup başına tablo kalır. */
+  grouping?: SquadGrouping
 }
 
 const DAY = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
-const loanDate = (date?: string) => (date ? ` · ${DAY.format(new Date(`${date.slice(0, 10)}T00:00:00Z`))}` : '')
+const day = (date: string) => DAY.format(new Date(`${date.slice(0, 10)}T00:00:00Z`))
+const loanDate = (date?: string) => (date ? ` · ${day(date)}` : '')
 
-export function SquadList({ squad, positionAdvice, recordColumns = false }: Props) {
+export function SquadList({ squad, positionAdvice, recordColumns = false, grouping }: Props) {
+  if (grouping) {
+    return <GroupedSquadTable squad={squad} positionAdvice={positionAdvice} recordColumns={recordColumns} grouping={grouping} />
+  }
   const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
   const placed = new Set<number>()
   const groups = GROUPS.map((group) => {
@@ -96,6 +103,98 @@ export function SquadList({ squad, positionAdvice, recordColumns = false }: Prop
           )}
         </section>
       ))}
+    </div>
+  )
+}
+
+// Sütunlar kırılım noktasına göre: sm altı isim · en iyi · OVR · POT; sm+ yaş ve durum; lg+ mevkiler ve maaş.
+// Gizlenen sütunun col'u da gizlenir (gizli hücre ızgaradan çıkar; col kalırsa kalan hücreler kayar). Gizli bilgiler isim hücresinin altına iner.
+const SM = 'hidden sm:table-cell'
+const LG = 'hidden lg:table-cell'
+const NUM = 'pr-2 text-right tabular-nums'
+// Grup başlığı her genişlikte en az görünen sütun sayısı kadar yayılır; daha geniş colSpan dar ekranda boş sütun açar.
+const GROUP_SPAN = 4
+
+function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping }: Required<Omit<Props, 'grouping'>> & { grouping: SquadGrouping }) {
+  const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
+  const groups = squadGroups(squad, grouping)
+  const noWages = recordColumns && squad.length > 0 && squad.every((s) => s.wageEur === undefined || s.wageEur === null)
+
+  return (
+    <div>
+      <table className="w-full table-fixed text-left text-sm" data-squad-table>
+        <colgroup>
+          <col />
+          <col className="hidden w-12 sm:table-column" />
+          <col className="hidden w-32 lg:table-column" />
+          <col className="w-16 sm:w-24" />
+          <col className="w-12" />
+          <col className="w-12" />
+          {recordColumns && <col className="hidden w-28 lg:table-column" />}
+          <col className="hidden w-48 sm:table-column" />
+        </colgroup>
+        <thead className="text-xs uppercase text-muted">
+          <tr>
+            <th scope="col" className="py-1 pr-2">Oyuncu</th>
+            <th scope="col" className={`pr-2 text-right ${SM}`}>Yaş</th>
+            <th scope="col" className={`pr-2 ${LG}`}>Mevkiler</th>
+            <th scope="col" className="pr-2">En iyi mevki</th>
+            <th scope="col" className="pr-2 text-right">OVR</th>
+            <th scope="col" className="pr-2 text-right">POT</th>
+            {recordColumns && <th scope="col" className={`pr-2 text-right ${LG}`}>Maaş (hafta)</th>}
+            <th scope="col" className={SM}>Durum</th>
+          </tr>
+        </thead>
+        {groups.map((group) => (
+          <tbody key={group.key}>
+            <tr>
+              <th scope="rowgroup" colSpan={GROUP_SPAN} className="pt-4 pb-1 text-sm font-semibold normal-case">
+                {group.title} <span className="font-normal text-muted">· {group.players.length}</span>
+              </th>
+            </tr>
+            {group.players.map((entry) => {
+              const advice = adviceById.get(entry.player.id)
+              const positions = entry.player.positions.slice(0, 4).join(', ')
+              // Tarih çipin dışında, ayrı satırda: dar durum sütununda çip taşmaz.
+              const status = (short: boolean) => (entry.onLoan || entry.loanedOut) && (
+                <span className="flex flex-col items-start gap-0.5">
+                  {entry.onLoan ? <Chip tone="warn">Kiralık (bizde)</Chip> : <Chip tone="info">{short ? 'Kiralıkta' : 'Kiralıkta (başka takımda)'}</Chip>}
+                  {entry.loanUntil && <span className="text-xs text-muted">bitiş {day(entry.loanUntil)}</span>}
+                </span>
+              )
+              return (
+                <tr key={entry.player.id} className="border-t border-line align-top">
+                  <td data-col="name" className="py-1.5 pr-2 font-medium">
+                    <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline">{entry.player.name}</Link>
+                    <span data-compact className="block text-xs font-normal text-muted lg:hidden">
+                      {positions}<span className="sm:hidden">{entry.player.age !== undefined && ` · ${entry.player.age} yaş`}</span>
+                    </span>
+                    {(entry.onLoan || entry.loanedOut) && <span className="mt-1 block sm:hidden">{status(true)}</span>}
+                  </td>
+                  <td data-col="age" className={`py-1.5 ${NUM} ${SM}`}>{entry.player.age ?? '—'}</td>
+                  <td data-col="positions" className={`py-1.5 pr-2 text-muted ${LG}`}>{positions}</td>
+                  <td data-col="best" className="py-1.5 pr-2">
+                    {advice?.bestOverallPosition ? (
+                      <span title="Mevki bazlı en yüksek overall">
+                        <b>{advice.bestOverallPosition}</b> <span className="tabular-nums text-muted">{advice.bestOverall}</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted">{entry.loanedOut ? 'Kiralıkta' : '—'}</span>
+                    )}
+                  </td>
+                  <td data-col="ovr" className={`py-1.5 font-semibold ${NUM}`}>{entry.player.overall}</td>
+                  <td data-col="pot" className={`py-1.5 ${NUM}`}>{entry.dynamicPotential ?? entry.player.potential ?? '—'}</td>
+                  {recordColumns && (
+                    <td data-col="wage" className={`py-1.5 ${NUM} ${LG}`}>{entry.wageEur !== undefined && entry.wageEur !== null ? formatEur(entry.wageEur) : '—'}</td>
+                  )}
+                  <td data-col="status" className={`py-1.5 ${SM}`}>{status(false)}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        ))}
+      </table>
+      {noWages && <p className="mt-2 text-xs text-muted">Maaş verisi içe aktarmada gelmiyor.</p>}
     </div>
   )
 }

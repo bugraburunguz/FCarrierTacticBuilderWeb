@@ -918,3 +918,25 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 2. Karşılaştır'da farklı formasyonlu iki taraf slot kimliğiyle eşleşir; eşleşmeyen slot "karşılaştırılamaz" yazar. Mevkiye göre eşleme istenir mi?
 
 **Yerel yığın.** Backend `kariyer-ux-4b` (`a31e4e5`), web `kariyer-ux-4b`; kart vekili kapalı; test hesapları silindi.
+
+## 22. FAZ 3.1 raporu: Kadro listesi (2026-10-23)
+
+**Gruplama** (`lib/squadGroups.ts`, `?grup=mevki|hat`, varsayılan mevki; Liste ve Kartlar aynı gruplamayı kullanır, "Gruplama" segmenti). Mevki: ana mevki (ilk listelenen) sırası GK · RB · CB · LB · CDM · CM · CAM · RM · LM · RW · LW · ST, başlık "LW · Sol kanat · 3", boş grup yok; grup içinde OVR azalan, eşitlikte POT. Hat: eski dört grup (Kaleciler · Defans · Orta saha · Hücum), boş olan gösterilmez. Kartlarda hat gruplamasında derinlik etiketi yok (derinlik mevki başınadır). Derinlik sekmesinin `?grup=` değerleri Liste'de geçersizdir ve mevkiye düşer. v2 (`SquadPage`) değişmedi: `grouping` verilmezse eski grup başına tablo.
+
+**Tek tablo** (`SquadList` `grouping` opt-in): bir `thead`, `colgroup` sabit genişlikler (`table-fixed`), grup başına `tbody` + `<th scope="rowgroup">` başlık satırı; sayılar sağa hizalı, `tabular-nums`. Kırılımlar: sm altı isim · en iyi mevki · OVR · POT (mevkiler, yaş ve durum isim altında); sm+ yaş ve durum; lg+ mevkiler ve maaş. Gizlenen sütunun `col`'u da gizlenir; grup başlığı 4 sütuna yayılır (daha geniş `colSpan` dar ekranda boş sütun açıp isim sütununu eziyordu). Kiralık tarihi çipin altında ayrı satırda ("bitiş 31 May 2027"); kiralıktaki oyuncunun en iyi mevkisi "Kiralıkta" (öneri bu oyuncuları içermez).
+
+**Sol/sağ en iyi mevki (BEHAVIOR CHANGE, backend).** `BestPositionRule`: (1) listelenen bir mevki en iyi overall'a `fcareer.position.listed-preference` (varsayılan 1) puan yakınsa o gösterilir; (2) simetrik eşitlikte (LB/RB, LWB/RWB, LM/RM, LW/RW) taraf listelenen mevkilerin tek tarafından, yoksa tercih ayağından, yoksa ilk listelenen mevkiden. Eskiden aday listesi soldan başladığı için eşitlikte sol seçiliyordu. Taranan yollar: `PositionAdviceService.bestOverall` (düzeltildi) ve öneri sırası `options` (eşit puanlı simetrik çiftler aynı kuralla sıralanır); `bestScores` ve `FeasibilityService` yalnız mevki başına en yüksek puanı kullanır (taraf seçmez, etkilenmez); `PlayerMapper.positionOveralls` yalnız gösterim haritası; web en iyi mevkiyi kendisi hesaplamaz. Testler: `BestPositionRuleTest` (McGowan/Gutiérrez/Hall sentetik oyuncuları, eşik), `PositionAdviceSideTest`.
+
+**Maaş sütunu.** Başlık "Maaş (hafta)", boş hücre "—"; hiçbir oyuncuda maaş yoksa tablo altında "Maaş verisi içe aktarmada gelmiyor." Bulgu: `CareerPlayerWriter.applyContracts` maaşı `players.wage` alanından okur; LE betiği `players` tablosunu ve `career_playercontract`'ı dışa aktarır. Depodaki fikstürde (`le-export/fc27-2026-10/players.csv`) 243 satırın hepsinde `wage` dolu (biriminin haftalık euro olduğu doğrulanmadı; ana menüden mi kariyerden mi alındığı bilinmiyor). Yerel içe aktarılmış kariyerde 21 668 satırın hiçbirinde maaş, sözleşme ya da kiralık verisi yok. Kariyer içinden alınmış bir dışa aktarım diskte yok; değer uydurulmadı.
+
+**Ekranlar** `screens/KARIYER-UX-3-1/` (`scripts/kadro-list-shots.mjs`): liste mevki/hat + kartlar mevki/hat × 375/768/1280 × koyu/açık = 24 çekim, sorun 0, en küçük yazı 12px. Sütun kapısı: her sütunun görünür hücreleri tüm gruplarda ve başlıkta aynı x'te (yayılım 0 px), isim sütunu ≥ 120 px, hiçbir hücrede içerik taşması yok; ilk koşu 375'te ve 768'de isim sütununun ezildiğini yakaladı (yukarıdaki kırılım düzeltmesi).
+
+**11 §8.** Q2 (12px, yalnız token), Q3 (taşma yok), Q4/Q15 (axe serious/critical 0), Q6 (yeni uç yok), Q13 (çip yazısı 12px; çipler etkileşimsiz) bu çekimlerle ölçüldü; Q1 sayfanın mevcut yükleme/boş durumları değişmedi; Q11/Q17/Q18 saha kapıları Liste sekmesinde saha olmadığı için yeniden koşulmadı; Q8, Q9, Q10, Q14, Q16 bu değişiklikle ilgisiz.
+
+**Test sayıları:** web 1481/1481, backend 660 (0 hata, 5 atlanan; backend `3800e29`); lint hatasız, build yeşil.
+
+**Açık sorular (FAZ 3.1).**
+1. Kariyer içi maaş `career_playercontract`'ta mı, `players.wage`'te mi ve hangi birimde (haftalık euro mu)? Kariyer içinden bir LE dışa aktarımı gelirse doğrulanır.
+2. `listed-preference` = 1 doğru eşik mi (listelenen mevki en iyiye 1 puan yakınsa o gösterilir)?
+
+**Yerel yığın.** Backend ve web `kariyer-ux-3-1`; kart vekili kapalı; test hesapları silindi.

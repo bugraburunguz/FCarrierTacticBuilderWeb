@@ -139,6 +139,22 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     await waitFor(() => expect(endpoints.applyEvent).toHaveBeenCalledWith(7, expect.objectContaining({ type: 'SELL' })))
   })
 
+  it('liste: tek tablo, varsayılan mevki gruplaması; Gruplama "Hat" ?grup=hat yazar, kartlar da aynı gruplamayı kullanır', async () => {
+    renderAt('/career/squad?sekme=liste')
+    await screen.findByRole('link', { name: 'Oyuncu 13' })
+    const table = screen.getByRole('table')
+    expect(within(table).getAllByRole('rowheader').map((th) => th.textContent)).toEqual(
+      ['GK · Kaleci · 2', 'RB · Sağ bek · 1', 'CB · Stoper · 2', 'LB · Sol bek · 1', 'CM · Merkez orta saha · 2', 'RM · Sağ orta saha · 1', 'LM · Sol orta saha · 1', 'ST · Santrfor · 3'])
+    fireEvent.click(screen.getByRole('radio', { name: 'Hat' }))
+    expect(screen.getByTestId('where')).toHaveTextContent('grup=hat')
+    expect(within(screen.getByRole('table')).getAllByRole('rowheader').map((th) => th.textContent)).toEqual(['Kaleciler · 2', 'Defans · 4', 'Orta saha · 4', 'Hücum · 3'])
+    fireEvent.click(screen.getByRole('radio', { name: 'Kartlar' }))
+    expect(screen.getByRole('heading', { name: 'Hücum · 3' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('radio', { name: 'Mevki' }))
+    expect(screen.getByTestId('where')).not.toHaveTextContent('grup=')
+    expect(screen.getByRole('heading', { name: 'ST · Santrfor · 3' })).toBeInTheDocument()
+  })
+
   it('derinlik: ?grup= o grubu açık ve odaklı getirir; diğerleri kapalı', async () => {
     renderAt('/career/squad?sekme=derinlik&grup=MID')
     const toggle = await screen.findByRole('button', { name: /Orta saha/ })

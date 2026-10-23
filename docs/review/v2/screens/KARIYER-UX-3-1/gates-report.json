@@ -1,0 +1,1173 @@
+{
+  "career": 356,
+  "report": [
+    {
+      "shot": "liste-mevki-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "GK · Kaleci · 3",
+          "RB · Sağ bek · 2",
+          "CB · Stoper · 5",
+          "LB · Sol bek · 1",
+          "CDM · Defansif orta saha · 2",
+          "CM · Merkez orta saha · 5",
+          "CAM · Ofansif orta saha · 2",
+          "LM · Sol orta saha · 3",
+          "RW · Sağ kanat · 1",
+          "ST · Santrfor · 3"
+        ],
+        "tbodies": 10,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "hidden": true
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "hidden": true
+          }
+        },
+        "nameWidth": 149,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-mevki-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "headings": [
+        "GK · Kaleci · 3",
+        "RB · Sağ bek · 2",
+        "CB · Stoper · 5",
+        "LB · Sol bek · 1",
+        "CDM · Defansif orta saha · 2",
+        "CM · Merkez orta saha · 5",
+        "CAM · Ofansif orta saha · 2",
+        "LM · Sol orta saha · 3",
+        "RW · Sağ kanat · 1",
+        "ST · Santrfor · 3",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-hat-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "Kaleciler · 3",
+          "Defans · 8",
+          "Orta saha · 12",
+          "Hücum · 4"
+        ],
+        "tbodies": 4,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "hidden": true
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "hidden": true
+          }
+        },
+        "nameWidth": 149,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-hat-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "headings": [
+        "Kaleciler · 3",
+        "Defans · 8",
+        "Orta saha · 12",
+        "Hücum · 4",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-mevki-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "GK · Kaleci · 3",
+          "RB · Sağ bek · 2",
+          "CB · Stoper · 5",
+          "LB · Sol bek · 1",
+          "CDM · Defansif orta saha · 2",
+          "CM · Merkez orta saha · 5",
+          "CAM · Ofansif orta saha · 2",
+          "LM · Sol orta saha · 3",
+          "RW · Sağ kanat · 1",
+          "ST · Santrfor · 3"
+        ],
+        "tbodies": 10,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "hidden": true
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "hidden": true
+          }
+        },
+        "nameWidth": 149,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-mevki-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "headings": [
+        "GK · Kaleci · 3",
+        "RB · Sağ bek · 2",
+        "CB · Stoper · 5",
+        "LB · Sol bek · 1",
+        "CDM · Defansif orta saha · 2",
+        "CM · Merkez orta saha · 5",
+        "CAM · Ofansif orta saha · 2",
+        "LM · Sol orta saha · 3",
+        "RW · Sağ kanat · 1",
+        "ST · Santrfor · 3",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-hat-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "Kaleciler · 3",
+          "Defans · 8",
+          "Orta saha · 12",
+          "Hücum · 4"
+        ],
+        "tbodies": 4,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "hidden": true
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "hidden": true
+          }
+        },
+        "nameWidth": 149,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-hat-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "headings": [
+        "Kaleciler · 3",
+        "Defans · 8",
+        "Orta saha · 12",
+        "Hücum · 4",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-mevki-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "GK · Kaleci · 3",
+          "RB · Sağ bek · 2",
+          "CB · Stoper · 5",
+          "LB · Sol bek · 1",
+          "CDM · Defansif orta saha · 2",
+          "CM · Merkez orta saha · 5",
+          "CAM · Ofansif orta saha · 2",
+          "LM · Sol orta saha · 3",
+          "RW · Sağ kanat · 1",
+          "ST · Santrfor · 3"
+        ],
+        "tbodies": 10,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 262,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-mevki-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "GK · Kaleci · 3",
+        "RB · Sağ bek · 2",
+        "CB · Stoper · 5",
+        "LB · Sol bek · 1",
+        "CDM · Defansif orta saha · 2",
+        "CM · Merkez orta saha · 5",
+        "CAM · Ofansif orta saha · 2",
+        "LM · Sol orta saha · 3",
+        "RW · Sağ kanat · 1",
+        "ST · Santrfor · 3",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-hat-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "Kaleciler · 3",
+          "Defans · 8",
+          "Orta saha · 12",
+          "Hücum · 4"
+        ],
+        "tbodies": 4,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 262,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-hat-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "Kaleciler · 3",
+        "Defans · 8",
+        "Orta saha · 12",
+        "Hücum · 4",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-mevki-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "GK · Kaleci · 3",
+          "RB · Sağ bek · 2",
+          "CB · Stoper · 5",
+          "LB · Sol bek · 1",
+          "CDM · Defansif orta saha · 2",
+          "CM · Merkez orta saha · 5",
+          "CAM · Ofansif orta saha · 2",
+          "LM · Sol orta saha · 3",
+          "RW · Sağ kanat · 1",
+          "ST · Santrfor · 3"
+        ],
+        "tbodies": 10,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 262,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-mevki-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "GK · Kaleci · 3",
+        "RB · Sağ bek · 2",
+        "CB · Stoper · 5",
+        "LB · Sol bek · 1",
+        "CDM · Defansif orta saha · 2",
+        "CM · Merkez orta saha · 5",
+        "CAM · Ofansif orta saha · 2",
+        "LM · Sol orta saha · 3",
+        "RW · Sağ kanat · 1",
+        "ST · Santrfor · 3",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-hat-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "Kaleciler · 3",
+          "Defans · 8",
+          "Orta saha · 12",
+          "Hücum · 4"
+        ],
+        "tbodies": 4,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "hidden": true
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "hidden": true
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 262,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-hat-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "Kaleciler · 3",
+        "Defans · 8",
+        "Orta saha · 12",
+        "Hücum · 4",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-mevki-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "GK · Kaleci · 3",
+          "RB · Sağ bek · 2",
+          "CB · Stoper · 5",
+          "LB · Sol bek · 1",
+          "CDM · Defansif orta saha · 2",
+          "CM · Merkez orta saha · 5",
+          "CAM · Ofansif orta saha · 2",
+          "LM · Sol orta saha · 3",
+          "RW · Sağ kanat · 1",
+          "ST · Santrfor · 3"
+        ],
+        "tbodies": 10,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "cells": 27,
+            "spread": 0
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "cells": 27,
+            "spread": 0
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 446,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-mevki-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "GK · Kaleci · 3",
+        "RB · Sağ bek · 2",
+        "CB · Stoper · 5",
+        "LB · Sol bek · 1",
+        "CDM · Defansif orta saha · 2",
+        "CM · Merkez orta saha · 5",
+        "CAM · Ofansif orta saha · 2",
+        "LM · Sol orta saha · 3",
+        "RW · Sağ kanat · 1",
+        "ST · Santrfor · 3",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-hat-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "Kaleciler · 3",
+          "Defans · 8",
+          "Orta saha · 12",
+          "Hücum · 4"
+        ],
+        "tbodies": 4,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "cells": 27,
+            "spread": 0
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "cells": 27,
+            "spread": 0
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 446,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-hat-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "Kaleciler · 3",
+        "Defans · 8",
+        "Orta saha · 12",
+        "Hücum · 4",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-mevki-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "GK · Kaleci · 3",
+          "RB · Sağ bek · 2",
+          "CB · Stoper · 5",
+          "LB · Sol bek · 1",
+          "CDM · Defansif orta saha · 2",
+          "CM · Merkez orta saha · 5",
+          "CAM · Ofansif orta saha · 2",
+          "LM · Sol orta saha · 3",
+          "RW · Sağ kanat · 1",
+          "ST · Santrfor · 3"
+        ],
+        "tbodies": 10,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "cells": 27,
+            "spread": 0
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "cells": 27,
+            "spread": 0
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 446,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-mevki-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "GK · Kaleci · 3",
+        "RB · Sağ bek · 2",
+        "CB · Stoper · 5",
+        "LB · Sol bek · 1",
+        "CDM · Defansif orta saha · 2",
+        "CM · Merkez orta saha · 5",
+        "CAM · Ofansif orta saha · 2",
+        "LM · Sol orta saha · 3",
+        "RW · Sağ kanat · 1",
+        "ST · Santrfor · 3",
+        "Mevki önerileri"
+      ]
+    },
+    {
+      "shot": "liste-hat-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "columns": {
+        "found": true,
+        "groups": [
+          "Kaleciler · 3",
+          "Defans · 8",
+          "Orta saha · 12",
+          "Hücum · 4"
+        ],
+        "tbodies": 4,
+        "theads": 1,
+        "columns": {
+          "name": {
+            "cells": 27,
+            "spread": 0
+          },
+          "age": {
+            "cells": 27,
+            "spread": 0
+          },
+          "positions": {
+            "cells": 27,
+            "spread": 0
+          },
+          "best": {
+            "cells": 27,
+            "spread": 0
+          },
+          "ovr": {
+            "cells": 27,
+            "spread": 0
+          },
+          "pot": {
+            "cells": 27,
+            "spread": 0
+          },
+          "wage": {
+            "cells": 27,
+            "spread": 0
+          },
+          "status": {
+            "cells": 27,
+            "spread": 0
+          }
+        },
+        "nameWidth": 446,
+        "clipped": [],
+        "aligned": true,
+        "fits": true,
+        "note": true
+      },
+      "loanedOutBest": 1
+    },
+    {
+      "shot": "kartlar-hat-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "headings": [
+        "Kaleciler · 3",
+        "Defans · 8",
+        "Orta saha · 12",
+        "Hücum · 4",
+        "Mevki önerileri"
+      ]
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import { SquadTagsView } from '../../components/SquadTagsView'
 import { TransferDialog } from '../../components/TransferDialog'
 import { Button, EmptyState, Panel, Segmented, Skeleton, StatTile, TabPanel, Tabs, type DataSource } from '../../design/components/primitives'
 import { GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
+import { parseGrouping, SQUAD_GROUPINGS } from '../../lib/squadGroups'
 import { endpoints } from '../../api/endpoints'
 import { StarterTacticPanel } from '../career/StarterTacticPanel'
 import { useTabParam } from '../player/playerPage'
@@ -25,7 +26,8 @@ const VIEWS: { id: View; label: string }[] = [
   { id: 'cards', label: 'Kartlar' },
   { id: 'tags', label: 'Etiket & yaş' },
 ]
-const decimal = (value?: number) => (value === undefined ? undefined : value.toLocaleString('tr-TR', { maximumFractionDigits: 1 }))
+const GROUPINGS = SQUAD_GROUPINGS.map((g) => ({ id: g.value, label: g.label }))
+const decimal =(value?: number) => (value === undefined ? undefined : value.toLocaleString('tr-TR', { maximumFractionDigits: 1 }))
 
 /**
  * Kadro Analizi (/career/squad, KARIYER-UX FAZ 3, 15 §4.2): "Elimde ne var?". Düzenleme yok; kararlar yalnız hamleler ve geri alma.
@@ -45,8 +47,10 @@ export function CareerSquadPage() {
     { id: 'derinlik' as const, label: 'Derinlik' },
     { id: 'hareketler' as const, label: `Hareketler (${(saveMoves.data?.length ?? 0) + (k.events.data?.length ?? 0)})` },
   ]
-  const { tab, setTab, params } = useTabParam(tabs)
+  const { tab, setTab, params, set } = useTabParam(tabs)
   const wanted = params.get('grup') as PositionGroup | null
+  // Liste ve Kartlar ?grup=mevki|hat (varsayılan mevki); Derinlik'in grup değerleri burada geçersiz sayılır ve mevkiye düşer.
+  const grouping = parseGrouping(params.get('grup'))
   const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, r.display])), [k.fits.rows])
 
   if (k.careers.isLoading) {
@@ -97,7 +101,14 @@ export function CareerSquadPage() {
       </TabPanel>
 
       <TabPanel idPrefix={PREFIX} id="liste" active={tab === 'liste'}>
-        <Panel title={`Oyuncular · ${players.length}`} source={record} actions={<Segmented label="Görünüm" value={view} options={VIEWS} onChange={setView} />}>
+        <Panel title={`Oyuncular · ${players.length}`} source={record} actions={(
+          <div className="flex flex-wrap items-center gap-2">
+            {view !== 'tags' && (
+              <Segmented label="Gruplama" value={grouping} options={GROUPINGS} onChange={(value) => set({ grup: value === 'mevki' ? undefined : value })} />
+            )}
+            <Segmented label="Görünüm" value={view} options={VIEWS} onChange={setView} />
+          </div>
+        )}>
           {k.squad.isLoading ? (
             <Skeleton className="h-64" />
           ) : players.length === 0 ? (
@@ -105,9 +116,9 @@ export function CareerSquadPage() {
           ) : view === 'tags' ? (
             <SquadTagsView careerId={career.id} squad={players} />
           ) : view === 'list' ? (
-            <SquadList squad={players} positionAdvice={k.positionAdvice.data ?? []} recordColumns />
+            <SquadList squad={players} positionAdvice={k.positionAdvice.data ?? []} recordColumns grouping={grouping} />
           ) : (
-            <SquadCards squad={players} busy={k.move.isPending} needs={k.needs} positionAdvice={k.positionAdvice.data ?? []} onSell={(entry) => k.openMove('SELL', entry)} onLoanOut={(entry) => k.openMove('LOAN_OUT', entry)} />
+            <SquadCards squad={players} grouping={grouping} busy={k.move.isPending} needs={k.needs} positionAdvice={k.positionAdvice.data ?? []} onSell={(entry) => k.openMove('SELL', entry)} onLoanOut={(entry) => k.openMove('LOAN_OUT', entry)} />
           )}
         </Panel>
       </TabPanel>
