@@ -4,17 +4,12 @@ import { describe, expect, it } from 'vitest'
 
 /*
  * KARIYER-UX (D-28): v3 kodu tek kopya taktik/diziliş deposunu (state/tacticStore, state/lineupStore) okumaz/yazmaz; katman 2 sunucu
- * (ana taktik), katman 3 Lab taslağı (state/labStore). Bu depolar yalnız v2 (geliştirme) sayfaları için kalır.
- * Geçiş süresince izinli liste: FAZ 2-4'te sayfalar taşındıkça boşalır ve yalnız küçülebilir (listede olup artık ihlal etmeyen dosya testi kırar).
+ * (ana taktik), katman 3 Lab taslağı (state/labStore). Bu depolar yalnız v2 (geliştirme) sayfaları için kalır (src/pages/**).
+ * FAZ 4b: geçiş izin listesi boşaldı (10 → 8 → 2 → 0) ve kaldırıldı; kural katı — v3 klasörlerinde istisna yok.
  */
 const ROOT = join(process.cwd(), 'src')
 const V3_DIRS = ['features', 'components', 'design', 'lib']
 const LEGACY = /from\s+['"][./]*(?:\.\.\/)*state\/(tacticStore|lineupStore)['"]/
-
-// FAZ 4a: kalan 4b'nin (Kod sekmesi). Sihirbaz 4a kapanışında taslağa yazmaya geçti.
-const ALLOWED_UNTIL_FAZ_4 = new Set([
-  'components/EaTacticCode.tsx',
-])
 
 function files(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -31,12 +26,8 @@ describe('v3 kodu eski tek kopya taktik deposunu kullanmaz (KARIYER-UX)', () => 
     .filter((f) => LEGACY.test(readFileSync(f, 'utf8')))
     .map((f) => relative(ROOT, f).split('\\').join('/'))
 
-  it('izinli liste dışında içe aktarma yok', () => {
-    expect(violating.filter((f) => !ALLOWED_UNTIL_FAZ_4.has(f))).toEqual([])
-  })
-
-  it('izinli liste yalnız küçülür: artık ihlal etmeyen dosya listeden çıkarılmalı', () => {
-    expect([...ALLOWED_UNTIL_FAZ_4].filter((f) => !violating.includes(f))).toEqual([])
+  it('features/, components/, design/, lib/ içinde hiçbir dosya tacticStore/lineupStore içe aktarmaz (istisna yok)', () => {
+    expect(violating).toEqual([])
   })
 })
 

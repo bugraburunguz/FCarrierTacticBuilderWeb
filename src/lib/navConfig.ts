@@ -25,12 +25,8 @@ export const CAREER_NAV: NavGroup[] = [
     to: '/career/tactics-lab',
     label: 'Taktik Lab',
     mobileLabel: 'Lab',
+    // FAZ 4b: sekmeler (Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır) sayfa içinde; /replicas sayfası da Lab'da sayılır.
     match: ['/career/tactics-lab', '/tactics', '/squad', '/fit', '/recommend', '/scouting', '/replicas'],
-    tabs: [
-      { to: '/career/tactics-lab', label: 'Kurucu' },
-      { to: '/tactics/wizard', label: 'Sihirbaz' },
-      { to: '/replicas', label: 'Replikalar' },
-    ],
   },
   { to: '/career/transfer', label: 'Transfer', match: ['/career/transfer'] },
   {

@@ -883,4 +883,38 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 **Açık sorular (FAZ 4a).**
 1. Railway: servis durdurulmuş görünüyor; yeniden kurulunca web servisinin `v3`'ü mü `main`'i mi izleyeceği ve `v3` → `main` birleşmesi ne zaman?
 2. Toplu uyum (4b): `/fit/lineup` yanıtına `reasons` eklenip kurucu/Masa/Kadro/Transfer'in 11 `/fit/role` isteği tek isteğe indirilsin mi?
-3. Mobil "Oyuncular" etiketi "Oyuncu" oldu (375'te kelime bölünmesi); doküman §3 metni güncellensin mi?
+3. Mobil "Oyuncular" etiketi "Oyuncu" oldu (375'te kelime bölünmesi); doküman §3 metni güncellensin mi? (Kapandı: §3 güncellendi.)
+
+## 21. FAZ 4b raporu: Lab sekmeleri ve toplu uyum (2026-10-23)
+
+**4a kapanışı.** Sihirbaz "Uygula" → `labStore.create({origin: wizard})`, taslak aktif, `/career/tactics-lab?sekme=kurucu`; sınırda mesaj, yönlendirme yok (testler önce kırmızı). §3 mobil etiketi "Oyuncu". PR #5 CI yeşil, merge commit ile `v3`'e: `b1f6e54`. Dal silinmedi.
+
+**Sekmeler** (`?sekme=`): Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır. Taslak çubuğu taslak varken her sekmenin üstünde; Lab grubunun kabuktaki ikinci sekme satırı kaldırıldı.
+- **Sihirbaz:** `features/wizard/TacticWizardPage` → `features/lab/WizardTab.tsx` (sayfa kabuğu silindi). "Bu taktiği kur" yeni taslak (origin wizard) + Kurucu sekmesi. `/tactics/wizard` v3'te → `/career/tactics-lab?sekme=sihirbaz` (sorgu taşınır); v2 eski sayfada. `WIZARD_RESULT_PATH` = `/career/tactics-lab?sekme=kurucu` (yalnız v2 kullanır; v2'de bu rota girişsiz eski kurucuya yönlenir).
+- **Replikalar:** mevcut liste (`ReplicasPage`, `embedded`: başlık yok, süzgeç dışı adres parametreleri korunur) gömülü; kartta "Klonla → taslak" — replika taktiği (`tacticFromReplica`) + `/replicas/{id}/apply` kadromla dizilişi (useReplicaApply ile aynı sorgu anahtarı) → taslak (origin replica) → Kurucu. `/replicas/:id` › Kadromla uygula kariyer modunda aynı eylemi sunar ve Lab kurucusuna gider; UT'de yok (davranış aynı). REP-d tasarımına dokunulmadı.
+- **Kod:** dışa aktar — "Aktif taslak" (TacticCodeService.export) ya da "Ana taktik" (saklı `eaCode`); içe aktar — EA kodu yeni taslak (origin code) → Kurucu. Kullanılmayan `components/EaTacticCode.tsx` (eski depo bağı) silindi.
+- **Karşılaştır:** A/B seçimi (ana taktik + taslaklar; varsayılan A ana taktik, B aktif taslak). Her taraf tek `/fit/lineup` (kilitli). Slot slot: oyuncu, %, fark B − A işaretli ve metinli ("▼ −64 · düştü", "= aynı"), etiket değişimi ("Rol için uygun → Rol için eksik"); takım uyumu farkı StatTile'larla. Mobilde tek sütun, renk kullanılmaz.
+
+**Toplu uyum (API CONTRACT CHANGE, backend `a31e4e5`).** `/fit/lineup` `slots[].roleFit.reasons` döner (`/fit/role` ile aynı biçim/sıra, en çok 3; `LineupReasonsIntegrationTest` iki slotu `/fit/role` ile birebir karşılaştırır ve ücretli alanların yokluğunu teyit eder — D-01). `ApiFlowIntegrationTest`'teki "reasons yok" beklentisi bu karara göre güncellendi. Web: `useLineupFits` (tek istek, dizilenler kilitli, `slot-fit` anahtarı) — Lab kurucusu ve `useMainTacticFits` (Masa, Kadro, Transfer, Ana sayfa) kullanır; `useSlotFits` yalnız v2 sayfalarında. Not: rol uyumu artık kariyer kaydındaki oyuncu verisiyle hesaplanır (`/fit/role` katalog verisini kullanıyordu); tazelenmiş kariyerde sayılar kayda göre farklılaşabilir.
+
+**İstek ölçümü** (`scripts/fit-requests.mjs`, tam yükleme, `screens/KARIYER-UX-4b/istek-once.json`, `istek-sonra.json`):
+
+| Sayfa | Önce | Sonra | /fit/role | /fit/lineup |
+|---|---|---|---|---|
+| Lab kurucusu | 25 | 15 | 11 → 0 | 0 → 1 |
+| Masa | 25 | 15 | 11 → 0 | 0 → 1 |
+| Kadro | 25 | 16 | 11 → 0 | 0 → 1 |
+
+(4a'daki 26, boş dizilişli taslakta ilk dizme isteğini de sayıyordu.)
+
+**Legacy listesi → 0.** İzin listesi kaldırıldı; kural katı: `features/`, `components/`, `design/`, `lib/` içinde `tacticStore`/`lineupStore` içe aktaran dosya yok (istisna yok). Eski depolar yalnız v2 (`src/pages/**`).
+
+**Ekranlar** `screens/KARIYER-UX-4b/` (`scripts/lab-tabs-shots.mjs`): 5 sekme × 375/768/1280 × koyu/açık = 30 çekim, sorun 0, en küçük yazı 11px. UT kurucusu önce/sonra (`ut-once`, `ut-sonra`): **8/8 piksel birebir**. pawn-font-gate yeşil. Q17/Q18 Lab (kart + piyon, 29 formasyon × 3 genişlik): 174/174 temiz (3 satır ilk koşuda sayfa yükleme zaman aşımıydı, yeniden ölçüldü; `q17-lab-report.json`).
+
+**Test sayıları:** web 1471/1471, backend 653 (0 hata, 5 atlanan); lint hatasız, build yeşil.
+
+**Açık sorular (FAZ 4b).**
+1. Rol uyumu kariyer kaydındaki oyuncu verisine geçti (`/fit/lineup`); eski `/fit/role` katalog verisini kullanıyordu. Bu doğru kabul ediliyor mu (Masa/Kadro yüzdeleri kayda göre değişebilir)?
+2. Karşılaştır'da farklı formasyonlu iki taraf slot kimliğiyle eşleşir; eşleşmeyen slot "karşılaştırılamaz" yazar. Mevkiye göre eşleme istenir mi?
+
+**Yerel yığın.** Backend `kariyer-ux-4b` (`a31e4e5`), web `kariyer-ux-4b`; kart vekili kapalı; test hesapları silindi.

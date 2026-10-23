@@ -122,7 +122,7 @@ export function ReplicaDetailPage() {
                   </div>
                 </TabPanel>
                 <TabPanel idPrefix={PREFIX} id="uygula" active={tab === 'uygula'}>
-                  <ApplyTab replicaId={id} apply={apply} />
+                  <ApplyTab replicaId={id} apply={apply} replica={summary} />
                 </TabPanel>
               </>
             )}

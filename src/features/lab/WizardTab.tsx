@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { Preset } from '../../api/types'
 import { SetupChips } from '../../components/SetupChips'
@@ -9,10 +8,7 @@ import { HelpPopover } from '../../components/ui'
 import { Button, Chip, ErrorState, Skeleton } from '../../design/components/primitives'
 import { DEFAULT_ANSWERS, recommend, type WizardAnswers } from '../../lib/wizard'
 import { tacticFromPreset, WIZARD_QUESTIONS, type WizardQuestion } from '../../lib/wizardQuestions'
-import { useActiveCareerId } from '../../state/careerStore'
 import { labStore } from '../../state/labStore'
-
-const LAB_BUILDER_PATH = '/career/tactics-lab?sekme=kurucu'
 
 const STEPS = [...WIZARD_QUESTIONS.map((q) => q.short), 'Sonuç']
 const RESULT_STEP = WIZARD_QUESTIONS.length
@@ -96,12 +92,11 @@ function Results({ answers, onApply }: { answers: WizardAnswers; onApply: (prese
 }
 
 /**
- * v3 taktik sihirbazı (/tactics/wizard, V3-07b; 11 §9 Akış şablonu): ortada tek cam panel, adım göstergesi, her adımda tek karar, geri/ileri.
- * Sorular ve sonuç v2 ile aynı (lib/wizardQuestions, lib/wizard); seçilen taktik yeni Lab taslağı olarak Lab kurucusunda açılır.
+ * Lab › Sihirbaz (KARIYER-UX FAZ 4b; eski /tactics/wizard sayfası, V3-07b; 11 §9 Akış şablonu): tek cam panel, adım göstergesi, her adımda tek karar.
+ * Sorular ve sonuç v2 ile aynı (lib/wizardQuestions, lib/wizard). "Bu taktiği kur" yeni Lab taslağı açar (aktif) ve `onApplied` ile Kurucu'ya geçilir;
+ * sınır doluysa mesaj, geçiş yok.
  */
-export function TacticWizardPage() {
-  const navigate = useNavigate()
-  const careerId = useActiveCareerId()
+export function WizardTab({ careerId, onApplied }: { careerId: number | undefined; onApplied: () => void }) {
   const [message, setMessage] = useState<string>()
   const [answers, setAnswers] = useState<WizardAnswers>(DEFAULT_ANSWERS)
   const [step, setStep] = useState(0)
@@ -117,8 +112,7 @@ export function TacticWizardPage() {
     heading.current?.focus()
   }, [step])
 
-  // KARIYER-UX 4a kapanışı: "Uygula" yeni Lab taslağı açar (aktif olur) ve Lab kurucusuna geçer; eski tek kopya depoya yazılmaz.
-  // Sınır doluysa mesaj gösterilir ve yönlendirme yapılmaz. Diziliş boş: kurucu ilk açılışta kadrodan dizer.
+  // 4a kapanışı: "Uygula" yeni Lab taslağı açar (aktif olur); eski tek kopya depoya yazılmaz. Diziliş boş: kurucu ilk açılışta kadrodan dizer.
   function apply(preset: Preset) {
     if (careerId === undefined) {
       setMessage('Taslak açmak için önce bir kariyer seç.')
@@ -129,15 +123,12 @@ export function TacticWizardPage() {
       setMessage(created.message)
       return
     }
-    navigate(LAB_BUILDER_PATH)
+    onApplied()
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-3 py-2">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Taktik sihirbazı</h1>
-        <p className="text-sm text-ink-2">Nasıl oynamak istediğini seç; sana en yakın hazır taktikleri bulalım.</p>
-      </header>
+    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-3">
+      <p className="text-sm text-ink-2">Nasıl oynamak istediğini seç; sana en yakın hazır taktikleri bulalım.</p>
       <section aria-labelledby="wizard-question" className="glass flex flex-col gap-4 p-4 sm:p-5">
         <Stepper step={step} />
         <div className="flex items-center gap-1.5">

@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
+import type { ReplicaSummary } from '../../api/types'
 import { Input, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
 import { ReplicaCard } from './ReplicaCard'
 import { BUILD_UP_LABEL, CATEGORY_LABEL, CATEGORY_ORDER } from './labels'
-import { filterReplicas, filtersFromParams, filtersToParams, sortReplicas, type ReplicaFilters } from './replicaFilter'
+import { FILTER_KEYS, filterReplicas, filtersFromParams, filtersToParams, sortReplicas, type ReplicaFilters } from './replicaFilter'
 
 const STALE_MS = 600_000
 const SKELETONS = 6
@@ -46,11 +47,24 @@ function FilterFields({ filters, set, formationOptions }: { filters: ReplicaFilt
   )
 }
 
-/** Replikalar (Katalog şablonu): yapışkan cam filtre çubuğu + kart ızgarası. Süzgeçler adres çubuğunda durur. */
-export function ReplicasPage() {
+/**
+ * Replikalar (Katalog şablonu): yapışkan cam filtre çubuğu + kart ızgarası. Süzgeçler adres çubuğunda durur.
+ * `embedded` (KARIYER-UX FAZ 4b, Lab › Replikalar): sayfa başlığı yok; süzgeç dışındaki adres parametreleri (Lab `sekme`) korunur; `cardAction` kart eylemi.
+ */
+export function ReplicasPage({ embedded = false, cardAction }: { embedded?: boolean; cardAction?: (replica: ReplicaSummary) => ReactNode } = {}) {
   const [params, setParams] = useSearchParams()
   const filters = useMemo(() => filtersFromParams(params), [params])
-  const set = (patch: Partial<ReplicaFilters>) => setParams(filtersToParams({ ...filters, ...patch }), { replace: true })
+  const withOthers = (next: URLSearchParams) => {
+    if (embedded) {
+      params.forEach((value, key) => {
+        if (!FILTER_KEYS.includes(key) && !next.has(key)) {
+          next.set(key, value)
+        }
+      })
+    }
+    return next
+  }
+  const set = (patch: Partial<ReplicaFilters>) => setParams(withOthers(filtersToParams({ ...filters, ...patch })), { replace: true })
 
   const replicas = useQuery({ queryKey: ['replicas'], queryFn: endpoints.replicas, staleTime: STALE_MS })
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: STALE_MS })
@@ -63,8 +77,8 @@ export function ReplicasPage() {
   const extraCount = [filters.formation !== '', filters.buildUp !== 'ALL', filters.from !== undefined, filters.to !== undefined].filter(Boolean).length
 
   return (
-    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-4 py-4">
-      <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Replikalar</h1>
+    <div className={embedded ? 'flex w-full flex-col gap-4' : 'mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-4 py-4'}>
+      {!embedded && <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Replikalar</h1>}
 
       <div className="z-20 min-[820px]:sticky min-[820px]:top-[var(--header-h)]">
       <section aria-label="Süzgeçler" className="glass glass-sticky flex flex-col gap-3 p-3 sm:px-4">
@@ -114,7 +128,7 @@ export function ReplicasPage() {
       ) : replicas.isError ? (
         <ErrorState message="Replikalar yüklenemedi." onRetry={() => replicas.refetch()} />
       ) : shown.length === 0 ? (
-        <EmptyState action={active ? <Button onClick={() => setParams({}, { replace: true })}>Süzgeçleri temizle</Button> : undefined}>
+        <EmptyState action={active ? <Button onClick={() => setParams(withOthers(new URLSearchParams()), { replace: true })}>Süzgeçleri temizle</Button> : undefined}>
           {active ? 'Bu süzgeçlere uyan replika yok.' : 'Henüz replika yok.'}
         </EmptyState>
       ) : (
@@ -122,7 +136,7 @@ export function ReplicasPage() {
           <p role="status" className="text-xs text-muted">{shown.length} replika{shown.length !== (replicas.data?.length ?? 0) ? ` / ${replicas.data?.length}` : ''}</p>
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {shown.map((r) => (
-              <ReplicaCard key={r.id} replica={r} formation={formationById.get(r.formationId)} />
+              <ReplicaCard key={r.id} replica={r} formation={formationById.get(r.formationId)} action={cardAction?.(r)} />
             ))}
           </ul>
         </>

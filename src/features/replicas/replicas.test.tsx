@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { ReplicaApplyResult, ReplicaApplySlot, ReplicaDetail, ReplicaSummary, TacticAnalysis } from '../../api/types'
+import { labStore } from '../../state/labStore'
 import { ApplyTab } from './ApplyTab'
 import { AttentionPoints } from './AttentionPoints'
 import { ReplicasPage } from './ReplicasPage'
@@ -226,6 +227,33 @@ describe('kadromla uygula', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Evet, üzerine yaz' }))
     await waitFor(() => expect(endpoints.saveUserTactic).toHaveBeenCalledWith(2, { careerId: 5, replicaId: 'a' }))
     expect(await screen.findByText(/Slot 2'e kaydedildi/)).toBeInTheDocument()
+  })
+
+  it('KARIYER-UX FAZ 4b: kariyerde "Klonla → taslak" replika taktiği + bu dizilişle Lab taslağı açar ve Lab kurucusuna geçer', async () => {
+    localStorage.clear()
+    labStore.reload()
+    const replica = { id: 'a', club: 'Ajax', season: '1994/95', formationId: '4-3-3', buildUp: 'SHORT_PASSING', lineHeight: 75, slots: [{ slotId: 'ST', position: 'ST', role: 'False 9', focus: 'Build-Up', roleId: 'false_9_build_up' }] } as unknown as ReplicaSummary
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const apply = applyOf('CAREER', [slot({})])
+    client.setQueryData(['replica-apply', 'a', JSON.stringify({ careerId: 5 })], apply.result.data)
+    render(
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/replicas/a?sekme=uygula']}>
+          <Routes>
+            <Route path="/replicas/a" element={<ApplyTab replicaId="a" apply={apply} replica={replica} />} />
+            <Route path="/career/tactics-lab" element={<p>lab açıldı</p>} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /Klonla → taslak/ }))
+    expect(await screen.findByText('lab açıldı')).toBeInTheDocument()
+    expect(labStore.get(5).drafts[0]).toMatchObject({ name: 'Ajax 1994/95', origin: { kind: 'replica', ref: 'a' }, lineup: { ST: 1 }, tactic: { formation: '4-3-3' } })
+  })
+
+  it('UT modunda "Klonla → taslak" yok (UT davranışı değişmez)', () => {
+    renderApply(applyOf('UT', [slot({})], 'ut'))
+    expect(screen.queryByRole('button', { name: /Klonla → taslak/ })).toBeNull()
   })
 
   it('slot seçilmeden kaydet kapalı ve nedeni yazar', async () => {

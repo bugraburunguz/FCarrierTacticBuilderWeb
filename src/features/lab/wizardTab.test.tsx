@@ -1,13 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { Preset } from '../../api/types'
 import { careerStore } from '../../state/careerStore'
 import { LAB_DRAFT_LIMIT, labStore } from '../../state/labStore'
 import { tacticStore } from '../../state/tacticStore'
-import { TacticWizardPage } from './TacticWizardPage'
+import { WizardTab } from './WizardTab'
 
 const preset = (id: string, patch: Partial<Preset>): Preset => ({ id, kind: 'STYLE', name: id, formation: '4-3-3', ...patch })
 const PRESETS = [
@@ -18,20 +18,13 @@ const PRESETS = [
 
 vi.mock('../../api/endpoints', () => ({ endpoints: { presets: vi.fn() } }))
 
-function Where() {
-  const location = useLocation()
-  return <output data-testid="where">{location.pathname + location.search}</output>
-}
+const onApplied = vi.fn()
 
 function renderPage() {
   return render(
     <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-      <MemoryRouter initialEntries={['/tactics/wizard']}>
-        <Routes>
-          <Route path="/tactics/wizard" element={<TacticWizardPage />} />
-          <Route path="*" element={null} />
-        </Routes>
-        <Where />
+      <MemoryRouter>
+        <WizardTab careerId={7} onApplied={onApplied} />
       </MemoryRouter>
     </QueryClientProvider>,
   )
@@ -39,8 +32,8 @@ function renderPage() {
 
 const next = () => fireEvent.click(screen.getByRole('button', { name: 'İleri' }))
 
-/** V3-07b: taktik sihirbazı v3 Akış şablonunda — adım göstergesi, her adımda tek karar, geri/ileri; sonuç mevcut yoldan kadro kurucuya. */
-describe('TacticWizardPage (v3 Akış)', () => {
+/** V3-07b → FAZ 4b: taktik sihirbazı Lab sekmesi — adım göstergesi, her adımda tek karar, geri/ileri; sonuç yeni Lab taslağı. */
+describe('WizardTab (Lab › Sihirbaz)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
@@ -95,7 +88,7 @@ describe('TacticWizardPage (v3 Akış)', () => {
     expect(lab.drafts[0]).toMatchObject({ name: 'Blok', origin: { kind: 'wizard', ref: 'Blok' }, tactic: { formation: '4-4-2', presetId: 'Blok', setup: { buildUp: 'Counter', depth: 30 } }, lineup: {} })
     expect(lab.activeId).toBe(lab.drafts[0].id)
     expect(set).not.toHaveBeenCalled()
-    expect(screen.getByTestId('where')).toHaveTextContent('/career/tactics-lab?sekme=kurucu')
+    expect(onApplied).toHaveBeenCalledTimes(1)
     set.mockRestore()
   })
 
@@ -105,7 +98,7 @@ describe('TacticWizardPage (v3 Akış)', () => {
     fireEvent.click(within(await toResults()).getByRole('button', { name: 'Bu taktiği kur' }))
     expect(screen.getByRole('alert')).toHaveTextContent(`Taslak sınırı (${LAB_DRAFT_LIMIT})`)
     expect(labStore.get(7).drafts).toHaveLength(LAB_DRAFT_LIMIT)
-    expect(screen.getByTestId('where')).toHaveTextContent('/tactics/wizard')
+    expect(onApplied).not.toHaveBeenCalled()
   })
 
   it('taktik listesi alınamazsa sebep ve yeniden dene', async () => {

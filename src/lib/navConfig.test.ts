@@ -25,7 +25,8 @@ describe('v3 kariyer menüsü tek (V3-06d)', () => {
     expect(bar.items.map((g) => g.mobileLabel ?? g.label)).toEqual(['Masa', 'Kadro', 'Lab', 'Transfer', 'Oyuncu'])
     expect(career.find((g) => g.label === 'Kadro')?.to).toBe('/career/squad')
     expect(career.find((g) => g.label === 'Taktik Lab')?.to).toBe('/career/tactics-lab')
-    expect(career.find((g) => g.label === 'Taktik Lab')?.tabs?.map((t) => t.to)).toEqual(['/career/tactics-lab', '/tactics/wizard', '/replicas'])
+    // FAZ 4b: Lab sekmeleri sayfa içinde (Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır); kabukta ikinci sekme satırı yok.
+    expect(career.find((g) => g.label === 'Taktik Lab')?.tabs).toBeUndefined()
     expect(bar.more.map((g) => g.label)).toEqual(['Gelişim', 'Takımlar', 'İçe aktar', 'Yeni kariyer'])
     expect(CAREER_MORE.map((g) => g.to)).toEqual(['/career/new'])
   })
