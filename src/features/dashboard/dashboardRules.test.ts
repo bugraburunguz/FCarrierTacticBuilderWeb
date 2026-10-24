@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Career, CareerPlayer, CareerSnapshot, RoleFit } from '../../api/types'
 import { fitDisplay } from '../../lib/fitLabels'
 import type { SlotFitRow } from '../squad/useSlotFits'
-import { financeSummary, reasonText, upcomingEvents, urgentAlerts, weakLinks, withContracts } from './dashboardRules'
+import { financeSummary, reasonText, recordGaps, snapshotTimeline, upcomingEvents, urgentAlerts, weakLinks, withContracts } from './dashboardRules'
 
 const row = (slotId: string, fitLabel: RoleFit['fitLabel'], levelFit: number, reasons: string[] = []): SlotFitRow => {
   const fit = { playerId: 1, playerName: 'X', roleId: 'r', roleName: 'Rol', score: 70, levelFit, fitLabel, reasons, projectedRating: 70, outOfPosition: false, weaponChecks: [] } as unknown as RoleFit
@@ -11,6 +11,39 @@ const row = (slotId: string, fitLabel: RoleFit['fitLabel'], levelFit: number, re
 
 const member = (id: number, extra: Partial<CareerPlayer> = {}, player: object = {}): CareerPlayer =>
   ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 70, ...player }, onLoan: false, ...extra }) as CareerPlayer
+
+/** FAZ 6a-A: Masa'da tek "Kayıt verisi eksik" bandı: ne eksik, neyi etkiliyor. */
+describe('kayıt verisi eksikleri', () => {
+  it('oyun tarihi, maaş/sözleşme, kiralık bitişi ayrı ayrı; facets yüklenmemişse yalnız oyun tarihi değerlendirilir; tam veride boş', () => {
+    expect(recordGaps(undefined, { contractData: false, loanData: false }).map((g) => g.key)).toEqual(['gameDate', 'contracts', 'loans'])
+    expect(recordGaps(undefined, undefined).map((g) => g.key)).toEqual(['gameDate'])
+    expect(recordGaps('2027-01-15', { contractData: true, loanData: true })).toEqual([])
+    expect(recordGaps(undefined, { contractData: true, loanData: true })[0].affects).toMatch(/uyar/)
+  })
+})
+
+/** FAZ 6a-E: zaman çizelgesindeki içe aktarmalar kadroyu anlatır; aynı güne düşenler tek satır. */
+describe('zaman çizelgesi görüntü satırları', () => {
+  const snap = (id: number, takenAt: string, extra: Partial<CareerSnapshot> = {}): CareerSnapshot => ({ id, takenAt, source: 'IMPORT', playerCount: 21668, ...extra })
+
+  it('aynı gün üç içe aktarma tek satır; dünya oyuncu sayısı yok, kadro sayısı ve net giren/çıkan var', () => {
+    const rows = snapshotTimeline([
+      snap(3, '2026-10-10T03:24:00Z', { squadCount: 31, squadJoined: ['C'], squadLeft: ['A'] }),
+      snap(2, '2026-10-10T01:21:00Z', { squadCount: 31, squadJoined: ['A', 'B'], squadLeft: ['D'] }),
+      snap(1, '2026-10-10T00:01:00Z', { squadCount: 30 }),
+      snap(0, '2026-10-09T10:00:00Z', { squadCount: 30 }),
+    ])
+    expect(rows).toHaveLength(2)
+    expect(rows[0]).toMatchObject({ at: '2026-10-10T03:24:00Z' })
+    expect(rows[0].text).toBe('İçe aktarma ×3 · kadro: 31 oyuncu · giren: B, C · çıkan: D')
+    expect(rows[0].text).not.toContain('21668')
+    expect(rows[1].text).toBe('İçe aktarma · kadro: 30 oyuncu')
+  })
+
+  it('kadro bilgisi olmayan eski görüntüde yalnız tür yazılır (sayı uydurulmaz)', () => {
+    expect(snapshotTimeline([snap(1, '2026-10-10T00:01:00Z')])[0].text).toBe('İçe aktarma')
+  })
+})
 
 /** KARIYER-UX 6: birleşik uyarı — zayıf halka + sözleşme; ilk 11 + yakın sözleşme bitişi. */
 describe('birleşik uyarılar', () => {

@@ -18,6 +18,7 @@ import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
 import { squadStats } from './careerSquadRules'
 import { DepthTab } from './DepthTab'
 import { useCareerSquadData } from './useCareerSquadData'
+import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 
 const PREFIX = 'kadro'
 type View = 'list' | 'cards' | 'tags'
@@ -72,7 +73,7 @@ export function CareerSquadPage() {
   const career = k.career
   if (!career) {
     return (
-      <div className="mx-auto max-w-[1280px] py-2">
+      <div className={`mx-auto ${CAREER_PAGE_WIDTH} py-2`}>
         <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Kadro</h1>
         <EmptyState action={<Link to="/career/new" className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-on-accent">Yeni kariyer başlat</Link>}>
           Kadronu görmek için bir kariyer seç ya da yeni kariyer başlat.
@@ -87,7 +88,7 @@ export function CareerSquadPage() {
   const gameDate = career.gameDate
 
   return (
-    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-2">
+    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
       <header className="flex flex-col gap-2">
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kadro</h1>
         <CareerSelect />

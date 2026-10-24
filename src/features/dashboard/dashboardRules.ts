@@ -1,6 +1,7 @@
 import type { Career, CareerPlayer, CareerSnapshot } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from '../../lib/contract'
 import { deskLink } from '../../lib/deskLinks'
+import { SNAPSHOT_LABEL } from '../../lib/deskRules'
 import type { FitState } from '../../components/card/FitBadge'
 import { FIT_STATE_TEXT, isWeakFit } from '../../lib/fitLabels'
 import { ATTR_LABELS } from '../../lib/format'
@@ -67,6 +68,70 @@ export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[
       pct: Math.round(level(r)), state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: worstReason(r.fit.reasons),
       primary: r.fit.fitLabel === 'WRONG_ROLE' ? 'ROLE' : 'TRANSFER',
     }))
+}
+
+export interface RecordGap {
+  key: 'gameDate' | 'contracts' | 'loans'
+  missing: string
+  affects: string
+}
+
+/**
+ * Masa'nın "Kayıt verisi eksik" bandı (FAZ 6a-A): kayıtta (içe aktarma) olmayan veriler ve neyi etkiledikleri. Boş kutular tek tek gösterilmez;
+ * bant ne eksik, neyi etkiliyor ve nasıl tamamlanır söyler. Facets yüklenmemişse yalnız oyun tarihi değerlendirilir (eksik uydurulmaz).
+ */
+export function recordGaps(gameDate: string | undefined, facets: { contractData: boolean; loanData: boolean } | undefined): RecordGap[] {
+  const gaps: RecordGap[] = []
+  if (!gameDate) {
+    gaps.push({ key: 'gameDate', missing: 'Oyun tarihi', affects: 'dönem sonuna kalan gün, sözleşme ve kiralık uyarıları, yaklaşan tarihler' })
+  }
+  if (facets && !facets.contractData) {
+    gaps.push({ key: 'contracts', missing: 'Maaş ve sözleşme', affects: 'maaş bütçesi kullanımı, sözleşme bitişleri' })
+  }
+  if (facets && !facets.loanData) {
+    gaps.push({ key: 'loans', missing: 'Kiralık bitişi', affects: 'kiralık dönüş uyarıları' })
+  }
+  return gaps
+}
+
+const NAMES_SHOWN = 3
+const names = (list: string[]) => (list.length > NAMES_SHOWN ? `${list.slice(0, NAMES_SHOWN).join(', ')} +${list.length - NAMES_SHOWN}` : list.join(', '))
+
+/**
+ * Zaman çizelgesinin görüntü satırları (FAZ 6a-E): aynı UTC gününe düşen aynı kaynaklı görüntüler tek satır ("İçe aktarma ×3"); metin dünya
+ * oyuncu sayısı değil kadro sayısı ve gün içindeki net giren/çıkan. Kadro bilgisi olmayan (eski) görüntüde yalnız tür.
+ */
+export function snapshotTimeline(snapshots: CareerSnapshot[]): { key: string; at: string; text: string }[] {
+  const groups: CareerSnapshot[][] = []
+  const newestFirst = [...snapshots].sort((a, b) => b.takenAt.localeCompare(a.takenAt))
+  for (const s of newestFirst) {
+    const last = groups.at(-1)
+    if (last && last[0].source === s.source && last[0].takenAt.slice(0, 10) === s.takenAt.slice(0, 10)) {
+      last.push(s)
+    } else {
+      groups.push([s])
+    }
+  }
+  return groups.map((group) => {
+    const newest = group[0]
+    const joined: string[] = []
+    const left: string[] = []
+    ;[...group].reverse().forEach((s) => {
+      ;(s.squadJoined ?? []).forEach((n) => (left.includes(n) ? left.splice(left.indexOf(n), 1) : joined.push(n)))
+      ;(s.squadLeft ?? []).forEach((n) => (joined.includes(n) ? joined.splice(joined.indexOf(n), 1) : left.push(n)))
+    })
+    const parts = [`${SNAPSHOT_LABEL[newest.source] ?? 'Güncelleme'}${group.length > 1 ? ` ×${group.length}` : ''}`]
+    if (newest.squadCount !== undefined) {
+      parts.push(`kadro: ${newest.squadCount} oyuncu`)
+    }
+    if (joined.length > 0) {
+      parts.push(`giren: ${names(joined)}`)
+    }
+    if (left.length > 0) {
+      parts.push(`çıkan: ${names(left)}`)
+    }
+    return { key: `s${newest.id}`, at: newest.takenAt, text: parts.join(' · ') }
+  })
 }
 
 export interface FinanceSummary {

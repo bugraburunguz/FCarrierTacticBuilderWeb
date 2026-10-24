@@ -19,6 +19,7 @@ import { useTabParam } from '../player/playerPage'
 import { BudgetPlanPanel } from './BudgetPlanPanel'
 import { SellPlanTab } from './SellPlanTab'
 import { budgetAfterPurchase, budgetPlan, needsForTransfer } from './transferPlan'
+import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 
 const STALE_MS = 120_000
 const PREFIX = 'transfer'
@@ -111,7 +112,7 @@ export function TransferCenterPage() {
   }
   if (!career) {
     return (
-      <div className="mx-auto max-w-[1280px] py-2">
+      <div className={`mx-auto ${CAREER_PAGE_WIDTH} py-2`}>
         <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Transfer Merkezi</h1>
         <EmptyState action={<Link to="/career/new" className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-on-accent">Yeni kariyer başlat</Link>}>Önce bir kariyer başlat.</EmptyState>
       </div>
@@ -130,7 +131,7 @@ export function TransferCenterPage() {
   const budgetPanel = <BudgetPlanPanel plan={plan} budget={budget} mobile={mobile} />
 
   return (
-    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-2">
+    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Transfer Merkezi</h1>
         <p className="text-sm text-ink-2">{career.clubName ?? career.name}</p>
