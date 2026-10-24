@@ -3,8 +3,18 @@ import { useMemo } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { PlayerSummary, RoleFit } from '../../api/types'
 import { fitDisplay } from '../../lib/fitLabels'
+import { useDebouncedValue } from '../../lib/useDebouncedValue'
 import type { SlotFitRow } from './useSlotFits'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
+
+const LINEUP_DEBOUNCE_MS = 300
+
+type LineupBody = { tactic: SquadWorkspaceApi<number>['tactic']; locked: Record<string, number> }
+
+const askable = (json: string) => {
+  const body = JSON.parse(json) as LineupBody
+  return Boolean(body.tactic.formation) && Object.keys(body.locked).length > 0
+}
 
 /**
  * Dolu slotların rol uyumu, tek istekte (KARIYER-UX FAZ 4b, toplu uyum): `/fit/lineup` dizilen oyuncular kilitli çağrılır; yanıt slot başına
@@ -17,10 +27,17 @@ export function useLineupFits(ws: SquadWorkspaceApi<number>, playerById: Map<num
     () => Object.fromEntries(slots.flatMap((s) => (state.assigned[s.slotId] !== undefined && playerById.has(state.assigned[s.slotId]) ? [[s.slotId, state.assigned[s.slotId]]] : []))) as Record<string, number>,
     [slots, state.assigned, playerById],
   )
+  // GUV-2: art arda atama/rol değişiklikleri tek isteğe iner (analiz kovası 60/dk); ilk istek bekletilmez.
+  // İstek ve koşulu aynı (bekletilmiş) değerden: güncel değere bakan koşul eski gövdeyle istek attırırdı.
+  // Bekletilmiş değer henüz istek atılabilir değilse (ilk yükleme: kadro gelmeden kilit boş) güncel değer hemen kullanılır.
+  const current = JSON.stringify({ tactic, locked })
+  const settled = useDebouncedValue(current, LINEUP_DEBOUNCE_MS)
+  const request = askable(settled) ? settled : current
+  const body = useMemo(() => JSON.parse(request) as LineupBody, [request])
   const query = useQuery({
-    queryKey: ['slot-fit', 'lineup', careerId, JSON.stringify(tactic), JSON.stringify(locked)],
-    queryFn: () => endpoints.lineup(careerId!, tactic, locked),
-    enabled: careerId !== undefined && Boolean(tactic.formation) && !stale && Object.keys(locked).length > 0,
+    queryKey: ['slot-fit', 'lineup', careerId, request],
+    queryFn: () => endpoints.lineup(careerId!, body.tactic, body.locked),
+    enabled: careerId !== undefined && Boolean(body.tactic.formation) && !stale && Object.keys(body.locked).length > 0,
     staleTime: 300_000,
     retry: false,
   })
