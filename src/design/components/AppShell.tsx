@@ -18,6 +18,7 @@ import { modeStore, useMode } from '../../state/modeStore'
 import { LogoLockup } from '../brand/LogoLockup'
 import { LEGAL_NOTE } from '../brand/legal'
 import { Chip, Segmented } from './primitives'
+import { RouteErrorBoundary } from './RouteErrorBoundary'
 import { MobileMenu, ThemeToggle } from './ThemeToggle'
 import { UserMenu } from './UserMenu'
 
@@ -186,7 +187,9 @@ export function AppShell() {
               ))}
             </nav>
           )}
-          <Outlet />
+          <RouteErrorBoundary resetKey={pathname}>
+            <Outlet />
+          </RouteErrorBoundary>
           <footer className="mt-10 flex flex-col gap-1 border-t border-line pt-4 text-xs text-muted">
             <p>{LEGAL_NOTE}</p>
             <div className="flex flex-wrap gap-x-4">

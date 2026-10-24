@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerSnapshot, RosterEvent } from '../../api/types'
 import { CareerSelect } from '../../components/CareerSelect'
-import { Chip, EmptyState, Panel, Skeleton, SourceTag, StatTile, TabPanel, Tabs, type DataSource, type StatDelta } from '../../design/components/primitives'
+import { Chip, EmptyState, ErrorState, Panel, Skeleton, SourceTag, StatTile, TabPanel, Tabs, type DataSource, type StatDelta } from '../../design/components/primitives'
 import { deskLink } from '../../lib/deskLinks'
 import { EVENT_LABEL, SNAPSHOT_LABEL } from '../../lib/deskRules'
 import { formatEur } from '../../lib/format'
@@ -107,6 +107,10 @@ export function DashboardPage() {
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
   }
+  // REVIEW Y5: liste alınamadıysa "kariyerin yok" demek yanlış; hata ve tekrar dene. Eldeki veri varken başarısız yenileme sayfayı düşürmez.
+  if (careers.isError && !careers.data) {
+    return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => careers.refetch()} />
+  }
   if (!career) {
     return (
       <div className="mx-auto max-w-[1280px] py-2">
@@ -134,6 +138,7 @@ export function DashboardPage() {
         </div>
         <CareerSelect />
       </header>
+      {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
 
       <Tabs label="Masa sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="masa" active={tab === 'masa'}>
