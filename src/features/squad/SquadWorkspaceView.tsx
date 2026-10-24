@@ -49,6 +49,8 @@ export interface SquadViewProps {
   clearLabel?: string
   note?: string
   actions?: ReactNode
+  /** Saha görünümü seçici (kariyer Lab: Kart/Piyon); kendi etiketli satırında, temizle/eylem düğmelerinden ayrı (FAZ 6a-H). Verilmezse yok. */
+  viewToggle?: ReactNode
   header?: ReactNode
   /** Kadro adı alanının localStorage anahtarı (F6); verilmezse alan görünmez. */
   squadNameKey?: string
@@ -205,6 +207,12 @@ function SquadInfo(p: SquadViewProps) {
 
       <section aria-label="EA taktik kodu">{p.tacticCode}</section>
 
+      {p.viewToggle && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span aria-hidden="true" className="text-xs font-medium text-ink-2">Saha görünümü</span>
+          {p.viewToggle}
+        </div>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button variant="ghost" onClick={p.onClear} disabled={p.clearDisabled} disabledReason="Kadro zaten boş">{p.clearLabel ?? "Kartları temizle"}</Button>
         {p.actions}
