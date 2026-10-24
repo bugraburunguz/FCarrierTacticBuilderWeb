@@ -2,16 +2,23 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer, RosterEventType } from '../../api/types'
+import { invalidateCareerScope } from '../../lib/careerQueries'
 import { analyzeDepth } from '../../lib/depth'
 import type { TacticState } from '../../lib/tactic'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useUtRules } from '../../state/rulesStore'
 import { useMainTacticFits } from '../career/useMainTacticFits'
 
-/** Kariyer verisi değişince tazelenen sorgular (kariyer listesi, kadro, hareketler, ana taktik dizilişi). */
+/**
+ * Kariyer verisi değişince (hareket, geri alma) o kariyere bağlı her şey tazelenir: kadro, bütçe/facets, uyum (slot-fit), başlangıç önerisi,
+ * oyuncu sayfaları (REVIEW Y3; önceden yalnız 6 anahtar, bütçe ve uyum 2-5 dk bayat kalıyordu).
+ */
 export function useInvalidateCareer() {
   const queryClient = useQueryClient()
-  return () => Promise.all(['careers', 'squad', 'events', 'career-moves', 'main-tactic', 'lineup'].map((k) => queryClient.invalidateQueries({ queryKey: [k] })))
+  const careerId = useActiveCareerId()
+  return () => (careerId === undefined
+    ? queryClient.invalidateQueries({ queryKey: ['careers'] })
+    : invalidateCareerScope(queryClient, careerId))
 }
 
 export type OutMove = { mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer }

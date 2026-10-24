@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError, api } from './client'
 import { tokens } from './tokens'
+import { careerStore } from '../state/careerStore'
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
@@ -37,16 +38,31 @@ describe('api client', () => {
     await expect(api.post('/fit/squad', {})).rejects.toMatchObject({ code: 'fc.exception.0004', message: 'Yeterli krediniz yok.', status: 200 })
   })
 
-  it('yabancı ya da silinmiş kariyer kimliği (404, BE-SEC-09) kariyersiz bir kez yeniden denenir', async () => {
+  it('yabancı ya da silinmiş kariyer kimliği (404, BE-SEC-09; kariyer listemde yok) kariyersiz bir kez yeniden denenir', async () => {
+    careerStore.set(5)
     fetchMock
       .mockResolvedValueOnce(jsonResponse({ success: false, error: [{ code: 'fc.exception.0001', message: 'Kayıt bulunamadı.' }] }, 404))
+      .mockResolvedValueOnce(jsonResponse({ success: true, data: [{ id: 9 }] }))
       .mockResolvedValueOnce(jsonResponse({ success: true, data: { items: [] } }))
 
     const data = await api.get<{ items: unknown[] }>('/players', { career: 5, size: 3 })
 
     expect(data).toEqual({ items: [] })
     expect(fetchMock.mock.calls[0][0]).toContain('career=5')
-    expect(fetchMock.mock.calls[1][0]).not.toContain('career=')
+    expect(fetchMock.mock.calls[1][0]).toBe('/api/v1/careers')
+    expect(fetchMock.mock.calls[2][0]).not.toContain('career=')
+    expect(careerStore.get()).toBeUndefined()
+  })
+
+  it('REVIEW Y1: kariyer listemdeyse 404 başka kaynaktandır (ör. silinmiş oyuncu): kariyer silinmez, yeniden denenmez, hata fırlatılır', async () => {
+    careerStore.set(5)
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ success: false, error: [{ code: 'fc.exception.0001', message: 'Kayıt bulunamadı.' }] }, 404))
+      .mockResolvedValueOnce(jsonResponse({ success: true, data: [{ id: 5 }, { id: 9 }] }))
+
+    await expect(api.get('/players/99999999', { career: 5 })).rejects.toMatchObject({ status: 404, code: 'fc.exception.0001' })
+    expect(careerStore.get()).toBe(5)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
   it('kariyer sorgusu olmayan 404 yeniden denenmez', async () => {

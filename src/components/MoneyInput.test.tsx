@@ -41,6 +41,18 @@ describe('MoneyInput', () => {
     expect(commit).toHaveBeenCalledWith(5_000)
   })
 
+  it('REVIEW O1: geçersiz tutarla alandan çıkınca kayıtlı değer silinmez (onCommit çağrılmaz)', async () => {
+    const user = userEvent.setup()
+    const commit = vi.fn()
+    render(<MoneyInput value={5_000_000} onChange={() => undefined} onCommit={commit} />)
+    const input = screen.getByLabelText('Tutar')
+    await user.clear(input)
+    await user.type(input, '1,2,3')
+    await user.tab()
+    expect(screen.getByText('Geçersiz tutar')).toBeInTheDocument()
+    expect(commit).not.toHaveBeenCalled()
+  })
+
   it('odakta değilken prop değişince metni ve birimi yeniden eşler', () => {
     const { rerender } = render(<MoneyInput value={5_000_000} onChange={() => undefined} />)
     expect(screen.getByLabelText('Tutar')).toHaveValue('5')

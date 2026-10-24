@@ -8,6 +8,7 @@ import { useAuth } from '../../auth/AuthContext'
 import { CareerSelect } from '../../components/CareerSelect'
 import { importWarningText } from '../../lib/importWarnings'
 import { EXPORT_DONE_WINDOW } from '../../lib/leExport'
+import { invalidateCareerScope } from '../../lib/careerQueries'
 import { useActiveCareerId } from '../../state/careerStore'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
 import { formatBytes, importChecks } from './importChecks'
@@ -85,12 +86,12 @@ export function CareerImportPage() {
     onSuccess: async (summary) => {
       setResult(summary)
       setTeamId(summary.guessedTeamId)
-      await queryClient.invalidateQueries({ queryKey: ['squad'] })
-      await queryClient.invalidateQueries({ queryKey: ['career-moves'] })
+      // REVIEW Y2: içe aktarma kariyerin her verisini değiştirir (oyun tarihi, facets, snapshot, uyum, oyuncu sayfaları); hepsi tazelenir.
+      await invalidateCareerScope(queryClient, careerId!)
     },
   })
   const teams = useQuery({ queryKey: ['career-teams', careerId, term], queryFn: () => endpoints.careerTeams(careerId!, term), enabled: careerId !== undefined && result !== null })
-  const sync = useMutation({ mutationFn: () => endpoints.syncSquad(careerId!, teamId!), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['squad'] }) })
+  const sync = useMutation({ mutationFn: () => endpoints.syncSquad(careerId!, teamId!), onSuccess: () => invalidateCareerScope(queryClient, careerId!) })
   const ready = !!logFile || FILES.filter((f) => f.required).every((f) => files[f.key])
 
   return (

@@ -5,11 +5,11 @@ import type { Career, CareerBackup } from '../../api/types'
 import { DeleteCareerButton } from '../../components/DeleteCareerButton'
 import { MoneyInput } from '../../components/MoneyInput'
 import { ErrorBox, Field, Input, Select } from '../../components/ui'
+import { invalidateCareerScope } from '../../lib/careerQueries'
 import { Button, Chip, Panel } from '../../design/components/primitives'
 
 const GENDER_LABEL: Record<number, string> = { 0: 'Erkek', 1: 'Kadın' }
 /** Ayar değişince tazelenen sorgular (kariyer listesi, kadro, hareketler, diziliş). */
-const REFRESHED = ['careers', 'squad', 'events', 'career-moves', 'lineup', 'player-facets']
 
 /**
  * Masa › Ayarlar (KARIYER-UX FAZ 2): eski DeskSettings (spoiler, maaş bütçesi, dönem sonu, challenge, yedek) ve Kadro › kariyer
@@ -25,7 +25,8 @@ export function CareerSettings({ career }: { career: Career }) {
   const [spoiler, setSpoiler] = useState(career.spoilerMode ?? 'SHOW')
   const [challenge, setChallenge] = useState(career.challengeId ?? '')
   const [notice, setNotice] = useState<string>()
-  const refresh = () => Promise.all(REFRESHED.map((k) => client.invalidateQueries({ queryKey: [k] })))
+  // REVIEW Y2/O3: ayar (bütçe, oyun tarihi, spoiler modu) kariyere bağlı her şeyi etkiler: oyuncu sayfaları ve wonderkids dahil tazelenir.
+  const refresh = () => invalidateCareerScope(client, career.id)
 
   const save = useMutation({
     mutationFn: () => endpoints.updateCareer(career.id, {
