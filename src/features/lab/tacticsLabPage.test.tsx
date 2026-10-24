@@ -252,6 +252,35 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('aynı')
   })
 
+  it('KARIYER-UX 6: Karşılaştır slot satırında rol farkı "Rol: A → B" (aynıysa tek rol)', async () => {
+    const base = endpoints.fitRole.getMockImplementation()!
+    endpoints.fitRole.mockImplementation((b: { playerId: number }) => base(b).then((r: { roleFit: object }) => (b.playerId === 12 ? { roleFit: { ...r.roleFit, roleName: 'Box-to-Box' } } : r)))
+    const d = draft('Deneme')
+    labStore.patch(7, d.id, () => ({ lineup: { ...LINEUP, LCM: 12 } }))
+    renderAt('/career/tactics-lab?sekme=karsilastir')
+    const lcm = await screen.findByRole('listitem', { name: /^LCM/ })
+    expect(lcm).toHaveTextContent('Rol: Rol → Box-to-Box')
+    expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('Rol: Rol')
+  })
+
+  it('Karşılaştır farklı formasyon: mevkiye göre soldan sağa eşleşir; eşleşmeyenler "Yalnız A\'da / Yalnız B\'de" (4b-2 kararı)', async () => {
+    const f433 = { id: '4-3-3', label: '4-3-3', slots: [['GK', 'GK', 50], ['LB', 'LB', 10], ['LCB', 'CB', 35], ['RCB', 'CB', 65], ['RB', 'RB', 90],
+      ['LCM', 'CM', 30], ['CM', 'CM', 50], ['RCM', 'CM', 70], ['LW', 'LW', 15], ['ST', 'ST', 50], ['RW', 'RW', 85]]
+      .map(([slotId, position, x]) => ({ slotId, position, x, y: 50, defaultRole: 'r', group: position })) }
+    endpoints.formations.mockResolvedValue([f442, f433])
+    const d = draft('Üçlü')
+    labStore.patch(7, d.id, () => ({ tactic: { formation: '4-3-3', slots: {} }, lineup: { GK: 1, LB: 2, LCB: 3, RCB: 4, RB: 5, LCM: 7, CM: 12, RCM: 8, LW: 6, ST: 10, RW: 9 } }))
+    renderAt('/career/tactics-lab?sekme=karsilastir')
+    const pair = await screen.findByRole('listitem', { name: /^RCM ↔ CM:/ })
+    expect(pair).toHaveTextContent('Oyuncu 8')
+    expect(pair).toHaveTextContent('Oyuncu 12')
+    expect(screen.getByRole('listitem', { name: /^LST ↔ ST:/ })).toBeInTheDocument()
+    const onlyA = screen.getByRole('region', { name: "Yalnız A'da" })
+    expect(within(onlyA).getAllByRole('listitem').map((li) => li.textContent?.split(' ')[0])).toEqual(['LM', 'RM', 'RST'])
+    const onlyB = screen.getByRole('region', { name: "Yalnız B'de" })
+    expect(within(onlyB).getAllByRole('listitem').map((li) => li.textContent?.split(' ')[0])).toEqual(['RCM', 'LW', 'RW'])
+  })
+
   it('kurucu yalnız taslağa yazar; eski tek kopya depo yazılmaz', async () => {
     const d = draft('Deneme')
     labStore.patch(7, d.id, () => ({ lineup: {} }))

@@ -1,0 +1,794 @@
+{
+  "career": 366,
+  "psQuery": "psp=FirstTouch",
+  "report": [
+    {
+      "shot": "masa-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: %",
+          "aria-hidden: 68"
+        ]
+      },
+      "found": 3
+    },
+    {
+      "shot": "kadro-derinlik-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 6",
+          "aria-hidden: 10",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: ≤20",
+          "aria-hidden: 21-23",
+          "aria-hidden: 24-26",
+          "aria-hidden: 27-29",
+          "aria-hidden: 30+"
+        ]
+      },
+      "found": 12
+    },
+    {
+      "shot": "lab-karsilastir-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: =",
+          "aria-hidden: ▼"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncu-statlar-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncular-playstyle-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "COL",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "found": 1
+    },
+    {
+      "shot": "replikalar-klon-dark-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "found": 103
+    },
+    {
+      "shot": "masa-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: %",
+          "aria-hidden: 68"
+        ]
+      },
+      "found": 3
+    },
+    {
+      "shot": "kadro-derinlik-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: 6",
+          "aria-hidden: 10",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: ≤20",
+          "aria-hidden: 21-23",
+          "aria-hidden: 24-26",
+          "aria-hidden: 27-29",
+          "aria-hidden: 30+"
+        ]
+      },
+      "found": 12
+    },
+    {
+      "shot": "lab-karsilastir-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: =",
+          "aria-hidden: ▼"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncu-statlar-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncular-playstyle-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "COL",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "found": 1
+    },
+    {
+      "shot": "replikalar-klon-light-375",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": []
+      },
+      "found": 103
+    },
+    {
+      "shot": "masa-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: %",
+          "aria-hidden: 68"
+        ]
+      },
+      "found": 3
+    },
+    {
+      "shot": "kadro-derinlik-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 6",
+          "aria-hidden: 10",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: ≤20",
+          "aria-hidden: 21-23",
+          "aria-hidden: 24-26",
+          "aria-hidden: 27-29",
+          "aria-hidden: 30+"
+        ]
+      },
+      "found": 12
+    },
+    {
+      "shot": "lab-karsilastir-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: =",
+          "aria-hidden: ▼"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncu-statlar-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncular-playstyle-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "COL",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "replikalar-klon-dark-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 103
+    },
+    {
+      "shot": "masa-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: %",
+          "aria-hidden: 68"
+        ]
+      },
+      "found": 3
+    },
+    {
+      "shot": "kadro-derinlik-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 6",
+          "aria-hidden: 10",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: ≤20",
+          "aria-hidden: 21-23",
+          "aria-hidden: 24-26",
+          "aria-hidden: 27-29",
+          "aria-hidden: 30+"
+        ]
+      },
+      "found": 12
+    },
+    {
+      "shot": "lab-karsilastir-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: =",
+          "aria-hidden: ▼"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncu-statlar-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "ENG",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncular-playstyle-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "COL",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "replikalar-klon-light-768",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 103
+    },
+    {
+      "shot": "masa-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: %",
+          "aria-hidden: 68"
+        ]
+      },
+      "found": 3
+    },
+    {
+      "shot": "kadro-derinlik-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 6",
+          "aria-hidden: 10",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: ≤20",
+          "aria-hidden: 21-23",
+          "aria-hidden: 24-26",
+          "aria-hidden: 27-29",
+          "aria-hidden: 30+"
+        ]
+      },
+      "found": 12
+    },
+    {
+      "shot": "lab-karsilastir-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: =",
+          "aria-hidden: ▼"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncu-statlar-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncular-playstyle-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "COL",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "replikalar-klon-dark-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: –"
+        ]
+      },
+      "found": 103
+    },
+    {
+      "shot": "masa-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 1",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: %",
+          "aria-hidden: 68"
+        ]
+      },
+      "found": 3
+    },
+    {
+      "shot": "kadro-derinlik-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [
+        "heading-order:moderate:1"
+      ],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: 6",
+          "aria-hidden: 10",
+          "aria-hidden: 2",
+          "aria-hidden: 3",
+          "aria-hidden: ≤20",
+          "aria-hidden: 21-23",
+          "aria-hidden: 24-26",
+          "aria-hidden: 27-29",
+          "aria-hidden: 30+"
+        ]
+      },
+      "found": 12
+    },
+    {
+      "shot": "lab-karsilastir-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: =",
+          "aria-hidden: ▼"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncu-statlar-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "Hız",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "oyuncular-playstyle-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 11,
+        "minFontText": "COL",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G"
+        ]
+      },
+      "found": 1
+    },
+    {
+      "shot": "replikalar-klon-light-1280",
+      "overflow": false,
+      "axeSeriousCritical": 0,
+      "axeAll": [],
+      "axeNodes": [],
+      "problems": [],
+      "text": {
+        "minFontPx": 12,
+        "minFontText": "Kariyer",
+        "below": [],
+        "belowCount": 0,
+        "excluded": [
+          "aria-hidden: FC",
+          "aria-hidden: Assist",
+          "aria-hidden: G",
+          "aria-hidden: –"
+        ]
+      },
+      "found": 103
+    }
+  ]
+}

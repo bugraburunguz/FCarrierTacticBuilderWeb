@@ -165,6 +165,28 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.getByRole('button', { name: /Kaleci/ })).toHaveAttribute('aria-expanded', 'true')
   })
 
+  it('KARIYER-UX 6: derinlik matrisi — grup başında aciliyet çipi, açılınca İlk 11 · Yedek · Genç (≤21) kolonları (ilk 11 ana taktikten)', async () => {
+    renderAt('/career/squad?sekme=derinlik')
+    const gk = await screen.findByRole('button', { name: /Kaleci/ })
+    await waitFor(() => expect(gk).toHaveTextContent('Yalnız genç yedek'))
+    expect(screen.getByRole('button', { name: /Orta saha/ })).toHaveTextContent('2 eksik')
+    expect(screen.getByRole('button', { name: /Kanat/ })).toHaveTextContent('Yedek yok')
+    expect(screen.getByRole('button', { name: /Forvet/ })).toHaveTextContent('Yeterli')
+    const body = document.getElementById('grup-GK')!
+    const starters = within(body).getByRole('list', { name: 'Kaleci · İlk 11' })
+    expect(starters).toHaveTextContent('Oyuncu 1')
+    expect(within(body).getByRole('list', { name: 'Kaleci · Genç (≤21)' })).toHaveTextContent('Oyuncu 12')
+    expect(within(body).getByRole('list', { name: 'Kaleci · Yedek' })).toHaveTextContent('Yok')
+  })
+
+  it('KARIYER-UX 6: yaş bantları Genç / Prime / Tecrübeli sayı ve oranla', async () => {
+    renderAt('/career/squad?sekme=derinlik')
+    const bands = await screen.findByRole('list', { name: 'Yaş bantları' })
+    expect(within(bands).getByText('Genç').closest('li')).toHaveTextContent('≤21 · 1 oyuncu · %8')
+    expect(within(bands).getByText('Prime').closest('li')).toHaveTextContent('22–29 · 12 oyuncu · %92')
+    expect(within(bands).getByText('Tecrübeli').closest('li')).toHaveTextContent('30+ · 0 oyuncu · %0')
+  })
+
   it('derinlik: yaş histogramı metin özetiyle ve tablo alternatifiyle; sözleşme zaman çizgisi', async () => {
     renderAt('/career/squad?sekme=derinlik')
     const histogram = await screen.findByRole('img', { name: /Yaş profili: ortalama 23,6/ })

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { currentRoute, deskLink } from './deskLinks'
+import * as deskLinks from './deskLinks'
+import { deskLink } from './deskLinks'
 
 describe('Masa geçişleri (15 §4.1 parametreleri)', () => {
   it('yeni rotalar ve parametreler', () => {
@@ -11,30 +12,8 @@ describe('Masa geçişleri (15 §4.1 parametreleri)', () => {
     expect(deskLink.depth('MID')).toBe('/career/squad?sekme=derinlik&grup=MID')
     expect(deskLink.settings()).toBe('/career/dashboard?sekme=ayarlar')
   })
-})
 
-/** GEÇİCİ eşleme (FAZ 3/5'te kalkar): yeni sayfalar gelene kadar bugünkü Kadro/Transfer'in okuduğu parametrelere çevirir. */
-describe('geçici eşleme: bugünkü sayfaların okuduğu parametreler', () => {
-  it('Transfer: rol → bugünkü role takma adı da eklenir (TransferCenterPage pos+role okur)', () => {
-    expect(currentRoute(deskLink.candidate('CM2', 'CM', 'b2b'))).toBe('/career/transfer?ihtiyac=slot-CM2&pos=CM&rol=b2b&role=b2b')
-  })
-
-  it('Transfer satış: sayfa açılır (satış planı aynı sayfada), parametreler zarar vermez', () => {
-    expect(currentRoute(deskLink.sell(14))).toBe('/career/transfer?sekme=satis&oyuncu=14')
-  })
-
-  it('Kadro (FAZ 3): /career/squad gerçek sayfa, eşleme yok; derinlik bağlantısı doğrudan derinlik sekmesine ve gruba', () => {
-    expect(currentRoute(deskLink.depth('MID'))).toBe('/career/squad?sekme=derinlik&grup=MID')
-    expect(currentRoute(deskLink.loans())).toBe('/career/squad?sekme=hareketler')
-  })
-
-  it('Lab (FAZ 4a): /career/tactics-lab gerçek sayfa, eşleme yok; slot okunur', () => {
-    expect(currentRoute(deskLink.lab('CM2'))).toBe('/career/tactics-lab?sekme=kurucu&slot=CM2')
-    expect(currentRoute(deskLink.lab())).toBe('/career/tactics-lab')
-  })
-
-  it('eşlemesi olmayan yol değişmez', () => {
-    expect(currentRoute(deskLink.contract(14))).toBe('/players/14?sekme=sozlesme')
-    expect(currentRoute('/career/growth?oyuncu=3')).toBe('/career/growth?oyuncu=3')
+  it('geçici eşleme kalmadı (KARIYER-UX FAZ 5): hedef sayfalar §4.1 parametrelerini doğrudan okur; modül yalnız deskLink dışa aktarır', () => {
+    expect(Object.keys(deskLinks)).toEqual(['deskLink'])
   })
 })

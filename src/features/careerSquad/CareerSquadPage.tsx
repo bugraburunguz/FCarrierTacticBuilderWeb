@@ -52,6 +52,9 @@ export function CareerSquadPage() {
   // Liste ve Kartlar ?grup=mevki|hat (varsayılan mevki); Derinlik'in grup değerleri burada geçersiz sayılır ve mevkiye düşer.
   const grouping = parseGrouping(params.get('grup'))
   const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, r.display])), [k.fits.rows])
+  // KARIYER-UX 6: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden.
+  const lineup = k.fits.main.active?.lineup
+  const starters = useMemo(() => (lineup ? new Set(Object.values(lineup).filter((id): id is number => typeof id === 'number')) : undefined), [lineup])
 
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -124,7 +127,7 @@ export function CareerSquadPage() {
       </TabPanel>
 
       <TabPanel idPrefix={PREFIX} id="derinlik" active={tab === 'derinlik'}>
-        <DepthTab squad={players} needs={k.needs} formation={k.formation} gameDate={gameDate} record={record}
+        <DepthTab squad={players} needs={k.needs} formation={k.formation} gameDate={gameDate} record={record} starters={starters}
           wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} />
       </TabPanel>
 

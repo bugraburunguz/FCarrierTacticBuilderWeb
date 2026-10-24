@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import { PlayerCard } from '../../components/card/PlayerCard'
 import { CompareButton } from '../../components/CompareButton'
+import { ShortlistButton } from '../../components/ShortlistButton'
 import { useIsMobile } from '../../design/components/MobileSheet'
 import { Chip, TabPanel, Tabs } from '../../design/components/primitives'
 import { HelpPopover } from '../../components/ui'
@@ -48,7 +49,13 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   }
   const inSquad = contract.data?.inSquad === true
   const meta = [summary.club, summary.league, summary.nationality].filter(Boolean).join(' · ')
-  const compare = <CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? '' }} />
+  // KARIYER-UX FAZ 5: kadroda olmayan oyuncu kısa listeye eklenir (Transfer › Kısa liste ile aynı mutation).
+  const compare = (
+    <div className="flex flex-wrap justify-center gap-2">
+      <CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? '' }} />
+      {contract.data !== undefined && !inSquad && <ShortlistButton careerId={careerId} playerId={summary.id} />}
+    </div>
+  )
   const pot = potentialText(summary)
   const card = (
     <>
@@ -86,7 +93,7 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   return (
     <PlayerDetailLayout back={back} topAside={mobile && compare} title={summary.name} positions={mobile ? summary.positions : undefined} meta={meta} badges={badges} card={card}>
       <Tabs label="Oyuncu sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
-      <TabPanel idPrefix={PREFIX} id="statlar" active={tab === 'statlar'}><StatsTab detail={detail.data} /></TabPanel>
+      <TabPanel idPrefix={PREFIX} id="statlar" active={tab === 'statlar'}><StatsTab detail={detail.data} profile /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="roller" active={tab === 'roller'}><RolesTab playerId={summary.id} positions={summary.positions} careerId={careerId} /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="gelisim" active={tab === 'gelisim'}><DevelopmentTab summary={summary} inSquad={inSquad} /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="sozlesme" active={tab === 'sozlesme'}><ContractTab query={contract} /></TabPanel>

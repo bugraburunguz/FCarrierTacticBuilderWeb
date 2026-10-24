@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer } from '../../api/types'
 import { Chip, Panel, Skeleton, SourceTag, type DataSource } from '../../design/components/primitives'
-import { currentRoute } from '../../lib/deskLinks'
 import { jobLayer, seasonJobs, type ActionKind } from '../../lib/deskRules'
 import { toDeskSlots, type SlotFitRow } from '../squad/useSlotFits'
 
@@ -50,7 +49,7 @@ export function SeasonJobs({ careerId, squad, rows, tacticSource, record, gameDa
               </div>
               <p className="mt-1 text-xs text-ink-2">{job.reason}</p>
             </div>
-            <Link to={currentRoute(job.to)} className="inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11">Gör</Link>
+            <Link to={job.to} className="inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11">Gör</Link>
           </li>
         )
       })}

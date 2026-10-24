@@ -7,6 +7,10 @@ import type { ReplicaSummary } from '../../api/types'
 import { Input, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
+import { useAuth } from '../../auth/AuthContext'
+import { useActiveCareerId } from '../../state/careerStore'
+import { useMode } from '../../state/modeStore'
+import { ReplicaCloneButton } from '../lab/ReplicaCloneButton'
 import { ReplicaCard } from './ReplicaCard'
 import { BUILD_UP_LABEL, CATEGORY_LABEL, CATEGORY_ORDER } from './labels'
 import { FILTER_KEYS, filterReplicas, filtersFromParams, filtersToParams, sortReplicas, type ReplicaFilters } from './replicaFilter'
@@ -66,6 +70,13 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
   }
   const set = (patch: Partial<ReplicaFilters>) => setParams(withOthers(filtersToParams({ ...filters, ...patch })), { replace: true })
 
+  // KARIYER-UX 6: tek başına liste kariyer modunda (oturum + seçili kariyer) Lab ile aynı "Klonla → taslak" eylemini sunar.
+  const mode = useMode()
+  const careerId = useActiveCareerId()
+  const { authenticated } = useAuth()
+  const action = cardAction ?? (!embedded && mode === 'career' && authenticated && careerId !== undefined
+    ? (replica: ReplicaSummary) => <ReplicaCloneButton careerId={careerId} replica={replica} />
+    : undefined)
   const replicas = useQuery({ queryKey: ['replicas'], queryFn: endpoints.replicas, staleTime: STALE_MS })
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: STALE_MS })
   const formationById = useMemo(() => new Map((formations.data ?? []).map((f) => [f.id, f])), [formations.data])
@@ -136,7 +147,7 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
           <p role="status" className="text-xs text-muted">{shown.length} replika{shown.length !== (replicas.data?.length ?? 0) ? ` / ${replicas.data?.length}` : ''}</p>
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {shown.map((r) => (
-              <ReplicaCard key={r.id} replica={r} formation={formationById.get(r.formationId)} action={cardAction?.(r)} />
+              <ReplicaCard key={r.id} replica={r} formation={formationById.get(r.formationId)} action={action?.(r)} />
             ))}
           </ul>
         </>

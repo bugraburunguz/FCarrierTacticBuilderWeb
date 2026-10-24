@@ -8,6 +8,7 @@ import { FIT_STATE_TEXT, fitDisplay } from '../../lib/fitLabels'
 import { fromUserTactic, toTacticRequest, type Lineup, type TacticState } from '../../lib/tactic'
 import type { CareerLab } from '../../state/labStore'
 import { teamFitPct } from '../squad/useSlotFits'
+import { matchSlots, type CompareSide } from './compareMatch'
 
 interface Side {
   id: string
@@ -36,6 +37,8 @@ interface SlotFit {
   playerId?: number
   pct?: number
   label?: string
+  /** Slotun rolü (motorun çözdüğü rol adı). */
+  role?: string
 }
 
 function slotFits(data: SquadFit | undefined, lineup: Lineup): Map<string, SlotFit> {
@@ -44,12 +47,13 @@ function slotFits(data: SquadFit | undefined, lineup: Lineup): Map<string, SlotF
       return []
     }
     const display = fitDisplay(s.roleFit as RoleFit)
-    return [[s.slotId, { playerId: s.playerId, pct: display.pct, label: FIT_STATE_TEXT[display.state].label }] as const]
+    return [[s.slotId, { playerId: s.playerId, pct: display.pct, label: FIT_STATE_TEXT[display.state].label, role: s.roleName || undefined }] as const]
   }))
 }
 
 /**
  * Lab › Karşılaştır (KARIYER-UX FAZ 4b, 15 §4.3): iki taslak ya da taslak ↔ ana taktik. Slot slot uyum farkı (B − A) ve etiket değişimi,
+ * eşleme `matchSlots` (FAZ 5: aynı formasyon slot kimliği, farklı formasyon mevki + soldan sağa; eşleşmeyenler "Yalnız A'da / B'de"),
  * toplam takım uyumu farkı. Fark hep işaretli ve metinli ("−30 · düştü"); renk tek başına anlam taşımaz. Mobilde tek sütun.
  */
 export function CompareTab({ careerId, lab, main }: { careerId: number; lab: CareerLab; main?: UserTactic | null }) {
@@ -65,13 +69,18 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
   const b = sides.find((s) => s.id === (bId ?? (lab.activeId && lab.activeId !== a?.id ? lab.activeId : sides.find((s) => s.id !== a?.id)?.id)))
   const fitsA = useSideFits(careerId, a)
   const fitsB = useSideFits(careerId, b)
+  const formations = useQuery({ queryKey: ['formations'], queryFn: () => endpoints.formations() })
 
   if (sides.length < 2) {
     return <EmptyState>Karşılaştırmak için en az iki taslak ya da bir taslak ve ana taktik gerekir.</EmptyState>
   }
   const mapA = slotFits(fitsA.data, a?.lineup ?? {})
   const mapB = slotFits(fitsB.data, b?.lineup ?? {})
-  const order = [...new Set([...(fitsA.data?.slots ?? []).map((s) => s.slotId), ...(fitsB.data?.slots ?? []).map((s) => s.slotId)])]
+  const sideSlots = (side: Side | undefined, data: SquadFit | undefined): CompareSide => {
+    const layout = new Map((formations.data ?? []).find((f) => f.id === side?.tactic.formation)?.slots.map((s) => [s.slotId, s]) ?? [])
+    return { formation: side?.tactic.formation ?? '', slots: (data?.slots ?? []).map((s) => ({ slotId: s.slotId, position: layout.get(s.slotId)?.position ?? s.position, x: layout.get(s.slotId)?.x ?? 50 })) }
+  }
+  const match = matchSlots(sideSlots(a, fitsA.data), sideSlots(b, fitsB.data))
   const teamA = teamFitPct([...mapA.values()].flatMap((f) => (f.pct === undefined ? [] : [{ pct: f.pct }])))
   const teamB = teamFitPct([...mapB.values()].flatMap((f) => (f.pct === undefined ? [] : [{ pct: f.pct }])))
   const teamDiff = teamA !== undefined && teamB !== undefined ? teamB - teamA : undefined
@@ -91,17 +100,21 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
         </div>
       </Panel>
       <Panel title="Slot slot" label="Slot slot">
-        {fitsA.isLoading || fitsB.isLoading ? <Skeleton className="h-48" /> : (
+        {fitsA.isLoading || fitsB.isLoading || formations.isLoading ? <Skeleton className="h-48" /> : (
           <ol className="flex flex-col gap-2">
-            {order.map((slotId) => {
-              const fa = mapA.get(slotId)
-              const fb = mapB.get(slotId)
+            {match.pairs.map((pair) => {
+              const slotId = pair.a === pair.b ? pair.a : `${pair.a} ↔ ${pair.b}`
+              const fa = mapA.get(pair.a)
+              const fb = mapB.get(pair.b)
               const diff = fa?.pct !== undefined && fb?.pct !== undefined ? fb.pct - fa.pct : undefined
-              const labelText = fa?.label && fb?.label ? (fa.label === fb.label ? fa.label : `${fa.label} → ${fb.label}`) : fa?.label ?? fb?.label ?? ''
+              const fitText = fa?.label && fb?.label ? (fa.label === fb.label ? fa.label : `${fa.label} → ${fb.label}`) : fa?.label ?? fb?.label ?? ''
+              // KARIYER-UX 6: taktiksel delta — rol değiştiyse "Rol: A → B", aynıysa tek rol.
+              const roleText = fa?.role && fb?.role ? `Rol: ${fa.role === fb.role ? fa.role : `${fa.role} → ${fb.role}`}` : (fa?.role ?? fb?.role) ? `Rol: ${fa?.role ?? fb?.role}` : ''
+              const labelText = [roleText, fitText].filter(Boolean).join(' · ')
               const diffText = diff === undefined ? 'karşılaştırılamaz' : diff === 0 ? 'aynı' : `${signed(diff)} · ${trend(diff)}`
               return (
                 <li key={slotId} aria-label={`${slotId}: A ${cell(fa)}, B ${cell(fb)}, fark ${diffText}. ${labelText}`}
-                  className="glass-3 grid grid-cols-1 gap-1 rounded-[var(--radius-sm)] p-2.5 text-sm min-[768px]:grid-cols-[72px_1fr_1fr_140px] min-[768px]:items-center">
+                  className="glass-3 grid grid-cols-1 gap-1 rounded-[var(--radius-sm)] p-2.5 text-sm min-[768px]:grid-cols-[96px_1fr_1fr_140px] min-[768px]:items-center">
                   <b className="font-[var(--font-num)]">{slotId}</b>
                   <span><span className="text-xs text-muted min-[768px]:hidden">A · </span>{cell(fa)}</span>
                   <span><span className="text-xs text-muted min-[768px]:hidden">B · </span>{cell(fb)}</span>
@@ -113,6 +126,19 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
           </ol>
         )}
       </Panel>
+      {(match.onlyA.length > 0 || match.onlyB.length > 0) && (
+        <div className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2">
+          {([["Yalnız A'da", match.onlyA, mapA], ["Yalnız B'de", match.onlyB, mapB]] as const).map(([title, slots, map]) => (
+            <Panel key={title} title={title} label={title}>
+              {slots.length === 0 ? <p className="text-sm text-muted">Yok.</p> : (
+                <ul className="flex flex-col gap-1 text-sm">
+                  {slots.map((slotId) => <li key={slotId}><b className="font-[var(--font-num)]">{slotId}</b> {cell(map.get(slotId))}</li>)}
+                </ul>
+              )}
+            </Panel>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
