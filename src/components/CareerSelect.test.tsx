@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../api/endpoints'
 import { CareerSelect } from './CareerSelect'
@@ -23,7 +23,8 @@ describe('CareerSelect (F11)', () => {
     auth.authenticated = false
     renderSelect()
 
-    await new Promise((r) => setTimeout(r, 30))
+    // REVIEW: sabit bekleme yerine bekleyen efektlerin boşaltılması.
+    await act(async () => { await Promise.resolve() })
     expect(endpoints.careers).not.toHaveBeenCalled()
     expect(screen.queryByText(/Yeni kariyer/)).not.toBeInTheDocument()
   })
