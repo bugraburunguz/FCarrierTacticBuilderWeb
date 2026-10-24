@@ -27,7 +27,7 @@ vi.mock('../../api/endpoints', () => ({
 
 const replica = (over: Partial<ReplicaSummary>): ReplicaSummary => ({
   id: 'r', category: 'UCL_WINNER', club: 'FC Barcelona', coach: 'Pep Guardiola', season: '2010-11', league: 'ES_LALIGA', formationId: '4-3-3 (2)', eaFormation: '4-3-3 (2)', buildUp: 'SHORT_PASSING', defensiveApproach: 'AGGRESSIVE', lineHeight: 92,
-  fidelity: 4, tacticCode: 'JBiHyZ597xmL', slots: [], eaOrderedSlots: [], attentionCount: 0, ...over,
+  fidelity: 4, tacticCode: 'JBiHyZ597xmL', slots: [], eaOrderedSlots: [], attentionCount: 0, verified: false, ...over,
 })
 
 const LIST = [
@@ -67,8 +67,10 @@ describe('replika listesi › klon (kariyer modu)', () => {
     modeStore.set('career')
     careerStore.set(7)
     renderPage()
-    const card = (await screen.findAllByRole('button', { name: /Klonla → taslak/ }))[0]
-    fireEvent.click(card)
+    // Kart sırası lig/kategori gruplamasına bağlı (REP-d); Barcelona kartını adıyla seç.
+    await screen.findAllByRole('button', { name: /Klonla → taslak/ })
+    const barca = screen.getAllByRole('listitem').find((li) => li.textContent?.includes('FC Barcelona') && within(li).queryByRole('button', { name: /Klonla → taslak/ }))!
+    fireEvent.click(within(barca).getByRole('button', { name: /Klonla → taslak/ }))
     expect(await screen.findByText('lab kurucu')).toBeInTheDocument()
     expect(endpoints.replicaApply).toHaveBeenCalledWith('a', { careerId: 7 })
     expect(labStore.get(7).drafts[0]).toMatchObject({ name: 'FC Barcelona 2010-11', origin: { kind: 'replica', ref: 'a' }, lineup: { GK: 5 } })

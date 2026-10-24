@@ -1327,6 +1327,8 @@ export interface ReplicaSummary {
   eaOrderedSlots: ReplicaRoleSlot[]
   /** Uyarı + risk bulgusu sayısı (bilgi sayılmaz). */
   attentionCount: number
+  /** Kaynaklar doğrulandı (iç doğrulama listesi boş; detaydaki bayrakla aynı, REP-d). */
+  verified: boolean
 }
 
 export interface TacticEvidence {
