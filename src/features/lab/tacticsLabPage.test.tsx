@@ -252,6 +252,17 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('aynı')
   })
 
+  it('KARIYER-UX 6: Karşılaştır slot satırında rol farkı "Rol: A → B" (aynıysa tek rol)', async () => {
+    const base = endpoints.fitRole.getMockImplementation()!
+    endpoints.fitRole.mockImplementation((b: { playerId: number }) => base(b).then((r: { roleFit: object }) => (b.playerId === 12 ? { roleFit: { ...r.roleFit, roleName: 'Box-to-Box' } } : r)))
+    const d = draft('Deneme')
+    labStore.patch(7, d.id, () => ({ lineup: { ...LINEUP, LCM: 12 } }))
+    renderAt('/career/tactics-lab?sekme=karsilastir')
+    const lcm = await screen.findByRole('listitem', { name: /^LCM/ })
+    expect(lcm).toHaveTextContent('Rol: Rol → Box-to-Box')
+    expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('Rol: Rol')
+  })
+
   it('Karşılaştır farklı formasyon: mevkiye göre soldan sağa eşleşir; eşleşmeyenler "Yalnız A\'da / Yalnız B\'de" (4b-2 kararı)', async () => {
     const f433 = { id: '4-3-3', label: '4-3-3', slots: [['GK', 'GK', 50], ['LB', 'LB', 10], ['LCB', 'CB', 35], ['RCB', 'CB', 65], ['RB', 'RB', 90],
       ['LCM', 'CM', 30], ['CM', 'CM', 50], ['RCM', 'CM', 70], ['LW', 'LW', 15], ['ST', 'ST', 50], ['RW', 'RW', 85]]

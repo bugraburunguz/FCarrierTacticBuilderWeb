@@ -93,7 +93,7 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   return (
     <PlayerDetailLayout back={back} topAside={mobile && compare} title={summary.name} positions={mobile ? summary.positions : undefined} meta={meta} badges={badges} card={card}>
       <Tabs label="Oyuncu sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
-      <TabPanel idPrefix={PREFIX} id="statlar" active={tab === 'statlar'}><StatsTab detail={detail.data} /></TabPanel>
+      <TabPanel idPrefix={PREFIX} id="statlar" active={tab === 'statlar'}><StatsTab detail={detail.data} profile /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="roller" active={tab === 'roller'}><RolesTab playerId={summary.id} positions={summary.positions} careerId={careerId} /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="gelisim" active={tab === 'gelisim'}><DevelopmentTab summary={summary} inSquad={inSquad} /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="sozlesme" active={tab === 'sozlesme'}><ContractTab query={contract} /></TabPanel>

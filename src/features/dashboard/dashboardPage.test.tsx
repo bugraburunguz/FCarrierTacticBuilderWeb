@@ -102,6 +102,18 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(cards[0]).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-CM2&pos=CM&rol=box_to_box_balanced')
   })
 
+  it('KARIYER-UX 6: zayıf halka oyuncusunun sözleşmesi ≤ 12 ay ise kartta kalan ay (birleşik uyarı)', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue([
+      member(1, { wageEur: 5_000 }, { contractUntil: '2027-10-20' }), member(2, { wageEur: 5_000 }, { contractUntil: '2030-06-30' }), member(3, { wageEur: 5_000 }),
+      member(4, { wageEur: 2_000 }, { age: 32, contractUntil: '2027-05-01' }), member(5, { onLoan: true, loanUntil: '2027-02-05' }),
+    ] as never)
+    renderPage()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const [wrongRole, weakCard] = await within(weak).findAllByRole('listitem')
+    expect(weakCard).toHaveTextContent('Sözleşmesi 9 ay içinde bitiyor')
+    expect(wrongRole).not.toHaveTextContent('Sözleşmesi')
+  })
+
   it('WRONG_ROLE kartı: birincil "Rolü değiştir" (Lab, slot seçili), ikincil aday; WEAK kartı: birincil aday, ikincil "Lab\'da dene"', async () => {
     renderPage()
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })

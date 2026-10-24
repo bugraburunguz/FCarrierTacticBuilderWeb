@@ -983,3 +983,19 @@ Fazlar: 1 kabuk ve navigasyon · 2 Kariyer Masası · 3 Kadro Analizi (+3.1 list
 - FAZ 5 açık soruları (§23) ve REP-d (ayrı oturum).
 
 **`v3` → `main` önerisi.** KARİYER-UX ve REP-ce `v3`'te tamam; her faz kendi PR'ında CI yeşil birleşti. Öneri: (1) REP-d `v3`'e birleşince `v3` → `main` tek PR (merge commit), CI yeşil; (2) Railway web servisi `main`'den dağıtıldığı için birleştirme = yayın — önce yerel yığında `main` adayıyla duman testi (`scripts/deploy/smoke.mjs`), prod DB'de hangi migration'ların uygulandığı buradan bilinmiyor (Railway'e erişilmedi) — backend açılışta eksikleri (en çok V45'e kadar) uygular, öncesinde Postgres yedeği alınır; (3) v2 silme işi ayrı PR, `main`'e geçişten sonra.
+
+## 25. KARİYER-UX 6: eksik özellik taraması ve ekler (2026-10-24)
+
+Dışarıdan gelen "Cyber-Pitch eksik özellik" istemi v3 sayfalarına (`src/features/**`) göre tarandı; v2 (`src/pages/**`) dokunulmadı. Zaten olanlar: Masa "Transferde aday bul" slot/mevki/rol seçili açar (FAZ 5); replikadan Lab taslağına klon Lab'da ve replika detayında var; Karşılaştır sayfasında profil radarı var; Kadro'da yaş histogramı ve derinlik haritası var. Eklenenler (Buğra seçti):
+- **Oyuncu sayfası › Statlar:** profil radarı (Karşılaştır'daki `AttributeRadar`, aynı token ve desenler, metin tablosuyla); `StatsTab profile` yalnız kariyer oyuncu sayfasında (UT sayfası değişmedi).
+- **Lab › Karşılaştır:** slot satırında rol farkı "Rol: A → B" (aynıysa tek rol), motorun çözdüğü rol adından.
+- **Kadro › Derinlik matrisi:** grup başına İlk 11 (ana taktik, yoksa başlangıç önerisi) · Yedek · Genç (≤21, ilk 11 dışı) ve aciliyet çipi: "N eksik" > "Yedek yok" > "Yalnız genç yedek" > "Yeterli". İlk 11 bilinmiyorsa yalnız eksik/yeterli. Panel geniş ekranda tam genişlik (isimler kesilmesin). Masa'nın `?grup=` davranışı aynı.
+- **Kadro › Yaş bantları:** Genç (≤21) · Prime (22–29) · Tecrübeli (30+) sayı ve oran (kiralık gönderilen hariç), histogramın üstünde.
+- **Masa birleşik uyarı:** zayıf halka oyuncusunun sözleşmesi ≤ 12 ay ise kartta "Sözleşmesi N ay içinde bitiyor" (sözleşme sekmesine bağlantı); acil sözleşme uyarısı ilk 11 oyuncusunda "· ilk 11". Sayılar uydurulmaz (motor ve kayıt).
+- **Oyuncular › PlayStyle süzgeci:** PlayStyle ekle, her biri PS ya da PS+; adres `ps` / `psp`, sorgu `ps` (varlık) / `ps_plus` (seviye ≥ 2, **API CONTRACT CHANGE geriye uyumlu**, backend `PlayerSearchRepository`, kariyer ve katalog).
+- **Replikalar listesi:** kariyer modunda (oturum + kariyer) kartta "Klonla → taslak" (`ReplicaCloneButton`, Lab ile aynı `cloneReplicaToDraft`).
+- Yapılmayanlar: mevki aşinalığı süzgeci (istemde vardı, seçilmedi); "takım uyumunu %4 düşürür" türü tahmini etki (motor böyle bir sayı vermiyor; uydurulmadı).
+
+**Ekranlar** `screens/KARIYER-UX-6/` (`scripts/kariyer-ux-6-shots.mjs`): 6 sayfa × 375/768/1280 × koyu/açık = 36 çekim, sorun 0, en küçük yazı 11px. Fikstür: kadroda sözleşme bitişi (yalnız tarayıcıda; yeni kariyerde LE verisi yok).
+
+**Test sayıları:** web 1515/1515, lint hatasız, build yeşil; backend 672 (0 hata, 5 atlanan).

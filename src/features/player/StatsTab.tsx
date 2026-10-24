@@ -1,4 +1,5 @@
 import type { PlayerDetail } from '../../api/types'
+import { AttributeRadar } from '../../components/AttributeRadar'
 import { Chip } from '../../design/components/primitives'
 import { ATTR_GROUPS, ATTR_LABELS } from '../../lib/format'
 import { playStyleName } from '../../lib/playstyles'
@@ -7,14 +8,20 @@ import { TONE_VAR, ratingTone } from '../../lib/ratingTone'
 /**
  * Statlar: 6 grup attribute tablosu (ratingTone ile renkli), PlayStyle'lar; kaleci için yalnız kaleci grubu. UT ve kariyer oyuncu sayfası ortak.
  * note: değerlerin hangi karta ait olduğuna dair kısa not (UT'de base dışı versiyon).
+ * profile (KARIYER-UX 6, kariyer oyuncu sayfası): grupların üstünde Karşılaştır'daki profil radarı (aynı bileşen, metin tablosuyla).
  */
-export function StatsTab({ detail, note }: { detail: PlayerDetail; note?: string }) {
+export function StatsTab({ detail, note, profile = false }: { detail: PlayerDetail; note?: string; profile?: boolean }) {
   const { attrs, playstyles, summary } = detail
   const goalkeeper = summary.positions.includes('GK')
   const groups = ATTR_GROUPS.filter((g) => (g.title === 'Kaleci') === goalkeeper || (g.title !== 'Kaleci' && !goalkeeper))
   return (
     <div className="flex flex-col gap-4">
       {note && <p className="text-xs text-muted">{note}</p>}
+      {profile && (
+        <section aria-label="Profil" className="glass-3 rounded-[var(--radius-sm)] p-3">
+          <AttributeRadar series={[{ name: summary.name, attrs }]} goalkeeper={goalkeeper} />
+        </section>
+      )}
       {groups.map((g) => (
         <section key={g.title} aria-label={g.title}>
           <h2 className="mb-1 font-display text-lg font-semibold leading-6">{g.title}</h2>
