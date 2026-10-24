@@ -157,7 +157,7 @@ Self-host (Barlow + Plex zaten var, Inter eklenir); `font-display: swap`; latin 
 | **Piyon** (Pitch `marker="pawn"`) | Gölgesiz düz daire `--pawn-bg`, OVR `--pawn-ink` (mono ≥14px); uyum durumu 2px kenar (`--good/--warn/--bad`); altında opak soyad hapı `--pawn-label-*` (tam ad `title`), mevki hapı; rol etiketi `showRole` ile | Daire ≥32px (≥1024: 40), dokunma ≥44px; `readOnly` + `onPickPawn` → düğme; düzenlenebilirde sürükle/klavye taşıma aynı. Yerleşim `layout.ts markerBox` (Q17 matrisi piyon dahil) |
 | **PitchSlot** | Kart (EA render ya da kendi çerçeve) → altında rol hapı (`.glass-3`, Inter 12) → altında mevki hapı (mono 11→12, koyu) ; boş: kesikli kenarlı cam kart siluet + "+" | Tıkla → SidePanel (08 §15); boşta da rol çipi (WEB-BUG-11) |
 | **PlayerCard (OWN)** | Rarity çerçevesi + yüz + OVR/pozisyon + 6 stat; altında cam bilgi şeridi (kimya elmasları, rol uyumu, fiyat) | EA render modunda kartın üstüne hiçbir şey basılmaz (06 §2.2) |
-| **Chart** | Şeffaf zemin, ızgara `--glass-border`, seri renkleri vurgu + nötr | uPlot/Recharts lazy |
+| **Chart** | Şeffaf zemin, ızgara `--glass-border`, seri renkleri vurgu + nötr | Elle yazılmış SVG (grafik kütüphanesi yok) |
 
 ## 7. PERFORMANS KURALLARI
 - `backdrop-filter` sayısı ekranda ≤ 6; `.glass` yalnız: AppShell bar/ray, sayfa başına 2-3 panel, açık SidePanel/Dialog.
