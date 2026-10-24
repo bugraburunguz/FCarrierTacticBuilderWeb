@@ -28,6 +28,25 @@ export const LEAGUE_LABEL: Record<ReplicaLeague, string> = {
   AT_BUNDESLIGA: 'Avusturya Bundesliga',
 }
 
+/** Lig sekmeleri (REP-d): altı büyük lig + "Diğer" (Championship, Serie B, Eredivisie, Portekiz, İskoçya, Avusturya). */
+export type LeagueTab = 'ALL' | 'TR_SUPER_LIG' | 'EN_PREMIER_LEAGUE' | 'ES_LALIGA' | 'IT_SERIE_A' | 'DE_BUNDESLIGA' | 'FR_LIGUE_1' | 'OTHER'
+export const LEAGUE_TABS: LeagueTab[] = ['ALL', 'TR_SUPER_LIG', 'EN_PREMIER_LEAGUE', 'ES_LALIGA', 'IT_SERIE_A', 'DE_BUNDESLIGA', 'FR_LIGUE_1', 'OTHER']
+export const LEAGUE_TAB_LABEL: Record<LeagueTab, string> = {
+  ALL: 'Tümü',
+  TR_SUPER_LIG: LEAGUE_LABEL.TR_SUPER_LIG,
+  EN_PREMIER_LEAGUE: LEAGUE_LABEL.EN_PREMIER_LEAGUE,
+  ES_LALIGA: LEAGUE_LABEL.ES_LALIGA,
+  IT_SERIE_A: LEAGUE_LABEL.IT_SERIE_A,
+  DE_BUNDESLIGA: LEAGUE_LABEL.DE_BUNDESLIGA,
+  FR_LIGUE_1: LEAGUE_LABEL.FR_LIGUE_1,
+  OTHER: 'Diğer',
+}
+
+/** Formasyon ailesi: savunma hattındaki oyuncu sayısı (EA etiketinin ilk hanesi). */
+export type FormationFamily = '4' | '3' | '5'
+export const FAMILY_ORDER: FormationFamily[] = ['4', '3', '5']
+export const FAMILY_LABEL: Record<FormationFamily, string> = { '4': '4 defans', '3': '3 defans', '5': '5 defans' }
+
 export const BUILD_UP_LABEL: Record<ReplicaBuildUp, string> = {
   SHORT_PASSING: 'Kısa pas',
   BALANCED: 'Dengeli',

@@ -29,6 +29,7 @@ const mode = flag('mode', route.startsWith('/ut') ? 'ut' : 'career')
 const auth = args.includes('--auth') || args.includes('--auto-account')
 const matrix = flag('matrix', 'full')
 // --formation <id>: UT örnek kadrosu ve kariyer taktiği bu formasyonla başlar (örn. 3-5-2).
+// --career <id>: kariyer modunda aktif kariyer (fc.career) bu id ile başlar (örn. replika "Kadroma uyanlar").
 // Ek durum: sayfa yüklendikten sonra --click <css seçici> ile tıklanır ve dosya adına --tag eklenir
 const clickSelector = flag('click', undefined)
 const stateTag = flag('tag', clickSelector ? 'state' : '')
@@ -83,9 +84,12 @@ for (const v of variants) {
   await new Promise((r) => setTimeout(r, 2500)) // anonim istek hız sınırına (429) takılmamak için
   const context = await browser.newContext({ viewport: { width: v.w, height: v.w === 375 ? 812 : 900 }, reducedMotion: v.reducedMotion ?? 'no-preference' })
   await context.addInitScript(
-    ({ theme, mode, reducedTransparency, session, squadSample, careerFormation }) => {
+    ({ theme, mode, reducedTransparency, session, squadSample, careerFormation, careerId }) => {
       localStorage.setItem('fc.theme', theme)
       localStorage.setItem('fc.mode', mode)
+      if (careerId) {
+        localStorage.setItem('fc.career', careerId)
+      }
       if (reducedTransparency) {
         localStorage.setItem('fc.transparency', 'reduced')
       }
@@ -101,7 +105,7 @@ for (const v of variants) {
       }
       document.documentElement.classList.toggle('dark', theme === 'dark')
     },
-    { theme: v.theme, mode, reducedTransparency: v.reducedTransparency ?? false, session, squadSample, careerFormation: mode === 'career' ? flag('formation', undefined) : undefined },
+    { theme: v.theme, mode, reducedTransparency: v.reducedTransparency ?? false, session, squadSample, careerFormation: mode === 'career' ? flag('formation', undefined) : undefined, careerId: mode === 'career' ? flag('career', undefined) : undefined },
   )
   const page = await context.newPage()
   const problems = []

@@ -1,14 +1,17 @@
-import { Info } from 'lucide-react'
+import { BadgeCheck, Info } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Formation, ReplicaSummary } from '../../api/types'
 import { Chip } from '../../design/components/primitives'
 import { CopyCodeButton } from './CopyCodeButton'
-import { APPROACH_LABEL, BUILD_UP_LABEL, CATEGORY_LABEL } from './labels'
+import { APPROACH_LABEL, BUILD_UP_LABEL, CATEGORY_LABEL, LEAGUE_LABEL } from './labels'
 import { MiniPitch } from './MiniPitch'
 
-/** Liste kartı (Katalog şablonu): blur yok (`.glass-3`); takım + sezon, hoca, mini saha, build-up/hat rozetleri, kod kopyala, dikkat noktası sayısı. */
-export function ReplicaCard({ replica, formation, action }: { replica: ReplicaSummary; formation?: Formation; action?: ReactNode }) {
+/**
+ * Liste kartı (Katalog şablonu): blur yok (`.glass-3`); takım + sezon, hoca, lig · kategori, doğrulama rozeti (metinli; renk tek başına anlam taşımaz),
+ * mini saha, formasyon/build-up/hat rozetleri, kod kopyala, dikkat noktası sayısı. `fit`: "Kadroma uyanlar" uyum yüzdesi (REP-d).
+ */
+export function ReplicaCard({ replica, formation, action, fit }: { replica: ReplicaSummary; formation?: Formation; action?: ReactNode; fit?: number }) {
   const attention = replica.attentionCount
   return (
     <li className="glass-3 relative flex gap-3 p-3 transition-transform hover:-translate-y-0.5">
@@ -25,9 +28,21 @@ export function ReplicaCard({ replica, formation, action }: { replica: ReplicaSu
             </Link>
           </h2>
           <p className="truncate text-sm text-ink-2">{replica.coach}</p>
-          <p className="text-xs text-muted">{CATEGORY_LABEL[replica.category]}</p>
+          <p className="text-xs text-muted">
+            <span>{LEAGUE_LABEL[replica.league] ?? replica.league}</span>
+            <span aria-hidden="true"> · </span>
+            <span>{CATEGORY_LABEL[replica.category]}</span>
+          </p>
         </div>
         <div className="flex flex-wrap gap-1.5">
+          {fit !== undefined && <Chip title="Ana kadronun bu taktiğe uyumu" className="font-semibold text-ink">Uyum %{fit}</Chip>}
+          {replica.verified && (
+            <Chip title="Diziliş ve ilk 11 maç raporlarıyla doğrulandı">
+              {/* Light temada --good-soft üstünde yeşil metin AA'yı geçmiyor: metin nötr, renk yalnız ikonda (anlam metinde). */}
+              <BadgeCheck size={12} aria-hidden="true" className="text-good" />
+              Doğrulandı
+            </Chip>
+          )}
           <Chip>{replica.eaFormation}</Chip>
           <Chip>{BUILD_UP_LABEL[replica.buildUp]}</Chip>
           <Chip title={`Hat yüksekliği ${replica.lineHeight}`}>{APPROACH_LABEL[replica.defensiveApproach]} · {replica.lineHeight}</Chip>
