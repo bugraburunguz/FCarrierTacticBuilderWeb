@@ -1,0 +1,65 @@
+{
+  "taskId": "REP-d",
+  "route": "/replicas?lig=super-lig&kategori=TURKISH_BIG4,CURRENT&dogrulandi=1",
+  "mode": "career",
+  "matrix": "full",
+  "base": "http://localhost:5174",
+  "shots": [
+    {
+      "file": "career-dark-375-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-light-375-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-768-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-light-768-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-light-1280-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-reduced-motion-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    },
+    {
+      "file": "career-dark-1280-reduced-transparency-sekme-filtre.png",
+      "horizontalOverflow": false,
+      "axeSeriousCritical": 0,
+      "axeViolations": [],
+      "consoleAndNetwork": []
+    }
+  ]
+}
