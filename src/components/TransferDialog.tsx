@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { CareerPlayer, Club } from '../api/types'
 import { AppDialog } from '../design/components/AppDialog'
+import { MoneyInput } from './MoneyInput'
 import { Button, ErrorBox, Field, Input } from './ui'
 
 interface Props {
@@ -16,7 +17,9 @@ interface Props {
 }
 
 export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, onClose }: Props) {
-  const [fee, setFee] = useState('')
+  // REVIEW O2: bedel diğer ekranlarla aynı para girişiyle (birim seçili, "2,5" → milyon); ham € alanı "15" yazana 15 € gönderiyordu.
+  const [fee, setFee] = useState<number | undefined>()
+  const [feeValid, setFeeValid] = useState(true)
   const [term, setTerm] = useState('')
   const [club, setClub] = useState<Club | undefined>()
   const clubs = useQuery({
@@ -29,9 +32,10 @@ export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, 
   return (
     <AppDialog title={`${entry.player.name} — ${selling ? 'Satış' : 'Kiralık verme'}`} onClose={onClose}>
       <div className="space-y-3">
-        <Field label={selling ? 'Gelen bedel (€)' : 'Kiralama bedeli (€, yoksa 0)'}>
-          <Input type="number" min={0} autoFocus value={fee} onChange={(e) => setFee(e.target.value)} placeholder="0" />
-        </Field>
+        <div className="flex flex-col gap-1 text-sm font-medium">
+          {selling ? 'Gelen bedel' : 'Kiralama bedeli (yoksa boş)'}
+          <MoneyInput ariaLabel={selling ? 'Gelen bedel' : 'Kiralama bedeli'} value={fee} onChange={(euro, meta) => { setFee(euro); setFeeValid(meta?.valid ?? true) }} />
+        </div>
         <Field label={selling ? 'Hangi kulübe satıldı? (isteğe bağlı)' : 'Hangi kulübe kiralandı? (isteğe bağlı)'}>
           <Input
             value={club ? club.name : term}
@@ -60,7 +64,7 @@ export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, 
           <Button variant="ghost" onClick={onClose}>
             Vazgeç
           </Button>
-          <Button variant={selling ? 'danger' : 'primary'} disabled={pending} onClick={() => onSubmit({ feeEur: fee ? Number(fee) : 0, toClubId: club?.id })}>
+          <Button variant={selling ? 'danger' : 'primary'} disabled={pending || !feeValid} onClick={() => onSubmit({ feeEur: fee ?? 0, toClubId: club?.id })}>
             {selling ? 'Satışı onayla' : 'Kiralığı onayla'}
           </Button>
         </div>

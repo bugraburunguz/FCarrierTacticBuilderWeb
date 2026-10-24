@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { Career } from '../api/types'
+import { removeCareerScope } from '../lib/careerQueries'
 import { careerStore } from '../state/careerStore'
 import { labStore } from '../state/labStore'
 import { Button, ErrorBox } from './ui'
@@ -19,11 +20,14 @@ export function DeleteCareerButton({ career, onDeleted }: { career: Career; onDe
   const remove = useMutation({
     mutationFn: () => endpoints.deleteCareer(career.id),
     onSuccess: async () => {
-      client.setQueryData<Career[]>(['careers'], (old) => (old ?? []).filter((c) => c.id !== career.id))
-      careerStore.set(undefined)
+      const remaining = (client.getQueryData<Career[]>(['careers']) ?? []).filter((c) => c.id !== career.id)
+      client.setQueryData<Career[]>(['careers'], remaining)
+      // REVIEW O4: silinen kariyer seçiliyse kalan ilk kariyere geç (seçimsiz sayfa kalmaz); o kariyerin sorguları önbellekten kalkar.
+      if (careerStore.get() === career.id) {
+        careerStore.set(remaining[0]?.id)
+      }
       labStore.dropCareer(career.id) // KARIYER-UX 15 §6.2: kariyerin Lab taslakları da gider
-
-      await Promise.all(['careers', 'squad', 'events', 'snapshots', 'shortlist', 'tags'].map((k) => client.invalidateQueries({ queryKey: [k] })))
+      removeCareerScope(client, career.id)
       setOpen(false)
       onDeleted?.()
     },

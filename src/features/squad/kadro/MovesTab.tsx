@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../../../api/endpoints'
 import type { Career, RosterEvent, RosterEventType } from '../../../api/types'
+import { MoneyInput } from '../../../components/MoneyInput'
 import { ErrorBox, Field, Input } from '../../../components/ui'
 import { Button, Chip, EmptyState, Panel } from '../../../design/components/primitives'
 import { formatEur } from '../../../lib/format'
@@ -52,7 +53,9 @@ export function MoveHistory({ careerId, events }: { careerId: number; events: Ro
 export function TransferMarket({ career, squadIds }: { career: Career; squadIds: Set<number> }) {
   const refresh = useInvalidateCareer()
   const [term, setTerm] = useState('')
-  const [fee, setFee] = useState('')
+  // REVIEW O2: bedel para girişiyle (birim seçili); ham € alanı "15" yazana 15 € gönderiyordu.
+  const [fee, setFee] = useState<number | undefined>()
+  const [feeValid, setFeeValid] = useState(true)
   const search = useQuery({
     queryKey: ['transfer-search', term, career.gender],
     queryFn: () => endpoints.players({ q: term, size: 8, gender: career.gender }),
@@ -62,16 +65,18 @@ export function TransferMarket({ career, squadIds }: { career: Career; squadIds:
     mutationFn: (v: { type: RosterEventType; playerId: number; feeEur?: number }) => endpoints.applyEvent(career.id, v),
     onSuccess: refresh,
   })
-  const feeValue = fee ? Number(fee) : 0
+  const feeValue = fee ?? 0
+  const busy = apply.isPending || !feeValid
   return (
     <Panel title="Transfer piyasası">
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Oyuncu ara">
           <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="En az 2 harf…" />
         </Field>
-        <Field label="Bedel (€)">
-          <Input type="number" min={0} value={fee} onChange={(e) => setFee(e.target.value)} placeholder="Bedelsiz" />
-        </Field>
+        <div className="flex flex-col gap-1 text-sm font-medium">
+          Bedel (yoksa boş)
+          <MoneyInput ariaLabel="Bedel" value={fee} onChange={(euro, meta) => { setFee(euro); setFeeValid(meta?.valid ?? true) }} />
+        </div>
       </div>
       <ul className="mt-2 divide-y divide-[var(--glass-border)] text-sm">
         {(search.data?.items ?? []).map((p) => (
@@ -84,8 +89,8 @@ export function TransferMarket({ career, squadIds }: { career: Career; squadIds:
               <Chip tone="good">Kadroda</Chip>
             ) : (
               <span className="flex flex-wrap gap-1">
-                <Button disabled={apply.isPending} onClick={() => apply.mutate({ type: 'BUY', playerId: p.id, feeEur: feeValue })}>Satın al</Button>
-                <Button disabled={apply.isPending} onClick={() => apply.mutate({ type: 'LOAN_IN', playerId: p.id, feeEur: feeValue })}>Kirala</Button>
+                <Button disabled={busy} onClick={() => apply.mutate({ type: 'BUY', playerId: p.id, feeEur: feeValue })}>Satın al</Button>
+                <Button disabled={busy} onClick={() => apply.mutate({ type: 'LOAN_IN', playerId: p.id, feeEur: feeValue })}>Kirala</Button>
                 <Button disabled={apply.isPending} onClick={() => apply.mutate({ type: 'PROMOTE', playerId: p.id })}>Altyapı</Button>
               </span>
             )}
