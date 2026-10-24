@@ -2,7 +2,17 @@ import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { StarterTactic, UserTactic } from '../api/types'
-import { DEFAULT_SETUP, fromStarter, fromUserTactic, toSaveBody, type TacticState } from './tactic'
+import { DEFAULT_SETUP, fromStarter, fromUserTactic, mainTacticName, toSaveBody, type TacticState } from './tactic'
+
+/** FAZ 6a-F: göçten gelen "Önceki taslak" ya da boş ad ana taktik adı olarak görünmez. */
+describe('mainTacticName', () => {
+  it('göç adı ve boş ad "Ana taktik · <formasyon>"; kullanıcının verdiği ad aynen', () => {
+    expect(mainTacticName('Önceki taslak', '4-3-3')).toBe('Ana taktik · 4-3-3')
+    expect(mainTacticName('  ', '4-4-2')).toBe('Ana taktik · 4-4-2')
+    expect(mainTacticName(undefined, '4-4-2')).toBe('Ana taktik · 4-4-2')
+    expect(mainTacticName('Gegenpress', '4-3-3')).toBe('Gegenpress')
+  })
+})
 import defaults from './tacticDefaults.json'
 
 const BACKEND_SEED = join(process.cwd(), '..', 'FCarrierTacticBuilderBackend', 'src', 'main', 'resources', 'seed', 'tactic-defaults.json')

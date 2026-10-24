@@ -310,6 +310,14 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(box).queryByText(/21668/)).toBeNull()
   })
 
+  it('FAZ 6a-F: göçten gelen "Önceki taslak" adı ana taktik adı olarak görünmez', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue({ ...MAIN, name: 'Önceki taslak' } as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım uyumu' })
+    expect(await within(fit).findByText('Ana taktik · 4-3-3')).toBeInTheDocument()
+    expect(screen.queryByText(/Önceki taslak/)).toBeNull()
+  })
+
   it('FAZ 6a-G: zayıf halka başlığında yüzdenin anlamı (bilgi ikonu + title)', async () => {
     renderPage()
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })

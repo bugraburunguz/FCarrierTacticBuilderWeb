@@ -55,6 +55,12 @@ function FitGauge({ pct }: { pct: number }) {
   )
 }
 
+/** Ad zaten formasyonu taşıyorsa ("Ana taktik · 4-3-3") formasyon tekrar yazılmaz. */
+const tacticLabel = (name: string | undefined, formation: string | undefined) => {
+  const title = name ?? 'Ana taktik'
+  return formation && !title.includes(formation) ? `${title} · ${formation}` : title
+}
+
 function NoMainTactic() {
   return (
     <EmptyState action={<Link to={deskLink.lab()} className={SECONDARY}>Lab'a git</Link>}>
@@ -211,7 +217,7 @@ export function DashboardPage() {
       ) : (
         <div className="flex flex-col items-center gap-2">
           <FitGauge pct={teamFit} />
-          <p className="text-center text-sm text-ink-2">{main.active?.main?.name ?? 'Ana taktik'} · {main.active?.tactic.formation}</p>
+          <p className="text-center text-sm text-ink-2">{tacticLabel(main.active?.main?.name, main.active?.tactic.formation)}</p>
           {main.dropped > 0 && <p role="status" className="text-center text-sm text-warn">{droppedText(main)}</p>}
         </div>
       )}

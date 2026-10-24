@@ -63,7 +63,7 @@ function migrate532(storage: Storage) {
 }
 
 /**
- * 002 (KARIYER-UX FAZ 1): tek kopya fc.tactic + fc.lineup → kariyere göre Lab taslağı "Önceki taslak" (fc.lab.v1). Dizilişi olan her kariyere,
+ * 002 (KARIYER-UX FAZ 1): tek kopya fc.tactic + fc.lineup → kariyere göre Lab taslağı "Ana taktik · <formasyon>" (fc.lab.v1). Dizilişi olan her kariyere,
  * yoksa etkin kariyere (fc.career). Eski anahtarlar silinmez: v2 (geliştirme) sayfaları hâlâ okur; v3 okumaz.
  */
 function migrateToLab(storage: Storage) {
@@ -85,7 +85,8 @@ function migrateToLab(storage: Storage) {
       return
     }
     const id = `migrated-${careerId}-${Date.now()}-${i}`
-    lab[careerId] = { activeId: id, drafts: [{ id, name: 'Önceki taslak', origin: { kind: 'blank', ref: 'fc.tactic' }, tactic, lineup, dirty: true, updatedAt: at }] }
+    // FAZ 6a-F: göç adı ana taktik adı olarak görünmesin diye "Ana taktik · <formasyon>" (göç taslağı origin.ref ile tanınır, adla değil).
+    lab[careerId] = { activeId: id, drafts: [{ id, name: `Ana taktik · ${tactic.formation}`, origin: { kind: 'blank', ref: 'fc.tactic' }, tactic, lineup, dirty: true, updatedAt: at }] }
   })
   storage.setItem('fc.lab.v1', JSON.stringify(lab))
 }

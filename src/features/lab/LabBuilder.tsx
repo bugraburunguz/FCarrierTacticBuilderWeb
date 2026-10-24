@@ -78,7 +78,6 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
         onFormation={b.changeFormation}
         setup={setup}
         onSetup={(next) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_SETUP), ...next } }))}
-        squadNameKey="fc.squadName.career"
         ratingStars={avgOvr}
         allAverages={[{ label: 'Rol uyumu', value: pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : [])))) }, { label: 'Dolu', value: `${placed.length}/11` }]}
         stats={[
