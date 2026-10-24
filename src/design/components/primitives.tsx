@@ -305,10 +305,14 @@ export function Tabs<T extends string>({ label, idPrefix, value, tabs, onChange 
   )
 }
 
-export function TabPanel({ idPrefix, id, active, children }: { idPrefix: string; id: string; active: boolean; children: ReactNode }) {
+/**
+ * keepMounted (REVIEW Y6): pasif sekmede içerik gizlenir ama bağlı kalır; ücretli sonuç, yarım form gibi yerel durum sekme değişince
+ * kaybolmaz. Varsayılan: pasif sekme çizilmez.
+ */
+export function TabPanel({ idPrefix, id, active, keepMounted = false, children }: { idPrefix: string; id: string; active: boolean; keepMounted?: boolean; children: ReactNode }) {
   return (
     <div role="tabpanel" id={`${idPrefix}-panel-${id}`} aria-labelledby={`${idPrefix}-tab-${id}`} hidden={!active} tabIndex={0} className="outline-none focus-visible:ring-2 focus-visible:ring-accent">
-      {active ? children : null}
+      {active || keepMounted ? children : null}
     </div>
   )
 }

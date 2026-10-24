@@ -9,7 +9,7 @@ import { ShortlistButton } from '../../components/ShortlistButton'
 import { ShortlistLabel } from '../../components/ShortlistLabel'
 import { HelpPopover } from '../../components/ui'
 import { useIsMobile } from '../../design/components/MobileSheet'
-import { Button, Chip, EmptyState, Skeleton, SourceTag, TabPanel, Tabs } from '../../design/components/primitives'
+import { Button, Chip, EmptyState, ErrorState, Skeleton, SourceTag, TabPanel, Tabs } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
 import { LeagueLevelChip } from '../careerPlayers/LeagueLevelChip'
@@ -105,6 +105,10 @@ export function TransferCenterPage() {
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
   }
+  // REVIEW Y5: hata boş durum gibi görünmez.
+  if (careers.isError) {
+    return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => careers.refetch()} />
+  }
   if (!career) {
     return (
       <div className="mx-auto max-w-[1280px] py-2">
@@ -117,7 +121,10 @@ export function TransferCenterPage() {
   // Bütçe girilmemişse (ya da ≤ 0) bilinmiyor: "—" ve neden; 0'a çevrilmez (ENG-02).
   const budget = career.budgetEur !== undefined && career.budgetEur !== null && career.budgetEur > 0 ? career.budgetEur : undefined
   const wageBudget = career.wageBudgetEur !== undefined && career.wageBudgetEur !== null && career.wageBudgetEur > 0 ? career.wageBudgetEur : undefined
-  const plan = budgetPlan({ budgetEur: budget, wageBudgetEur: wageBudget, shortlist: items, squad: squad.data ?? [], tags: tagList.data ?? [] })
+  const computed = budgetPlan({ budgetEur: budget, wageBudgetEur: wageBudget, shortlist: items, squad: squad.data ?? [], tags: tagList.data ?? [] })
+  // REVIEW Y5: kısa liste ya da satış planı alınamadıysa kalan bütçe eksik veriyle hesaplanmaz ("—").
+  const loadFailed = shortlist.isError || tagList.isError || squad.isError
+  const plan = loadFailed ? { ...computed, remaining: undefined } : computed
   const after = budget === undefined ? undefined : budget - plan.shortlist.total
   const gameDate = facets.data?.gameDate
   const budgetPanel = <BudgetPlanPanel plan={plan} budget={budget} mobile={mobile} />
@@ -128,12 +135,16 @@ export function TransferCenterPage() {
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Transfer Merkezi</h1>
         <p className="text-sm text-ink-2">{career.clubName ?? career.name}</p>
       </header>
+      {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
+      {shortlist.isError && <ErrorState message="Kısa liste yüklenemedi." onRetry={() => shortlist.refetch()} />}
+      {tagList.isError && <ErrorState message="Satış planı yüklenemedi." onRetry={() => tagList.refetch()} />}
       {mobile && budgetPanel}
       <div className="flex flex-col gap-3 min-[1024px]:flex-row min-[1024px]:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           <Tabs label="Transfer sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
 
-          <TabPanel idPrefix={PREFIX} id="adaylar" active={tab === 'adaylar'}>
+          {/* REVIEW Y6: öneri sonucu (kredi düşer) Kısa liste/Satış sekmesine geçince kaybolmasın. */}
+          <TabPanel idPrefix={PREFIX} id="adaylar" active={tab === 'adaylar'} keepMounted>
             <div className="flex flex-col gap-3">
       <Section title="İhtiyaçlar" actions={(
         <span className="flex flex-wrap items-center gap-2">

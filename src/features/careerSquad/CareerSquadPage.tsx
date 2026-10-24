@@ -6,7 +6,7 @@ import { SquadCards } from '../../components/SquadCards'
 import { SquadList } from '../../components/SquadList'
 import { SquadTagsView } from '../../components/SquadTagsView'
 import { TransferDialog } from '../../components/TransferDialog'
-import { Button, EmptyState, Panel, Segmented, Skeleton, StatTile, TabPanel, Tabs, type DataSource } from '../../design/components/primitives'
+import { Button, EmptyState, ErrorState, Panel, Segmented, Skeleton, StatTile, TabPanel, Tabs, type DataSource } from '../../design/components/primitives'
 import { GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
 import { parseGrouping, SQUAD_GROUPINGS } from '../../lib/squadGroups'
 import { endpoints } from '../../api/endpoints'
@@ -59,6 +59,10 @@ export function CareerSquadPage() {
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
   }
+  // REVIEW Y5: hata boş durum gibi görünmez.
+  if (k.careers.isError) {
+    return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => k.careers.refetch()} />
+  }
   const career = k.career
   if (!career) {
     return (
@@ -82,6 +86,7 @@ export function CareerSquadPage() {
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kadro</h1>
         <CareerSelect />
       </header>
+      {k.squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => k.squad.refetch()} />}
       <Tabs label="Kadro sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
 
       <TabPanel idPrefix={PREFIX} id="dizilis" active={tab === 'dizilis'}>
@@ -112,7 +117,9 @@ export function CareerSquadPage() {
             <Segmented label="Görünüm" value={view} options={VIEWS} onChange={setView} />
           </div>
         )}>
-          {k.squad.isLoading ? (
+          {k.squad.isError ? (
+            <p className="text-sm text-ink-2">Kadro yüklenemedi.</p>
+          ) : k.squad.isLoading ? (
             <Skeleton className="h-64" />
           ) : players.length === 0 ? (
             <EmptyState action={<Button onClick={() => setTab('hareketler')}>Transfer piyasası</Button>}>Kadro boş.</EmptyState>

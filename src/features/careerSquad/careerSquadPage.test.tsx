@@ -81,6 +81,15 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     ] as never)
   })
 
+  /** REVIEW Y5: kadro alınamazsa "Kadro boş" değil hata ve Tekrar dene. */
+  it('kadro alınamazsa "Kadro yüklenemedi" + Tekrar dene; "Kadro boş" yazmaz', async () => {
+    vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
+    renderAt('/career/squad?sekme=liste')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Kadro yüklenemedi.')
+    expect(screen.getByRole('button', { name: 'Tekrar dene' })).toBeInTheDocument()
+    expect(screen.queryByText('Kadro boş.')).toBeNull()
+  })
+
   it('sekmeler: Diziliş · Liste · Derinlik · Hareketler; Kariyer sekmesi yok', async () => {
     renderAt()
     expect(await screen.findByRole('tab', { name: 'Diziliş', selected: true })).toBeInTheDocument()

@@ -79,6 +79,17 @@ const fetchCandidates = async () => {
 }
 const plan = () => screen.findByRole('region', { name: 'Bütçe planı' })
 
+/** REVIEW Y5: kısa liste ya da etiketler alınamazsa bütçe planı "0" ile yanlış hesaplanmaz; hata görünür. */
+describe('Transfer hata durumları', () => {
+  it('kısa liste alınamazsa "Kısa liste yüklenemedi" + Tekrar dene; kalan bütçe gösterilmez', async () => {
+    vi.mocked(endpoints.shortlist).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    expect(await screen.findByText('Kısa liste yüklenemedi.')).toBeInTheDocument()
+    const budget = await screen.findByRole('region', { name: 'Bütçe planı' })
+    expect(within(budget).getByText('Kalan').closest('div')).toHaveTextContent('—')
+  })
+})
+
 describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
   it('sekmeler Adaylar · Kısa liste · Satış (?sekme=); varsayılan Adaylar adrese yazılmaz', async () => {
     renderPage()
@@ -181,6 +192,16 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     await waitFor(() => expect(add).toBeEnabled())
     fireEvent.click(add)
     await waitFor(() => expect(endpoints.shortlistAdd).toHaveBeenCalledWith(1, 50, expect.objectContaining({ note: expect.stringContaining('CM') })))
+  })
+
+  it('REVIEW Y6: ücretli öneri sonucu sekme değişince kaybolmaz (yeniden ödeme gerekmez)', async () => {
+    renderPage()
+    await fetchCandidates()
+    expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('tab', { name: /Kısa liste/ }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Adaylar' }))
+    expect(await screen.findByText('Aday Forvet')).toBeInTheDocument()
+    expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
   })
 
   it('kısa liste sekmesi: oyuncu adıyla, pazarlık tavanı MoneyInput kaydeder, çıkar', async () => {

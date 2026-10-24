@@ -78,6 +78,23 @@ beforeEach(() => {
   vi.mocked(endpoints.updateCareer).mockReset().mockResolvedValue(CAREER as never)
 })
 
+/** REVIEW Y5: hata boş durum gibi görünmez ("kariyerin yok", "kadro boş" değil); tekrar denenebilir. */
+describe('Kariyer Masası hata durumları', () => {
+  it('kariyer listesi alınamazsa "yüklenemedi" + Tekrar dene; "Henüz kariyerin yok" yazmaz', async () => {
+    vi.mocked(endpoints.careers).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Kariyerler yüklenemedi.')
+    expect(screen.getByRole('button', { name: 'Tekrar dene' })).toBeInTheDocument()
+    expect(screen.queryByText(/Henüz kariyerin yok/)).toBeNull()
+  })
+
+  it('kadro alınamazsa üstte "Kadro yüklenemedi" + Tekrar dene', async () => {
+    vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    expect(await screen.findByText('Kadro yüklenemedi.')).toBeInTheDocument()
+  })
+})
+
 describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
   it('ana taktik varsa: takım uyumu ve zayıf halkalar ana taktikten, "Kararın" etiketiyle; saha yok', async () => {
     renderPage()
