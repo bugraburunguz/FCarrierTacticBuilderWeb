@@ -108,3 +108,18 @@ describe('Kadro zinciri taslak ve eski depo okumaz (FAZ 3)', () => {
     expect(files.filter((f) => /useCareerLineup|kadro\/useCareerSquad|KadroPage/.test(f))).toEqual([])
   })
 })
+
+/* KARIYER-UX FAZ 5: Transfer yalnız katman 1-2 okur (kayıt, ana taktik ya da başlangıç önerisi, kısa liste, satış planı); taslak ve eski depo yok. */
+describe('Transfer zinciri taslak ve eski depo okumaz (FAZ 5)', () => {
+  const files = chain(join(ROOT, 'features/transfer/TransferCenterPage.tsx'))
+  const importing = (store: string) => files.filter((f) => new RegExp(`from\\s+['"][./]*state/${store}['"]`).test(readFileSync(join(ROOT, f), 'utf8')))
+
+  it('tacticStore / lineupStore / labStore zincirde yok', () => {
+    expect(files.length).toBeGreaterThan(10)
+    expect(importing('(tacticStore|lineupStore|labStore)')).toEqual([])
+  })
+
+  it('eski Transfer parçaları (v2 CareerTransferPage, useSlotFits hesabı, useAutoLineup) zincirde yok', () => {
+    expect(files.filter((f) => /CareerTransferPage|useAutoLineup|pages\//.test(f))).toEqual([])
+  })
+})

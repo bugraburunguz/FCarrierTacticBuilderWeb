@@ -6,7 +6,7 @@ import { Chip, EmptyState, Panel, type DataSource } from '../../design/component
 import type { PositionNeed } from '../../lib/depth'
 import { ageProfile, type PositionGroup } from '../../lib/deskRules'
 import { DepthMap } from '../squad/kadro/DepthMap'
-import { contractTimeline, groupRoster, type GroupRoster } from './careerSquadRules'
+import { ageBands, contractTimeline, groupRoster, YOUTH_MAX_AGE, type DepthTier, type GroupRoster } from './careerSquadRules'
 
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const decimal = (value: number) => value.toLocaleString('tr-TR', { maximumFractionDigits: 1 })
@@ -27,23 +27,57 @@ function GroupSection({ roster, open, onToggle, focus }: { roster: GroupRoster; 
         <span className="flex flex-wrap items-center gap-2">
           {roster.label}
           <span className="font-[var(--font-num)] tabular-nums text-ink-2">{roster.have}/{roster.need}</span>
-          {roster.short > 0 ? <Chip tone="bad">{roster.short} eksik</Chip> : <Chip tone="good">Yeterli</Chip>}
+          <UrgencyChip roster={roster} />
         </span>
         <ChevronDown size={16} aria-hidden="true" className={open ? 'rotate-180' : ''} />
       </button>
       {open && (
-        <ul id={panelId} className="flex flex-col gap-1 px-3 pb-3 text-sm">
-          {roster.players.length === 0 && <li className="text-ink-2">Bu grupta oyuncu yok.</li>}
-          {roster.players.map((p) => (
-            <li key={p.id} className="flex items-baseline justify-between gap-2">
-              <Link to={`/players/${p.id}`} className="min-w-0 truncate underline-offset-2 hover:underline">{p.name}</Link>
-              <span className="shrink-0 text-xs text-ink-2">{p.position} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age} yaş` : ''}</span>
-            </li>
-          ))}
-        </ul>
+        <div id={panelId} className="px-3 pb-3 text-sm">
+          {roster.players.length === 0 ? <p className="text-ink-2">Bu grupta oyuncu yok.</p> : (
+            <div className="grid grid-cols-1 gap-3 min-[560px]:grid-cols-3">
+              {TIERS.map(({ tier, label }) => {
+                const players = roster.players.filter((p) => p.tier === tier)
+                return (
+                  <div key={tier} className="flex min-w-0 flex-col gap-1">
+                    <h4 className="text-xs font-semibold text-ink-2">{label}</h4>
+                    <ul aria-label={`${roster.label} · ${label}`} className="flex flex-col gap-1">
+                      {players.length === 0 && <li className="text-xs text-muted">Yok</li>}
+                      {players.map((p) => (
+                        <li key={p.id} className="flex items-baseline justify-between gap-2">
+                          <Link to={`/players/${p.id}`} className="min-w-0 truncate underline-offset-2 hover:underline">{p.name}</Link>
+                          <span className="shrink-0 text-xs text-ink-2">{p.position} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age}` : ''}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
       )}
     </li>
   )
+}
+
+const TIERS: { tier: DepthTier; label: string }[] = [
+  { tier: 'starter', label: 'İlk 11' },
+  { tier: 'backup', label: 'Yedek' },
+  { tier: 'youth', label: `Genç (≤${YOUTH_MAX_AGE})` },
+]
+
+/** Aciliyet çipi (KARIYER-UX 6): eksik (kötü) > yedek yok / yalnız genç yedek (uyarı) > yeterli (iyi); metin her zaman yazılı. */
+function UrgencyChip({ roster }: { roster: GroupRoster }) {
+  switch (roster.urgency) {
+    case 'short':
+      return <Chip tone="bad">{roster.short} eksik</Chip>
+    case 'no-backup':
+      return <Chip tone="warn">Yedek yok</Chip>
+    case 'youth-only':
+      return <Chip tone="warn">Yalnız genç yedek</Chip>
+    case 'ok':
+      return <Chip tone="good">Yeterli</Chip>
+  }
 }
 
 /** Yaş profili (tek seri): erişilebilir özet + ekran okuyucu tablosu; her çubukta sayı yazılı, renk anlam taşımaz (dataviz). */
@@ -53,6 +87,17 @@ function AgeHistogram({ squad }: { squad: CareerPlayer[] }) {
   const summary = `Yaş profili: ortalama ${decimal(average)}; ${buckets.map((b) => `${b.label}: ${b.count}`).join(', ')}`
   return (
     <figure className="flex flex-col gap-2">
+      {/* KARIYER-UX 6: gençleştirme stratejisi için bant özeti (genç / prime / tecrübeli), sayı ve oran yazılı. */}
+      <ul aria-label="Yaş bantları" className="grid grid-cols-3 gap-2">
+        {ageBands(squad).map((b) => (
+          <li key={b.key} className="glass-3 flex min-w-0 flex-col gap-0.5 rounded-[var(--radius-sm)] p-2">
+            <span className="text-xs font-semibold text-ink">{b.label}</span>
+            <span className="text-xs text-ink-2">
+              {b.range} · <b className="font-[var(--font-num)] tabular-nums text-ink">{b.count}</b> oyuncu · <span className="font-[var(--font-num)] tabular-nums">%{Math.round(b.share * 100)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
       <div role="img" aria-label={summary} className="flex h-40 items-end gap-0.5 border-b border-[var(--glass-border)]">
         {buckets.map((b) => (
           <div key={b.label} title={`${b.label} yaş: ${b.count} oyuncu`} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
@@ -104,15 +149,17 @@ function ContractTimeline({ squad, gameDate }: { squad: CareerPlayer[]; gameDate
  * Derinlik sekmesi (KARIYER-UX FAZ 3, 15 §4.2): mevki grubunda kim/kaç (Masa derinlik işiyle aynı eşik), mevki yoğunluk haritası
  * (ana taktiğe göre), yaş profili ve sözleşme bitiş zaman çizgisi. `?grup=` o grubu açık ve odaklı getirir (Masa'nın derinlik bağlantısı).
  */
-export function DepthTab({ squad, needs, formation, wanted, gameDate, record }: {
+export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters }: {
   squad: CareerPlayer[]
   needs: PositionNeed[]
   formation?: Formation
   wanted?: PositionGroup
   gameDate?: string
   record?: DataSource
+  /** İlk 11 (ana taktik, yoksa başlangıç önerisi); bilinmiyorsa matris yalnız yedek/genç ayırır. */
+  starters?: ReadonlySet<number>
 }) {
-  const roster = groupRoster(squad)
+  const roster = groupRoster(squad, starters)
   const [open, setOpen] = useState<Set<PositionGroup>>(() => new Set(wanted ? [wanted] : roster.map((r) => r.group)))
   const toggle = (group: PositionGroup) => setOpen((cur) => {
     const next = new Set(cur)
@@ -128,7 +175,8 @@ export function DepthTab({ squad, needs, formation, wanted, gameDate, record }: 
   }
   return (
     <div className="grid grid-cols-1 gap-3 min-[1100px]:grid-cols-2">
-      <Panel title="Mevki grupları" label="Mevki grupları" source={record}>
+      {/* KARIYER-UX 6: matris üç kolonlu (ilk 11 / yedek / genç); isimler kesilmesin diye geniş ekranda tam genişlik. */}
+      <Panel title="Mevki grupları" label="Mevki grupları" source={record} className="min-[1100px]:col-span-2">
         <ul className="flex flex-col gap-2">
           {roster.map((r) => <GroupSection key={r.group} roster={r} open={open.has(r.group)} onToggle={() => toggle(r.group)} focus={r.group === wanted} />)}
         </ul>

@@ -10,6 +10,7 @@ import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton, TabPanel, Tabs } from '../../design/components/primitives'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useMode } from '../../state/modeStore'
+import { ReplicaCloneButton } from '../lab/ReplicaCloneButton'
 import { ReplicaCard } from './ReplicaCard'
 import { APPROACH_LABEL, BUILD_UP_LABEL, CATEGORY_LABEL, CATEGORY_ORDER, FAMILY_LABEL, FAMILY_ORDER, LEAGUE_TAB_LABEL, LEAGUE_TABS, type LeagueTab } from './labels'
 import {
@@ -127,6 +128,10 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
   }
   const set = (patch: Partial<ReplicaFilters>) => write({ ...filters, ...patch }, fitMode)
 
+  // KARIYER-UX 6: tek başına liste kariyer modunda (oturum + seçili kariyer) Lab ile aynı "Klonla → taslak" eylemini sunar.
+  const action = cardAction ?? (!embedded && mode === 'career' && authenticated && careerId !== undefined
+    ? (replica: ReplicaSummary) => <ReplicaCloneButton careerId={careerId} replica={replica} />
+    : undefined)
   const replicas = useQuery({ queryKey: ['replicas'], queryFn: endpoints.replicas, staleTime: STALE_MS })
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: STALE_MS })
   const formationById = useMemo(() => new Map((formations.data ?? []).map((f) => [f.id, f])), [formations.data])
@@ -254,11 +259,11 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
                   open={!collapsed.has(g.tab)}
                   onToggle={() => setCollapsed((cur) => new Set(toggle([...cur], g.tab)))}
                 >
-                  <CardGrid items={g.items} formationById={formationById} cardAction={cardAction} />
+                  <CardGrid items={g.items} formationById={formationById} cardAction={action} />
                 </LeagueGroupSection>
               ))
             ) : (
-              <CardGrid items={shown} formationById={formationById} cardAction={cardAction} fits={fitMode ? fits : undefined} />
+              <CardGrid items={shown} formationById={formationById} cardAction={action} fits={fitMode ? fits : undefined} />
             )}
           </div>
         </TabPanel>

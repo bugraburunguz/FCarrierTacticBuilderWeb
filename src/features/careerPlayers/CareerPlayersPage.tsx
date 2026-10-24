@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerFacets, PlayerSummary } from '../../api/types'
 import { CompareButton } from '../../components/CompareButton'
+import { ShortlistButton } from '../../components/ShortlistButton'
 import { HelpPopover, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Segmented } from '../../design/components/primitives'
@@ -32,7 +33,7 @@ const NUM = 'font-[var(--font-num)] tabular-nums'
 const playerHref = (p: PlayerSummary) => `/players/${p.id}`
 const contractText = (date?: string) => (date ? new Date(`${date}T00:00:00`).toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' }) : '–')
 
-function columns(facets: CareerPlayerFacets | undefined, role: boolean): CatalogColumn<PlayerSummary, CareerSort>[] {
+function columns(careerId: number, facets: CareerPlayerFacets | undefined, role: boolean): CatalogColumn<PlayerSummary, CareerSort>[] {
   const cols: (CatalogColumn<PlayerSummary, CareerSort> | false)[] = [
     { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="block truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link> },
     { sort: 'overall', label: 'OVR', align: 'right', cellClassName: NUM, cell: (p) => p.overall },
@@ -49,6 +50,7 @@ function columns(facets: CareerPlayerFacets | undefined, role: boolean): Catalog
       cell: (p) => <LeagueLevelChip overall={p.overall} leagueOvr={facets.leagueOvr} />,
     },
     role && { sort: 'role', label: 'Rol uyumu', align: 'right', cellClassName: NUM, cell: (p) => p.roleFit?.toFixed(1) ?? '–' },
+    { label: <span className="sr-only">Kısa liste</span>, align: 'right', cell: (p) => <ShortlistButton careerId={careerId} playerId={p.id} compact /> },
     { label: <span className="sr-only">Karşılaştır</span>, align: 'right', cell: (p) => <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact /> },
   ]
   return cols.filter((c): c is CatalogColumn<PlayerSummary, CareerSort> => c !== false)
@@ -108,7 +110,7 @@ export function CareerPlayersPage({ careerId }: { careerId: number }) {
   })
   const total = query.data?.pages[0]?.totalItems ?? 0
   const roleSort = filters.sort === 'role' && filters.role !== undefined
-  const cols = useMemo(() => columns(facets.data, roleSort), [facets.data, roleSort])
+  const cols = useMemo(() => columns(careerId, facets.data, roleSort), [careerId, facets.data, roleSort])
 
   function sortBy(key: CareerSort) {
     if (key === 'role') {
@@ -164,6 +166,7 @@ export function CareerPlayersPage({ careerId }: { careerId: number }) {
               <LeagueLevelChip overall={p.overall} leagueOvr={facets.data?.leagueOvr} />
               {p.valueEur !== undefined && <span className={NUM}>{p.valuationEstimated ? '≈' : ''}{formatEur(p.valueEur)}</span>}
               {roleSort && p.roleFit !== undefined && <span className="inline-flex gap-1">Rol <span className={`${NUM} text-ink`}>{p.roleFit.toFixed(1)}</span></span>}
+              <ShortlistButton careerId={careerId} playerId={p.id} compact />
             </div>
           )} />
         )}

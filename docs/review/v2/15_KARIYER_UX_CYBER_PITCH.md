@@ -940,3 +940,62 @@ Dallar yığın (Buğra kararı): web ve backend `kariyer-ux-2`, `kariyer-ux` ü
 2. `listed-preference` = 1 doğru eşik mi (listelenen mevki en iyiye 1 puan yakınsa o gösterilir)?
 
 **Yerel yığın.** Backend ve web `kariyer-ux-3-1`; kart vekili kapalı; test hesapları silindi.
+
+## 23. FAZ 5 raporu: Transfer & Scouting (2026-10-24)
+
+**Merge (0. adım, Buğra onayı).** Backend `main` ← #3 4b `c624b87`, #5 3.1 `60909e9`, #4 REP-ce `8a7af09`; web `v3` ← #6 4b `ff137cf`, #8 3.1 `5e7e366`, #7 REP-ce `05151b4` (merge commit, dal silinmedi; birleştirmeyi Buğra yaptı, otomatik mod izin vermedi). REP oturumuna REP-d başlangıç mesajı iletildi. Prod health ölçülmedi (Railway adresleri "Application not found"; Railway'e erişilmedi).
+
+**4b/3.1 kararları (ayrı commit).**
+- 4b-1 (backend `137d541`, BEHAVIOR CHANGE): rol uyumu kariyer kaydından; kayıtta özniteliği olmayan oyuncu (boş `attrs`) öznitelikleri katalogdan alır, overall ve mevkiler kayıttan kalır; kayıt satırı hiç yoksa katalogdan okunur (önceden 404). `CareerFitPlayerFallbackIntegrationTest`: biri öznitelikli (kayıt kazanır), biri özniteliksiz (katalog) iki oyuncu.
+- 4b-2 (web `e54b25e`): Karşılaştır eşlemesi `features/lab/compareMatch.ts` — aynı formasyon slot kimliği; farklı formasyon mevki + aynı mevkide soldan sağa (formasyonun `x`'i); eşleşmeyenler "Yalnız A'da / Yalnız B'de" panelleri. `compareMatch.test.ts` + Lab sayfa testi (4-4-2 ↔ 4-3-3).
+- 3.1-2 eşik 1 kalır; 3.1-1 maaş: uydurma yok, Transfer maaş etkisi "bilinmiyor"u gösterir.
+
+**Sayfa** `/career/transfer` (`TransferCenterPage`): sekmeler Adaylar · Kısa liste · Satış (`?sekme=adaylar|kisa-liste|satis`, varsayılan adrese yazılmaz); yanda Bütçe planı (≥1024px yapışkan), mobilde üstte katlanır şerit "Kalan €X" (§5.8). Okunan parametreler: `ihtiyac`, `pos`, `rol` (eski `role` takma ad), `sekme`, `oyuncu`, `kadro`, `uzak`.
+- **deskLinks geçici eşlemesi kaldırıldı:** `currentRoute` silindi (Masa ve SeasonJobs bağlantıları doğrudan §4.1 rotası); `deskLinks.test` modülün yalnız `deskLink` dışa aktardığını doğrular → **geçici eşleme kalmadı**. Masa satış bağlantısı `?sekme=satis&oyuncu=` Satış sekmesini açar, o oyuncunun satırını işaretler (`aria-current`), "Tut" grubundaysa grubu açar ve görünür yapar.
+- **İhtiyaçlar:** Masa'nın zayıf halka kuralı `weakLinks` (sınırsız) — kopya yok (`needsForTransfer`); "Tüm kadro" tüm dizilim; derinlik açıkları sonda. Ana taktik yoksa başlangıç önerisi ve "Otomatik öneri · ana taktik değil" etiketi (`SourceTag`). Not: Masa ile aynı kural olduğu için seviyesinde (AT_LEVEL) slotlar da ihtiyaçtır (eski Transfer yalnız WEAK/WRONG_ROLE gösteriyordu).
+- **Adaylar:** `RecommendationPanel` (CreditGuard `runCharged`); `ihtiyac=slot-{id}` → öneri isteği `slotId` ile. D-01 teyidi mevcut testlerle: `SecurityHardeningIntegrationTest.slotViewIsCappedAndHasNoPaidInsights` / `anonymousPreviewIsCappedAndHasNoPaidInsights`, `ApiFlowIntegrationTest.roleFitCompareAndRecommendationEndpoints`, `LineupReasonsIntegrationTest`.
+- **Kısa liste:** satırlar + pazarlık tavanı (`maxFeeEur`). Ortak `components/ShortlistButton` (tek mutation `PUT /careers/{id}/shortlist/{pid}`, çıkarma DELETE, ardından `['shortlist', id]` tazelenir): Transfer aday satırı, Oyuncular (kart ve tablo satırı), Wonderkids satırı (kariyerde), oyuncu sayfası (kadroda değilse).
+- **Bütçe planı** (`budgetPlan`): kalan = bütçe − kısa liste (`maxFeeEur ?? valueEur`) + satış planı geliri (Σ FOR_SALE `askingPriceEur ?? valueEur`); bütçe bilinmiyorsa "—" ve neden. Maaş etkisi = kısa liste maaşı − satılacakların maaşı, maaş bütçesine oranla; herhangi bir maaş bilinmiyorsa hesaplanmaz: "N oyuncunun maaşı bilinmiyor — maaş verisi içe aktarmada gelmiyor" (kısa liste oyuncusunun maaşı katalogda hiç yok, kadronunki yalnız LE kaydından; bugün her zaman bilinmiyor).
+- **Satış planı kalıcılığı (§7.2, Q3; backend `d3816cb`):** migration **V45** `career_player_tag.asking_price_eur BIGINT NULL` (≥ 0; açık dallarda V45 boştu). **API CONTRACT CHANGE (geriye uyumlu):** `PUT /careers/{id}/tags/{pid}` gövdesine opsiyonel `askingPriceEur`; GET ve yedek döner; bedelsiz gövde bedeli temizler; `requireOwned` (başkasının kariyeri 404). Satış sekmesi (`SellPlanTab`): öneri (`sellAdvice`, Masa kuralları) + kalıcı plan "Satışa koy / Kiralığa aç / Tut" (FOR_SALE / LOAN_OK / plan etiketini kaldır) ve "Satışa koy"da istenen bedel.
+- **Legacy ve kapı:** `kariyerUxGates` "Transfer zinciri taslak ve eski depo okumaz (FAZ 5)": zincirde `tacticStore`/`lineupStore`/`labStore` yok, v2 parçası yok (zincir zaten temizdi; kapı koruma). Eski sayfanın satış planı satırları `SellPlanTab`'a taşındı; başka kullanılmayan parça kalmadı (`transferNeeds`, `needsFromFits`, `ShortlistLabel` v2 ya da yeni sayfa kullanıyor).
+
+**Ekranlar** `screens/KARIYER-UX-5/` (`scripts/transfer-tabs-shots.mjs`; V3-06c'nin `transfer-shots.mjs`'i değişmedi): 3 sekme × ana taktik yok/var + satış bağlantısı (`?oyuncu=`) + bütçe planı maaş bilinmiyor × 375/768/1280 × koyu/açık = 48 çekim, sorun 0, en küçük yazı 12px; "Otomatik öneri" yalnız ana taktiksiz kariyerde; satış planı kaydedilmiş (istenen bedelli ve bedelsiz satış, kiralık). İlk koşuda 2 çekim hız sınırına (429) takıldı; betik squad-shots gibi kendi hızını ayarlıyor, ikinci koşu temiz.
+
+**11 §8.** Q2 (12px, token), Q3 (taşma yok), Q4/Q15 (axe serious/critical 0), Q6 (eski uç çağrısı yok — sayfa testi), Q13 (çip 12px) ölçüldü; Q1 yükleme/boş durumları (kariyer yok, kadro boş, kısa liste boş, ihtiyaç yok) testli; Q11/Q17/Q18 Transfer'de saha yok; UT regresyon testleri tam vitest koşusunda yeşil.
+
+**Test sayıları:** web 1501/1501, lint hatasız, build yeşil; backend 671 (0 hata, 5 atlanan).
+
+**Açık sorular (FAZ 5).**
+1. İhtiyaçlar artık Masa ile aynı kural (AT_LEVEL slotlar da ihtiyaç). Transfer'de yalnız WEAK/WRONG_ROLE istenirse `weakLinks`'e süzgeç parametresi eklenir (kopya yazılmaz).
+2. Kadro › Etiket & yaş görünümü FOR_SALE'i bedelsiz yazar (`PUT {tag}`), kayıtlı istenen bedel temizlenir. Etiket görünümünden yazarken bedel korunsun mu?
+3. Etiket ucu oyuncunun var olduğunu doğrulamıyor (kısa liste doğruluyor); sahiplik kontrolü var, veri sızıntısı yok. Ayrı iş olarak eklensin mi?
+
+**Yerel yığın.** Backend ve web `kariyer-ux-5`; V45 yerel DB'ye uygulandı (yalnız sütun ekler); kart vekili kapalı; test hesapları silindi.
+
+## 24. KARİYER-UX kapanışı (2026-10-24)
+
+Fazlar: 1 kabuk ve navigasyon · 2 Kariyer Masası · 3 Kadro Analizi (+3.1 liste) · 4a Lab kabuğu, kurucu, ana taktik · 4b Lab sekmeleri ve toplu uyum · 5 Transfer. Katman modeli (kayıt → karar → Lab taslağı) tüm kariyer sayfalarında kapıyla korunuyor (`kariyerUxGates`: Masa, Lab, Kadro, Transfer zincirleri); eski tek kopya depolar yalnız v2 sayfalarında; Masa geçiş bağlantılarında geçici eşleme kalmadı.
+
+**Kalan açık işler.**
+- **Maaş verisi:** kariyer içi LE dışa aktarımı bekleniyor (maaş `career_playercontract`'ta mı `players.wage`'te mi, birim). Gelince Kadro maaş sütunu ve Transfer maaş etkisi kendiliğinden dolar; kısa liste adaylarının maaş tahmini için ayrı kaynak gerekir (katalogda maaş yok).
+- **Sakatlık verisi:** içe aktarmada yok; Masa/Kadro'da sakatlık durumu gösterilemiyor.
+- **v2'nin kaldırılması:** v2 sayfaları (`src/pages/**`) ve eski depolar (`tacticStore`, `lineupStore`), v2'ye özgü yardımcılar (`transferNeeds`, `needsFromFits`, `useSlotFits`, `useAutoLineup`, `useCareerBinding` …) v3 varsayılan olunca birlikte silinir; kapılar şimdiden v3 zincirlerinin bunlara bağlı olmadığını doğruluyor.
+- FAZ 5 açık soruları (§23) ve REP-d (ayrı oturum).
+
+**`v3` → `main` önerisi.** KARİYER-UX ve REP-ce `v3`'te tamam; her faz kendi PR'ında CI yeşil birleşti. Öneri: (1) REP-d `v3`'e birleşince `v3` → `main` tek PR (merge commit), CI yeşil; (2) Railway web servisi `main`'den dağıtıldığı için birleştirme = yayın — önce yerel yığında `main` adayıyla duman testi (`scripts/deploy/smoke.mjs`), prod DB'de hangi migration'ların uygulandığı buradan bilinmiyor (Railway'e erişilmedi) — backend açılışta eksikleri (en çok V45'e kadar) uygular, öncesinde Postgres yedeği alınır; (3) v2 silme işi ayrı PR, `main`'e geçişten sonra.
+
+## 25. KARİYER-UX 6: eksik özellik taraması ve ekler (2026-10-24)
+
+Dışarıdan gelen "Cyber-Pitch eksik özellik" istemi v3 sayfalarına (`src/features/**`) göre tarandı; v2 (`src/pages/**`) dokunulmadı. Zaten olanlar: Masa "Transferde aday bul" slot/mevki/rol seçili açar (FAZ 5); replikadan Lab taslağına klon Lab'da ve replika detayında var; Karşılaştır sayfasında profil radarı var; Kadro'da yaş histogramı ve derinlik haritası var. Eklenenler (Buğra seçti):
+- **Oyuncu sayfası › Statlar:** profil radarı (Karşılaştır'daki `AttributeRadar`, aynı token ve desenler, metin tablosuyla); `StatsTab profile` yalnız kariyer oyuncu sayfasında (UT sayfası değişmedi).
+- **Lab › Karşılaştır:** slot satırında rol farkı "Rol: A → B" (aynıysa tek rol), motorun çözdüğü rol adından.
+- **Kadro › Derinlik matrisi:** grup başına İlk 11 (ana taktik, yoksa başlangıç önerisi) · Yedek · Genç (≤21, ilk 11 dışı) ve aciliyet çipi: "N eksik" > "Yedek yok" > "Yalnız genç yedek" > "Yeterli". İlk 11 bilinmiyorsa yalnız eksik/yeterli. Panel geniş ekranda tam genişlik (isimler kesilmesin). Masa'nın `?grup=` davranışı aynı.
+- **Kadro › Yaş bantları:** Genç (≤21) · Prime (22–29) · Tecrübeli (30+) sayı ve oran (kiralık gönderilen hariç), histogramın üstünde.
+- **Masa birleşik uyarı:** zayıf halka oyuncusunun sözleşmesi ≤ 12 ay ise kartta "Sözleşmesi N ay içinde bitiyor" (sözleşme sekmesine bağlantı); acil sözleşme uyarısı ilk 11 oyuncusunda "· ilk 11". Sayılar uydurulmaz (motor ve kayıt).
+- **Oyuncular › PlayStyle süzgeci:** PlayStyle ekle, her biri PS ya da PS+; adres `ps` / `psp`, sorgu `ps` (varlık) / `ps_plus` (seviye ≥ 2, **API CONTRACT CHANGE geriye uyumlu**, backend `PlayerSearchRepository`, kariyer ve katalog).
+- **Replikalar listesi:** kariyer modunda (oturum + kariyer) kartta "Klonla → taslak" (`ReplicaCloneButton`, Lab ile aynı `cloneReplicaToDraft`).
+- Yapılmayanlar: mevki aşinalığı süzgeci (istemde vardı, seçilmedi); "takım uyumunu %4 düşürür" türü tahmini etki (motor böyle bir sayı vermiyor; uydurulmadı).
+
+**Ekranlar** `screens/KARIYER-UX-6/` (`scripts/kariyer-ux-6-shots.mjs`): 6 sayfa × 375/768/1280 × koyu/açık = 36 çekim, sorun 0, en küçük yazı 11px. Fikstür: kadroda sözleşme bitişi (yalnız tarayıcıda; yeni kariyerde LE verisi yok).
+
+**Test sayıları:** web 1515/1515, lint hatasız, build yeşil; backend 672 (0 hata, 5 atlanan).
