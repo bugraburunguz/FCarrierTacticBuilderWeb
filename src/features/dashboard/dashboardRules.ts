@@ -2,7 +2,7 @@ import type { Career, CareerPlayer, CareerSnapshot } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from '../../lib/contract'
 import { deskLink } from '../../lib/deskLinks'
 import type { FitState } from '../../components/card/FitBadge'
-import { FIT_STATE_TEXT, type FitLabel } from '../../lib/fitLabels'
+import { FIT_STATE_TEXT, isWeakFit } from '../../lib/fitLabels'
 import { ATTR_LABELS } from '../../lib/format'
 import type { SlotFitRow } from '../squad/useSlotFits'
 
@@ -10,8 +10,6 @@ import type { SlotFitRow } from '../squad/useSlotFits'
 
 const WEAK_SHOWN = 3
 const LOAN_ALERT_DAYS = 30
-/** Sunucu etiketine göre öncelik (FAZ 2 kararı 5): sarı/kırmızı önce, seviyesinde sonra; uygun hiç girmez. */
-const LABEL_TIER: Partial<Record<FitLabel, number>> = { WEAK: 0, WRONG_ROLE: 0, AT_LEVEL: 1 }
 
 export interface WeakLinkCard {
   slotId: string
@@ -26,7 +24,7 @@ export interface WeakLinkCard {
   /** Etiket her zaman metin olarak ("Rol için eksik"); renk tek başına anlam taşımaz. */
   labelText: string
   reason?: string
-  /** Birincil eylem: WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir, rol yanlış; Lab FAZ 4), WEAK/AT_LEVEL → transferde aday. */
+  /** Birincil eylem: WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir, rol yanlış; Lab FAZ 4), WEAK → transferde aday. */
   primary: 'ROLE' | 'TRANSFER'
 }
 
@@ -54,12 +52,15 @@ export function worstReason(reasons: readonly string[] | undefined): string | un
   return worst && reasonText(worst.raw)
 }
 
+/**
+ * Zayıf halka tek kuralla (FAZ 6a-G, lib/fitLabels.isWeakFit): yalnız WEAK ve WRONG_ROLE; "Rol için seviyesinde" (AT_LEVEL) ve uygun girmez.
+ * Masa'nın 3 işi (deskRules.weakSlots) ve Transfer İhtiyaçları aynı kuralı kullanır. Üç dolmazsa daha az kart.
+ */
 export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[] {
-  const tier = (r: SlotFitRow) => (r.fit.fitLabel ? LABEL_TIER[r.fit.fitLabel] : undefined)
   const level = (r: SlotFitRow) => r.fit.levelFit ?? r.display.pct
   return rows
-    .filter((r) => tier(r) !== undefined)
-    .sort((a, b) => tier(a)! - tier(b)! || level(a) - level(b) || a.slotId.localeCompare(b.slotId))
+    .filter((r) => isWeakFit(r.fit.fitLabel))
+    .sort((a, b) => level(a) - level(b) || a.slotId.localeCompare(b.slotId))
     .slice(0, limit)
     .map((r) => ({
       slotId: r.slotId, position: r.position, roleId: r.roleId, roleName: r.roleName, playerId: r.playerId, playerName: r.playerName,

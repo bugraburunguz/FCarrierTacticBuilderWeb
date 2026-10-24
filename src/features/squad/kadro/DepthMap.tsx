@@ -39,6 +39,7 @@ export function RegionSummary({ squad, needs }: { squad: CareerPlayer[]; needs: 
 function DepthCell({ cell }: { cell: Cell }) {
   const [min, max] = cell.guide
   const state = STATE[cell.state]
+  const total = cell.natural.length + cell.flex.length
   return (
     <div data-depth-cell title={cellTitle(cell)} className={`rounded-[var(--radius-sm)] bg-[var(--sheet-bg)] p-1.5 text-xs text-ink ${state.cell}`}>
       {/* Dar hücrede (375, 4-5'li hat) metin kesilmez, alt satıra geçer. */}
@@ -46,12 +47,17 @@ function DepthCell({ cell }: { cell: Cell }) {
         <strong className="text-[13px]">{cell.position}</strong>
         <span className="font-semibold">{state.text}</span>
       </div>
+      {/* FAZ 6a-B: büyük sayı mevki kapasitesi (listelenen tüm mevkiler); birincil/ikincil ayrımı metinle. */}
       <div className="flex items-baseline gap-1">
-        <span className="font-[var(--font-num)] text-base font-semibold tabular-nums">{cell.natural.length}</span>
-        {cell.flex.length > 0 && <span className="text-ink-2">+{cell.flex.length}</span>}
+        <span data-depth-total className="font-[var(--font-num)] text-base font-semibold tabular-nums">{total}</span>
         <span className="text-ink-2">/ {cell.required ?? `${min}–${max}`}</span>
       </div>
-      <div className="break-words text-ink-2">{cell.best ? <>En iyi <b className="text-ink">{cell.best}</b></> : 'Oyuncu yok'}</div>
+      {total === 0 ? <div className="text-ink-2">Oyuncu yok</div> : (
+        <>
+          <div className="break-words text-ink-2">{cell.natural.length} birincil · {cell.flex.length} ikincil</div>
+          {cell.best !== undefined && <div className="break-words text-ink-2">En iyi <b className="text-ink">{cell.best}</b></div>}
+        </>
+      )}
       <span className="sr-only">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</span>
     </div>
   )
@@ -72,15 +78,17 @@ export function DepthMap({ squad, needs, formation }: { squad: CareerPlayer[]; n
           {byTactic ? `Dizilim: ${formationName(formation)}` : 'Genel mevki haritası'}
           <HelpPopover label="Mevki haritası nasıl okunur">
             {needs.length > 0 ? 'Renkler seçili taktiğin ihtiyacına göre (ilk 11 + rotasyon). ' : 'Renkler genel derinlik rehberine göre (taktik seçilmedi). '}
-            Sayı: asıl mevkisi o olan + (alternatif mevkisi o olan). Soldaki hücrelerde sol ayaklılar, sağdakilerde sağ ayaklılar; iki ayaklılar (zayıf ayak 4+) iki tarafta da sayılır.
+            Sayı: o mevkiyi listeleyen tüm oyuncular; altında ana mevkisi o olan (birincil) ve alternatif olarak listeleyen (ikincil) ayrı yazılır. Soldaki hücrelerde sol ayaklılar, sağdakilerde sağ ayaklılar; iki ayaklılar (zayıf ayak 4+) iki tarafta da sayılır.
           </HelpPopover>
         </span>
         {formation && <Segmented label="Harita" value={mode} options={[{ id: 'tactic', label: 'Taktiğe göre' }, { id: 'general', label: 'Genel' }]} onChange={setMode} />}
       </div>
       {byTactic ? (
         <div
-          className="mx-auto flex w-full max-w-[460px] flex-col gap-3 overflow-hidden rounded-[var(--radius-md)] p-2"
-          style={{ background: 'repeating-linear-gradient(180deg, var(--pitch-1) 0 10%, var(--pitch-2) 10% 20%)' }}
+          data-depth-field
+          className="mx-auto flex w-full max-w-[460px] flex-col gap-3 overflow-hidden rounded-[var(--radius-md)] border border-[var(--glass-border)] p-2"
+          // FAZ 6a-I: Cyber-Pitch zemini (Pitch field="cyber" ile aynı token'lar); eski yeşil çim değil.
+          style={{ background: 'repeating-linear-gradient(180deg, var(--cyber-pitch-1) 0 10%, var(--cyber-pitch-2) 10% 20%)' }}
         >
           {formationRows(formation.slots).map((row) => (
             <div key={row.map((s) => s.slotId).join('-')} data-depth-row className="flex justify-center gap-1.5">

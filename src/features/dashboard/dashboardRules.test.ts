@@ -28,11 +28,12 @@ describe('birleşik uyarılar', () => {
 })
 
 describe('zayıf halkalar: sunucu etiketiyle seçilir', () => {
-  it('WEAK/WRONG_ROLE önce, sonra AT_LEVEL; aynı grupta düşük levelFit önce; GOOD hiç girmez; en çok 3', () => {
+  it('FAZ 6a-G: yalnız WEAK/WRONG_ROLE; düşük levelFit önce; AT_LEVEL ve GOOD hiç girmez; üç dolmazsa daha az kart', () => {
     const cards = weakLinks([
       row('S1', 'GOOD', 20), row('S2', 'AT_LEVEL', 30), row('S3', 'WEAK', 55), row('S4', 'WRONG_ROLE', 60), row('S5', 'AT_LEVEL', 25),
     ])
-    expect(cards.map((c) => c.slotId)).toEqual(['S3', 'S4', 'S5'])
+    expect(cards.map((c) => c.slotId)).toEqual(['S3', 'S4'])
+    expect(weakLinks([row('S6', 'WEAK', 40), row('S7', 'WEAK', 30), row('S8', 'WRONG_ROLE', 20), row('S9', 'WEAK', 10)]).map((c) => c.slotId)).toEqual(['S9', 'S8', 'S7'])
   })
 
   it('kartta etiket metni, levelFit yüzdesi ve ilk neden; renk tek başına sunulmaz', () => {
@@ -41,7 +42,6 @@ describe('zayıf halkalar: sunucu etiketiyle seçilir', () => {
     expect(card.pct).toBe(38)
     expect(card.reason).toBe('Dayanıklılık −7,5')
     expect(weakLinks([row('S3', 'WEAK', 50)])[0].labelText).toBe('Rol için sınırda')
-    expect(weakLinks([row('S3', 'AT_LEVEL', 50)])[0].labelText).toBe('Rol için seviyesinde')
   })
 })
 

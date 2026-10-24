@@ -24,4 +24,25 @@ describe('DepthMap', () => {
       expect(c.className).not.toMatch(/bg-\[var\(--\w+-soft\)\]/)
     })
   })
+
+  it('FAZ 6a-I: taktiğe göre saha Cyber-Pitch zemininde (eski yeşil çim token\'ı yok)', () => {
+    const { container } = render(<DepthMap squad={squad} needs={[]} formation={formation} />)
+    const field = container.querySelector('[data-depth-field]') as HTMLElement
+    expect(field.getAttribute('style')).toContain('--cyber-pitch-1')
+    expect(field.getAttribute('style')).not.toContain('--pitch-1')
+  })
+
+  it('FAZ 6a-B: hücre listelenen tüm mevkileri sayar (birincil + ikincil); ikincil oyuncusu olan mevki "Oyuncu yok" demez', () => {
+    const wide = [
+      { player: { id: 11, name: 'Ouazane', overall: 66, positions: ['RM', 'RB', 'RW'] }, onLoan: false },
+      { player: { id: 12, name: 'Gutiérrez', overall: 64, positions: ['RB'] }, onLoan: false },
+    ] as unknown as CareerPlayer[]
+    const { container } = render(<DepthMap squad={wide} needs={[]} />)
+    const cell = (pos: string) => [...container.querySelectorAll('[data-depth-cell]')].find((c) => c.querySelector('strong')?.textContent === pos)!
+    expect(cell('RW').textContent).not.toContain('Oyuncu yok')
+    expect(cell('RW').querySelector('[data-depth-total]')?.textContent).toBe('1')
+    expect(cell('RW').textContent).toContain('0 birincil · 1 ikincil')
+    expect(cell('RB').querySelector('[data-depth-total]')?.textContent).toBe('2')
+    expect(cell('LW').textContent).toContain('Oyuncu yok')
+  })
 })

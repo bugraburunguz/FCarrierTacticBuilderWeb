@@ -45,7 +45,9 @@ function GroupSection({ roster, open, onToggle, focus }: { roster: GroupRoster; 
                       {players.map((p) => (
                         <li key={p.id} className="flex items-baseline justify-between gap-2">
                           <Link to={`/players/${p.id}`} className="min-w-0 truncate underline-offset-2 hover:underline">{p.name}</Link>
-                          <span className="shrink-0 text-xs text-ink-2">{p.position} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age}` : ''}</span>
+                          <span className="shrink-0 text-xs text-ink-2">
+                            {p.position}{!p.primary && ' (ikincil)'}{p.startsAt && ` · ilk 11: ${p.startsAt}`} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age}` : ''}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -156,8 +158,8 @@ export function DepthTab({ squad, needs, formation, wanted, gameDate, record, st
   wanted?: PositionGroup
   gameDate?: string
   record?: DataSource
-  /** İlk 11 (ana taktik, yoksa başlangıç önerisi); bilinmiyorsa matris yalnız yedek/genç ayırır. */
-  starters?: ReadonlySet<number>
+  /** İlk 11: oyuncu → oynadığı slotun mevkisi (ana taktik, yoksa başlangıç önerisi); bilinmiyorsa matris yalnız yedek/genç ayırır. */
+  starters?: ReadonlyMap<number, string>
 }) {
   const roster = groupRoster(squad, starters)
   const [open, setOpen] = useState<Set<PositionGroup>>(() => new Set(wanted ? [wanted] : roster.map((r) => r.group)))

@@ -1,5 +1,6 @@
 import type { CareerPlayer, FormationSlot } from '../api/types'
 import type { PositionNeed } from './depth'
+import { positionCapacity } from './deskRules'
 import { DEPTH_GUIDE, depthState, primaryPosition, type DepthState } from './positions'
 
 /**
@@ -89,12 +90,14 @@ function summarize(key: string, base: string, natural: CareerPlayer[], flex: Car
   return { position: key, base, natural, flex, state, guide, required, best: overalls.length ? Math.max(...overalls) : undefined, avg: average(overalls) }
 }
 
+/** Hücre kapasitesi tek tanımdan (deskRules.positionCapacity, FAZ 6a-B): natural = birincil, flex = ikincil; kiralık gönderilen sayılmaz. */
 export function buildBaseCells(squad: CareerPlayer[], needs: PositionNeed[]): Map<string, Cell> {
   const needByPosition = new Map(needs.map((n) => [n.position, n]))
+  const capacity = positionCapacity(squad)
   const cells = new Map<string, Cell>()
   for (const position of BASE_POSITIONS) {
-    const natural = squad.filter((s) => primaryPosition(s.player.positions) === position)
-    const flex = squad.filter((s) => primaryPosition(s.player.positions) !== position && s.player.positions.includes(position))
+    const natural = capacity.get(position)?.primary ?? []
+    const flex = capacity.get(position)?.secondary ?? []
     const need = needByPosition.get(position)
     cells.set(position, summarize(position, position, natural, flex, need ? need.state : depthState(position, natural.length), DEPTH_GUIDE[position] ?? [1, 3], need?.required))
   }

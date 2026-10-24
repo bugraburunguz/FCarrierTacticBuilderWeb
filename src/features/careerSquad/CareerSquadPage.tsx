@@ -52,9 +52,15 @@ export function CareerSquadPage() {
   // Liste ve Kartlar ?grup=mevki|hat (varsayılan mevki); Derinlik'in grup değerleri burada geçersiz sayılır ve mevkiye düşer.
   const grouping = parseGrouping(params.get('grup'))
   const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, r.display])), [k.fits.rows])
-  // KARIYER-UX 6: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden.
+  // KARIYER-UX 6 / FAZ 6a-B: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden; oyuncu oynadığı slotun mevkisiyle.
   const lineup = k.fits.main.active?.lineup
-  const starters = useMemo(() => (lineup ? new Set(Object.values(lineup).filter((id): id is number => typeof id === 'number')) : undefined), [lineup])
+  const starters = useMemo(() => {
+    if (!lineup || !k.formation) {
+      return undefined
+    }
+    const positionOf = new Map(k.formation.slots.map((s) => [s.slotId, s.position]))
+    return new Map(Object.entries(lineup).flatMap(([slotId, id]) => (typeof id === 'number' && positionOf.has(slotId) ? [[id, positionOf.get(slotId)!] as const] : [])))
+  }, [lineup, k.formation])
 
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
