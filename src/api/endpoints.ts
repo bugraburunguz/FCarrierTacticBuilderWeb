@@ -59,7 +59,6 @@ import type {
   HistoryPoint,
   PlayerTag,
   PlayerTagKind,
-  SeasonRecord,
   ShortlistItem,
   SnapshotDiff,
   EaRoleOption,
@@ -67,7 +66,6 @@ import type {
   KbItem,
   KbObjectiveGroup,
   KbPricePoint,
-  KbPromo,
   KbSbcSet,
   SbcSetVotes,
   SaveUserTacticBody,
@@ -172,7 +170,6 @@ export const endpoints = {
   kbSbcSet: (id: number) => api.get<KbSbcSet>(`/ut/kb/sbc/${id}`),
   kbObjectives: () => api.get<KbObjectiveGroup[]>('/ut/kb/objectives'),
   kbEvolutions: () => api.get<KbEvolution[]>('/ut/kb/evolutions'),
-  kbPromos: () => api.get<KbPromo[]>('/ut/kb/promos'),
   /** `resource`: EA kaynak kimlikleri (ör. SBC ödül oyuncuları); yalnız bunlar döner. */
   kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; resource?: number[]; limit?: number; offset?: number }) =>
     api.get<KbItem[]>('/ut/kb/items', { ...params, resource: params.resource?.map(String) }),
@@ -211,7 +208,6 @@ export const endpoints = {
   setMainTactic: (slot: number, careerId: number) => request<UserTactic>(`/user-tactics/${slot}/main`, { method: 'PUT', query: { careerId } }),
   /** Ücretsiz otomatik başlangıç önerisi (D-31); kredi düşmez. */
   starterTactic: (careerId: number) => api.get<StarterTactic>(`/careers/${careerId}/starter-tactic`),
-  deleteUserTactic: (slot: number, careerId?: number) => request<void>(`/user-tactics/${slot}`, { method: 'DELETE', query: { careerId } }),
   resolveTactic: (tactic: TacticRequest) => api.post<ResolvedTactic>('/tactics/resolve', tactic, false),
 
   fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[]; engineVersion?: 'v1' | 'v3' }) =>
@@ -254,8 +250,6 @@ export const endpoints = {
   shortlist: (careerId: number) => api.get<ShortlistItem[]>(`/careers/${careerId}/shortlist`),
   shortlistAdd: (careerId: number, playerId: number, body: { note?: string; maxFeeEur?: number } = {}) => request<void>(`/careers/${careerId}/shortlist/${playerId}`, { method: 'PUT', body }),
   shortlistRemove: (careerId: number, playerId: number) => request<void>(`/careers/${careerId}/shortlist/${playerId}`, { method: 'DELETE' }),
-  seasons: (careerId: number) => api.get<SeasonRecord[]>(`/careers/${careerId}/seasons`),
-  putSeason: (careerId: number, season: number, body: Omit<SeasonRecord, 'season'>) => request<void>(`/careers/${careerId}/seasons/${season}`, { method: 'PUT', body }),
   careerBackup: (careerId: number) => api.get<CareerBackup>(`/careers/${careerId}/backup`),
   careerRestore: (careerId: number, backup: CareerBackup) => request<CareerBackup>(`/careers/${careerId}/backup`, { method: 'POST', body: backup }),
   squad: (careerId: number) => api.get<CareerPlayer[]>(`/careers/${careerId}/squad`),
