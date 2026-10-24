@@ -7,7 +7,6 @@ import { rulesStore } from '../state/rulesStore'
  * Boyutlar kurallardan gelir: kadro ekranı 18 (XI + 7 yedek), SBC 11 (rulesStore → squadRating.sizes).
  */
 export const squadSize = () => rulesStore.get().squadRating.sizes.squad
-export const sbcSize = () => rulesStore.get().squadRating.sizes.sbc
 
 /** En iyi `size` oyuncu üzerinden rating (varsayılan: SBC boyutu değil, verilen listenin tamamı). */
 export function squadRating(ratings: number[], size: number = ratings.length): number {

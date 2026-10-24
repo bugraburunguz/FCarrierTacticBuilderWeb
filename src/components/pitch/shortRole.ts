@@ -64,10 +64,3 @@ export function shortRoleLabel(label: string): string {
 
 /** Etiketin tek satırdaki en geniş hâli (karakter): düzen hesabı ve test için üst sınır. */
 export const SHORT_ROLE_MAX_CHARS = 16
-
-const TWO_LINE_NAME_MAX_CHARS = 14
-
-/** İki satırlı etiketin ilk satırı tek satıra sığmalı (3. satıra taşıp rozete binmesin): uzun adlar kısa forma iner, tam ad title'da kalır. */
-export function fitRoleName(name: string): string {
-  return name.length > TWO_LINE_NAME_MAX_CHARS ? (NAMES[name] ?? fallback(name)) : name
-}
