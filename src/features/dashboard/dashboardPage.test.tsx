@@ -88,6 +88,23 @@ describe('Kariyer Masası hata durumları', () => {
     expect(screen.queryByText(/Henüz kariyerin yok/)).toBeNull()
   })
 
+  it('veri varken arka plan yenilemesi başarısız olursa sayfa hata ekranına düşmez; eldeki veri kalır', async () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/career/dashboard']}>
+          <Routes><Route path="/career/dashboard" element={<DashboardPage />} /></Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    )
+    expect((await screen.findAllByRole('heading', { name: 'Kariyer Masası' })).length).toBeGreaterThan(0)
+    vi.mocked(endpoints.careers).mockRejectedValue(new Error('ağ'))
+    await client.refetchQueries({ queryKey: ['careers'] }).catch(() => undefined)
+    await waitFor(() => expect(client.getQueryState(['careers'])?.status).toBe('error'))
+    expect(screen.queryByText('Kariyerler yüklenemedi.')).toBeNull()
+    expect(screen.getAllByRole('heading', { name: 'Kariyer Masası' }).length).toBeGreaterThan(0)
+  })
+
   it('kadro alınamazsa üstte "Kadro yüklenemedi" + Tekrar dene', async () => {
     vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
     renderPage()

@@ -59,8 +59,8 @@ export function CareerSquadPage() {
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
   }
-  // REVIEW Y5: hata boş durum gibi görünmez.
-  if (k.careers.isError) {
+  // REVIEW Y5: hata boş durum gibi görünmez. Eldeki veri varken başarısız yenileme sayfayı düşürmez.
+  if (k.careers.isError && !k.careers.data) {
     return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => k.careers.refetch()} />
   }
   const career = k.career
@@ -117,8 +117,8 @@ export function CareerSquadPage() {
             <Segmented label="Görünüm" value={view} options={VIEWS} onChange={setView} />
           </div>
         )}>
-          {k.squad.isError ? (
-            <p className="text-sm text-ink-2">Kadro yüklenemedi.</p>
+          {k.squad.isError && !k.squad.data ? (
+            <p className="text-sm text-ink-2">Liste gösterilemiyor.</p>
           ) : k.squad.isLoading ? (
             <Skeleton className="h-64" />
           ) : players.length === 0 ? (

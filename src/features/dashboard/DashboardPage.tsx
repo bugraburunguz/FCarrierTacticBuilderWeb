@@ -107,8 +107,8 @@ export function DashboardPage() {
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
   }
-  // REVIEW Y5: liste alınamadıysa "kariyerin yok" demek yanlış; hata ve tekrar dene.
-  if (careers.isError) {
+  // REVIEW Y5: liste alınamadıysa "kariyerin yok" demek yanlış; hata ve tekrar dene. Eldeki veri varken başarısız yenileme sayfayı düşürmez.
+  if (careers.isError && !careers.data) {
     return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => careers.refetch()} />
   }
   if (!career) {

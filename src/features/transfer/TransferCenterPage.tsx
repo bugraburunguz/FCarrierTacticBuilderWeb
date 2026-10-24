@@ -105,8 +105,8 @@ export function TransferCenterPage() {
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
   }
-  // REVIEW Y5: hata boş durum gibi görünmez.
-  if (careers.isError) {
+  // REVIEW Y5: hata boş durum gibi görünmez. Eldeki veri varken başarısız yenileme sayfayı düşürmez (Adaylar sonucu korunur).
+  if (careers.isError && !careers.data) {
     return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => careers.refetch()} />
   }
   if (!career) {
@@ -123,7 +123,7 @@ export function TransferCenterPage() {
   const wageBudget = career.wageBudgetEur !== undefined && career.wageBudgetEur !== null && career.wageBudgetEur > 0 ? career.wageBudgetEur : undefined
   const computed = budgetPlan({ budgetEur: budget, wageBudgetEur: wageBudget, shortlist: items, squad: squad.data ?? [], tags: tagList.data ?? [] })
   // REVIEW Y5: kısa liste ya da satış planı alınamadıysa kalan bütçe eksik veriyle hesaplanmaz ("—").
-  const loadFailed = shortlist.isError || tagList.isError || squad.isError
+  const loadFailed = (shortlist.isError && !shortlist.data) || (tagList.isError && !tagList.data) || (squad.isError && !squad.data)
   const plan = loadFailed ? { ...computed, remaining: undefined } : computed
   const after = budget === undefined ? undefined : budget - plan.shortlist.total
   const gameDate = facets.data?.gameDate
