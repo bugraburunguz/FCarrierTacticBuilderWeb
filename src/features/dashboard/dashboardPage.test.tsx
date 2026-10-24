@@ -99,7 +99,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(cards[0]).toHaveTextContent('Dayanıklılık −12,5')
     expect(cards[0]).not.toHaveTextContent('Sprint hızı')
     expect(cards[1]).toHaveTextContent('Rol için sınırda')
-    expect(within(cards[0]).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-CM2&pos=CM&rol=box_to_box_balanced&role=box_to_box_balanced')
+    expect(within(cards[0]).getByRole('link', { name: /Transferde aday bul/ })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-CM2&pos=CM&rol=box_to_box_balanced')
   })
 
   it('WRONG_ROLE kartı: birincil "Rolü değiştir" (Lab, slot seçili), ikincil aday; WEAK kartı: birincil aday, ikincil "Lab\'da dene"', async () => {

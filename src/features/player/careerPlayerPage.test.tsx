@@ -8,7 +8,8 @@ import { ROLES_HELP } from '../../lib/fitLabels'
 import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn() },
+  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn(),
+    shortlist: vi.fn(() => Promise.resolve([])), shortlistAdd: vi.fn(() => Promise.resolve()), shortlistRemove: vi.fn(() => Promise.resolve()) },
 }))
 
 const CAREER = 4
@@ -66,6 +67,19 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(within(card).getByText('Hareket')).toBeInTheDocument()
     expect(within(card).getByText('CF')).toBeInTheDocument()
     expect(within(card).getByRole('button', { name: /Karşılaştır/ })).toBeInTheDocument()
+  })
+
+  it('KARIYER-UX FAZ 5: kadroda değilse "Kısa listeye ekle" (ortak ShortlistButton); kadrodaysa yok', async () => {
+    const { unmount } = renderPage()
+    const add = await screen.findByRole('button', { name: 'Kısa listeye ekle' })
+    await waitFor(() => expect(add).toBeEnabled())
+    fireEvent.click(add)
+    await waitFor(() => expect(endpoints.shortlistAdd).toHaveBeenCalledWith(CAREER, 7, {}))
+    unmount()
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true }))
+    renderPage()
+    await screen.findByText('Kadronda')
+    expect(screen.queryByRole('button', { name: 'Kısa listeye ekle' })).toBeNull()
   })
 
   it('dört sekme; sekme adres çubuğunda (?sekme=), doğrudan adresle açılır', async () => {

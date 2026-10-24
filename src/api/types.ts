@@ -453,6 +453,13 @@ export interface HistoryPoint {
 
 export type PlayerTagKind = 'LOCKED' | 'ROTATION' | 'DEVELOPING' | 'FOR_SALE' | 'LOAN_OK'
 
+/** Kariyer oyuncu etiketi; KARIYER-UX FAZ 5: satış planında istenen bedel (euro, opsiyonel). */
+export interface PlayerTag {
+  playerId: number
+  tag: PlayerTagKind
+  askingPriceEur?: number | null
+}
+
 export interface ShortlistItem {
   playerId: number
   /** Gömülü oyuncu özeti (WEB-BUG-13); katalogdan kalkmış oyuncuda yok. */

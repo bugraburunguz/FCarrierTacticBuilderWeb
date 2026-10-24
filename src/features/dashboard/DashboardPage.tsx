@@ -6,7 +6,7 @@ import { endpoints } from '../../api/endpoints'
 import type { CareerSnapshot, RosterEvent } from '../../api/types'
 import { CareerSelect } from '../../components/CareerSelect'
 import { Chip, EmptyState, Panel, Skeleton, SourceTag, StatTile, TabPanel, Tabs, type DataSource, type StatDelta } from '../../design/components/primitives'
-import { currentRoute, deskLink } from '../../lib/deskLinks'
+import { deskLink } from '../../lib/deskLinks'
 import { EVENT_LABEL, SNAPSHOT_LABEL } from '../../lib/deskRules'
 import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
@@ -165,7 +165,7 @@ export function DashboardPage() {
                 {alerts.slice(0, ALERTS_SHOWN).map((a) => (
                   <li key={`${a.kind}-${a.playerId}`} className="flex items-start gap-2">
                     {a.kind === 'LOAN' ? <ArrowRightLeft size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-warn" /> : <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-warn" />}
-                    <Link to={currentRoute(a.to)} className="min-w-0 underline-offset-2 hover:underline">{a.text}</Link>
+                    <Link to={a.to} className="min-w-0 underline-offset-2 hover:underline">{a.text}</Link>
                   </li>
                 ))}
                 {alerts.length === 0 && <li className="text-ink-2">{gameDate ? 'Sözleşme ya da kiralık uyarısı yok.' : 'Oyun tarihi yok: uyarılar içe aktarmadan sonra gelir.'}</li>}
@@ -215,7 +215,7 @@ export function DashboardPage() {
                           <Repeat size={14} aria-hidden="true" />Rolü değiştir
                         </Link>
                       )}
-                      <Link to={currentRoute(deskLink.candidate(w.slotId, w.position, w.roleId))} data-variant={w.primary === 'TRANSFER' ? 'primary' : 'secondary'}
+                      <Link to={deskLink.candidate(w.slotId, w.position, w.roleId)} data-variant={w.primary === 'TRANSFER' ? 'primary' : 'secondary'}
                         className={w.primary === 'TRANSFER' ? PRIMARY : SECONDARY}>
                         <Search size={14} aria-hidden="true" />Transferde aday bul
                       </Link>

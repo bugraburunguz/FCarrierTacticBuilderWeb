@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import { PlayerCard } from '../../components/card/PlayerCard'
 import { CompareButton } from '../../components/CompareButton'
+import { ShortlistButton } from '../../components/ShortlistButton'
 import { useIsMobile } from '../../design/components/MobileSheet'
 import { Chip, TabPanel, Tabs } from '../../design/components/primitives'
 import { HelpPopover } from '../../components/ui'
@@ -48,7 +49,13 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   }
   const inSquad = contract.data?.inSquad === true
   const meta = [summary.club, summary.league, summary.nationality].filter(Boolean).join(' · ')
-  const compare = <CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? '' }} />
+  // KARIYER-UX FAZ 5: kadroda olmayan oyuncu kısa listeye eklenir (Transfer › Kısa liste ile aynı mutation).
+  const compare = (
+    <div className="flex flex-wrap justify-center gap-2">
+      <CompareButton entry={{ id: summary.id, name: summary.name, overall: summary.overall, position: summary.positions[0] ?? '' }} />
+      {contract.data !== undefined && !inSquad && <ShortlistButton careerId={careerId} playerId={summary.id} />}
+    </div>
+  )
   const pot = potentialText(summary)
   const card = (
     <>

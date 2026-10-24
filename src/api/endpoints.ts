@@ -57,6 +57,7 @@ import type {
   CaptureResult,
   ContributionResult,
   HistoryPoint,
+  PlayerTag,
   PlayerTagKind,
   SeasonRecord,
   ShortlistItem,
@@ -243,8 +244,10 @@ export const endpoints = {
   playerHistory: (careerId: number, playerId: number) => api.get<HistoryPoint[]>(`/careers/${careerId}/players/${playerId}/history`),
   updateRatings: (careerId: number, body: { updates: { playerId: number; overall: number; potential?: number }[]; note?: string }) =>
     request<CareerSnapshot>(`/careers/${careerId}/players/ratings`, { method: 'PUT', body }),
-  playerTags: (careerId: number) => api.get<{ playerId: number; tag: PlayerTagKind }[]>(`/careers/${careerId}/tags`),
-  setPlayerTag: (careerId: number, playerId: number, tag: PlayerTagKind) => request<unknown>(`/careers/${careerId}/tags/${playerId}`, { method: 'PUT', body: { tag } }),
+  playerTags: (careerId: number) => api.get<PlayerTag[]>(`/careers/${careerId}/tags`),
+  /** `askingPriceEur` yalnız satış planında (FAZ 5); verilmezse sunucu bedeli temizler. */
+  setPlayerTag: (careerId: number, playerId: number, tag: PlayerTagKind, askingPriceEur?: number) =>
+    request<unknown>(`/careers/${careerId}/tags/${playerId}`, { method: 'PUT', body: askingPriceEur === undefined ? { tag } : { tag, askingPriceEur } }),
   clearPlayerTag: (careerId: number, playerId: number) => request<void>(`/careers/${careerId}/tags/${playerId}`, { method: 'DELETE' }),
   shortlist: (careerId: number) => api.get<ShortlistItem[]>(`/careers/${careerId}/shortlist`),
   shortlistAdd: (careerId: number, playerId: number, body: { note?: string; maxFeeEur?: number } = {}) => request<void>(`/careers/${careerId}/shortlist/${playerId}`, { method: 'PUT', body }),

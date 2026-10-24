@@ -13,18 +13,3 @@ export const deskLink = {
   growth: (playerId: number) => query('/career/growth', { oyuncu: playerId }),
   settings: () => query('/career/dashboard', { sekme: 'ayarlar' }),
 }
-
-/**
- * GEÇİCİ eşleme — FAZ 5 (Transfer parametreleri) gelince kaldırılacak. Kadro (FAZ 3) ve Lab (FAZ 4a: /career/tactics-lab gerçek sayfa, `slot` okunur) eşlemeleri kalktı.
- * Yeni sayfalar yokken §4.1 bağlantısını bugünkü sayfanın okuduğu rota ve parametreye çevirir; okunmayan parametre zarar vermediği için kalır.
- * Bugün karşılanmayanlar: Transfer `sekme`, `oyuncu`.
- */
-export function currentRoute(to: string): string {
-  const [path, search = ''] = to.split('?')
-  const params = new URLSearchParams(search)
-  if (path === '/career/transfer' && params.has('rol')) {
-    params.set('role', params.get('rol')!)
-    return `${path}?${params}`
-  }
-  return to
-}
