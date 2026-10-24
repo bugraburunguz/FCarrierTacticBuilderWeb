@@ -5,6 +5,7 @@ import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { unusedPositionSuggestions, type DepthState, type PositionNeed } from '../lib/depth'
 import { setCardDragImage } from '../lib/dragCard'
 import { groupByPrimaryPosition, primaryPosition } from '../lib/positions'
+import { squadGroups, type SquadGrouping } from '../lib/squadGroups'
 import { Chip } from '../design/components/primitives'
 import { Button } from './ui'
 
@@ -21,13 +22,17 @@ interface Props {
   onLoanOut: (entry: CareerPlayer) => void
   needs: PositionNeed[]
   positionAdvice: PlayerPositionAdvice[]
+  /** KARIYER-UX FAZ 3.1 (v3): listeyle aynı gruplama; v2 vermez, eski mevki gruplaması kalır. Hat gruplamasında derinlik etiketi yok. */
+  grouping?: SquadGrouping
 }
 
-export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvice }: Props) {
+export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvice, grouping }: Props) {
   const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
   const [dragged, setDragged] = useState<CareerPlayer | null>(null)
   const [hover, setHover] = useState<'SELL' | 'LOAN' | null>(null)
-  const groups = groupByPrimaryPosition(squad)
+  const groups = grouping
+    ? squadGroups(squad, grouping).map((g) => ({ position: g.key, label: g.title, players: g.players }))
+    : groupByPrimaryPosition(squad)
   const needByPosition = new Map(needs.map((n) => [n.position, n]))
   const suggestions = unusedPositionSuggestions(squad, needs)
 
@@ -74,9 +79,11 @@ export function SquadCards({ squad, busy, onSell, onLoanOut, needs, positionAdvi
                 <h3 className="text-sm font-semibold">
                   {g.label} <span className="text-muted">· {g.players.length}</span>
                 </h3>
-                <span title={need?.reason}>
-                  {need ? <Chip tone={DEPTH_LABEL[need.state].tone}>{DEPTH_LABEL[need.state].text}</Chip> : <Chip>Taktikte yok</Chip>}
-                </span>
+                {grouping !== 'hat' && (
+                  <span title={need?.reason}>
+                    {need ? <Chip tone={DEPTH_LABEL[need.state].tone}>{DEPTH_LABEL[need.state].text}</Chip> : <Chip>Taktikte yok</Chip>}
+                  </span>
+                )}
               </header>
               <ul className="divide-y divide-line">
                 {g.players.map((entry) => (

@@ -57,6 +57,7 @@ import type {
   CaptureResult,
   ContributionResult,
   HistoryPoint,
+  PlayerTag,
   PlayerTagKind,
   SeasonRecord,
   ShortlistItem,
@@ -69,6 +70,8 @@ import type {
   KbPromo,
   KbSbcSet,
   SbcSetVotes,
+  SaveUserTacticBody,
+  StarterTactic,
 } from './types'
 
 export interface SetupBody {
@@ -80,6 +83,8 @@ export interface PlayerFilters {
   q?: string
   pos?: string[]
   ps?: string[]
+  /** KARIYER-UX 6: PlayStyle+ (seviye ≥ 2) istenenler. */
+  ps_plus?: string[]
   at?: string[]
   ovr_min?: number
   ovr_max?: number
@@ -200,7 +205,12 @@ export const endpoints = {
   replicaLegacyIds: () => api.get<Record<string, string | null>>('/replicas/legacy-ids'),
   replicaApply: (id: string, body: ReplicaApplyBody) => api.post<ReplicaApplyResult>(`/replicas/${id}/apply`, body),
   userTactics: (careerId?: number) => api.get<UserTactic[]>('/user-tactics', { careerId }),
-  saveUserTactic: (slot: number, body: { careerId?: number; replicaId: string }) => request<UserTactic>(`/user-tactics/${slot}`, { method: 'PUT', body }),
+  saveUserTactic: (slot: number, body: SaveUserTacticBody) => request<UserTactic>(`/user-tactics/${slot}`, { method: 'PUT', body }),
+  /** Kariyerin ana taktiği (D-30); yoksa null. */
+  mainTactic: (careerId: number) => api.get<UserTactic | null>('/user-tactics/main', { careerId }),
+  setMainTactic: (slot: number, careerId: number) => request<UserTactic>(`/user-tactics/${slot}/main`, { method: 'PUT', query: { careerId } }),
+  /** Ücretsiz otomatik başlangıç önerisi (D-31); kredi düşmez. */
+  starterTactic: (careerId: number) => api.get<StarterTactic>(`/careers/${careerId}/starter-tactic`),
   deleteUserTactic: (slot: number, careerId?: number) => request<void>(`/user-tactics/${slot}`, { method: 'DELETE', query: { careerId } }),
   resolveTactic: (tactic: TacticRequest) => api.post<ResolvedTactic>('/tactics/resolve', tactic, false),
 
@@ -211,7 +221,8 @@ export const endpoints = {
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
-  lineup: (careerId: number, tactic: TacticRequest) => api.post<SquadFit>('/fit/lineup', { careerId, tactic }),
+  /** locked (KARIYER-UX Q2): slotId → oyuncu sabit kalır, kalan slotları sunucu doldurur. */
+  lineup: (careerId: number, tactic: TacticRequest, locked?: Record<string, number>) => api.post<SquadFit>('/fit/lineup', locked ? { careerId, tactic, locked } : { careerId, tactic }),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number; setup?: SetupBody }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
@@ -235,8 +246,10 @@ export const endpoints = {
   playerHistory: (careerId: number, playerId: number) => api.get<HistoryPoint[]>(`/careers/${careerId}/players/${playerId}/history`),
   updateRatings: (careerId: number, body: { updates: { playerId: number; overall: number; potential?: number }[]; note?: string }) =>
     request<CareerSnapshot>(`/careers/${careerId}/players/ratings`, { method: 'PUT', body }),
-  playerTags: (careerId: number) => api.get<{ playerId: number; tag: PlayerTagKind }[]>(`/careers/${careerId}/tags`),
-  setPlayerTag: (careerId: number, playerId: number, tag: PlayerTagKind) => request<unknown>(`/careers/${careerId}/tags/${playerId}`, { method: 'PUT', body: { tag } }),
+  playerTags: (careerId: number) => api.get<PlayerTag[]>(`/careers/${careerId}/tags`),
+  /** `askingPriceEur` yalnız satış planında (FAZ 5); verilmezse sunucu bedeli temizler. */
+  setPlayerTag: (careerId: number, playerId: number, tag: PlayerTagKind, askingPriceEur?: number) =>
+    request<unknown>(`/careers/${careerId}/tags/${playerId}`, { method: 'PUT', body: askingPriceEur === undefined ? { tag } : { tag, askingPriceEur } }),
   clearPlayerTag: (careerId: number, playerId: number) => request<void>(`/careers/${careerId}/tags/${playerId}`, { method: 'DELETE' }),
   shortlist: (careerId: number) => api.get<ShortlistItem[]>(`/careers/${careerId}/shortlist`),
   shortlistAdd: (careerId: number, playerId: number, body: { note?: string; maxFeeEur?: number } = {}) => request<void>(`/careers/${careerId}/shortlist/${playerId}`, { method: 'PUT', body }),

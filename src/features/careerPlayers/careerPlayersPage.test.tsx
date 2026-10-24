@@ -10,6 +10,9 @@ vi.mock('../../api/endpoints', () => ({
   endpoints: {
     players: vi.fn(),
     playerFacets: vi.fn(),
+    shortlist: vi.fn(() => Promise.resolve([])),
+    shortlistAdd: vi.fn(() => Promise.resolve()),
+    shortlistRemove: vi.fn(() => Promise.resolve()),
     leagues: vi.fn(() => Promise.resolve([{ id: 13, name: 'Premier League', count: 1 }])),
     nationalities: vi.fn(() => Promise.resolve([{ id: 18, name: 'Fransa', count: 1 }])),
     careerTeams: vi.fn(() => Promise.resolve([{ teamId: 101, name: 'Crewe Alexandra' }])),
@@ -52,6 +55,21 @@ describe('kariyer oyuncu listesi (v3 Katalog)', () => {
     expect(within(screen.getByRole('link', { name: /Bora Stoper/ }).closest('li')!).getByText('Hayal')).toBeInTheDocument()
     expect(lastQuery()).toMatchObject({ career: 4 })
     expect(lastQuery().bucket).toBeUndefined()
+  })
+
+  it('KARIYER-UX FAZ 5: kartta ve tablo satırında "Kısa listeye ekle" (ortak ShortlistButton, PUT /shortlist/{pid})', async () => {
+    const { unmount } = renderPage()
+    await screen.findByRole('link', { name: /Ada Golcü, 74/ })
+    const buttons = await screen.findAllByRole('button', { name: 'Kısa listeye ekle' })
+    expect(buttons).toHaveLength(2)
+    const add = buttons[0]
+    await waitFor(() => expect(add).toBeEnabled())
+    fireEvent.click(add)
+    await waitFor(() => expect(endpoints.shortlistAdd).toHaveBeenCalledWith(4, 1, {}))
+    unmount()
+    renderPage('/players?gorunum=table')
+    const row = (await screen.findByRole('link', { name: 'Bora Stoper' })).closest('tr')!
+    expect(within(row).getByRole('button', { name: 'Kısa listeye ekle' })).toBeInTheDocument()
   })
 
   it('yapışkan opak filtre çubuğu kart veritabanıyla aynı parçadır', async () => {
@@ -151,6 +169,20 @@ describe('kariyer oyuncu listesi (v3 Katalog)', () => {
     expect(group).not.toHaveAttribute('open')
     fireEvent.change(within(group).getByLabelText('Bitiricilik en az'), { target: { value: '70' } })
     await waitFor(() => expect(lastQuery().attrMin).toEqual({ Finishing: 70 }))
+  })
+
+  it('KARIYER-UX 6: PlayStyle süzgeci — seç, PS+ yap, kaldır; sunucuya ps / ps_plus, adres çubuğunda', async () => {
+    renderPage()
+    await screen.findByText(/2 oyuncu/)
+    const group = screen.getByText('PlayStyle').closest('details')!
+    fireEvent.change(within(group).getByRole('combobox', { name: 'PlayStyle ekle' }), { target: { value: 'FinesseShot' } })
+    await waitFor(() => expect(lastQuery()).toMatchObject({ ps: ['FinesseShot'], ps_plus: undefined }))
+    fireEvent.click(within(group).getByRole('radio', { name: 'PS+' }))
+    await waitFor(() => expect(lastQuery()).toMatchObject({ ps: undefined, ps_plus: ['FinesseShot'] }))
+    fireEvent.click(within(group).getByRole('button', { name: 'Finesse Shot süzgecini kaldır' }))
+    // Süzgeçsiz sorgu önbellekte (ilk yükleme): yeni istek gitmez; satır kalkar ve seçenek listeye döner.
+    await waitFor(() => expect(within(group).queryByRole('radio', { name: 'PS+' })).toBeNull())
+    expect(within(group).getByRole('option', { name: 'Finesse Shot' })).toBeInTheDocument()
   })
 
   it('boş sonuçta süzgeçleri temizle önerilir', async () => {

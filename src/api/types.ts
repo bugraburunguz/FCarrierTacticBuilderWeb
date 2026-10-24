@@ -413,6 +413,9 @@ export interface CareerSnapshot {
   note?: string
   /** V3-06e: kayıt anındaki oyun tarihi; yoksa alan yok. */
   gameDate?: string
+  /** KARIYER-UX FAZ 2 (V44): snapshot anındaki transfer bütçesi ve kadro maaş toplamı (Masa Δ); bilinmiyorsa yok. */
+  budgetEur?: number
+  squadWageEur?: number
 }
 
 export interface SnapshotDiffRow {
@@ -449,6 +452,13 @@ export interface HistoryPoint {
 }
 
 export type PlayerTagKind = 'LOCKED' | 'ROTATION' | 'DEVELOPING' | 'FOR_SALE' | 'LOAN_OK'
+
+/** Kariyer oyuncu etiketi; KARIYER-UX FAZ 5: satış planında istenen bedel (euro, opsiyonel). */
+export interface PlayerTag {
+  playerId: number
+  tag: PlayerTagKind
+  askingPriceEur?: number | null
+}
 
 export interface ShortlistItem {
   playerId: number
@@ -488,6 +498,10 @@ export interface CareerPlayer {
   valueEur?: number
   form?: number
   acquiredAt?: string
+  /** KARIYER-UX FAZ 2 (15 §7.3): kayıttaki kiralık bitişi; bilinmiyorsa yok. */
+  loanUntil?: string
+  /** Kayıttaki haftalık maaş; bilinmiyorsa yok. */
+  wageEur?: number
 }
 
 export type RosterEventType = 'BUY' | 'SELL' | 'LOAN_IN' | 'LOAN_OUT' | 'PROMOTE'
@@ -1269,7 +1283,21 @@ export interface CreditCosts {
 
 // ── Replikalar (E3-9 / REP-04, REP-07) ────────────────────────────────────────────────────────────────────────────────
 
-export type ReplicaCategory = 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaCategory = 'CURRENT' | 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+/** Kulübün o sezon oynadığı lig (REP-c). */
+export type ReplicaLeague =
+  | 'TR_SUPER_LIG'
+  | 'EN_PREMIER_LEAGUE'
+  | 'EN_CHAMPIONSHIP'
+  | 'ES_LALIGA'
+  | 'IT_SERIE_A'
+  | 'IT_SERIE_B'
+  | 'DE_BUNDESLIGA'
+  | 'FR_LIGUE_1'
+  | 'NL_EREDIVISIE'
+  | 'PT_LIGA'
+  | 'SCO_PREMIERSHIP'
+  | 'AT_BUNDESLIGA'
 export type ReplicaBuildUp = 'SHORT_PASSING' | 'BALANCED' | 'COUNTER'
 export type ReplicaApproach = 'DEEP' | 'BALANCED' | 'HIGH' | 'AGGRESSIVE'
 
@@ -1287,6 +1315,7 @@ export interface ReplicaSummary {
   club: string
   coach: string
   season: string
+  league: ReplicaLeague
   formationId: string
   eaFormation: string
   buildUp: ReplicaBuildUp
@@ -1343,6 +1372,7 @@ export interface ReplicaDetail {
   club: string
   coach: string
   season: string
+  league: ReplicaLeague
   honours?: string[]
   whyIconic?: string
   realShape?: { inPossession?: string; outOfPossession?: string; keyMechanisms?: string[] }
@@ -1397,6 +1427,7 @@ export interface ReplicaApplyBody {
   playerIds?: number[]
 }
 
+/** user_tactic (V31, V43). slots satırı: replikada focus dolu, taslakta tags dolu. main: kariyerin ana taktiği (D-30). */
 export interface UserTactic {
   slot: number
   careerId: number | null
@@ -1405,7 +1436,30 @@ export interface UserTactic {
   buildUp: string | null
   defensiveApproach: string | null
   lineHeight: number | null
-  slots: { slot: string; position: string; roleId: string; focus: string }[]
+  slots: { slot: string; position: string; roleId: string | null; focus?: string | null; tags?: string[] }[]
   eaCode: string | null
   sourceReplicaId: string | null
+  main: boolean
+  /** slotId → base_player.id (/fit/lineup'ın playerId'si); boşsa /fit/lineup dizer. */
+  lineup: Record<string, number> | null
+  depth: number | null
+  presetId: string | null
+  updatedAt: string | null
+  /** Yalnız ana taktik okumasında: kadroda olmadığı için dizilişten düşen oyuncu sayısı (Q2). */
+  lineupDropped: number | null
+}
+
+/** Slota kaydet: ya replikadan ya Lab taslağından (tek taktik gövdesi TacticRequest + opsiyonel diziliş). */
+export type SaveUserTacticBody =
+  | { careerId?: number; replicaId: string }
+  | { careerId?: number; name: string; tactic: TacticRequest; lineup?: Record<string, number> }
+
+/** Ücretsiz otomatik başlangıç önerisi (D-31): ana taktik değildir. */
+export interface StarterTactic {
+  formationId: string
+  setup: { buildUp: string; depth: number }
+  slots: { slotId: string; position: string; roleId: string; roleName: string }[]
+  lineup: Record<string, number>
+  squadFit: number
+  alternatives: { formationId: string; score: number }[]
 }

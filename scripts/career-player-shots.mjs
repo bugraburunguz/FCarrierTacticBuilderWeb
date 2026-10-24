@@ -4,8 +4,8 @@
 // minFont, yapışkan bant sızıntısı + alfa 1, sekme çubuğu üst kenarı (375×812 ≤ 640), "Kadronda" rozeti, Roller yardımında lig referansı.
 // Veri: geçici test hesabı (yalnız localhost) + Crewe Alexandra kariyeri; koşu sonunda yalnız bu hesap silinir.
 // Kullanım: node scripts/career-player-shots.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/V3-06b/career-player/
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -25,8 +25,6 @@ const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11
 const TAB_TOP_MAX = 640
 const BAND = ['header']
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 /** Tam veri fikstürü (yalnız görünüm): oyun tarihine göre 7 ay, tahmini değer, maaş, serbest bırakma bedeli, kiralık, kova, alım sonrası bütçe. */
 const FULL_CONTRACT = { inSquad: false, onLoan: true, valuationEstimated: true, valueEur: 1_500_000, wageEur: 12_000, releaseClauseEur: 5_000_000,
   contractUntil: '2027-08-15', gameDate: '2027-01-15', monthsLeft: 7, feasibility: 'ZOR', budgetEur: 5_000_000, budgetAfterPurchaseEur: 3_500_000 }
@@ -56,7 +54,6 @@ const report = []
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   const mobile = w < 820
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     session = await login()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
     await context.addInitScript(({ t, s, c }) => {

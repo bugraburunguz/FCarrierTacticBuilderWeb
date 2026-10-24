@@ -24,6 +24,21 @@ const FULL: CareerListFilters = {
   view: 'table',
 }
 
+/** KARIYER-UX 6: PlayStyle / PlayStyle+ süzgeci (adres: ps / psp; sorgu: ps / ps_plus). */
+describe('PlayStyle süzgeci', () => {
+  it('adres gidiş-dönüşü; bilinmeyen PlayStyle atılır; sorguda PS varlık, PS+ seviye ≥ 2; rozet sayısına girer', () => {
+    const f: CareerListFilters = { ...DEFAULT_CAREER_FILTERS, playstyles: [{ id: 'FinesseShot', plus: true }, { id: 'Rapid', plus: false }] }
+    const params = careerFiltersToParams(f)
+    expect(params.getAll('ps')).toEqual(['Rapid'])
+    expect(params.getAll('psp')).toEqual(['FinesseShot'])
+    expect(careerFiltersFromParams(params).playstyles).toEqual([{ id: 'FinesseShot', plus: true }, { id: 'Rapid', plus: false }])
+    expect(careerFiltersFromParams(new URLSearchParams('ps=Bozuk&psp=Rapid')).playstyles).toEqual([{ id: 'Rapid', plus: true }])
+    expect(toCareerQuery(f, 4, undefined, 0)).toMatchObject({ ps: ['Rapid'], ps_plus: ['FinesseShot'] })
+    expect(toCareerQuery(DEFAULT_CAREER_FILTERS, 4, undefined, 0)).toMatchObject({ ps: undefined, ps_plus: undefined })
+    expect(activeCareerFilterCount(f)).toBe(1)
+  })
+})
+
 describe('kariyer listesi süzgeçleri', () => {
   it('adres çubuğu gidiş-dönüşü kayıpsız', () => {
     expect(careerFiltersFromParams(careerFiltersToParams(FULL))).toEqual(FULL)

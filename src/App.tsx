@@ -4,6 +4,9 @@ import { useAuth } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
 import { CaptureOnly } from './components/CaptureOnly'
+import { LegacySquadRedirect, RedirectWithSearch } from './components/RedirectWithSearch'
+
+const LAB_BUILDER = '/career/tactics-lab?sekme=kurucu'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { isV3 } from './design/uiVersion'
@@ -17,9 +20,10 @@ const CareerNewPage = lazy(() => import('./pages/CareerNewPage').then((m) => ({ 
 const CareerTransferPage = lazy(() => import('./pages/CareerTransferPage').then((m) => ({ default: m.CareerTransferPage })))
 const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })))
 const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ default: m.ComparePage })))
+// Yalnız geliştirme: KARIYER-UX bileşen önizlemesi (prod derlemesinde rota yok; dinamik import ağaçtan atılır).
+const KariyerUxPreview = import.meta.env.DEV ? lazy(() => import('./features/preview/KariyerUxPreview').then((m) => ({ default: m.KariyerUxPreview }))) : undefined
 const CompareV3Page = lazy(() => import('./features/compare/CompareV3Page').then((m) => ({ default: m.CompareV3Page })))
 const WizardPage = lazy(() => import('./pages/WizardPage').then((m) => ({ default: m.WizardPage })))
-const TacticWizardPage = lazy(() => import('./features/wizard/TacticWizardPage').then((m) => ({ default: m.TacticWizardPage })))
 const WonderkidsPage = lazy(() => import('./pages/WonderkidsPage').then((m) => ({ default: m.WonderkidsPage })))
 const WonderkidsV3Page = lazy(() => import('./features/wonderkids/WonderkidsV3Page').then((m) => ({ default: m.WonderkidsV3Page })))
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })))
@@ -30,10 +34,10 @@ const PlayerDetailPage = lazy(() => import('./pages/PlayerDetailPage').then((m) 
 const PlayersPage = lazy(() => import('./pages/PlayersPage').then((m) => ({ default: m.PlayersPage })))
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
 const SquadBuilderPage = lazy(() => import('./pages/SquadBuilderPage').then((m) => ({ default: m.SquadBuilderPage })))
-const CareerSquadBuilderPage = lazy(() => import('./features/squad/CareerSquadBuilderPage').then((m) => ({ default: m.CareerSquadBuilderPage })))
+const TacticsLabPage = lazy(() => import('./features/lab/TacticsLabPage').then((m) => ({ default: m.TacticsLabPage })))
 const UtSquadBuilderPage = lazy(() => import('./features/squad/UtSquadBuilderPage').then((m) => ({ default: m.UtSquadBuilderPage })))
 const SquadPage = lazy(() => import('./pages/SquadPage').then((m) => ({ default: m.SquadPage })))
-const KadroPage = lazy(() => import('./features/squad/kadro/KadroPage').then((m) => ({ default: m.KadroPage })))
+const CareerSquadPage = lazy(() => import('./features/careerSquad/CareerSquadPage').then((m) => ({ default: m.CareerSquadPage })))
 const TeamsPage = lazy(() => import('./pages/TeamsPage').then((m) => ({ default: m.TeamsPage })))
 const TeamsV3Page = lazy(() => import('./features/teams/TeamsV3Page').then((m) => ({ default: m.TeamsV3Page })))
 const UtMetaPage = lazy(() => import('./pages/UtMetaPage').then((m) => ({ default: m.UtMetaPage })))
@@ -64,7 +68,7 @@ const ProfileV3 = lazy(() => import('./features/account/ProfilePage').then((m) =
 const CareerImportPage = lazy(() => import('./features/import/CareerImportPage').then((m) => ({ default: m.CareerImportPage })))
 const NewCareerPage = lazy(() => import('./features/career/NewCareerPage').then((m) => ({ default: m.NewCareerPage })))
 const GrowthPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthPage })))
-const DeskPage = lazy(() => import('./features/desk/DeskPage').then((m) => ({ default: m.DeskPage })))
+const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })))
 const TransferCenterPage = lazy(() => import('./features/transfer/TransferCenterPage').then((m) => ({ default: m.TransferCenterPage })))
 const CareerPlayerPage = lazy(() => import('./features/player/CareerPlayerPage').then((m) => ({ default: m.CareerPlayerPage })))
 const UtPlayerPage = lazy(() => import('./features/cards/UtPlayerPage').then((m) => ({ default: m.UtPlayerPage })))
@@ -121,18 +125,24 @@ export function App() {
         <Route path="players/:id" element={<PlayerDetailRoute />} />
         <Route path="compare" element={isV3() ? <CompareV3Page /> : <ComparePage />} />
         <Route path="wonderkids" element={isV3() ? <WonderkidsV3Page /> : <WonderkidsPage />} />
-        <Route path="tactics/builder" element={<Navigate to="/squad/builder" replace />} />
-        <Route path="tactics/wizard" element={isV3() ? <TacticWizardPage /> : <WizardPage />} />
-        <Route path="squad" element={<RequireAuth>{isV3() ? <KadroPage /> : <SquadPage />}</RequireAuth>} />
-        <Route path="squad/builder" element={isV3() ? <CareerSquadBuilderPage /> : <SquadBuilderPage />} />
+        {/* KARIYER-UX FAZ 4a: v3'te kurucu Taktik Laboratuvarı'nda; eski kurucu adresleri sorgu dizgisiyle oraya. v2 eski kurucuda kalır. */}
+        <Route path="career/tactics-lab" element={isV3() ? <RequireAuth><TacticsLabPage /></RequireAuth> : <Navigate to="/squad/builder" replace />} />
+        <Route path="tactics/builder" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <Navigate to="/squad/builder" replace />} />
+        {/* KARIYER-UX FAZ 4b: v3 sihirbazı Lab › Sihirbaz sekmesinde (sorgu dizgisi taşınır). v2 sayfası v2 için kalır. */}
+        <Route path="tactics/wizard" element={isV3() ? <RedirectWithSearch to="/career/tactics-lab?sekme=sihirbaz" /> : <WizardPage />} />
+        {/* KARIYER-UX FAZ 3: v3 Kadro Analizi /career/squad; eski /squad sekme eşlemesiyle yönlenir (kariyer → Masa › Ayarlar). v2 sayfası v2 için kalır. */}
+        <Route path="career/squad" element={<RequireAuth>{isV3() ? <CareerSquadPage /> : <Navigate to="/squad" replace />}</RequireAuth>} />
+        <Route path="squad" element={isV3() ? <LegacySquadRedirect /> : <RequireAuth><SquadPage /></RequireAuth>} />
+        <Route path="squad/builder" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <SquadBuilderPage />} />
         <Route path="replicas" element={<ReplicasPage />} />
         <Route path="replicas/:id" element={<ReplicaDetailPage />} />
         <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
-        <Route path="fit" element={<Navigate to="/tactics/builder" replace />} />
+        <Route path="fit" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
         <Route path="career/import" element={<RequireAuth>{isV3() ? <CareerImportPage /> : <ImportPage />}</RequireAuth>} />
-        {/* V3-06d: v3'te Kariyer Masası (yalnız v3, Ayarlar sekmesi); v2 sayfası v2 için kalır. */}
-        <Route path="career/desk" element={<RequireAuth>{isV3() ? <DeskPage /> : <CareerDeskPage />}</RequireAuth>} />
+        {/* KARIYER-UX FAZ 2: v3 Kariyer Masası /career/dashboard; eski adres sorgu dizgisiyle (?sekme=ayarlar) yönlenir. v2 sayfası v2 için kalır. */}
+        <Route path="career/dashboard" element={<RequireAuth>{isV3() ? <DashboardPage /> : <Navigate to="/career/desk" replace />}</RequireAuth>} />
+        <Route path="career/desk" element={isV3() ? <RedirectWithSearch to="/career/dashboard" /> : <RequireAuth><CareerDeskPage /></RequireAuth>} />
         <Route path="career/new" element={<RequireAuth>{isV3() ? <NewCareerPage /> : <CareerNewPage />}</RequireAuth>} />
         {/* V3-06c: v3'te Transfer Merkezi (yalnız v3 uçları); v2 sayfası v2 için kalır. */}
         <Route path="career/transfer" element={<RequireAuth>{isV3() ? <TransferCenterPage /> : <CareerTransferPage />}</RequireAuth>} />
@@ -155,6 +165,7 @@ export function App() {
         <Route path="admin/ut" element={<AdminUtPage />} />
         <Route path="profile" element={<RequireAuth>{isV3() ? <ProfileV3 /> : <ProfilePage />}</RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
+        {KariyerUxPreview && <Route path="onizleme/kariyer-ux" element={<KariyerUxPreview />} />}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

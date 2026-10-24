@@ -33,6 +33,11 @@
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 :root:not([data-ui="v3"]) .v3-aurora, :root:not([data-ui="v3"]) .v3-grain { display: none; }
+/* Cyber-Pitch (KARIYER-UX §8.4): şeffaflık azaltıldığında ya da yüksek kontrastta kariyer aurorası gizlenir, zemin düz --bg-base. UT değişmez. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root[data-ui="v3"][data-mode="career"] .v3-aurora { display: none; }
+}
+:root[data-ui="v3"][data-mode="career"][data-transparency="reduced"] .v3-aurora { display: none; }
 
 /*
  * Cam bileşen sınıfları `@layer components` içinde (V3-05b-c). Katmansız CSS, özgüllükten bağımsız her katmanlı kuralı yener;
@@ -90,6 +95,10 @@
       background: linear-gradient(var(--sheet-bg, var(--glass-1)), var(--sheet-bg, var(--glass-1))), var(--bg-base);
     }
   }
+
+  /* Panel kenar varyantları (KARIYER-UX §9.2): glow = ince neon halka (gölgeyle; blur yok, animasyon yok), draft = kesik çizgili Lab taslağı. */
+  .panel-edge-glow { box-shadow: var(--glass-shadow), 0 0 0 1px var(--edge-glow); }
+  .panel-edge-draft { border-style: dashed; border-color: var(--edge-draft); }
 
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
     .glass, .glass-2 { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }

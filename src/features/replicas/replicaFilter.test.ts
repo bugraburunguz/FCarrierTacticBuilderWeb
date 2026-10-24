@@ -3,7 +3,7 @@ import type { ReplicaSummary } from '../../api/types'
 import { DEFAULT_FILTERS, filterReplicas, filtersFromParams, filtersToParams, sortReplicas, startYear } from './replicaFilter'
 
 const make = (over: Partial<ReplicaSummary>): ReplicaSummary => ({
-  id: 'x', category: 'UCL_WINNER', club: 'FC Barcelona', coach: 'Pep Guardiola', season: '2010-11', formationId: '4-3-3 (2)', eaFormation: '4-3-3 (2)', buildUp: 'SHORT_PASSING', defensiveApproach: 'HIGH', lineHeight: 70, fidelity: 4,
+  id: 'x', category: 'UCL_WINNER', club: 'FC Barcelona', coach: 'Pep Guardiola', season: '2010-11', league: 'ES_LALIGA', formationId: '4-3-3 (2)', eaFormation: '4-3-3 (2)', buildUp: 'SHORT_PASSING', defensiveApproach: 'HIGH', lineHeight: 70, fidelity: 4,
   tacticCode: 'AAAAAAAAAAAA', slots: [], eaOrderedSlots: [], attentionCount: 0, ...over,
 })
 

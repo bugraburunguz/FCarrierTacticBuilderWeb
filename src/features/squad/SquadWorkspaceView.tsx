@@ -16,6 +16,9 @@ const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
 export interface SquadViewProps {
   title: string
   slots: PitchSlot[]
+  /** KARIYER-UX FAZ 4a (Lab): Cyber-Pitch zemini ve kart/piyon işareti. Verilmezse Pitch varsayılanı (UT değişmez). */
+  field?: 'grass' | 'cyber'
+  marker?: 'card' | 'pawn'
   selectedSlotId?: string
   onPickPlayer: (slotId: string) => void
   onPickRole: (slotId: string) => void
@@ -233,6 +236,8 @@ export function SquadWorkspaceView(p: SquadViewProps) {
             onRemove={p.onRemove}
             onSwap={p.onSwap}
             eaCards={p.eaCards}
+            field={p.field}
+            marker={p.marker}
           />
           <p className="mt-2 px-1 text-xs text-muted">
             {p.pitchHint ?? (

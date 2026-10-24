@@ -4,9 +4,9 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
-import { lineupStore } from '../../state/lineupStore'
 import { modeStore } from '../../state/modeStore'
 import { utCardStore } from '../../state/utCardStore'
+import { lineupFromFitRole } from '../../test/lineupFromFitRole'
 import { HomePage } from './HomePage'
 
 let authenticated = true
@@ -17,7 +17,7 @@ vi.mock('../../api/endpoints', () => {
   const none = () => Promise.resolve([])
   return {
     endpoints: {
-      careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), formations: vi.fn(), fitRole: vi.fn(), lineup: vi.fn(() => Promise.resolve({ slots: [] })), playerTags: none, roles: none, eaRoles: none,
+      careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), formations: vi.fn(), fitRole: vi.fn(), lineup: vi.fn(() => Promise.resolve({ slots: [] })), playerTags: none, roles: none, eaRoles: none,
       resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })), playerFacets: vi.fn(() => Promise.resolve({ contractData: false, loanData: false })),
       kbSbc: vi.fn(), kbItems: none, playerAssetNames: none, sbcVotes: vi.fn(() => Promise.resolve({ sets: [] })),
     },
@@ -44,8 +44,13 @@ beforeEach(() => {
   vi.mocked(endpoints.careers).mockResolvedValue([{ id: 1, name: 'Crewe 2026', clubName: 'Crewe Alexandra', gameVersionId: 27, clubId: 9, squadSize: 5, gameDate: '2027-01-15' }] as never)
   vi.mocked(endpoints.formations).mockResolvedValue([{ id: '4-3-3', name: '4-3-3', slots: [slot('CM1'), slot('CM2')] }] as never)
   vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2), member(3), member(4, { age: 19, overall: 58, potential: 76 })] as never)
-  lineupStore.set(1, { CM1: 1, CM2: 2 })
+  vi.mocked(endpoints.mainTactic).mockResolvedValue({
+    slot: 1, careerId: 1, name: 'Ana', formation: '4-3-3', buildUp: 'Balanced', defensiveApproach: null, lineHeight: null, eaCode: 'X', sourceReplicaId: null,
+    slots: ['CM1', 'CM2'].map((s) => ({ slot: s, position: 'CM', roleId: 'box_to_box_balanced', tags: [] })), main: true, lineup: { CM1: 1, CM2: 2 },
+    depth: 50, presetId: null, updatedAt: '2026-10-20T10:00:00Z', lineupDropped: 0,
+  } as never)
   vi.mocked(endpoints.fitRole).mockImplementation(((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, roleId: 'r', roleName: 'Rol', projectedRating: 70, outOfPosition: false, reasons: [], weaponChecks: [], levelFit: b.playerId === 1 ? 30 : 70, score: 70, fitLabel: b.playerId === 1 ? 'WEAK' : 'GOOD' } })) as never)
+  vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never) as never)
   vi.mocked(endpoints.snapshots).mockResolvedValue([{ id: 5, takenAt: '2026-10-10T10:00:00Z', source: 'IMPORT', playerCount: 30 }] as never)
   vi.mocked(endpoints.kbSbc).mockResolvedValue([set(1, '2026-10-01'), set(2, '2026-10-05'), set(3, '2026-10-03'), set(4, '2026-10-09'), set(5, '2026-10-08'), set(6, '2026-10-02')] as never)
   utCardStore.set([])
@@ -64,10 +69,13 @@ describe('Ana sayfa (v3, mod başına)', () => {
     expect(within(card).getByText('Crewe 2026')).toBeInTheDocument()
     expect(await within(card).findByText(/Son içe aktarma 10\.10\.2026/)).toBeInTheDocument()
     expect(await within(card).findByText('%50')).toBeInTheDocument()
-    expect(await within(card).findByText(/CM: zayıf halka/)).toBeInTheDocument()
+    // KARIYER-UX FAZ 2 düzeltme 3: Masa ile aynı bileşen (SeasonJobs) ve fonksiyon (deskRules.seasonJobs), ana taktikten.
+    const jobs = await within(card).findByRole('region', { name: 'Bu dönemin 3 işi' })
+    expect(await within(jobs).findByText(/CM: zayıf halka/)).toBeInTheDocument()
+    expect(jobs.querySelector('header [data-source="decision"]')).not.toBeNull()
     const actions = screen.getByRole('navigation', { name: 'Hızlı eylemler' })
     expect(within(actions).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-      ['Masa', '/career/desk'], ['Transfer', '/career/transfer'], ['İçe aktar', '/career/import'], ['Yeni kariyer', '/career/new'],
+      ['Masa', '/career/dashboard'], ['Transfer', '/career/transfer'], ['İçe aktar', '/career/import'], ['Yeni kariyer', '/career/new'],
     ])
   })
 

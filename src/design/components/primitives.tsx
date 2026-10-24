@@ -1,3 +1,4 @@
+import { BadgeCheck, Database, PencilLine, Sparkles } from 'lucide-react'
 import { useEffect, useId, useRef, type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react'
 
 /*
@@ -6,13 +7,63 @@ import { useEffect, useId, useRef, type ButtonHTMLAttributes, type KeyboardEvent
  */
 const cx = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(' ')
 
-/** Panel: tek `.glass` yüzey, başlık satırı (Barlow 20) + sağ eylem. İç içe `.glass` yok. */
-export function Panel({ title, actions, children, className, as: Tag = 'section' }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; as?: 'section' | 'div' }) {
+/**
+ * Veri katmanı (KARIYER-UX D-28): kayıt verisi (salt okunur içe aktarım), kariyer kararı (sunucu), Lab taslağı (yerel), otomatik öneri (ana taktik değil).
+ */
+export type DataSource =
+  | { kind: 'record'; at: string }
+  | { kind: 'decision'; label?: string }
+  | { kind: 'draft'; savedSlot?: number }
+  | { kind: 'auto' }
+
+const SHORT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short' })
+
+function sourceText(source: DataSource): string {
+  switch (source.kind) {
+    case 'record':
+      return `Kayıt verisi · ${SHORT_DATE.format(new Date(source.at))}`
+    case 'decision':
+      return source.label ?? 'Kararın'
+    case 'draft':
+      return source.savedSlot ? `Taslak · Slot ${source.savedSlot}` : 'Taslak · kaydedilmedi'
+    case 'auto':
+      return 'Otomatik öneri · ana taktik değil'
+  }
+}
+
+const SOURCE_ICON = { record: Database, decision: BadgeCheck, draft: PencilLine, auto: Sparkles } as const
+
+/** SourceTag: verinin hangi katmandan geldiği (ikon + metin; renk tek başına anlam taşımaz, ≥12px). */
+export function SourceTag({ source, className }: { source: DataSource; className?: string }) {
+  const Icon = SOURCE_ICON[source.kind]
   return (
-    <Tag className={cx('glass p-4 text-ink sm:px-5', className)}>
-      {(title || actions) && (
-        <header className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>
+    <span data-source={source.kind} className={cx('inline-flex min-h-6 items-center gap-1 whitespace-nowrap rounded-full border px-2.5 text-xs font-medium',
+      source.kind === 'draft' ? 'border-dashed border-[var(--edge-draft)] text-ink' : 'border-[var(--glass-border)] text-ink-2', 'glass-3', className)}>
+      <Icon aria-hidden="true" size={13} strokeWidth={2} />
+      {sourceText(source)}
+    </span>
+  )
+}
+
+export type PanelEdge = 'default' | 'glow' | 'draft'
+
+/**
+ * Panel: tek `.glass` yüzey, başlık satırı (Barlow 20) + kaynak etiketi + sağ eylem. İç içe `.glass` yok.
+ * edge: glow = 1px --edge-glow halka (kariyer kararı / vurgu), draft = 1px kesik --edge-draft (Lab taslağı). Animasyon yok.
+ */
+export function Panel({ title, actions, source, edge = 'default', children, className, as: Tag = 'section', label }: {
+  title?: ReactNode; actions?: ReactNode; source?: DataSource; edge?: PanelEdge; children: ReactNode; className?: string; as?: 'section' | 'div'
+  /** Bölge adı (aria-label): verilirse panel ekran okuyucuda adlı bölge olur. */
+  label?: string
+}) {
+  return (
+    <Tag data-edge={edge} aria-label={label} className={cx('glass p-4 text-ink sm:px-5', edge !== 'default' && `panel-edge-${edge}`, className)}>
+      {(title || actions || source) && (
+        <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <span className="flex min-w-0 flex-wrap items-center gap-2">
+            {title && <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>}
+            {source && <SourceTag source={source} />}
+          </span>
           {actions}
         </header>
       )}
@@ -75,14 +126,30 @@ export function Chip({ children, tone, onClick, pressed, className, title }: { c
 }
 
 /** StatTile: büyük mono sayı + etiket; boş değer "–" (08 §16). */
-export function StatTile({ label, value, suffix }: { label: string; value?: ReactNode; suffix?: string }) {
+/** Δ çipi (11 §6): yön oku + işaretli metin; iyi/kötü yorumu yapılmaz (bütçe artışı iyi, maaş artışı kötü olabilir), kıyas `label`'da. */
+export interface StatDelta {
+  value: number
+  text: string
+  label: string
+}
+
+export function StatTile({ label, value, suffix, delta, children }: { label: string; value?: ReactNode; suffix?: string; delta?: StatDelta; children?: ReactNode }) {
+  const direction = delta === undefined ? undefined : delta.value > 0 ? 'up' : delta.value < 0 ? 'down' : 'flat'
   return (
     <div className="glass-3 flex min-w-[96px] flex-1 flex-col px-3 py-2">
       <span className="text-xs font-medium text-muted">{label}</span>
-      <span className="flex items-baseline gap-1">
+      <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
         <span className="font-[var(--font-num)] text-2xl font-medium tabular-nums leading-tight text-ink">{value ?? '–'}</span>
         {suffix && <span className="text-xs text-muted">{suffix}</span>}
+        {delta && (
+          <span data-delta={direction} title={delta.label} className="inline-flex min-h-6 items-center gap-1 rounded-full border border-[var(--glass-border)] px-2 font-[var(--font-num)] text-xs tabular-nums text-ink-2">
+            <span aria-hidden="true">{direction === 'up' ? '▲' : direction === 'down' ? '▼' : '='}</span>
+            <span>{delta.text}</span>
+            <span className="sr-only">{delta.label}</span>
+          </span>
+        )}
       </span>
+      {children}
     </div>
   )
 }

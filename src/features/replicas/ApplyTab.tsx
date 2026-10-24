@@ -1,10 +1,13 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Copy } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import type { ReplicaApplySlot } from '../../api/types'
+import { Link, useNavigate } from 'react-router-dom'
+import type { ReplicaApplySlot, ReplicaSummary } from '../../api/types'
 import { FitBadge } from '../../components/card/FitBadge'
 import { ErrorBox } from '../../components/ui'
 import { AppDialog } from '../../design/components/AppDialog'
 import { Button, EmptyState, Skeleton, StatTile } from '../../design/components/primitives'
+import { cloneReplicaToDraft } from '../lab/labSources'
 import { PickBody } from '../squad/ut/PickBody'
 import { AttentionPoints } from './AttentionPoints'
 import { SaveToSlot } from './SaveToSlot'
@@ -49,10 +52,18 @@ function SlotRow({ slot, mode, onSuggest }: { slot: ReplicaApplySlot; mode: 'car
 }
 
 /** Kadromla uygula (REP-07): 11 slotta oyuncu + seviye rozeti, zayıf/boş slotlar için "öner", oyunculu bulgular, "Taktik slotuma kaydet". */
-export function ApplyTab({ replicaId, apply }: { replicaId: string; apply: ReturnType<typeof useReplicaApply> }) {
+export function ApplyTab({ replicaId, apply, replica }: { replicaId: string; apply: ReturnType<typeof useReplicaApply>; replica?: ReplicaSummary }) {
   const { mode, authenticated, plan, result, addCard, loading } = apply
   const [suggesting, setSuggesting] = useState<ReplicaApplySlot>()
   const data = result.data
+  const client = useQueryClient()
+  const navigate = useNavigate()
+  const [cloneError, setCloneError] = useState<string>()
+  // KARIYER-UX FAZ 4b: kariyerde "Uygula" akışı Lab ile aynı — replika taktiği + bu diziliş yeni taslak olur (aynı sorgu, önbellekten), Lab kurucusu açılır.
+  const clone = useMutation({
+    mutationFn: () => cloneReplicaToDraft(client, plan.body.careerId!, replica!),
+    onSuccess: (r) => (r.ok ? navigate('/career/tactics-lab?sekme=kurucu') : setCloneError(r.message)),
+  })
 
   if (!authenticated) {
     return (
@@ -97,6 +108,18 @@ export function ApplyTab({ replicaId, apply }: { replicaId: string; apply: Retur
         ))}
       </ol>
       <AttentionPoints analysis={data.analysis} withPlayers />
+      {data.source === 'CAREER' && replica && plan.body.careerId !== undefined && (
+        <section aria-label="Lab'da taslak" className="flex flex-col gap-2">
+          <span>
+            <Button variant="primary" disabled={clone.isPending} onClick={() => { setCloneError(undefined); clone.mutate() }}>
+              <Copy size={14} aria-hidden="true" />Klonla → taslak
+            </Button>
+          </span>
+          <p className="text-xs text-muted">Taktik ve bu diziliş Taktik Lab'da yeni taslak olarak açılır; ana taktiğin değişmez.</p>
+          {cloneError && <p role="alert" className="text-sm text-bad">{cloneError}</p>}
+          <ErrorBox error={clone.error} />
+        </section>
+      )}
       <SaveToSlot replicaId={replicaId} careerId={data.source === 'CAREER' ? plan.body.careerId : undefined} />
       {suggesting && (
         <AppDialog wide title={`${suggesting.position} · ${suggesting.roleName} — Kart seç`} hint="Kulüp kartların ya da katalog" onClose={() => setSuggesting(undefined)}>

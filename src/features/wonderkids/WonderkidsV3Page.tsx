@@ -5,6 +5,7 @@ import { endpoints } from '../../api/endpoints'
 import type { Wonderkid } from '../../api/types'
 import { FitBadge } from '../../components/card/FitBadge'
 import { CompareButton } from '../../components/CompareButton'
+import { ShortlistButton } from '../../components/ShortlistButton'
 import { HelpPopover, Input, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
@@ -171,7 +172,12 @@ export function WonderkidsV3Page() {
                     {inCareer && <td className="px-2"><LeagueLevelChip overall={p.overall} leagueOvr={facets.data?.leagueOvr ?? undefined} /></td>}
                     {inCareer && <td className="px-2"><BucketChip bucket={p.feasibility} /></td>}
                     <td className="px-2 text-ink-2">{p.club ?? '–'}<span className="block text-xs">{p.league ?? ''}</span></td>
-                    <td className="px-2"><CompareButton compact entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} /></td>
+                    <td className="px-2">
+                      <span className="flex items-center gap-1">
+                        <CompareButton compact entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} />
+                        {inCareer && <ShortlistButton careerId={careerId!} playerId={p.id} compact />}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

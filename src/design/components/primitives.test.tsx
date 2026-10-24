@@ -26,6 +26,13 @@ describe('v3 bileşenleri', () => {
     expect(screen.getByText('–')).toBeInTheDocument()
   })
 
+  it('StatTile Δ çipi metinle ve kıyas açıklamasıyla (yön rengi tek başına anlam taşımaz)', () => {
+    render(<StatTile label="Transfer bütçesi" value="€5,00 Mn" delta={{ value: 1_000_000, text: '+€1,00 Mn', label: 'önceki içe aktarmaya göre' }} />)
+    const chip = screen.getByText('+€1,00 Mn')
+    expect(chip.closest('[data-delta]')).toHaveAttribute('data-delta', 'up')
+    expect(screen.getByTitle('önceki içe aktarmaya göre')).toBeInTheDocument()
+  })
+
   it('ChemBar 33 bölme ve X/33 yazısı üretir', () => {
     render(<ChemBar value={21} />)
     expect(screen.getByRole('progressbar', { name: 'Toplam kimya' })).toHaveAttribute('aria-valuenow', '21')

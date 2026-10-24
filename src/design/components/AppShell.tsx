@@ -1,6 +1,6 @@
-import { ArrowLeftRight, Database, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Sparkles, Swords, Target, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Shirt, Sparkles, Swords, Target, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../../api/client'
 import { useAuth } from '../../auth/AuthContext'
 import { CompareTray } from '../../components/CompareTray'
@@ -12,6 +12,8 @@ import { activeNav, MODES, mobileBar, navFor, type NavGroup } from '../../lib/na
 import { MobileSheet } from './MobileSheet'
 import { BETA_TEXT, useAppConfig } from '../../state/appConfig'
 import { useStorageError } from '../../state/bigStore'
+import { useActiveCareerId } from '../../state/careerStore'
+import { useLab } from '../../state/labStore'
 import { modeStore, useMode } from '../../state/modeStore'
 import { LogoLockup } from '../brand/LogoLockup'
 import { LEGAL_NOTE } from '../brand/legal'
@@ -20,11 +22,14 @@ import { MobileMenu, ThemeToggle } from './ThemeToggle'
 import { UserMenu } from './UserMenu'
 
 const ICONS: Record<string, LucideIcon> = {
+  '/career/dashboard': LayoutDashboard,
   '/career/desk': LayoutDashboard,
   '/career/transfer': ArrowLeftRight,
   '/career/growth': TrendingUp,
   '/career/new': Plus,
   '/players': Users,
+  '/career/squad': Shirt,
+  '/career/tactics-lab': FlaskConical,
   '/squad/builder': Swords,
   '/teams': Shield,
   '/career/import': Upload,
@@ -40,26 +45,37 @@ const ICONS: Record<string, LucideIcon> = {
 const RAIL_ITEM = 'flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-[var(--radius-sm)] px-1 py-1.5 text-center text-xs font-medium leading-4'
 const railTone = (active: boolean) => (active ? 'bg-[var(--accent-soft)] text-accent' : 'text-ink-2 hover:bg-[var(--glass-hover)]')
 
+/** Kaydedilmemiş taslak noktası taşıyan öğe (KARIYER-UX FAZ 4a §4.3: rota engeli yok, gösterge var). */
+const LAB_PATH = '/career/tactics-lab'
+
 /** Küçük, kabuk-içi gezinme öğesi: ikon + etiket (rayda 72px, mobilde alt çubukta kısa etiketle). aria-current rotadan gelir. */
-function RailLink({ group, active, short = false, onNavigate }: { group: NavGroup; active: boolean; short?: boolean; onNavigate?: () => void }) {
+function RailLink({ group, active, short = false, onNavigate, unsaved = false }: { group: NavGroup; active: boolean; short?: boolean; onNavigate?: () => void; unsaved?: boolean }) {
   const Icon = ICONS[group.to] ?? Database
+  const label = short ? group.mobileLabel ?? group.label : group.label
   return (
-    <NavLink to={group.to} aria-current={active ? 'page' : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)}`}>
-      <Icon size={20} aria-hidden="true" />
-      <span className="max-w-full break-words">{short ? group.mobileLabel ?? group.label : group.label}</span>
-    </NavLink>
+    // Etkinlik grubun `match` listesinden (activeNav); NavLink yalnız kendi `to`'su eşleşince aria-current yazar, grup başka alt rotadayken (/squad/builder) yanlış olur.
+    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)}`}>
+      {/* Nokta yokken işaretleme öncekiyle birebir (UT rayı ve alt çubuğu piksel düzeyinde değişmez). */}
+      {unsaved ? (
+        <span className="relative block">
+          <Icon size={20} aria-hidden="true" />
+          <span data-unsaved-dot aria-hidden="true" className="absolute -right-1 -top-0.5 h-2 w-2 rounded-full bg-[var(--accent)] ring-2 ring-[var(--glass-1,var(--surface))]" />
+        </span>
+      ) : <Icon size={20} aria-hidden="true" />}
+      <span className="max-w-full break-words">{label}</span>
+    </Link>
   )
 }
 
 /** Mobil alt çubuk (V3-06d): kariyerde 4 öğe + "Daha fazla" sheet'i (aktif öğe sheet'teyse düğme aktif görünür); UT'de ilk 5 öğe. */
-function MobileBar({ mode, nav, active, pathname }: { mode: 'career' | 'ut'; nav: NavGroup[]; active?: NavGroup; pathname: string }) {
+function MobileBar({ mode, nav, active, pathname, labUnsaved }: { mode: 'career' | 'ut'; nav: NavGroup[]; active?: NavGroup; pathname: string; labUnsaved: boolean }) {
   const [open, setOpen] = useState(false)
   const { items, more } = mobileBar(mode, nav)
   const moreActive = more.find((g) => g === active || pathname === g.to)
   return (
     <nav aria-label="Mobil menü" className="glass glass-sticky fixed inset-x-0 bottom-0 z-20 grid h-16 grid-flow-col auto-cols-fr items-stretch gap-0.5 rounded-none border-x-0 border-b-0 px-1 min-[820px]:hidden">
       {items.map((g) => (
-        <RailLink key={g.to} group={g} active={g === active} short />
+        <RailLink key={g.to} group={g} active={g === active} short unsaved={labUnsaved && g.to === LAB_PATH} />
       ))}
       {more.length > 0 && (
         <button type="button" aria-current={moreActive ? 'page' : undefined} aria-haspopup="dialog" onClick={() => setOpen(true)} className={`${RAIL_ITEM} ${railTone(Boolean(moreActive))}`}>
@@ -96,6 +112,10 @@ export function AppShell() {
   // V3-06d: kariyerde tek menü (CAREER_NAV); aktif öğe rotadan.
   const nav = navFor(mode, extensionCaptureEnabled(), true)
   const active = activeNav(nav, pathname)
+  // FAZ 4a: aktif kariyerde kaydedilmemiş (kirli) Lab taslağı varsa "Taktik Lab" öğesinde nokta (labStore.hasUnsaved ile aynı kural).
+  const careerId = useActiveCareerId()
+  const lab = useLab(mode === 'career' ? careerId : undefined)
+  const labUnsaved = lab.drafts.some((d) => d.dirty)
   const showTabs = !/^\/players\/\d+/.test(pathname)
 
   return (
@@ -142,7 +162,7 @@ export function AppShell() {
       <div className="flex">
         <nav aria-label="Ana menü" className="glass sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">
           {nav.map((g) => (
-            <RailLink key={g.to} group={g} active={g === active} />
+            <RailLink key={g.to} group={g} active={g === active} unsaved={labUnsaved && g.to === LAB_PATH} />
           ))}
         </nav>
         <main className="mx-auto w-full min-w-0 max-w-[1600px] px-4 pb-24 pt-3 min-[820px]:pb-8">
@@ -177,7 +197,7 @@ export function AppShell() {
         </main>
       </div>
 
-      <MobileBar mode={mode} nav={nav} active={active} pathname={pathname} />
+      <MobileBar mode={mode} nav={nav} active={active} pathname={pathname} labUnsaved={labUnsaved} />
       <CompareTray />
     </div>
   )

@@ -6,8 +6,8 @@
 // Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa minFont ≥ 11, saha kartı minFont, bant sızıntısı, çözücü süresi (p95).
 // Oturum: geçici yerel test hesabı (yalnız localhost; koşu sonunda yalnız bu hesap silinir). EA'ya istek yok; sayfa yalnız plan gösterir.
 // Kullanım: node scripts/sbc-solve-shots.mjs [--base http://localhost:8081] [--skip-q17]   Çıktı: docs/review/v2/screens/V3-05d/
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -30,8 +30,6 @@ const dir = (sub) => {
 }
 const fixtureFile = dir('./')
 const realFile = dir('gercek/')
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 const ok = (data) => ({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data }) })
 const MIN_FONT = 11
 const CLUB = { cards: sbcClubFixture(), importedAt: '2026-10-15T10:00:00Z' }
@@ -44,7 +42,6 @@ async function catalogClub() {
   const cards = []
   const seen = new Set()
   for (const pos of ['GK', 'LB', 'CB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST', 'LWB', 'RWB', 'CF']) {
-    resetRateLimits()
     // Reytinge yayılmış kulüp (bronz/gümüş/altın her bant): her mevki için bu reytinglerden birer kart.
     for (const rating of [62, 66, 70, 73, 76, 78, 82, 85]) {
       const page = (await (await fetch(`${base}/api/v1/players?pos=${pos}&ovr_min=${rating}&ovr_max=${rating}&sort=overall&order=asc&size=1&gender=0`)).json()).data
@@ -62,7 +59,6 @@ async function catalogClub() {
 }
 const stripOf = (name) => [...name.trim().split(/\s+/)].reverse().find((w) => /\p{L}/u.test(w)) ?? name
 const REAL_CARDS = await catalogClub()
-resetRateLimits() // katalog istekleri yerel anonim hız sınırını doldurur
 const REAL_CLUB = { cards: REAL_CARDS.map(({ catalogName, ...c }) => c), importedAt: '2026-10-15T10:00:00Z' }
 const EXPECTED_SURNAMES = new Set(REAL_CARDS.map((c) => stripOf(c.catalogName).toLocaleUpperCase('tr')))
 const SPECIAL_NAMES = new Set(REAL_CARDS.filter((c) => c.rarityId === 3).map((c) => c.catalogName))
@@ -74,7 +70,6 @@ const report = []
 const solveTimes = []
 
 async function newContext({ w, h, theme, seed, fixture, formation = '4-4-2', club = CLUB }) {
-  resetRateLimits()
   const session = await login()
   const context = await browser.newContext({ viewport: { width: w, height: h } })
   await context.addInitScript(({ t, s, club }) => {

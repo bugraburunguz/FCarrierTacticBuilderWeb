@@ -1,6 +1,6 @@
 // V3-05a-b performans: 2.000 kart yükle, kaydırma sırasında uzun görev (>50 ms) sayısı ve DOM düğüm sayısı (ızgara + tablo, masaüstü + mobil).
 // Kullanım: node scripts/card-db-perf.mjs [--base http://localhost:8081] [--cards 2000]   Çıktı: docs/review/v2/screens/V3-05a/perf-report.json
-import { spawnSync } from 'node:child_process'
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -14,15 +14,12 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
 }
 const out = new URL('../docs/review/v2/screens/V3-05a/', import.meta.url)
 mkdirSync(out, { recursive: true })
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const results = []
 
 for (const [label, viewport] of [['masaüstü 1280', { width: 1280, height: 900 }], ['mobil 375', { width: 375, height: 812 }]]) {
   for (const view of ['grid', 'table']) {
-    resetRateLimits()
     const context = await browser.newContext({ viewport })
     await context.addInitScript(() => {
       localStorage.setItem('fc.mode', 'ut')

@@ -4,8 +4,8 @@
 // 375/768/1280 × koyu/açık + kaydırılmış. Menü: her kariyer rotasında aktif öğe (sol ray 1280, alt çubuk 375) + mobil "Daha fazla" sheet'i.
 // Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa minFont (≥ 11px), yapışkan bant sızıntısı + alfa 1, aria-current doğru öğede.
 // Kullanım: node scripts/desk-shots.mjs [--base http://localhost:8081] [--out V3-06d]
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -28,8 +28,6 @@ const deskFile = dirOf('desk')
 const menuFile = dirOf('menu')
 const MIN_FONT = 11
 const BAND = ['header']
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 const ROUTES = [['/career/desk', 'Masa'], ['/players', 'Oyuncular'], ['/squad/builder', 'Taktik & Kadro'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'], ['/teams', 'Takımlar'], ['/career/import', 'İçe aktar']]
 const MOBILE_ACTIVE = { 'Taktik & Kadro': 'Kadro', Gelişim: 'Daha fazla', Takımlar: 'Daha fazla', 'İçe aktar': 'Daha fazla' }
 
@@ -57,7 +55,6 @@ const report = []
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   const mobile = w < 820
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     session = await login()
     const context = await browser.newContext({ viewport: { width: w, height: h } })
     const page = await context.newPage()

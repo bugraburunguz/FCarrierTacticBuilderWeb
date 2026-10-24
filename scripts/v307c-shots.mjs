@@ -2,8 +2,8 @@
 // kurucu, Masa, Transfer, oyuncu sayfası). Fikstürler yalnız bu tarayıcıda (page.route) ve raporda "fixture" olarak işaretli; hata durumlarının
 // beklenen 4xx/5xx'i ayrı tutulur. Ölçüm: yatay taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa minFont ≥ 11, kaydırılmışta yapışkan bant.
 // Kullanım: node scripts/v307c-shots.mjs [--base http://localhost:8081] [--only ut-club,teams]   (yerel test hesabı kurar, sonunda yalnız kendisini siler)
+// Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
-import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
@@ -23,8 +23,6 @@ mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 const SAMPLE_CAPTURES = fileURLToPath(new URL('../tests/fixtures/captures/sample-captures.json', import.meta.url))
 const MIN_FONT = 11
-const COMPOSE = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/docker-compose.yml', import.meta.url))
-const resetRateLimits = () => spawnSync('docker', ['compose', '-f', COMPOSE, 'exec', '-T', 'redis', 'sh', '-c', 'for k in $(redis-cli --scan --pattern "fc:ratelimit:*"); do redis-cli del $k >/dev/null; done'], { encoding: 'utf8' })
 const want = (group) => !only || only.includes(group)
 
 await createGateAccount(base, 'gate-')
@@ -103,7 +101,6 @@ async function newPage(w, h, theme, { auth = true, mode = 'career', local = {}, 
 for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 900 }]) {
   const mobile = w < 820
   for (const theme of ['dark', 'light']) {
-    resetRateLimits()
     session = await login()
     const shoot = async (ctx, name, extra = {}, expectProblems = false) => {
       const { page, problems } = ctx
@@ -123,7 +120,6 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
       await ctx.page.evaluate(() => window.scrollTo(0, 0))
     }
     const go = async (ctx, path, ready) => {
-      resetRateLimits()
       await ctx.page.goto(`${base}${path}${path.includes('?') ? '&' : '?'}ui=v3`, { waitUntil: 'networkidle' })
       await ctx.page.locator('main h1').first().waitFor({ timeout: 20000 })
       if (ready) {

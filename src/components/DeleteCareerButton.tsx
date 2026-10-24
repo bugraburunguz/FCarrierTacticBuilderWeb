@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { Career } from '../api/types'
 import { careerStore } from '../state/careerStore'
+import { labStore } from '../state/labStore'
 import { Button, ErrorBox } from './ui'
 
 /**
@@ -20,6 +21,8 @@ export function DeleteCareerButton({ career, onDeleted }: { career: Career; onDe
     onSuccess: async () => {
       client.setQueryData<Career[]>(['careers'], (old) => (old ?? []).filter((c) => c.id !== career.id))
       careerStore.set(undefined)
+      labStore.dropCareer(career.id) // KARIYER-UX 15 §6.2: kariyerin Lab taslakları da gider
+
       await Promise.all(['careers', 'squad', 'events', 'snapshots', 'shortlist', 'tags'].map((k) => client.invalidateQueries({ queryKey: [k] })))
       setOpen(false)
       onDeleted?.()

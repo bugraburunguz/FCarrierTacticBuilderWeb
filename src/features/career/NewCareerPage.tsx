@@ -46,7 +46,7 @@ export function NewCareerPage() {
     onSuccess: async (career) => {
       careerStore.set(career.id)
       await Promise.all(['careers', 'squad', 'events'].map((k) => client.invalidateQueries({ queryKey: [k] })))
-      navigate('/career/desk')
+      navigate('/career/dashboard')
     },
   })
 
@@ -108,7 +108,7 @@ export function NewCareerPage() {
                   <span className="block text-xs text-ink-2">{c.clubName} · sezon {c.season ?? 1} · {c.squadSize} oyuncu{c.budgetEur ? ` · bütçe ${formatEur(c.budgetEur)}` : ''}</span>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <button type="button" onClick={() => { careerStore.set(c.id); navigate('/career/desk') }} className="glass-3 inline-flex min-h-10 items-center rounded-[var(--radius-sm)] px-3 font-semibold hover:bg-[var(--glass-hover)] max-sm:min-h-11">Aç</button>
+                  <button type="button" onClick={() => { careerStore.set(c.id); navigate('/career/dashboard') }} className="glass-3 inline-flex min-h-10 items-center rounded-[var(--radius-sm)] px-3 font-semibold hover:bg-[var(--glass-hover)] max-sm:min-h-11">Aç</button>
                   <DeleteCareerButton career={c} />
                 </div>
               </li>

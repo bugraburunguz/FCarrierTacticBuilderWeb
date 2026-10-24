@@ -57,6 +57,8 @@ export function sortReplicas(list: ReplicaSummary[]): ReplicaSummary[] {
 }
 
 const KEYS = { category: 'kategori', formation: 'formasyon', buildUp: 'build', from: 'dan', to: 'a', query: 'ara' } as const
+/** Süzgecin adres anahtarları (gömülü kullanımda diğer parametreler korunur, FAZ 4b). */
+export const FILTER_KEYS: readonly string[] = Object.values(KEYS)
 
 /** Süzgeçler adres çubuğunda durur (paylaşılabilir "filtreli liste"). */
 export function filtersToParams(f: ReplicaFilters): URLSearchParams {

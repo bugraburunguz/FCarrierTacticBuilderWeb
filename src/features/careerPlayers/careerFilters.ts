@@ -1,6 +1,7 @@
 import type { PlayerFilters } from '../../api/endpoints'
 import type { CareerPlayerFacets, FeasibilityBucket } from '../../api/types'
 import { POSITIONS } from '../../lib/format'
+import { PLAYSTYLES } from '../../lib/playstyles'
 import { CATALOG_PAGE_SIZE } from '../catalog/catalogChunks'
 
 export const BUCKETS: { id: FeasibilityBucket; label: string; tone: 'good' | 'warn' | 'bad' }[] = [
@@ -44,6 +45,8 @@ export interface CareerListFilters {
   buckets: FeasibilityBucket[]
   /** Öznitelik en az (1-99); boş nesne = süzgeç yok. */
   attrMin: Record<string, number>
+  /** KARIYER-UX 6: istenen PlayStyle'lar (hepsi birden); `plus` = PlayStyle+ (seviye ≥ 2). */
+  playstyles: { id: string; plus: boolean }[]
   /** Rol uyumu: seçilen rol için sunucu FitEngineV3 ile sıralar (sort=role). */
   role?: string
   sort: CareerSort
@@ -51,7 +54,7 @@ export interface CareerListFilters {
   view: 'grid' | 'table'
 }
 
-export const DEFAULT_CAREER_FILTERS: CareerListFilters = { q: '', pos: [], gender: 0, freeAgent: false, budget: false, contract: false, loan: false, buckets: [], attrMin: {}, sort: 'overall', order: 'desc', view: 'grid' }
+export const DEFAULT_CAREER_FILTERS: CareerListFilters = { q: '', pos: [], gender: 0, freeAgent: false, budget: false, contract: false, loan: false, buckets: [], attrMin: {}, playstyles: [], sort: 'overall', order: 'desc', view: 'grid' }
 
 const MAX_VALUE = 2_000_000_000
 const int = (value: string | null, min: number, max: number): number | undefined => {
@@ -88,6 +91,7 @@ export function careerFiltersToParams(f: CareerListFilters): URLSearchParams {
   if (f.loan) set('kiralik', 1)
   f.buckets.forEach((b) => p.append('kova', b))
   ATTR_MIN_KEYS.forEach((k) => set(`${ATTR_PREFIX}${k}`, f.attrMin[k]))
+  f.playstyles.forEach((ps) => p.append(ps.plus ? 'psp' : 'ps', ps.id))
   set('rol', f.role)
   if (f.sort !== DEFAULT_CAREER_FILTERS.sort) set('sirala', f.sort)
   if (f.order !== DEFAULT_CAREER_FILTERS.order) set('yon', f.order)
@@ -123,6 +127,8 @@ export function careerFiltersFromParams(p: URLSearchParams): CareerListFilters {
     loan: p.get('kiralik') === '1',
     buckets: p.getAll('kova').filter((b): b is FeasibilityBucket => ids.includes(b as FeasibilityBucket)),
     attrMin: Object.fromEntries(ATTR_MIN_KEYS.map((k) => [k, int(p.get(`${ATTR_PREFIX}${k}`), 1, 99)]).filter(([, v]) => v !== undefined)) as Record<string, number>,
+    playstyles: [...p.getAll('psp').map((id) => ({ id, plus: true })), ...p.getAll('ps').map((id) => ({ id, plus: false }))]
+      .filter((ps, i, all) => ps.id in PLAYSTYLES && all.findIndex((x) => x.id === ps.id) === i),
     role,
     sort: validSort,
     order: p.get('yon') === 'asc' ? 'asc' : 'desc',
@@ -161,6 +167,8 @@ export function toCareerQuery(f: CareerListFilters, careerId: number, facets: Ca
     on_loan: f.loan && facets?.loanData ? true : undefined,
     bucket: f.buckets.length > 0 ? f.buckets : undefined,
     attrMin: Object.keys(f.attrMin).length > 0 ? f.attrMin : undefined,
+    ps: f.playstyles.some((ps) => !ps.plus) ? f.playstyles.filter((ps) => !ps.plus).map((ps) => ps.id) : undefined,
+    ps_plus: f.playstyles.some((ps) => ps.plus) ? f.playstyles.filter((ps) => ps.plus).map((ps) => ps.id) : undefined,
     role: roleSort ? f.role : undefined,
     sort: roleSort ? 'role' : f.sort === 'role' ? DEFAULT_CAREER_FILTERS.sort : f.sort,
     order: roleSort ? undefined : f.order,
@@ -172,5 +180,5 @@ export function toCareerQuery(f: CareerListFilters, careerId: number, facets: Ca
 /** "Filtreler (n)" rozeti: arama, görünüm, sıralama ve rol sayılmaz. */
 export function activeCareerFilterCount(f: CareerListFilters): number {
   return [f.pos.length > 0, f.gender !== DEFAULT_CAREER_FILTERS.gender, f.league, f.nat, f.foot, f.team, f.freeAgent || undefined, f.ovrMin, f.ovrMax, f.potMin, f.potMax, f.ageMin, f.ageMax, f.valueMin, f.valueMax].filter((x) => x !== undefined && x !== false).length
-    + [f.budget, f.contract, f.loan, f.buckets.length > 0, Object.keys(f.attrMin).length > 0].filter(Boolean).length
+    + [f.budget, f.contract, f.loan, f.buckets.length > 0, Object.keys(f.attrMin).length > 0, f.playstyles.length > 0].filter(Boolean).length
 }

@@ -74,10 +74,23 @@
   color-scheme: dark;
 }
 
-/* Kariyer modu: sıcak vurgu */
+/* Cyber-Pitch saha ve piyon (KARIYER-UX D-27): tema bağımsız; saha her temada koyu (11 §3.2). Kenar token'ları kariyer bloklarında. */
+:root[data-ui="v3"] {
+  --cyber-pitch-1: #0b1324; --cyber-pitch-2: #0e182c;
+  --cyber-line: rgba(62, 232, 168, 0.80); --cyber-line-2: rgba(56, 189, 248, 0.65);
+  --pawn-bg: #f2f5fb; --pawn-ink: #090d1a;
+  --pawn-label-bg: #090d1a; --pawn-label-ink: #f2f5fb;
+  --edge-glow: transparent; --edge-draft: var(--glass-border);
+}
+
+/* Kariyer modu: Cyber-Pitch (D-27; eski amber vurgunun yerine). Antrasit-lacivert zemin; mor, siber mavi, neon yeşil aurora; neon yeşil vurgu. */
 :root[data-ui="v3"][data-mode="career"] {
-  --aurora-1: #ff9f1c; --aurora-2: #3a7d44; --aurora-3: #c2410c;
-  --accent: #ffb547; --accent-soft: rgba(255, 181, 71, 0.16);
+  --bg-base: #090d1a;
+  --aurora-1: #7c3aed; --aurora-2: #0ea5e9; --aurora-3: #10b981;
+  --aurora-opacity: 0.40;
+  --accent: #3ee8a8; --accent-ink: #06120d; --accent-soft: rgba(62, 232, 168, 0.16);
+  --edge-glow: rgba(62, 232, 168, 0.35); --edge-draft: rgba(56, 189, 248, 0.60);
+  --pawn-ring: var(--accent);
 }
 
 /* Açık tema */
@@ -99,7 +112,14 @@
   --grain-opacity: 0.02;
   color-scheme: light;
 }
-:root[data-ui="v3"][data-theme="light"][data-mode="career"] { --accent: #c2410c; --accent-soft: rgba(194, 65, 12, 0.12); }
+/* Açık tema + kariyer: pastel aurora (eskiden koyu kariyer aurorası sızıyordu). */
+:root[data-ui="v3"][data-theme="light"][data-mode="career"] {
+  --bg-base: #eaeef7;
+  --aurora-1: #c4b5fd; --aurora-2: #7dd3fc; --aurora-3: #6ee7b7;
+  --aurora-opacity: 0.30;
+  --accent: #0f7a55; --accent-ink: #ffffff; --accent-soft: rgba(15, 122, 85, 0.12);
+  --edge-glow: rgba(15, 122, 85, 0.30); --edge-draft: #0369a1;
+}
 
 /* Mobil: daha hafif blur (§7) */
 @media (max-width: 768px) {
@@ -114,6 +134,9 @@
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   :root[data-ui="v3"] { --glass-1: #121826; --glass-2: #161e30; --glass-3: #1c2538; }
   :root[data-ui="v3"][data-theme="light"] { --glass-1: #ffffff; --glass-2: #ffffff; --glass-3: #e8ecf4; }
+  /* Cyber-Pitch: parıltı yok, taslak kenarı düz metin rengi (KARIYER-UX §8.4). */
+  :root[data-ui="v3"][data-mode="career"] { --edge-glow: transparent; --edge-draft: var(--ink-2); }
 }
 :root[data-ui="v3"][data-transparency="reduced"] { --glass-1: #121826; --glass-2: #161e30; --glass-3: #1c2538; }
 :root[data-ui="v3"][data-theme="light"][data-transparency="reduced"] { --glass-1: #ffffff; --glass-2: #ffffff; --glass-3: #e8ecf4; }
+:root[data-ui="v3"][data-mode="career"][data-transparency="reduced"] { --edge-glow: transparent; --edge-draft: var(--ink-2); }

@@ -10,7 +10,7 @@ import { DEFAULT_TACTIC, tacticStore } from '../../state/tacticStore'
 import { utSquadStore } from '../../state/utSquadStore'
 import { TacticCodeCard } from './TacticCodeCard'
 import type { SquadMode } from './types'
-import { useCareerBinding } from './useCareerBinding'
+import { useCareerBinding } from '../../pages/squad/useCareerBinding'
 import { useSquadWorkspace, type SquadWorkspaceApi } from './useSquadWorkspace'
 import { useUtBinding } from './useUtBinding'
 

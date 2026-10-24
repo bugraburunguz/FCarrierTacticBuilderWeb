@@ -1,5 +1,5 @@
 import type { Preset } from '../api/types'
-import type { TacticState } from '../state/tacticStore'
+import type { TacticState } from './tactic'
 import { profileOf, type BuildUp, type FormationPref, type Striker, type Width, type WizardAnswers } from './wizard'
 
 export interface WizardOption<T> {
@@ -63,5 +63,8 @@ export function tacticFromPreset(preset: Preset): TacticState {
   return { formation: preset.formation, presetId: preset.id, slots, setup: { buildUp: profile.buildUp, depth: profile.depth } }
 }
 
-/** Sihirbaz sonucunun gittiği mevcut yol (→ /squad/builder yönlendirmesi). */
-export const WIZARD_RESULT_PATH = '/tactics/builder'
+/**
+ * Sihirbaz sonucunun gittiği yol (KARIYER-UX FAZ 4b): Lab kurucusu. v3'te sihirbaz Lab'ın içinde (sonuç taslak + sekme geçişi) ve bu yolu kullanmaz;
+ * v2 sayfası kullanır — v2'de bu rota eski kadro kurucusuna yönlenir.
+ */
+export const WIZARD_RESULT_PATH = '/career/tactics-lab?sekme=kurucu'

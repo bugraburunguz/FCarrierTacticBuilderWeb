@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import { EVIDENCE_LABEL, evidenceText } from './labels'
+import type { ReplicaLeague } from '../../api/types'
+import { CATEGORY_LABEL, CATEGORY_ORDER, EVIDENCE_LABEL, LEAGUE_LABEL, evidenceText } from './labels'
+
+describe('kategori ve lig sözlüğü (REP-c/e)', () => {
+  it('güncel sezon kategorisi listenin başında, etiketi "Güncel"', () => {
+    expect(CATEGORY_ORDER[0]).toBe('CURRENT')
+    expect(CATEGORY_LABEL.CURRENT).toBe('Güncel')
+    CATEGORY_ORDER.forEach((c) => expect(CATEGORY_LABEL[c]).toBeTruthy())
+  })
+
+  it('her lig kodunun okunur adı var, iç kod sızmaz', () => {
+    const leagues: ReplicaLeague[] = ['TR_SUPER_LIG', 'EN_PREMIER_LEAGUE', 'EN_CHAMPIONSHIP', 'ES_LALIGA', 'IT_SERIE_A', 'IT_SERIE_B', 'DE_BUNDESLIGA', 'FR_LIGUE_1',
+      'NL_EREDIVISIE', 'PT_LIGA', 'SCO_PREMIERSHIP', 'AT_BUNDESLIGA']
+    leagues.forEach((l) => expect(LEAGUE_LABEL[l]).not.toMatch(/_/))
+    expect(LEAGUE_LABEL.TR_SUPER_LIG).toBe('Süper Lig')
+  })
+})
 
 describe('kanıt satırları', () => {
   it('iç metrik kodu göstermez, okunur ad kullanır', () => {

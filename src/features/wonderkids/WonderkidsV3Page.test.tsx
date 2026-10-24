@@ -8,7 +8,8 @@ import { WonderkidsV3Page } from './WonderkidsV3Page'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true }) }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { careers: vi.fn(), wonderkids: vi.fn(), leagues: vi.fn(() => Promise.resolve([])), roles: vi.fn(() => Promise.resolve([{ id: 'poacher_attack', name: 'Poacher', focus: 'Attack', positions: ['ST'] }])), playerFacets: vi.fn() },
+  endpoints: { careers: vi.fn(), wonderkids: vi.fn(), leagues: vi.fn(() => Promise.resolve([])), roles: vi.fn(() => Promise.resolve([{ id: 'poacher_attack', name: 'Poacher', focus: 'Attack', positions: ['ST'] }])), playerFacets: vi.fn(),
+    shortlist: vi.fn(() => Promise.resolve([])), shortlistAdd: vi.fn(() => Promise.resolve()), shortlistRemove: vi.fn(() => Promise.resolve()) },
 }))
 
 const KID = (id: number, extra = {}) => ({ id, name: `Genç ${id}`, age: 19, overall: 66, potential: 84, gap: 18, positions: ['ST'], club: 'Kulüp', league: 'Lig', ...extra })
@@ -53,6 +54,23 @@ describe('WonderkidsV3Page', () => {
     await waitFor(() => expect(within(table).getByText('Ligin üstünde (+4)')).toBeInTheDocument())
     expect(within(table).getByText('Alınabilir')).toBeInTheDocument()
     expect(endpoints.wonderkids).toHaveBeenCalledWith(expect.objectContaining({ career: 7 }))
+  })
+
+  it('KARIYER-UX FAZ 5: kariyerde satırda "Kısa listeye ekle" (ortak ShortlistButton); kariyersiz yok', async () => {
+    careerStore.set(7)
+    vi.mocked(endpoints.careers).mockResolvedValue([{ id: 7, clubId: 1, clubName: 'Crewe', budgetEur: 0, squadSize: 25 }] as never)
+    renderAt()
+    const table = await screen.findByRole('table', { name: 'Genç yetenekler' })
+    const add = (await within(table).findAllByRole('button', { name: 'Kısa listeye ekle' }))[0]
+    await waitFor(() => expect(add).toBeEnabled())
+    fireEvent.click(add)
+    await waitFor(() => expect(endpoints.shortlistAdd).toHaveBeenCalledWith(7, 1, {}))
+  })
+
+  it('kariyersiz: kısa liste düğmesi yok', async () => {
+    renderAt()
+    const table = await screen.findByRole('table', { name: 'Genç yetenekler' })
+    expect(within(table).queryByRole('button', { name: 'Kısa listeye ekle' })).toBeNull()
   })
 
   it('süzgeçler URL\'de: hazır seçim ve mevki çipi adrese yazılır, adresten okunur', async () => {

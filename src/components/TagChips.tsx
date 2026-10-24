@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { BehaviorTag } from '../api/types'
-import { lockedBy } from '../state/tacticStore'
+import { lockedBy } from '../lib/tactic'
 
 interface Props {
   tags: BehaviorTag[]

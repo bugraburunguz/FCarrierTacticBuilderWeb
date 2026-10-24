@@ -4,12 +4,13 @@ import { HelpPopover } from '../../../components/ui'
 import { Chip, Segmented } from '../../../design/components/primitives'
 import type { PositionNeed } from '../../../lib/depth'
 import { formationName, POSITION_LABELS, type DepthState } from '../../../lib/positions'
-import { buildBaseCells, buildCell, cellTitle, regionSummaries, ROWS, SIDED_LABELS, slotSpec, slotTop, type Cell } from '../../../lib/squadDensity'
+import { buildBaseCells, buildCell, cellTitle, formationRows, regionSummaries, ROWS, SIDED_LABELS, slotSpec, type Cell } from '../../../lib/squadDensity'
 
+// Yüzey her zaman opak (--sheet-bg); durum kalın kenar + metinle (yarı saydam renk saha zemininde açık temada okunmuyordu, FAZ 3).
 const STATE: Record<DepthState, { text: string; tone: 'bad' | 'good' | 'warn'; cell: string }> = {
-  thin: { text: 'Az', tone: 'bad', cell: 'border-[var(--bad)] bg-[var(--bad-soft)]' },
-  ok: { text: 'Yeterli', tone: 'good', cell: 'border-[var(--good)] bg-[var(--good-soft)]' },
-  dense: { text: 'Çok', tone: 'warn', cell: 'border-[var(--warn)] bg-[var(--warn-soft)]' },
+  thin: { text: 'Az', tone: 'bad', cell: 'border-2 border-[var(--bad)]' },
+  ok: { text: 'Yeterli', tone: 'good', cell: 'border border-[var(--good)]' },
+  dense: { text: 'Çok', tone: 'warn', cell: 'border-2 border-[var(--warn)]' },
 }
 
 /** Bölge özeti (Hücum / Orta saha / Defans / Kaleci): oyuncu sayısı, ort. overall ve az/çok mevkiler; renk yanında metin hep var. */
@@ -39,8 +40,9 @@ function DepthCell({ cell }: { cell: Cell }) {
   const [min, max] = cell.guide
   const state = STATE[cell.state]
   return (
-    <div title={cellTitle(cell)} className={`rounded-[var(--radius-sm)] border bg-[var(--sheet-bg)] p-1.5 text-xs text-ink ${state.cell}`}>
-      <div className="flex items-center justify-between gap-1">
+    <div data-depth-cell title={cellTitle(cell)} className={`rounded-[var(--radius-sm)] bg-[var(--sheet-bg)] p-1.5 text-xs text-ink ${state.cell}`}>
+      {/* Dar hücrede (375, 4-5'li hat) metin kesilmez, alt satıra geçer. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-1">
         <strong className="text-[13px]">{cell.position}</strong>
         <span className="font-semibold">{state.text}</span>
       </div>
@@ -49,7 +51,7 @@ function DepthCell({ cell }: { cell: Cell }) {
         {cell.flex.length > 0 && <span className="text-ink-2">+{cell.flex.length}</span>}
         <span className="text-ink-2">/ {cell.required ?? `${min}–${max}`}</span>
       </div>
-      <div className="truncate text-ink-2">{cell.best ? <>En iyi <b className="text-ink">{cell.best}</b></> : 'Oyuncu yok'}</div>
+      <div className="break-words text-ink-2">{cell.best ? <>En iyi <b className="text-ink">{cell.best}</b></> : 'Oyuncu yok'}</div>
       <span className="sr-only">{SIDED_LABELS[cell.position] ?? POSITION_LABELS[cell.base] ?? cell.base}</span>
     </div>
   )
@@ -77,12 +79,16 @@ export function DepthMap({ squad, needs, formation }: { squad: CareerPlayer[]; n
       </div>
       {byTactic ? (
         <div
-          className="relative mx-auto aspect-[100/130] w-full max-w-[460px] overflow-hidden rounded-[var(--radius-md)]"
+          className="mx-auto flex w-full max-w-[460px] flex-col gap-3 overflow-hidden rounded-[var(--radius-md)] p-2"
           style={{ background: 'repeating-linear-gradient(180deg, var(--pitch-1) 0 10%, var(--pitch-2) 10% 20%)' }}
         >
-          {formation.slots.map((slot) => (
-            <div key={slot.slotId} className="absolute z-10 w-[19%] min-w-[64px] -translate-x-1/2 -translate-y-1/2" style={{ left: `${Math.min(88, Math.max(12, slot.x))}%`, top: `${slotTop(slot, formation.slots)}%` }}>
-              <DepthCell cell={buildCell(slotSpec(slot, formation.slots), cells)} />
+          {formationRows(formation.slots).map((row) => (
+            <div key={row.map((s) => s.slotId).join('-')} data-depth-row className="flex justify-center gap-1.5">
+              {row.map((slot) => (
+                <div key={slot.slotId} className="min-w-0 max-w-[25%] flex-1 basis-0">
+                  <DepthCell cell={buildCell(slotSpec(slot, formation.slots), cells)} />
+                </div>
+              ))}
             </div>
           ))}
         </div>

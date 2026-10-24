@@ -1,4 +1,4 @@
-import type { TacticState } from '../state/tacticStore'
+import type { TacticState } from './tactic'
 
 const PAIRS: [string, string][] = [
   ['LB', 'RB'], ['LCB', 'RCB'], ['LM', 'RM'], ['LW', 'RW'],

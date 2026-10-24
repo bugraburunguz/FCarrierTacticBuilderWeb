@@ -3,8 +3,10 @@ import { useId, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerFacets } from '../../api/types'
 import { Input, Select } from '../../components/ui'
-import { Chip } from '../../design/components/primitives'
+import { X } from 'lucide-react'
+import { Chip, Segmented } from '../../design/components/primitives'
 import { ATTR_LABELS } from '../../lib/format'
+import { PLAYSTYLES } from '../../lib/playstyles'
 import { ATTR_MIN_KEYS, BUCKETS, budgetKnown, CONTRACT_MONTHS, contractFilterAvailable, type CareerListFilters } from './careerFilters'
 
 const label = 'flex flex-col gap-1 text-xs font-medium text-muted'
@@ -46,6 +48,49 @@ function Toggle({ text, checked, onChange, disabledReason }: { text: string; che
  * sözleşme ≤ 6 ay (yalnız sözleşme verisi + oyun tarihi varken), kiralık (yalnız kiralık verisi varken), ulaşılabilirlik kovası.
  * Masaüstünde "Daha fazla filtre"de, mobilde "Filtreler" sheet'inde aynı bileşen.
  */
+const PLAYSTYLE_OPTIONS = Object.entries(PLAYSTYLES).map(([id, info]) => ({ id, name: info.name })).sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+const LEVELS: { id: 'ps' | 'plus'; label: string }[] = [{ id: 'ps', label: 'PS' }, { id: 'plus', label: 'PS+' }]
+
+/**
+ * PlayStyle süzgeci (KARIYER-UX 6): seçilen her PlayStyle bir satır; PS (sahip) ya da PS+ (seviye ≥ 2). Hepsi birden istenir (VE).
+ * Sunucu: `ps` varlık, `ps_plus` seviye ≥ 2 (kariyer kaydında kariyer verisi, katalogda katalog).
+ */
+function PlayStyleFilter({ filters, set }: { filters: CareerListFilters; set: (patch: Partial<CareerListFilters>) => void }) {
+  const chosen = new Set(filters.playstyles.map((ps) => ps.id))
+  const update = (next: CareerListFilters['playstyles']) => set({ playstyles: next })
+  return (
+    <details className="text-sm" open={filters.playstyles.length > 0 || undefined}>
+      <summary className="min-h-8 cursor-pointer text-xs font-semibold text-accent">
+        PlayStyle{filters.playstyles.length > 0 ? ` (${filters.playstyles.length})` : ''}
+      </summary>
+      <div className="flex flex-col gap-2 pt-2">
+        <Select aria-label="PlayStyle ekle" value="" className="max-w-xs" onChange={(e) => e.target.value && update([...filters.playstyles, { id: e.target.value, plus: false }])}>
+          <option value="">PlayStyle ekle…</option>
+          {PLAYSTYLE_OPTIONS.filter((o) => !chosen.has(o.id)).map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+        </Select>
+        {filters.playstyles.length > 0 && (
+          <ul className="flex flex-col gap-1.5">
+            {filters.playstyles.map((ps) => {
+              const name = PLAYSTYLES[ps.id]?.name ?? ps.id
+              return (
+                <li key={ps.id} className="flex flex-wrap items-center gap-2">
+                  <span className="min-w-28 text-sm text-ink">{name}</span>
+                  <Segmented label={`${name} seviyesi`} value={ps.plus ? 'plus' : 'ps'} options={LEVELS}
+                    onChange={(level) => update(filters.playstyles.map((x) => (x.id === ps.id ? { ...x, plus: level === 'plus' } : x)))} />
+                  <button type="button" aria-label={`${name} süzgecini kaldır`} onClick={() => update(filters.playstyles.filter((x) => x.id !== ps.id))}
+                    className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-[var(--radius-sm)] text-ink-2 hover:bg-[var(--glass-hover)] max-sm:min-h-11 max-sm:min-w-11">
+                    <X size={14} aria-hidden="true" />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </div>
+    </details>
+  )
+}
+
 export function CareerFilterFields({ careerId, filters, set, facets }: { careerId: number; filters: CareerListFilters; set: (patch: Partial<CareerListFilters>) => void; facets?: CareerPlayerFacets }) {
   const bucketId = useId()
   const [teamTerm, setTeamTerm] = useState('')
@@ -129,6 +174,7 @@ export function CareerFilterFields({ careerId, filters, set, facets }: { careerI
           ))}
         </div>
       </details>
+      <PlayStyleFilter filters={filters} set={set} />
       <div className={label}>
         <span id={bucketId}>Ulaşılabilirlik</span>
         <div role="group" aria-labelledby={bucketId}className="flex flex-wrap gap-1.5">

@@ -4,6 +4,9 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { ReplicaApplyResult, ReplicaApplySlot, ReplicaDetail, ReplicaSummary, TacticAnalysis } from '../../api/types'
+import { careerStore } from '../../state/careerStore'
+import { labStore } from '../../state/labStore'
+import { modeStore } from '../../state/modeStore'
 import { ApplyTab } from './ApplyTab'
 import { AttentionPoints } from './AttentionPoints'
 import { ReplicasPage } from './ReplicasPage'
@@ -18,11 +21,12 @@ vi.mock('../../api/endpoints', () => ({
     formations: vi.fn(() => Promise.resolve([{ id: '4-3-3 (2)', slots: [{ slotId: 'GK', position: 'GK', group: 'GK', defaultRole: 'x', x: 50, y: 95 }] }])),
     userTactics: vi.fn(() => Promise.resolve([{ slot: 2, careerId: null, name: 'Eski taktik', formation: '4-4-2', buildUp: null, defensiveApproach: null, lineHeight: null, slots: [], eaCode: null, sourceReplicaId: null }])),
     saveUserTactic: vi.fn(() => Promise.resolve({ slot: 2, name: 'Pep Guardiola — FC Barcelona 2010-11' })),
+    replicaApply: vi.fn(() => Promise.resolve({ replicaId: 'a', source: 'CAREER', squadFit: 70, analysis: { findings: [] }, slots: [{ slotId: 'GK', position: 'GK', roleId: 'x', roleName: 'Kaleci', focus: 'Dengeli', player: { id: 5, name: 'Kaleci' } }] })),
   },
 }))
 
 const replica = (over: Partial<ReplicaSummary>): ReplicaSummary => ({
-  id: 'r', category: 'UCL_WINNER', club: 'FC Barcelona', coach: 'Pep Guardiola', season: '2010-11', formationId: '4-3-3 (2)', eaFormation: '4-3-3 (2)', buildUp: 'SHORT_PASSING', defensiveApproach: 'AGGRESSIVE', lineHeight: 92,
+  id: 'r', category: 'UCL_WINNER', club: 'FC Barcelona', coach: 'Pep Guardiola', season: '2010-11', league: 'ES_LALIGA', formationId: '4-3-3 (2)', eaFormation: '4-3-3 (2)', buildUp: 'SHORT_PASSING', defensiveApproach: 'AGGRESSIVE', lineHeight: 92,
   fidelity: 4, tacticCode: 'JBiHyZ597xmL', slots: [], eaOrderedSlots: [], attentionCount: 0, ...over,
 })
 
@@ -39,6 +43,7 @@ function renderPage(path = '/replicas') {
         <Routes>
           <Route path="/replicas" element={<ReplicasPage />} />
           <Route path="/replicas/:id" element={<p>detay</p>} />
+          <Route path="/career/tactics-lab" element={<p>lab kurucu</p>} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -47,6 +52,34 @@ function renderPage(path = '/replicas') {
 
 beforeEach(() => {
   vi.mocked(endpoints.replicas).mockResolvedValue(LIST)
+})
+
+/** KARIYER-UX 6: tek başına /replicas listesi de kariyer modunda "Klonla → taslak" sunar (Lab › Replikalar ile aynı akış). */
+describe('replika listesi › klon (kariyer modu)', () => {
+  afterEach(() => {
+    modeStore.set('ut')
+    careerStore.set(undefined)
+    localStorage.clear()
+    labStore.reload()
+  })
+
+  it('kariyer modunda kartta "Klonla → taslak": replika + kadromla diziliş yeni taslak olur, Lab kurucusu açılır', async () => {
+    modeStore.set('career')
+    careerStore.set(7)
+    renderPage()
+    const card = (await screen.findAllByRole('button', { name: /Klonla → taslak/ }))[0]
+    fireEvent.click(card)
+    expect(await screen.findByText('lab kurucu')).toBeInTheDocument()
+    expect(endpoints.replicaApply).toHaveBeenCalledWith('a', { careerId: 7 })
+    expect(labStore.get(7).drafts[0]).toMatchObject({ name: 'FC Barcelona 2010-11', origin: { kind: 'replica', ref: 'a' }, lineup: { GK: 5 } })
+  })
+
+  it('UT modunda klon düğmesi yok', async () => {
+    modeStore.set('ut')
+    renderPage()
+    await screen.findAllByText('FC Barcelona')
+    expect(screen.queryByRole('button', { name: /Klonla → taslak/ })).toBeNull()
+  })
 })
 
 describe('replika listesi', () => {
@@ -226,6 +259,33 @@ describe('kadromla uygula', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Evet, üzerine yaz' }))
     await waitFor(() => expect(endpoints.saveUserTactic).toHaveBeenCalledWith(2, { careerId: 5, replicaId: 'a' }))
     expect(await screen.findByText(/Slot 2'e kaydedildi/)).toBeInTheDocument()
+  })
+
+  it('KARIYER-UX FAZ 4b: kariyerde "Klonla → taslak" replika taktiği + bu dizilişle Lab taslağı açar ve Lab kurucusuna geçer', async () => {
+    localStorage.clear()
+    labStore.reload()
+    const replica = { id: 'a', club: 'Ajax', season: '1994/95', formationId: '4-3-3', buildUp: 'SHORT_PASSING', lineHeight: 75, slots: [{ slotId: 'ST', position: 'ST', role: 'False 9', focus: 'Build-Up', roleId: 'false_9_build_up' }] } as unknown as ReplicaSummary
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const apply = applyOf('CAREER', [slot({})])
+    client.setQueryData(['replica-apply', 'a', JSON.stringify({ careerId: 5 })], apply.result.data)
+    render(
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/replicas/a?sekme=uygula']}>
+          <Routes>
+            <Route path="/replicas/a" element={<ApplyTab replicaId="a" apply={apply} replica={replica} />} />
+            <Route path="/career/tactics-lab" element={<p>lab açıldı</p>} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /Klonla → taslak/ }))
+    expect(await screen.findByText('lab açıldı')).toBeInTheDocument()
+    expect(labStore.get(5).drafts[0]).toMatchObject({ name: 'Ajax 1994/95', origin: { kind: 'replica', ref: 'a' }, lineup: { ST: 1 }, tactic: { formation: '4-3-3' } })
+  })
+
+  it('UT modunda "Klonla → taslak" yok (UT davranışı değişmez)', () => {
+    renderApply(applyOf('UT', [slot({})], 'ut'))
+    expect(screen.queryByRole('button', { name: /Klonla → taslak/ })).toBeNull()
   })
 
   it('slot seçilmeden kaydet kapalı ve nedeni yazar', async () => {
