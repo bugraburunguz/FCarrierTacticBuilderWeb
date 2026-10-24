@@ -2,20 +2,33 @@ import type { Query, QueryClient } from '@tanstack/react-query'
 
 /**
  * Kariyere bağlı önbellek kapsamı (REVIEW Y2/Y3/O4). Sorgu anahtarlarının biçimi sayfadan sayfaya farklı (['squad', id],
- * ['slot-fit','lineup',id,…], ['career-player', id, oyuncu], ['wonderkids', {career: id}]); anahtarın herhangi bir yerinde kariyer
- * kimliği geçen sorgu kapsamdadır. Fazladan tazeleme zararsızdır (yeniden çekilir), eksik tazeleme bayat veri bırakır.
+ * ['slot-fit','lineup',id,…], ['player', oyuncu, id], ['wonderkids', filtre, id]); kariyer kimliği her önek için bilinen konumda aranır.
+ * Herhangi bir konumdaki sayıyı saymak ilgisiz önbellekleri de vuruyordu (['leagues', cinsiyet], ['ut-player', asset], filtre değerleri).
+ * Yeni kariyer kapsamlı anahtar eklerken buraya da ekle.
  */
-const mentions = (part: unknown, careerId: number): boolean => {
-  if (part === careerId || part === String(careerId)) {
-    return true
+const CAREER_AT_1 = new Set([
+  'squad', 'events', 'career-moves', 'career-player', 'career-player-contract', 'career-players', 'career-team', 'career-teams', 'lineup',
+  'player-facets', 'position-advice', 'shortlist', 'tags', 'user-tactics', 'main-tactic', 'starter-tactic', 'snapshots', 'snapshot-diff', 'history',
+])
+const CAREER_AT_2 = new Set(['player', 'player-roles', 'player-roles-v3', 'player-development', 'wonderkids'])
+/** `slot-fit` alt türlerinden kariyerli olanlar (`v3` oyuncu kimliği taşır, kariyersiz). */
+const CAREER_SLOT_FIT = new Set(['lineup', 'compare', 'replica'])
+
+const careerPart = (key: readonly unknown[]): unknown => {
+  const head = key[0] as string
+  if (CAREER_AT_1.has(head)) {
+    return key[1]
   }
-  if (part && typeof part === 'object') {
-    return Object.values(part as Record<string, unknown>).some((v) => mentions(v, careerId))
+  if (CAREER_AT_2.has(head) || (head === 'slot-fit' && CAREER_SLOT_FIT.has(key[1] as string))) {
+    return key[2]
   }
-  return false
+  return undefined
 }
 
-const inScope = (careerId: number) => (query: Query) => query.queryKey[0] === 'careers' || query.queryKey.slice(1).some((part) => mentions(part, careerId))
+const inScope = (careerId: number) => (query: Query) => {
+  const part = careerPart(query.queryKey)
+  return query.queryKey[0] === 'careers' || part === careerId || part === String(careerId)
+}
 
 /** İçe aktarma, kadro hareketi/geri alma, ayar kaydı, yedekten dönüş sonrası: kariyere bağlı her şey ve kariyer listesi tazelenir. */
 export function invalidateCareerScope(client: QueryClient, careerId: number): Promise<void> {

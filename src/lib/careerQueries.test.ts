@@ -6,7 +6,7 @@ const seed = () => {
   const client = new QueryClient()
   const keys = [
     ['careers'], ['squad', 7], ['player-facets', 7], ['snapshots', 7], ['starter-tactic', 7], ['main-tactic', 7], ['slot-fit', 'lineup', 7, '{}', '{}'],
-    ['career-player', 7, 120], ['career-player-contract', 7, 120], ['wonderkids', { career: 7 }], ['squad', 8], ['roles'], ['formations'],
+    ['career-player', 7, 120], ['career-player-contract', 7, 120], ['wonderkids', {}, 7], ['squad', 8], ['roles'], ['formations'],
   ]
   keys.forEach((k) => client.setQueryData(k, { ok: true }))
   return client
@@ -19,11 +19,25 @@ describe('careerQueries', () => {
     const client = seed()
     await invalidateCareerScope(client, 7)
     for (const key of [['careers'], ['squad', 7], ['player-facets', 7], ['snapshots', 7], ['starter-tactic', 7], ['main-tactic', 7], ['slot-fit', 'lineup', 7, '{}', '{}'],
-      ['career-player', 7, 120], ['career-player-contract', 7, 120], ['wonderkids', { career: 7 }]]) {
+      ['career-player', 7, 120], ['career-player-contract', 7, 120], ['wonderkids', {}, 7]]) {
       expect(stale(client, key), JSON.stringify(key)).toBe(true)
     }
     for (const key of [['squad', 8], ['roles'], ['formations']]) {
       expect(stale(client, key), JSON.stringify(key)).toBe(false)
+    }
+  })
+
+  it('kimlik yalnız kariyer konumunda sayılır: aynı sayıyı taşıyan ilgisiz anahtarlar (cinsiyet, oyuncu/asset id, filtre) silinmez', () => {
+    const client = new QueryClient()
+    const unrelated = [['leagues', 7], ['clubs', 'ab', 7], ['transfer-search', 'ab', 7], ['ut-player', 7], ['kb-prices', 7, 'ps'], ['slot-fit', 'v3', 7, 'r', 'ST', ''], ['wonderkids', { maxAge: 7 }, 8], ['player', 7, 8]]
+    const related = [['wonderkids', { maxAge: 21 }, 7], ['player', 120, 7], ['player-roles-v3', 120, 7], ['slot-fit', 'replica', 7, 'x']]
+    ;[...unrelated, ...related].forEach((k) => client.setQueryData(k, { ok: true }))
+    removeCareerScope(client, 7)
+    for (const key of unrelated) {
+      expect(client.getQueryData(key), JSON.stringify(key)).toEqual({ ok: true })
+    }
+    for (const key of related) {
+      expect(client.getQueryData(key), JSON.stringify(key)).toBeUndefined()
     }
   })
 
