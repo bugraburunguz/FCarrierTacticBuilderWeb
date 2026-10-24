@@ -109,7 +109,9 @@ describe.each<SquadMode>(['ut', 'career'])('kadro çekirdeği — %s modu', (mod
     vi.mocked(endpoints.formations).mockReturnValue(new Promise((resolve) => { release = resolve }) as never)
     renderMode(mode)
 
-    await new Promise((r) => setTimeout(r, 50))
+    // REVIEW: sabit bekleme yerine olumlu sinyal (formasyon istendi) + efektlerin boşaltılması; yavaş CI'da yanlış geçmez.
+    await waitFor(() => expect(endpoints.formations).toHaveBeenCalled())
+    await act(async () => { await Promise.resolve() })
     expect(endpoints.resolveTactic).not.toHaveBeenCalled()
 
     release([f442, f433])
