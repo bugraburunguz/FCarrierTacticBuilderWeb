@@ -4,7 +4,8 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { CareerRecommendation, CareerRecommendationItem } from '../../api/types'
-import { RecommendationPanel } from './RecommendationPanel'
+import { bigStore } from '../../state/bigStore'
+import { lastRecommendationsKey, RecommendationPanel } from './RecommendationPanel'
 import { RecommendationRow } from './RecommendationRow'
 
 let premium = false
@@ -71,6 +72,7 @@ function renderPanel(props: Partial<React.ComponentProps<typeof RecommendationPa
 beforeEach(() => {
   premium = false
   vi.mocked(endpoints.careerRecommendations).mockReset()
+  bigStore.clear(lastRecommendationsKey(4, 'ST', 'ST1'))
 })
 
 describe('RecommendationRow (E3-10)', () => {
@@ -174,6 +176,36 @@ describe('RecommendationPanel (E3-10)', () => {
     renderPanel()
     fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir/ }))
     expect(await screen.findByText(/Günlük krediler yarın yenilenir/)).toBeInTheDocument()
+  })
+
+  it('FAZ 6a-J: bütçeye uyanlar önce; bütçeyi aşanlar ayrı ve kapalı, anahtarla açılır', async () => {
+    premium = true
+    const over = item({ player: { ...player(1, 'Zizo'), valueEur: 20_500_000 }, rankScore: 99 })
+    const within_ = item({ player: { ...player(2, 'Uygun Oyuncu'), valueEur: 4_000_000 }, rankScore: 80 })
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([over, within_]), charged: 0 })
+    renderPanel({ budgetEur: 10_000_000 })
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir/ }))
+    const list = await screen.findByRole('region', { name: 'Öneriler' })
+    await within(list).findByText('Uygun Oyuncu')
+    expect(within(list).queryByText('Zizo')).toBeNull()
+    const toggle = within(list).getByRole('button', { name: 'Bütçeyi aşanları göster (1)' })
+    fireEvent.click(toggle)
+    expect(within(screen.getByRole('region', { name: 'Bütçeyi aşanlar' })).getByText('Zizo')).toBeInTheDocument()
+  })
+
+  it('FAZ 6a-J: son öneri sonucu kayıtlıysa açılışta "Son öneriler · tarih" ile gösterilir; ücretli çağrı otomatik yapılmaz', async () => {
+    premium = true
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })
+    const first = renderPanel()
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir/ }))
+    await screen.findByText('Ada Oyuncu')
+    first.unmount()
+    vi.mocked(endpoints.careerRecommendations).mockClear()
+
+    renderPanel()
+    expect(await screen.findByText(/^Son öneriler · /)).toBeInTheDocument()
+    expect(screen.getByText('Ada Oyuncu')).toBeInTheDocument()
+    expect(endpoints.careerRecommendations).not.toHaveBeenCalled()
   })
 
   it('kariyer yokken istek atılmaz', async () => {

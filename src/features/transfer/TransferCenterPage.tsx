@@ -157,13 +157,14 @@ export function TransferCenterPage() {
         {needs.length === 0 ? (
           <EmptyState>{fitsPending ? 'Hesaplanıyor…' : allSquad ? 'Dizilimde oyuncu yok.' : 'Zayıf halka yok: dizilimdeki herkes seviyesinde ya da üstünde.'}</EmptyState>
         ) : (
-          <ul className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 max-sm:snap-x">
+          // FAZ 6a-J: çipler satıra sarar; yatay kaydırmada son çip ("GK · Sweeper Keeper…") kesiliyordu.
+          <ul className="flex flex-wrap gap-2">
             {needs.map((n) => (
-              <li key={n.key} className="shrink-0 snap-start">
+              <li key={n.key} className="min-w-0 max-w-full">
                 <button type="button" aria-pressed={need?.key === n.key} onClick={() => set({ ihtiyac: n.key, pos: undefined, rol: undefined, role: undefined })}
                   className={`flex min-h-11 flex-col items-start gap-0.5 rounded-[var(--radius-sm)] border px-3 py-1.5 text-left text-sm ${need?.key === n.key ? 'border-accent bg-[var(--glass-press)] shadow-[inset_0_-2px_0_var(--accent)]' : 'border-[var(--glass-border)] glass-3 hover:bg-[var(--glass-hover)]'}`}>
-                  <span className="flex items-center gap-2 whitespace-nowrap font-semibold">{n.label}{n.state && <FitBadge state={n.state} compact />}</span>
-                  <span className="whitespace-nowrap text-xs text-ink-2">{n.detail}</span>
+                  <span className="flex flex-wrap items-center gap-2 font-semibold">{n.label}{n.state && <FitBadge state={n.state} compact />}</span>
+                  <span className="text-xs text-ink-2">{n.detail}</span>
                 </button>
               </li>
             ))}
@@ -179,6 +180,7 @@ export function TransferCenterPage() {
               position={need.position}
               slotId={need.slotId}
               roleId={need.roleId}
+              budgetEur={budget}
               cardWidth={mobile ? CANDIDATE_CARD_MOBILE : CANDIDATE_CARD}
               longShots={longShots}
               onLongShotsChange={(v) => set({ uzak: v ? '1' : undefined })}

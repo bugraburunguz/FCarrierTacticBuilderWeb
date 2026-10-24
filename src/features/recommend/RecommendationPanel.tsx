@@ -3,7 +3,8 @@ import { useId, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError, ErrorCodes } from '../../api/client'
 import { endpoints } from '../../api/endpoints'
-import type { CareerRecommendationItem, CareerRecommendationRequest, RecommendProfile } from '../../api/types'
+import type { CareerRecommendation, CareerRecommendationItem, CareerRecommendationRequest, Credited, RecommendProfile } from '../../api/types'
+import { bigStore } from '../../state/bigStore'
 import { useAuth } from '../../auth/AuthContext'
 import { MoneyInput } from '../../components/MoneyInput'
 import { ErrorBox, Select } from '../../components/ui'
@@ -22,6 +23,14 @@ const MAX_LONG_SHOTS = 3
 
 type BudgetMode = 'career' | 'unknown' | 'custom'
 
+/** FAZ 6a-J: son öneri sonucu (kariyer + ihtiyaç başına) IndexedDB'de; sayfa açılışında ücretli çağrı yapılmadan gösterilir. */
+export const lastRecommendationsKey = (careerId: number, position: string, slotId?: string) => `last-recommendations.${careerId}.${position}.${slotId ?? ''}`
+interface SavedRecommendation {
+  at: string
+  response: Credited<CareerRecommendation>
+}
+const SAVED_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+
 interface Props {
   careerId?: number
   position: string
@@ -38,6 +47,8 @@ interface Props {
   longShots?: boolean
   onLongShotsChange?: (value: boolean) => void
   longShotsLabel?: string
+  /** FAZ 6a-J: kariyer bütçesi; verilirse (ya da elle bütçe girilirse) bütçeyi aşan adaylar ayrı ve kapalı listelenir. */
+  budgetEur?: number
 }
 
 // Oturum içi "tekrar sorma" tercihi (kalıcı değil; kredi harcamasını açık tutar).
@@ -47,7 +58,7 @@ let skipConfirm = false
  * Kariyer öneri paneli (E3-10): `POST /careers/{id}/recommendations`. Ücretli olduğu için açılışta istek atmaz; düğme kaç kredi düşeceğini yazar,
  * ücretsiz üyelerde bir onay adımı vardır, PREMIUM'da yoktur. Filtre değişince sonuç bayatlar ve yeniden getirmek gerekir.
  */
-export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster' }: Props) {
+export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur }: Props) {
   const { me } = useAuth()
   const queryClient = useQueryClient()
   const ids = { age: useId(), budget: useId() }
@@ -68,8 +79,19 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
   const { freeBeta } = useAppConfig()
   const cost = costs.data?.recommend
 
+  const [showOver, setShowOver] = useState(false)
+  const savedKey = careerId === undefined ? undefined : lastRecommendationsKey(careerId, position, slotId)
+  // FAZ 6a-J: son sonuç yerelde; açılışta ücretli çağrı yapılmaz (D-01, kredi), kayıtlıysa tarihiyle gösterilir.
+  const saved = useQuery({ queryKey: ['last-recommendations', savedKey], queryFn: async () => (await bigStore.load<SavedRecommendation>(savedKey!)) ?? null, enabled: savedKey !== undefined, staleTime: Infinity })
   const run = useMutation({
     mutationFn: (body: CareerRecommendationRequest) => endpoints.careerRecommendations(careerId!, body),
+    onSuccess: (data) => {
+      if (savedKey) {
+        const entry: SavedRecommendation = { at: new Date().toISOString(), response: data }
+        bigStore.set(savedKey, entry)
+        queryClient.setQueryData(['last-recommendations', savedKey], entry)
+      }
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
   })
 
@@ -102,7 +124,13 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
     setStale(run.data !== undefined)
   }
 
-  const result = run.data?.result
+  const fromSaved = !run.data && saved.data ? saved.data : undefined
+  const result = run.data?.result ?? fromSaved?.response.result
+  // FAZ 6a-J: bütçeye uyanlar önce; aşanlar ayrı başlıkta, anahtarla açılır (değeri bilinmeyen aday uyanlarda kalır).
+  const budget = budgetMode === 'custom' ? customBudget : budgetMode === 'career' ? budgetEur : undefined
+  const overBudget = (i: CareerRecommendationItem) => budget !== undefined && i.player.valueEur !== undefined && i.player.valueEur > budget
+  const fitting = (result?.items ?? []).filter((i) => !overBudget(i))
+  const over = (result?.items ?? []).filter(overBudget)
   const outOfCredit = run.error instanceof ApiError && run.error.code === ErrorCodes.insufficientCredit
   const priceLabel = freeBeta ? "Beta'da ücretsiz" : premium ? "PREMIUM'da ücretsiz" : cost !== undefined ? `${cost} kredi` : 'kredi'
 
@@ -180,6 +208,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
       )}
       {result && !run.isPending && (
         <section aria-label="Öneriler" className="space-y-2">
+          {fromSaved && <p className="text-xs font-semibold text-ink-2">Son öneriler · {SAVED_DATE.format(new Date(fromSaved.at))}</p>}
           <p className="text-xs text-muted">
             {result.roleName ? `Rol: ${result.roleName}` : 'Tüm roller'}
             {result.userClubStrength !== undefined ? ` · kulüp gücün ${result.userClubStrength}` : ''}
@@ -189,10 +218,29 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi gevşetmeyi dene.</EmptyState>
           ) : (
             <ul className="space-y-1.5">
-              {result.items.map((item) => (
+              {fitting.map((item) => (
                 <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} extra={rowExtra?.(item)} cardWidth={cardWidth} />
               ))}
             </ul>
+          )}
+          {fitting.length === 0 && over.length > 0 && <p className="text-sm text-ink-2">Bütçeye uyan aday yok.</p>}
+          {over.length > 0 && (
+            <>
+              <button type="button" aria-expanded={showOver} onClick={() => setShowOver((v) => !v)}
+                className="inline-flex min-h-8 items-center text-xs font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11">
+                {showOver ? 'Bütçeyi aşanları gizle' : `Bütçeyi aşanları göster (${over.length})`}
+              </button>
+              {showOver && (
+                <section aria-label="Bütçeyi aşanlar" className="space-y-1.5">
+                  <h3 className="text-xs font-semibold text-ink-2">Bütçeyi aşanlar</h3>
+                  <ul className="space-y-1.5">
+                    {over.map((item) => (
+                      <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} extra={rowExtra?.(item)} cardWidth={cardWidth} />
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </>
           )}
           {result.longShots && result.longShots.length > 0 && (
             <section aria-label="Hayal transferler" className="space-y-1.5 pt-2">

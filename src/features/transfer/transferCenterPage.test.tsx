@@ -115,6 +115,15 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     expect(await screen.findByRole('button', { name: /Oyuncu 3 · Seviyesine göre %80/ })).toBeInTheDocument()
   })
 
+  it('FAZ 6a-J: ihtiyaç çipleri yatayda kesilmez, satıra sarar (yatay kaydırma yok)', async () => {
+    renderPage()
+    const chip = await screen.findByRole('button', { name: /Oyuncu 2 · Seviyesine göre %12/ })
+    const list = chip.closest('ul')!
+    expect(list.className).toContain('flex-wrap')
+    expect(list.className).not.toContain('overflow-x-auto')
+    expect(chip.innerHTML).not.toContain('whitespace-nowrap')
+  })
+
   it('ana taktik yoksa başlangıç önerisi kullanılır ve "Otomatik öneri" etiketi görünür', async () => {
     vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
     renderPage()
