@@ -6,6 +6,7 @@ import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
 import { modeStore } from '../../state/modeStore'
 import { utCardStore } from '../../state/utCardStore'
+import { lineupFromFitRole } from '../../test/lineupFromFitRole'
 import { HomePage } from './HomePage'
 
 let authenticated = true
@@ -49,6 +50,7 @@ beforeEach(() => {
     depth: 50, presetId: null, updatedAt: '2026-10-20T10:00:00Z', lineupDropped: 0,
   } as never)
   vi.mocked(endpoints.fitRole).mockImplementation(((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, roleId: 'r', roleName: 'Rol', projectedRating: 70, outOfPosition: false, reasons: [], weaponChecks: [], levelFit: b.playerId === 1 ? 30 : 70, score: 70, fitLabel: b.playerId === 1 ? 'WEAK' : 'GOOD' } })) as never)
+  vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never) as never)
   vi.mocked(endpoints.snapshots).mockResolvedValue([{ id: 5, takenAt: '2026-10-10T10:00:00Z', source: 'IMPORT', playerCount: 30 }] as never)
   vi.mocked(endpoints.kbSbc).mockResolvedValue([set(1, '2026-10-01'), set(2, '2026-10-05'), set(3, '2026-10-03'), set(4, '2026-10-09'), set(5, '2026-10-08'), set(6, '2026-10-02')] as never)
   utCardStore.set([])

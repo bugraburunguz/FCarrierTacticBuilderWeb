@@ -6,6 +6,7 @@ import type { UserTactic } from '../../api/types'
 import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
 import { labStore } from '../../state/labStore'
+import { lineupFromFitRole } from '../../test/lineupFromFitRole'
 import { CareerSquadPage } from './CareerSquadPage'
 
 const SLOTS = ['GK', 'LB', 'LCB', 'RCB', 'RB', 'LM', 'LCM', 'RCM', 'RM', 'LST', 'RST']
@@ -72,6 +73,8 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     vi.mocked(endpoints.careers).mockResolvedValue([CAREER] as never)
     vi.mocked(endpoints.squad).mockResolvedValue(SQUAD as never)
     vi.mocked(endpoints.mainTactic).mockResolvedValue(MAIN as never)
+    // FAZ 4b: rol uyumu tek /fit/lineup (11 slot kilitli), yanıt fitRole fikstüründen.
+    vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)]) as never)
     vi.mocked(endpoints.events).mockResolvedValue([
       { id: 2, type: 'BUY', playerId: 13, playerName: 'Oyuncu 13', feeEur: 500_000 },
       { id: 1, type: 'SELL', playerId: 50, playerName: 'Eski Oyuncu' },
@@ -95,7 +98,9 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.getByRole('button', { name: "Lab'da düzenle" })).toBeInTheDocument()
     fireEvent.click(pawn)
     expect(screen.getByTestId('where')).toHaveTextContent('/players/1')
-    expect(endpoints.lineup).not.toHaveBeenCalled()
+    // Doldurma yok (oyuncu düşmedi); tek çağrı rol uyumu için, 11 slot kilitli.
+    await waitFor(() => expect(endpoints.lineup).toHaveBeenCalled())
+    expect(vi.mocked(endpoints.lineup).mock.calls.every(([, , locked]) => Object.keys(locked ?? {}).length === 11)).toBe(true)
   })
 
   it('diziliş: StatTile\'lar ortalama reyting, oyuncu sayısı, ortalama yaş', async () => {

@@ -6,6 +6,7 @@ import type { UserTactic } from '../../api/types'
 import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
 import { labStore } from '../../state/labStore'
+import { lineupFromFitRole } from '../../test/lineupFromFitRole'
 import { DashboardPage } from './DashboardPage'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE', creditBalance: 17, dailyCreditLimit: 20 } }) }))
@@ -65,8 +66,9 @@ beforeEach(() => {
   ] as never)
   vi.mocked(endpoints.mainTactic).mockResolvedValue(MAIN as never)
   vi.mocked(endpoints.starterTactic).mockReset()
-  vi.mocked(endpoints.lineup).mockReset()
   vi.mocked(endpoints.fitRole).mockReset().mockImplementation(((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, playerName: `Oyuncu ${b.playerId}`, roleId: 'box_to_box_balanced', roleName: 'Box-to-Box (Balanced)', projectedRating: 70, outOfPosition: false, weaponChecks: [], ...FITS[b.playerId] } })) as never)
+  // FAZ 4b: rol uyumu tek /fit/lineup (dizilenler kilitli) — yanıt aynı fikstürden.
+  vi.mocked(endpoints.lineup).mockReset().mockImplementation(lineupFromFitRole(endpoints.fitRole as never) as never)
   vi.mocked(endpoints.playerFacets).mockResolvedValue({ gameDate: '2027-01-15', contractData: true, loanData: true })
   vi.mocked(endpoints.snapshots).mockResolvedValue([
     { id: 9, takenAt: '2026-10-19T12:00:00Z', source: 'IMPORT', playerCount: 30, budgetEur: 5_000_000 },
@@ -160,7 +162,11 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
 
   it('dizilişten düşen oyuncu: /fit/lineup kilitli doldurur, metin "otomatik dolduruldu"', async () => {
     vi.mocked(endpoints.mainTactic).mockResolvedValue({ ...MAIN, lineup: { CM1: 1, CM2: 2 }, lineupDropped: 1 } as never)
-    vi.mocked(endpoints.lineup).mockResolvedValue({ slots: [{ slotId: 'CM1', playerId: 1 }, { slotId: 'CM2', playerId: 2 }, { slotId: 'CM3', playerId: 3 }] } as never)
+    const fits = lineupFromFitRole(endpoints.fitRole as never)
+    // Doldurma isteği (2 kilitli) üçüncü slotu doldurur; uyum isteği (3 kilitli) fikstürden.
+    vi.mocked(endpoints.lineup).mockImplementation(((c: number, t: unknown, locked?: Record<string, number>) => Object.keys(locked ?? {}).length === 2
+      ? Promise.resolve({ slots: [{ slotId: 'CM1', playerId: 1 }, { slotId: 'CM2', playerId: 2 }, { slotId: 'CM3', playerId: 3 }] })
+      : fits(c, t, locked)) as never)
     renderPage()
     expect(await screen.findByText('1 oyuncu kadroda yok, otomatik dolduruldu')).toBeInTheDocument()
     expect(endpoints.lineup).toHaveBeenCalledWith(1, expect.objectContaining({ formation: '4-3-3' }), { CM1: 1, CM2: 2 })
@@ -235,7 +241,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
     expect(await within(weak).findAllByRole('listitem')).toHaveLength(2)
     expect(read).not.toHaveBeenCalled()
-    expect(vi.mocked(endpoints.fitRole).mock.calls.map(([b]) => b.playerId).sort()).toEqual([1, 2, 3])
+    expect(vi.mocked(endpoints.lineup).mock.calls.map(([, , locked]) => locked)).toContainEqual({ CM1: 1, CM2: 2, CM3: 3 })
     read.mockRestore()
   })
 })

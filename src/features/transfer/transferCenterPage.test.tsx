@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
 import { lineupStore } from '../../state/lineupStore'
+import { lineupFromFitRole } from '../../test/lineupFromFitRole'
 import { TransferCenterPage } from './TransferCenterPage'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'PREMIUM', creditBalance: 17, dailyCreditLimit: 20 } }) }))
@@ -57,6 +58,8 @@ beforeEach(() => {
     depth: 50, presetId: null, updatedAt: '2026-10-20T10:00:00Z', lineupDropped: 0,
   } as never)
   vi.mocked(endpoints.fitRole).mockReset().mockImplementation(((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, playerName: `Oyuncu ${b.playerId}`, roleId: 'box_to_box_balanced', roleName: 'Box-to-Box (Balanced)', projectedRating: 70, outOfPosition: false, reasons: [], weaponChecks: [], ...FITS[b.playerId] } })) as never)
+  // FAZ 4b: İhtiyaçlar rol uyumu tek /fit/lineup (dizilenler kilitli); yanıt fitRole fikstüründen (çağrı anında, testteki değişiklik geçer).
+  vi.mocked(endpoints.lineup).mockReset().mockImplementation(lineupFromFitRole(endpoints.fitRole as never) as never)
   vi.mocked(endpoints.shortlist).mockReset().mockResolvedValue([])
   vi.mocked(endpoints.shortlistAdd).mockClear()
   vi.mocked(endpoints.shortlistRemove).mockClear()
@@ -173,7 +176,8 @@ describe('Transfer Merkezi (v3)', () => {
   it('yalnız v3 uçları: rol uyumu v3, öneri hattı kariyer ucu; eski uçlar çağrılmaz', async () => {
     renderPage()
     await fetchCandidates()
-    expect(vi.mocked(endpoints.fitRole).mock.calls.every(([b]) => b.engineVersion === 'v3')).toBe(true)
+    // FAZ 4b: rol uyumu tek /fit/lineup'tan (kariyer motoru v3; slot başına /fit/role olmadığı useLineupFits.test'te).
+    expect(endpoints.lineup).toHaveBeenCalled()
     expect(endpoints.careerRecommendations).toHaveBeenCalledWith(1, expect.objectContaining({ position: 'CM', roleId: 'box_to_box_balanced' }))
     expect(endpoints.recommendTactic).not.toHaveBeenCalled()
     expect(endpoints.previewSlot).not.toHaveBeenCalled()

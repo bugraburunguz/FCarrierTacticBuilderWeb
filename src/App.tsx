@@ -24,7 +24,6 @@ const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ defa
 const KariyerUxPreview = import.meta.env.DEV ? lazy(() => import('./features/preview/KariyerUxPreview').then((m) => ({ default: m.KariyerUxPreview }))) : undefined
 const CompareV3Page = lazy(() => import('./features/compare/CompareV3Page').then((m) => ({ default: m.CompareV3Page })))
 const WizardPage = lazy(() => import('./pages/WizardPage').then((m) => ({ default: m.WizardPage })))
-const TacticWizardPage = lazy(() => import('./features/wizard/TacticWizardPage').then((m) => ({ default: m.TacticWizardPage })))
 const WonderkidsPage = lazy(() => import('./pages/WonderkidsPage').then((m) => ({ default: m.WonderkidsPage })))
 const WonderkidsV3Page = lazy(() => import('./features/wonderkids/WonderkidsV3Page').then((m) => ({ default: m.WonderkidsV3Page })))
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })))
@@ -127,9 +126,10 @@ export function App() {
         <Route path="compare" element={isV3() ? <CompareV3Page /> : <ComparePage />} />
         <Route path="wonderkids" element={isV3() ? <WonderkidsV3Page /> : <WonderkidsPage />} />
         {/* KARIYER-UX FAZ 4a: v3'te kurucu Taktik Laboratuvarı'nda; eski kurucu adresleri sorgu dizgisiyle oraya. v2 eski kurucuda kalır. */}
-        <Route path="career/tactics-lab" element={<RequireAuth>{isV3() ? <TacticsLabPage /> : <Navigate to="/squad/builder" replace />}</RequireAuth>} />
+        <Route path="career/tactics-lab" element={isV3() ? <RequireAuth><TacticsLabPage /></RequireAuth> : <Navigate to="/squad/builder" replace />} />
         <Route path="tactics/builder" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <Navigate to="/squad/builder" replace />} />
-        <Route path="tactics/wizard" element={isV3() ? <TacticWizardPage /> : <WizardPage />} />
+        {/* KARIYER-UX FAZ 4b: v3 sihirbazı Lab › Sihirbaz sekmesinde (sorgu dizgisi taşınır). v2 sayfası v2 için kalır. */}
+        <Route path="tactics/wizard" element={isV3() ? <RedirectWithSearch to="/career/tactics-lab?sekme=sihirbaz" /> : <WizardPage />} />
         {/* KARIYER-UX FAZ 3: v3 Kadro Analizi /career/squad; eski /squad sekme eşlemesiyle yönlenir (kariyer → Masa › Ayarlar). v2 sayfası v2 için kalır. */}
         <Route path="career/squad" element={<RequireAuth>{isV3() ? <CareerSquadPage /> : <Navigate to="/squad" replace />}</RequireAuth>} />
         <Route path="squad" element={isV3() ? <LegacySquadRedirect /> : <RequireAuth><SquadPage /></RequireAuth>} />

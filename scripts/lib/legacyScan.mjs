@@ -66,7 +66,8 @@ export function legacyScanner(src) {
     return [...app.matchAll(/<Route (index|path="([^"]+)") element=\{(.+?)\} \/>/g)].map((m) => {
       const path = m[1] === 'index' ? '/' : `/${m[2]}`
       const element = m[3]
-      const v3Name = element.match(/isV3\(\) \? <(\w+)/)?.[1] ?? element.match(/<(\w+)(?: [^>]*)?\s*\/>/g)?.map((t) => t.match(/<(\w+)/)[1]).filter((n) => !['RequireAuth', 'CaptureOnly'].includes(n)).pop()
+      // v3 dalı yalnız v3'te giriş isteyebilir: `isV3() ? <RequireAuth><Sayfa /></RequireAuth> : …` (FAZ 4b, /career/tactics-lab).
+      const v3Name = element.match(/isV3\(\) \? (?:<RequireAuth>)?<(\w+)/)?.[1] ?? element.match(/<(\w+)(?: [^>]*)?\s*\/>/g)?.map((t) => t.match(/<(\w+)/)[1]).filter((n) => !['RequireAuth', 'CaptureOnly'].includes(n)).pop()
       const spec = routeFiles[v3Name] ?? lazyFiles[v3Name]
       return { path, element, v3Name, spec, file: spec && fileOf(spec) }
     })

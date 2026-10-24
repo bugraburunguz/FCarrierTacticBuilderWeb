@@ -10,7 +10,7 @@ import type { CareerPlayer, PlayerSummary } from '../../api/types'
 import { DEFAULT_SETUP } from '../../lib/tactic'
 import { careerSlotTabs } from './careerSlotTabs'
 import type { SlotTab, SlotView, SquadBinding } from './types'
-import { useSlotFits } from './useSlotFits'
+import { useLineupFits } from './useLineupFits'
 import { useSquadWorkspace } from './useSquadWorkspace'
 
 /** Kurucunun durum kaynağı: v3 Lab `useLabBinding` (aktif taslak), v2 `useCareerBinding` (eski tek kopya depo). Kararlı (modül düzeyi) bir hook olmalı. */
@@ -43,7 +43,8 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
   const slotRole = (slotId: string, fallback: string) => roleBySlot.get(slotId)?.roleId ?? state.roleOverride[slotId] ?? fallback
   const slotTags = (slotId: string) => state.tags[slotId] ?? []
 
-  const { fitBySlot } = useSlotFits(ws, playerById)
+  // FAZ 4b: rol uyumu tek /fit/lineup isteğiyle (dizilenler kilitli); kariyer yoksa uyum yok.
+  const { fitBySlot } = useLineupFits(ws, playerById, hasCareer ? careerId : undefined)
 
   const views: SlotView[] = ws.slots.map((slot) => {
     const player = playerById.get(assignments[slot.slotId])

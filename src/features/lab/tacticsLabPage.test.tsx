@@ -7,11 +7,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { UserTactic } from '../../api/types'
 import { careerStore } from '../../state/careerStore'
 import { LAB_DRAFT_LIMIT, labStore } from '../../state/labStore'
+import { lineupFromFitRole } from '../../test/lineupFromFitRole'
 
 const SLOTS = ['GK', 'LB', 'LCB', 'RCB', 'RB', 'LM', 'LCM', 'RCM', 'RM', 'LST', 'RST']
 const POSITIONS = ['GK', 'LB', 'CB', 'CB', 'RB', 'LM', 'CM', 'CM', 'RM', 'ST', 'ST']
 const f442 = { id: '4-4-2', label: '4-4-2', slots: SLOTS.map((slotId, i) => ({ slotId, position: POSITIONS[i], x: 10 + i * 7, y: 10 + i * 7, defaultRole: 'r', group: POSITIONS[i] })) }
-const SQUAD = POSITIONS.map((position, i) => ({ player: { id: i + 1, name: `Oyuncu ${i + 1}`, overall: 70, positions: [position], age: 24, valuationEstimated: false }, onLoan: false }))
+const SQUAD = [...POSITIONS, 'CM'].map((position, i) => ({ player: { id: i + 1, name: `Oyuncu ${i + 1}`, overall: 70, positions: [position], age: 24, valuationEstimated: false }, onLoan: false }))
+const REPLICA = {
+  id: 'barca-2011', category: 'CLUB', club: 'Barcelona', coach: 'Guardiola', season: '2010/11', formationId: '4-4-2', eaFormation: '4-4-2', buildUp: 'SHORT_PASSING',
+  defensiveApproach: 'HIGH', lineHeight: 72, fidelity: null, tacticCode: 'BARCA', attentionCount: 0, eaOrderedSlots: [],
+  slots: SLOTS.map((s, i) => ({ slotId: s, position: POSITIONS[i], role: 'Rol', focus: 'Dengeli', roleId: 'r' })),
+}
 const LINEUP = Object.fromEntries(SLOTS.map((s, i) => [s, i + 1]))
 const mainTactic = (name: string, slot = 2): UserTactic => ({
   slot, careerId: 7, name, formation: '4-4-2', buildUp: 'Balanced', defensiveApproach: null, lineHeight: null, eaCode: 'X', sourceReplicaId: null,
@@ -24,6 +30,7 @@ const endpoints = vi.hoisted(() => ({
   careers: vi.fn(), squad: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), formations: vi.fn(), presets: vi.fn(), behaviorTags: vi.fn(),
   roles: vi.fn(), eaRoles: vi.fn(), resolveTactic: vi.fn(), fitRole: vi.fn(), lineup: vi.fn(), exportTacticCode: vi.fn(), importTacticCode: vi.fn(),
   userTactics: vi.fn(), saveUserTactic: vi.fn(), setMainTactic: vi.fn(), playerTags: vi.fn(), events: vi.fn(), positionAdvice: vi.fn(), careerMoves: vi.fn(), snapshots: vi.fn(),
+  replicas: vi.fn(), replicaApply: vi.fn(),
 }))
 vi.mock('../../api/endpoints', () => ({ endpoints }))
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true }) }))
@@ -71,8 +78,17 @@ beforeEach(() => {
   endpoints.roles.mockResolvedValue([])
   endpoints.eaRoles.mockResolvedValue([])
   endpoints.resolveTactic.mockImplementation((t: { formation: string }) => Promise.resolve({ formation: t.formation, slots: [] }))
-  endpoints.fitRole.mockImplementation((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, roleId: 'r', roleName: 'Rol', score: 70, levelFit: 70, fitLabel: 'GOOD', reasons: [], weaponChecks: [], projectedRating: 70, outOfPosition: false } }))
-  endpoints.lineup.mockResolvedValue({ slots: SLOTS.map((slotId, i) => ({ slotId, playerId: i + 1 })) })
+  endpoints.fitRole.mockImplementation((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, roleId: 'r', roleName: 'Rol', score: 70, reasons: [], weaponChecks: [], projectedRating: 70, outOfPosition: false,
+    ...(b.playerId === 12 ? { levelFit: 40, fitLabel: 'WEAK' } : { levelFit: 70, fitLabel: 'GOOD' }) } }))
+  // Kilitsiz çağrı = otomatik dizme; kilitli çağrı = rol uyumu (FAZ 4b toplu uyum), fitRole fikstüründen.
+  const fits = lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)] ?? 'CM')
+  endpoints.lineup.mockImplementation((c: number, t: unknown, locked?: Record<string, number>) => (locked
+    ? fits(c, t, locked)
+    : Promise.resolve({ slots: SLOTS.map((slotId, i) => ({ slotId, playerId: i + 1 })) })))
+  endpoints.replicas.mockResolvedValue([REPLICA])
+  endpoints.replicaApply.mockResolvedValue({ replicaId: REPLICA.id, source: 'CAREER', squadFit: 70, analysis: { findings: [] },
+    slots: SLOTS.map((slotId, i) => ({ slotId, position: POSITIONS[i], roleId: 'r', roleName: 'Rol', focus: 'Dengeli', player: { id: i + 1, name: `Oyuncu ${i + 1}` } })) })
+  endpoints.importTacticCode.mockResolvedValue({ formation: '4-4-2', buildUp: 'Counter', depth: 30, exact: true, warnings: [], slots: [{ slotId: 'LST', roleId: 'poacher_attack', roleName: 'Poacher' }] })
   endpoints.exportTacticCode.mockResolvedValue({ code: 'ABCDEFGHIJKL', formation: '4-4-2', exact: true, warnings: [] })
   endpoints.userTactics.mockImplementation(() => Promise.resolve(state.main ? [state.main] : []))
   endpoints.saveUserTactic.mockImplementation((slot: number, body: { name: string }) => Promise.resolve({ ...mainTactic(body.name, slot), main: false }))
@@ -180,6 +196,60 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(document.querySelector('[data-pitch-marker="pawn"]')).toBeNull()
     fireEvent.click(screen.getByRole('radio', { name: 'Piyon' }))
     await waitFor(() => expect(document.querySelector('[data-pitch-marker="pawn"]')).not.toBeNull())
+  })
+
+  it('FAZ 4b sekmeleri: Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır; ?sekme= ile açılır', async () => {
+    draft('Deneme')
+    renderAt('/career/tactics-lab?sekme=kod')
+    expect(await screen.findByRole('tab', { name: 'Kod', selected: true })).toBeInTheDocument()
+    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['Kurucu', 'Sihirbaz', 'Replikalar', 'Kod', 'Karşılaştır'])
+  })
+
+  it('Sihirbaz sekmesi: "Bu taktiği kur" sihirbaz kökenli yeni taslak açar ve Kurucu sekmesine geçer', async () => {
+    endpoints.presets.mockResolvedValue([{ id: 'Blok', kind: 'STYLE', name: 'Blok', formation: '4-4-2', settings: { buildUp: 'Counter', depth: 30 }, slotTags: {} }])
+    renderAt('/career/tactics-lab?sekme=sihirbaz')
+    for (let i = 0; i < 5; i += 1) fireEvent.click(await screen.findByRole('button', { name: 'İleri' }))
+    fireEvent.click((await screen.findAllByRole('button', { name: 'Bu taktiği kur' }))[0])
+    await waitFor(() => expect(labStore.get(7).drafts[0]?.origin).toEqual({ kind: 'wizard', ref: 'Blok' }))
+    expect(await screen.findByRole('tab', { name: 'Kurucu', selected: true })).toBeInTheDocument()
+  })
+
+  it('Replikalar sekmesi: "Klonla → taslak" replika taktiği + kadromla diziliş, kurucuya geçer', async () => {
+    renderAt('/career/tactics-lab?sekme=replikalar')
+    fireEvent.click(await screen.findByRole('button', { name: /Klonla → taslak/ }))
+    await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(1))
+    expect(endpoints.replicaApply).toHaveBeenCalledWith('barca-2011', { careerId: 7 })
+    expect(labStore.get(7).drafts[0]).toMatchObject({ name: 'Barcelona 2010/11', origin: { kind: 'replica', ref: 'barca-2011' }, lineup: LINEUP,
+      tactic: { formation: '4-4-2', setup: { buildUp: 'Short', depth: 72 } } })
+    expect(await screen.findByRole('tab', { name: 'Kurucu', selected: true })).toBeInTheDocument()
+  })
+
+  it('Kod sekmesi: dışa aktar aktif taslağın kodu, ana taktik seçilince saklı kodu; içe aktar yeni taslak açar', async () => {
+    draft('Deneme')
+    renderAt('/career/tactics-lab?sekme=kod')
+    expect(await screen.findByDisplayValue('ABCDEFGHIJKL')).toBeInTheDocument()
+    expect(endpoints.exportTacticCode).toHaveBeenCalledWith(expect.objectContaining({ formation: '4-4-2' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Ana taktik' }))
+    expect(await screen.findByDisplayValue('X')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('EA kodunu yapıştır'), { target: { value: 'KODKODKODKOD' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Taslak olarak aç' }))
+    await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(2))
+    expect(labStore.get(7).drafts[1]).toMatchObject({ origin: { kind: 'code' }, tactic: { formation: '4-4-2', setup: { buildUp: 'Counter', depth: 30 } } })
+  })
+
+  it('Karşılaştır: taslak ↔ ana taktik; slot slot fark işaretli ve metinli, etiket değişimi, toplam takım uyumu farkı', async () => {
+    const d = draft('Deneme')
+    labStore.patch(7, d.id, () => ({ lineup: { ...LINEUP, LCM: 12 } }))
+    renderAt('/career/tactics-lab?sekme=karsilastir')
+    const lcm = await screen.findByRole('listitem', { name: /^LCM/ })
+    expect(lcm).toHaveTextContent('Oyuncu 7')
+    expect(lcm).toHaveTextContent('Oyuncu 12')
+    expect(lcm).toHaveTextContent('−30')
+    expect(lcm).toHaveTextContent('düştü')
+    expect(lcm).toHaveTextContent('Rol için uygun → Rol için sınırda')
+    const total = screen.getByRole('region', { name: 'Takım uyumu farkı' })
+    expect(within(total).getByText('−3')).toBeInTheDocument()
+    expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('aynı')
   })
 
   it('kurucu yalnız taslağa yazar; eski tek kopya depo yazılmaz', async () => {

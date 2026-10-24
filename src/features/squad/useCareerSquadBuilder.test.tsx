@@ -51,26 +51,29 @@ describe('useCareerSquadBuilder', () => {
     labStore.create(7, { name: 'Deneme', origin: { kind: 'blank' }, tactic: { formation: '4-4-2', slots: {} }, lineup: {} })
   })
 
+  // FAZ 4b: /fit/lineup iki amaçla çağrılır — otomatik dizme (kilit yok) ve rol uyumu (dizilenler kilitli). Burada yalnız dizme sayılır.
+  const fills = () => vi.mocked(endpoints.lineup).mock.calls.filter(([, , locked]) => locked === undefined)
+
   it('boş kadroyla ilk açılışta bir kez otomatik dizer; "En iyi 11\'i diz" yeniden dizer', async () => {
     const { result } = renderHook(() => useCareerSquadBuilder(useLabBinding), { wrapper })
     await waitFor(() => expect(Object.keys(result.current.ws.state.assigned)).toHaveLength(11))
-    expect(endpoints.lineup).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(endpoints.lineup).mock.calls[0][0]).toBe(7)
+    expect(fills()).toHaveLength(1)
+    expect(fills()[0][0]).toBe(7)
     expect(result.current.views.filter((v) => v.player)).toHaveLength(11)
     expect(result.current.canAutoFill).toBe(true)
 
     act(() => result.current.autoFill.mutate())
-    await waitFor(() => expect(endpoints.lineup).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(fills()).toHaveLength(2))
   })
 
   it('v3 Lab kurucusu: "En iyi 11\'i diz" düğmesi dizer; taktik kodu tek bileşende', async () => {
     render(<LabBuilder />, { wrapper })
     const button = await screen.findByRole('button', { name: "En iyi 11'i diz" })
     await waitFor(() => expect(button).toBeEnabled())
-    const before = vi.mocked(endpoints.lineup).mock.calls.length
+    const before = fills().length
     fireEvent.click(button)
-    await waitFor(() => expect(endpoints.lineup).toHaveBeenCalledTimes(before + 1))
-    expect(vi.mocked(endpoints.lineup).mock.calls[before][0]).toBe(7)
+    await waitFor(() => expect(fills()).toHaveLength(before + 1))
+    expect(fills()[before][0]).toBe(7)
     expect(screen.getAllByText('EA Taktik Kodu')).toHaveLength(1)
   })
 

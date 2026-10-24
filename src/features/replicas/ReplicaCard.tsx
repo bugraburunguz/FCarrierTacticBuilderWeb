@@ -1,4 +1,5 @@
 import { Info } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Formation, ReplicaSummary } from '../../api/types'
 import { Chip } from '../../design/components/primitives'
@@ -7,7 +8,7 @@ import { APPROACH_LABEL, BUILD_UP_LABEL, CATEGORY_LABEL } from './labels'
 import { MiniPitch } from './MiniPitch'
 
 /** Liste kartı (Katalog şablonu): blur yok (`.glass-3`); takım + sezon, hoca, mini saha, build-up/hat rozetleri, kod kopyala, dikkat noktası sayısı. */
-export function ReplicaCard({ replica, formation }: { replica: ReplicaSummary; formation?: Formation }) {
+export function ReplicaCard({ replica, formation, action }: { replica: ReplicaSummary; formation?: Formation; action?: ReactNode }) {
   const attention = replica.attentionCount
   return (
     <li className="glass-3 relative flex gap-3 p-3 transition-transform hover:-translate-y-0.5">
@@ -32,6 +33,8 @@ export function ReplicaCard({ replica, formation }: { replica: ReplicaSummary; f
           <Chip title={`Hat yüksekliği ${replica.lineHeight}`}>{APPROACH_LABEL[replica.defensiveApproach]} · {replica.lineHeight}</Chip>
         </div>
         <div className="relative z-10 mt-auto flex flex-wrap items-center gap-2">
+          {/* KARIYER-UX FAZ 4b: Lab › Replikalar "Klonla → taslak" gibi gömülü kullanımın eylemi (kartın bağlantı katmanının üstünde). */}
+          {action}
           <CopyCodeButton code={replica.tacticCode} />
           {attention > 0 && (
             <Chip title="Bu taktikte dikkat edilecek yerler">
