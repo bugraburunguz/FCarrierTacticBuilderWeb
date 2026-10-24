@@ -187,12 +187,28 @@ export function suggestActions(input: ActionInput): DeskAction[] {
 
 const SEASON_JOBS = 3
 
+export interface SeasonJobs {
+  jobs: DeskAction[]
+  /** Gösterilen işle aynı türden kalanlar ("+N benzer"), öncelik sırasıyla. */
+  similar: Partial<Record<ActionKind, DeskAction[]>>
+}
+
 /**
  * "Bu dönemin 3 işi" TEK KAYNAK (KARIYER-UX FAZ 2): Ana sayfa ve Masa bu fonksiyonu ve `features/career/SeasonJobs` bileşenini kullanır.
  * `exclude`: Masa'da "Zayıf halkalar" kartında zaten gösterilen slotların FILL işi tekrar edilmez (V3-06e).
+ * FAZ 6a-D çeşitlilik: öncelik sırasıyla, aynı türden en çok bir iş; aynı türün kalanları `similar`'da. Türler azsa üçten az iş.
  */
-export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): DeskAction[] {
-  return rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId))).slice(0, limit)
+export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): SeasonJobs {
+  const jobs: DeskAction[] = []
+  const similar: SeasonJobs['similar'] = {}
+  for (const action of rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId)))) {
+    if (jobs.some((j) => j.kind === action.kind)) {
+      similar[action.kind] = [...(similar[action.kind] ?? []), action]
+    } else if (jobs.length < limit) {
+      jobs.push(action)
+    }
+  }
+  return { jobs, similar }
 }
 
 /** İşin kural kaynağı (veri katmanı etiketi): diziliş ve etiketlere dayananlar taktik kaynağından (karar ya da öneri), sözleşme/derinlik kayıttan. */

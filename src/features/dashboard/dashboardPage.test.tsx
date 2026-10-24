@@ -160,16 +160,31 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(weakCard).getByRole('link', { name: /Lab'da dene/ })).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu&slot=CM1')
   })
 
-  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; iş başına kural kaynağı etiketi', async () => {
+  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; kaynak yalnız panel başlığında ("Ana taktiğe göre"), satırlarda etiket yok (FAZ 6a-D)', async () => {
     renderPage()
     const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
     const panel = screen.getByRole('tabpanel')
     expect(panel.querySelector('section')).toBe(jobs)
     const items = await within(jobs).findAllByRole('listitem')
     expect(items.length).toBeGreaterThan(0)
-    expect(jobs.querySelector('header [data-source="decision"]')).not.toBeNull()
-    const contract = items.find((li) => li.textContent?.includes('Sözleşme: Oyuncu 4'))
-    expect(contract?.querySelector('[data-source="record"]')).not.toBeNull()
+    await waitFor(() => expect(jobs.querySelector('header [data-source="decision"]')?.textContent).toContain('Ana taktiğe göre'))
+    items.forEach((li) => expect(li.querySelector('[data-source]')).toBeNull())
+    expect(within(jobs).queryByText('Kararın')).toBeNull()
+  })
+
+  it('FAZ 6a-D: aynı türden tek iş; kalanlar "+N benzer" ile açılır', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue([
+      member(1, { wageEur: 5_000 }), member(2, { wageEur: 5_000 }), member(3, { wageEur: 5_000 }),
+      member(21, {}, { age: 19, overall: 60, potential: 80 }), member(22, {}, { age: 20, overall: 59, potential: 79 }), member(23, {}, { age: 18, overall: 58, potential: 78 }),
+    ] as never)
+    renderPage()
+    const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
+    await waitFor(() => expect(within(jobs).getAllByText('Kiralık')).toHaveLength(1))
+    const more = within(jobs).getByRole('button', { name: '+2 benzer' })
+    expect(more).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(more)
+    expect(more).toHaveAttribute('aria-expanded', 'true')
+    expect(within(jobs).getByRole('list', { name: 'Benzer işler · Kiralık' }).querySelectorAll('li')).toHaveLength(2)
   })
 
   it('tek IMPORT varsa Δ çipi hiç gösterilmez', async () => {

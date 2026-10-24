@@ -143,7 +143,7 @@ export function DashboardPage() {
       <Tabs label="Masa sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="masa" active={tab === 'masa'}>
         <div className="flex flex-col gap-3">
-          <SeasonJobs careerId={career.id} squad={players} rows={rows} tacticSource={main.source} record={record} gameDate={gameDate}
+          <SeasonJobs careerId={career.id} squad={players} rows={rows} tacticSource={main.source} gameDate={gameDate}
             pending={main.isLoading || pending || squad.isLoading} exclude={shownSlots} />
           <div className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[1100px]:grid-cols-3">
             <Panel title="Finansal sağlık" label="Finansal sağlık" source={record}>
