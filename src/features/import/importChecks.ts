@@ -25,10 +25,16 @@ const count = (n: number) => n.toLocaleString('tr-TR')
 /** Doğrulama tablosu: players / teams (tablo adı, sayı), kariyer bağlamı (NOT_IN_CAREER uyarısı), kadro kurulumu. */
 export function importChecks(summary: ImportSummary): ImportCheck[] {
   const notInCareer = (summary.warnings ?? []).includes('NOT_IN_CAREER')
+  // FAZ 6a-A: oyun tarihi ve maaş/sözleşme yalnız sunucu bildiriyorsa (eski sunucu contracts göndermez; satır uydurulmaz).
+  const careerData: ImportCheck[] = summary.contracts === undefined ? [] : [
+    { label: 'Oyun tarihi', value: summary.gameDate ? summary.gameDate.slice(0, 10).split('-').reverse().join('.') : 'yok', ok: Boolean(summary.gameDate) },
+    { label: 'Maaş / sözleşme', value: summary.contracts > 0 ? `${count(summary.contracts)} oyuncu` : 'yok', ok: summary.contracts > 0 },
+  ]
   return [
     { label: 'players', value: count(summary.players), ok: summary.players > 0 },
     { label: 'teams', value: count(summary.teams), ok: summary.teams > 0 },
     { label: 'Kariyer', value: notInCareer ? 'kariyer algılanmadı' : 'kariyer verisi', ok: !notInCareer },
+    ...careerData,
     summary.squadSynced !== undefined
       ? { label: 'Kadro', value: `${summary.guessedTeamName ?? 'Takım'} · ${summary.squadSynced} oyuncu`, ok: summary.squadSynced > 0 }
       : { label: 'Kadro', value: 'takım seçilmedi', ok: false },

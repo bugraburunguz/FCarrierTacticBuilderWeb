@@ -47,6 +47,16 @@ describe('içe aktarma hesapları (V3-07a)', () => {
     expect(importChecks(summary()).find((r) => r.label === 'Kariyer')).toMatchObject({ ok: true, value: 'kariyer verisi' })
     expect(importChecks(summary({ squadSynced: undefined })).find((r) => r.label === 'Kadro')).toMatchObject({ ok: false, value: 'takım seçilmedi' })
   })
+
+  it('FAZ 6a-A: sunucu söylüyorsa oyun tarihi ve maaş/sözleşme satırları; eksikse ✗ ve "yok"', () => {
+    const full = importChecks(summary({ gameDate: '2026-09-12', contracts: 30 }))
+    expect(full.find((r) => r.label === 'Oyun tarihi')).toMatchObject({ ok: true, value: '12.09.2026' })
+    expect(full.find((r) => r.label === 'Maaş / sözleşme')).toMatchObject({ ok: true, value: '30 oyuncu' })
+    const empty = importChecks(summary({ contracts: 0 }))
+    expect(empty.find((r) => r.label === 'Oyun tarihi')).toMatchObject({ ok: false, value: 'yok' })
+    expect(empty.find((r) => r.label === 'Maaş / sözleşme')).toMatchObject({ ok: false, value: 'yok' })
+    expect(importChecks(summary()).map((r) => r.label)).not.toContain('Maaş / sözleşme')
+  })
 })
 
 describe('Kariyer içe aktarma (v3)', () => {
@@ -75,6 +85,20 @@ describe('Kariyer içe aktarma (v3)', () => {
       'players21.620✓', 'teams841✓', 'Kariyerkariyer algılanmadı✗', 'KadroCrewe Alexandra · 27 oyuncu✓',
     ])
     expect(screen.queryByRole('progressbar')).toBeNull()
+    // FAZ 6a-A: ana menü export'unda açık uyarı ve kariyer içinden export rehberi.
+    expect(screen.getByText(/Bu export ana menüden; maaş, sözleşme ve oyun tarihi gelmez\. Kariyer içinden export al\./)).toBeInTheDocument()
+    const guide = screen.getByRole('list', { name: 'Kariyer içinden export' })
+    expect(within(guide).getAllByRole('listitem').length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('FAZ 6a-A: kariyer export\'unda maaş/sözleşme yoksa (CONTRACTS_MISSING) neyi etkilediği ve rehber', async () => {
+    vi.mocked(endpoints.importCareer).mockResolvedValue(summary({ warnings: ['CONTRACTS_MISSING'], gameDate: '2026-09-12', contracts: 0 }))
+    renderPage()
+    fireEvent.drop(screen.getByRole('button', { name: /Live Editor log dosyasını sürükle/ }), { dataTransfer: { files: [new File(['x'], 'a.log')] } })
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    expect(await screen.findByText(/maaş ve sözleşme yok/)).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Kariyer içinden export' })).toBeInTheDocument()
+    expect(screen.queryByText(/MISSINGTABLE/)).toBeNull()
   })
 
   it('PREMIUM değilse yükleme kapalı ve neden yazılı', () => {

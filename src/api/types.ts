@@ -554,6 +554,10 @@ export interface ImportSummary {
   squadSynced?: number
   skippedNoPosition?: number
   warnings?: string[]
+  /** FAZ 6a-A: export'taki oyun tarihi (ISO); yoksa alan yok. */
+  gameDate?: string
+  /** FAZ 6a-A: maaş/sözleşme/kiralık bitişi yazılan oyuncu sayısı; eski sunucu göndermez. */
+  contracts?: number
 }
 
 export interface TeamSummary {
