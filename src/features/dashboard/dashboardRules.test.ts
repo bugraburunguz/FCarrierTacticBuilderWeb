@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Career, CareerPlayer, CareerSnapshot, RoleFit } from '../../api/types'
 import { fitDisplay } from '../../lib/fitLabels'
 import type { SlotFitRow } from '../squad/useSlotFits'
-import { financeSummary, reasonText, upcomingEvents, urgentAlerts, weakLinks } from './dashboardRules'
+import { financeSummary, reasonText, upcomingEvents, urgentAlerts, weakLinks, withContracts } from './dashboardRules'
 
 const row = (slotId: string, fitLabel: RoleFit['fitLabel'], levelFit: number, reasons: string[] = []): SlotFitRow => {
   const fit = { playerId: 1, playerName: 'X', roleId: 'r', roleName: 'Rol', score: 70, levelFit, fitLabel, reasons, projectedRating: 70, outOfPosition: false, weaponChecks: [] } as unknown as RoleFit
@@ -11,6 +11,21 @@ const row = (slotId: string, fitLabel: RoleFit['fitLabel'], levelFit: number, re
 
 const member = (id: number, extra: Partial<CareerPlayer> = {}, player: object = {}): CareerPlayer =>
   ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 70, ...player }, onLoan: false, ...extra }) as CareerPlayer
+
+/** KARIYER-UX 6: birleşik uyarı — zayıf halka + sözleşme; ilk 11 + yakın sözleşme bitişi. */
+describe('birleşik uyarılar', () => {
+  it('zayıf halka kartına oyuncunun sözleşmesi ≤ 12 ay ise kalan ay eklenir; daha uzunsa, yoksa ya da oyun tarihi yoksa eklenmez', () => {
+    const cards = weakLinks([row('S1', 'WEAK', 30), row('S2', 'WEAK', 40), row('S3', 'WEAK', 50)])
+    const squad = [member(1, {}, { contractUntil: '2027-07-15' }), member(2, {}, { contractUntil: '2029-06-30' }), member(3)]
+    expect(withContracts(cards, squad, '2027-01-15').map((c) => c.contractMonths)).toEqual([6, undefined, undefined])
+    expect(withContracts(cards, squad, undefined).every((c) => c.contractMonths === undefined)).toBe(true)
+  })
+
+  it('acil sözleşme uyarısı ilk 11 oyuncusunda "· ilk 11" der', () => {
+    const squad = [member(1, {}, { contractUntil: '2027-04-01' }), member(2, {}, { contractUntil: '2027-04-01' })]
+    expect(urgentAlerts(squad, '2027-01-15', new Set([1])).map((a) => a.text)).toEqual(['Oyuncu 1 · sözleşme 2 ay · ilk 11', 'Oyuncu 2 · sözleşme 2 ay'])
+  })
+})
 
 describe('zayıf halkalar: sunucu etiketiyle seçilir', () => {
   it('WEAK/WRONG_ROLE önce, sonra AT_LEVEL; aynı grupta düşük levelFit önce; GOOD hiç girmez; en çok 3', () => {

@@ -114,8 +114,26 @@ export interface UrgentAlert {
   to: string
 }
 
-/** Acil uyarılar (oyun tarihine göre; yoksa hiç): sözleşmesi ≤ 6 ay kalan (kiralık gönderilen hariç), kiralık dönüşü ≤ 30 gün. En yakın önce. */
-export function urgentAlerts(squad: CareerPlayer[], gameDate: string | undefined): UrgentAlert[] {
+/** Zayıf halka kartında sözleşme satırının gösterildiği üst sınır (ay). */
+export const WEAK_LINK_CONTRACT_MONTHS = 12
+
+/**
+ * Birleşik uyarı (KARIYER-UX 6): zayıf halka oyuncusunun sözleşmesi ≤ 12 ay içinde bitiyorsa karta kalan ay eklenir
+ * (yerine aday aramak ile sözleşme uzatmak arasında karar). Oyun tarihi ya da sözleşme yoksa eklenmez.
+ */
+export function withContracts(cards: WeakLinkCard[], squad: CareerPlayer[], gameDate: string | undefined): (WeakLinkCard & { contractMonths?: number })[] {
+  const byId = new Map(squad.map((c) => [c.player.id, c]))
+  return cards.map((card) => {
+    const months = contractMonthsLeft(gameDate, byId.get(card.playerId)?.player.contractUntil)
+    return months !== undefined && months <= WEAK_LINK_CONTRACT_MONTHS ? { ...card, contractMonths: months } : card
+  })
+}
+
+/**
+ * Acil uyarılar (oyun tarihine göre; yoksa hiç): sözleşmesi ≤ 6 ay kalan (kiralık gönderilen hariç), kiralık dönüşü ≤ 30 gün. En yakın önce.
+ * KARIYER-UX 6: `starters` verilirse ilk 11 oyuncusunun sözleşme uyarısı "· ilk 11" der.
+ */
+export function urgentAlerts(squad: CareerPlayer[], gameDate: string | undefined, starters?: ReadonlySet<number>): UrgentAlert[] {
   if (!gameDate) {
     return []
   }
@@ -128,7 +146,7 @@ export function urgentAlerts(squad: CareerPlayer[], gameDate: string | undefined
     }
     const months = c.loanedOut ? undefined : contractMonthsLeft(gameDate, c.player.contractUntil)
     if (months !== undefined && months <= CONTRACT_MONTHS) {
-      result.push({ kind: 'CONTRACT', playerId: c.player.id, text: `${c.player.name} · sözleşme ${months} ay`, days: daysBetween(gameDate, c.player.contractUntil)!, to: deskLink.contract(c.player.id) })
+      result.push({ kind: 'CONTRACT', playerId: c.player.id, text: `${c.player.name} · sözleşme ${months} ay${starters?.has(c.player.id) ? ' · ilk 11' : ''}`, days: daysBetween(gameDate, c.player.contractUntil)!, to: deskLink.contract(c.player.id) })
     }
   })
   return result.sort((a, b) => a.days - b.days)

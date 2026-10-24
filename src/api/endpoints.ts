@@ -83,6 +83,8 @@ export interface PlayerFilters {
   q?: string
   pos?: string[]
   ps?: string[]
+  /** KARIYER-UX 6: PlayStyle+ (seviye ≥ 2) istenenler. */
+  ps_plus?: string[]
   at?: string[]
   ovr_min?: number
   ovr_max?: number

@@ -82,6 +82,14 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(screen.queryByRole('button', { name: 'Kısa listeye ekle' })).toBeNull()
   })
 
+  it('KARIYER-UX 6: Statlar sekmesinde profil radarı (ortak AttributeRadar, metin tablosuyla) öznitelik gruplarının üstünde', async () => {
+    renderPage()
+    const radar = await screen.findByRole('img', { name: /Profil radarı: Ollie Watkins/ })
+    expect(screen.getByRole('table', { name: 'Profil değerleri' })).toBeInTheDocument()
+    const order = [radar, screen.getByRole('region', { name: 'Hız' })]
+    expect(order[0].compareDocumentPosition(order[1]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('dört sekme; sekme adres çubuğunda (?sekme=), doğrudan adresle açılır', async () => {
     renderPage()
     const tabs = await screen.findAllByRole('tab')

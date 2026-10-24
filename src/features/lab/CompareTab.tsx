@@ -37,6 +37,8 @@ interface SlotFit {
   playerId?: number
   pct?: number
   label?: string
+  /** Slotun rolü (motorun çözdüğü rol adı). */
+  role?: string
 }
 
 function slotFits(data: SquadFit | undefined, lineup: Lineup): Map<string, SlotFit> {
@@ -45,7 +47,7 @@ function slotFits(data: SquadFit | undefined, lineup: Lineup): Map<string, SlotF
       return []
     }
     const display = fitDisplay(s.roleFit as RoleFit)
-    return [[s.slotId, { playerId: s.playerId, pct: display.pct, label: FIT_STATE_TEXT[display.state].label }] as const]
+    return [[s.slotId, { playerId: s.playerId, pct: display.pct, label: FIT_STATE_TEXT[display.state].label, role: s.roleName || undefined }] as const]
   }))
 }
 
@@ -105,7 +107,10 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
               const fa = mapA.get(pair.a)
               const fb = mapB.get(pair.b)
               const diff = fa?.pct !== undefined && fb?.pct !== undefined ? fb.pct - fa.pct : undefined
-              const labelText = fa?.label && fb?.label ? (fa.label === fb.label ? fa.label : `${fa.label} → ${fb.label}`) : fa?.label ?? fb?.label ?? ''
+              const fitText = fa?.label && fb?.label ? (fa.label === fb.label ? fa.label : `${fa.label} → ${fb.label}`) : fa?.label ?? fb?.label ?? ''
+              // KARIYER-UX 6: taktiksel delta — rol değiştiyse "Rol: A → B", aynıysa tek rol.
+              const roleText = fa?.role && fb?.role ? `Rol: ${fa.role === fb.role ? fa.role : `${fa.role} → ${fb.role}`}` : (fa?.role ?? fb?.role) ? `Rol: ${fa?.role ?? fb?.role}` : ''
+              const labelText = [roleText, fitText].filter(Boolean).join(' · ')
               const diffText = diff === undefined ? 'karşılaştırılamaz' : diff === 0 ? 'aynı' : `${signed(diff)} · ${trend(diff)}`
               return (
                 <li key={slotId} aria-label={`${slotId}: A ${cell(fa)}, B ${cell(fb)}, fark ${diffText}. ${labelText}`}

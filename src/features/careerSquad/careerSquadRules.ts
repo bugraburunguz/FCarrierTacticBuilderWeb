@@ -25,26 +25,63 @@ export function squadStats(squad: CareerPlayer[]): SquadStats {
   }
 }
 
+/** Derinlik matrisi katmanı: ilk 11 (ana taktik ya da başlangıç önerisi), yedek, genç (≤ 21, ilk 11 dışı). */
+export type DepthTier = 'starter' | 'backup' | 'youth'
+/** Aciliyet: eksik (asgari derinlik altı) > yedek yok > yalnız genç yedek > yeterli. */
+export type DepthUrgency = 'short' | 'no-backup' | 'youth-only' | 'ok'
+export const YOUTH_MAX_AGE = 21
+
 export interface GroupRoster {
   group: PositionGroup
   label: string
   have: number
   need: number
   short: number
-  players: { id: number; name: string; position: string; overall: number; age?: number }[]
+  urgency: DepthUrgency
+  players: { id: number; name: string; position: string; overall: number; age?: number; tier: DepthTier }[]
 }
 
-/** Derinlik: mevki grubu başına eldeki/gereken (deskRules.depthRows, Masa derinlik işiyle aynı eşik) ve oyuncular, reytinge göre. */
-export function groupRoster(squad: CareerPlayer[]): GroupRoster[] {
+/**
+ * Derinlik: mevki grubu başına eldeki/gereken (deskRules.depthRows, Masa derinlik işiyle aynı eşik) ve oyuncular, reytinge göre.
+ * KARIYER-UX 6: `starters` verilirse oyuncular ilk 11 / yedek / genç olarak ayrılır ve aciliyet yedek durumunu da hesaba katar;
+ * verilmezse (ilk 11 bilinmiyor) herkes yedek ya da genç, aciliyet yalnız eksik/yeterli.
+ */
+export function groupRoster(squad: CareerPlayer[], starters?: ReadonlySet<number>): GroupRoster[] {
   const active = squad.filter((c) => !c.loanedOut)
-  return depthRows(squad).map((row) => ({
-    ...row,
-    label: GROUP_LABEL[row.group],
-    players: active
+  const tierOf = (c: CareerPlayer): DepthTier => (starters?.has(c.player.id) ? 'starter' : c.player.age !== undefined && c.player.age <= YOUTH_MAX_AGE ? 'youth' : 'backup')
+  return depthRows(squad).map((row) => {
+    const players = active
       .filter((c) => groupOf(c.player.positions[0]) === row.group)
       .sort((a, b) => b.player.overall - a.player.overall)
-      .map((c) => ({ id: c.player.id, name: c.player.name, position: c.player.positions[0], overall: c.player.overall, age: c.player.age })),
-  }))
+      .map((c) => ({ id: c.player.id, name: c.player.name, position: c.player.positions[0], overall: c.player.overall, age: c.player.age, tier: tierOf(c) }))
+    const backups = players.filter((p) => p.tier === 'backup').length
+    const youth = players.filter((p) => p.tier === 'youth').length
+    const urgency: DepthUrgency = row.short > 0 ? 'short'
+      : starters === undefined || backups > 0 ? 'ok'
+        : youth > 0 ? 'youth-only' : 'no-backup'
+    return { ...row, label: GROUP_LABEL[row.group], urgency, players }
+  })
+}
+
+export interface AgeBand {
+  key: 'young' | 'prime' | 'veteran'
+  label: string
+  range: string
+  count: number
+  /** Yaşı bilinen aktif oyunculara oranı (0–1). */
+  share: number
+}
+
+/** Yaş bantları (KARIYER-UX 6, gençleştirme stratejisi): genç ≤ 21, prime 22–29, tecrübeli 30+; kiralık gönderilen ve yaşı bilinmeyen hariç. */
+export function ageBands(squad: CareerPlayer[]): AgeBand[] {
+  const ages = squad.filter((c) => !c.loanedOut).flatMap((c) => (c.player.age ? [c.player.age] : []))
+  const bands: [AgeBand['key'], string, string, number, number][] = [
+    ['young', 'Genç', `≤${YOUTH_MAX_AGE}`, 0, YOUTH_MAX_AGE], ['prime', 'Prime', '22–29', 22, 29], ['veteran', 'Tecrübeli', '30+', 30, 99],
+  ]
+  return bands.map(([key, label, range, lo, hi]) => {
+    const count = ages.filter((a) => a >= lo && a <= hi).length
+    return { key, label, range, count, share: ages.length === 0 ? 0 : count / ages.length }
+  })
 }
 
 export interface ContractLane {

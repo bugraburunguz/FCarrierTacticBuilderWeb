@@ -171,6 +171,20 @@ describe('kariyer oyuncu listesi (v3 Katalog)', () => {
     await waitFor(() => expect(lastQuery().attrMin).toEqual({ Finishing: 70 }))
   })
 
+  it('KARIYER-UX 6: PlayStyle süzgeci — seç, PS+ yap, kaldır; sunucuya ps / ps_plus, adres çubuğunda', async () => {
+    renderPage()
+    await screen.findByText(/2 oyuncu/)
+    const group = screen.getByText('PlayStyle').closest('details')!
+    fireEvent.change(within(group).getByRole('combobox', { name: 'PlayStyle ekle' }), { target: { value: 'FinesseShot' } })
+    await waitFor(() => expect(lastQuery()).toMatchObject({ ps: ['FinesseShot'], ps_plus: undefined }))
+    fireEvent.click(within(group).getByRole('radio', { name: 'PS+' }))
+    await waitFor(() => expect(lastQuery()).toMatchObject({ ps: undefined, ps_plus: ['FinesseShot'] }))
+    fireEvent.click(within(group).getByRole('button', { name: 'Finesse Shot süzgecini kaldır' }))
+    // Süzgeçsiz sorgu önbellekte (ilk yükleme): yeni istek gitmez; satır kalkar ve seçenek listeye döner.
+    await waitFor(() => expect(within(group).queryByRole('radio', { name: 'PS+' })).toBeNull())
+    expect(within(group).getByRole('option', { name: 'Finesse Shot' })).toBeInTheDocument()
+  })
+
   it('boş sonuçta süzgeçleri temizle önerilir', async () => {
     vi.mocked(endpoints.players).mockResolvedValue(page([]))
     renderPage('/players?kova=HAYAL')

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, ArrowRightLeft, FlaskConical, HeartPulse, Repeat, Search } from 'lucide-react'
+import { AlertTriangle, ArrowRightLeft, CalendarClock, FlaskConical, HeartPulse, Repeat, Search } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
@@ -17,7 +17,7 @@ import { useMainTacticFits } from '../career/useMainTacticFits'
 import { useTabParam } from '../player/playerPage'
 import { teamFitPct } from '../squad/useSlotFits'
 import { CareerSettings } from './CareerSettings'
-import { financeSummary, upcomingEvents, urgentAlerts, weakLinks } from './dashboardRules'
+import { financeSummary, upcomingEvents, urgentAlerts, weakLinks, withContracts } from './dashboardRules'
 
 const TABS = [
   { id: 'masa', label: 'Masa' },
@@ -97,9 +97,11 @@ export function DashboardPage() {
   const players = useMemo(() => squad.data ?? [], [squad.data])
   const gameDate = career?.gameDate ?? facets.data?.gameDate
   const isMain = main.source?.kind === 'decision'
-  const weakest = useMemo(() => (isMain ? weakLinks(rows) : []), [isMain, rows])
+  // KARIYER-UX 6: birleşik uyarılar — zayıf halka kartında yakın sözleşme bitişi, acil sözleşme uyarısında ilk 11 bilgisi.
+  const weakest = useMemo(() => (isMain ? withContracts(weakLinks(rows), players, gameDate) : []), [isMain, rows, players, gameDate])
   const shownSlots = useMemo(() => new Set(weakest.map((w) => w.slotId)), [weakest])
-  const alerts = useMemo(() => urgentAlerts(players, gameDate), [players, gameDate])
+  const starters = useMemo(() => (isMain ? new Set(rows.map((r) => r.playerId)) : undefined), [isMain, rows])
+  const alerts = useMemo(() => urgentAlerts(players, gameDate, starters), [players, gameDate, starters])
   const upcoming = useMemo(() => (career ? upcomingEvents(career, players, gameDate) : []), [career, players, gameDate])
 
   if (careers.isLoading) {
@@ -208,6 +210,11 @@ export function DashboardPage() {
                     </span>
                     <span className="text-sm font-semibold">{w.labelText}</span>
                     {w.reason && <span className="text-sm text-ink-2">{w.reason}</span>}
+                    {w.contractMonths !== undefined && (
+                      <Link to={deskLink.contract(w.playerId)} className="inline-flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline">
+                        <CalendarClock size={14} aria-hidden="true" />Sözleşmesi {w.contractMonths} ay içinde bitiyor
+                      </Link>
+                    )}
                     <span className="mt-auto flex flex-wrap gap-2">
                       {/* WRONG_ROLE: birincil "Rolü değiştir" (Lab'da ana taktikten yeni taslak, slot seçili), ikincil aday. WEAK: birincil aday, ikincil "Lab'da dene". */}
                       {w.primary === 'ROLE' && (
