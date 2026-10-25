@@ -1,0 +1,294 @@
+{
+  "career": 424,
+  "empty": 425,
+  "report": [
+    {
+      "shot": "altyapi-dark-375",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-panel-dark-375",
+      "path": "/career/academy/28241",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bulunamadi-dark-375",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bos-dark-375",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "gelisim-dark-375",
+      "path": "/career/growth",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "oyuncu-gelisim-dark-375",
+      "path": "/players/10325?sekme=gelisim",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-light-375",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-panel-light-375",
+      "path": "/career/academy/28241",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bulunamadi-light-375",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bos-light-375",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "gelisim-light-375",
+      "path": "/career/growth",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "oyuncu-gelisim-light-375",
+      "path": "/players/10325?sekme=gelisim",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-dark-768",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-panel-dark-768",
+      "path": "/career/academy/28241",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bulunamadi-dark-768",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bos-dark-768",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "gelisim-dark-768",
+      "path": "/career/growth",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "oyuncu-gelisim-dark-768",
+      "path": "/players/10325?sekme=gelisim",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-light-768",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-panel-light-768",
+      "path": "/career/academy/28241",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bulunamadi-light-768",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bos-light-768",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "gelisim-light-768",
+      "path": "/career/growth",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "oyuncu-gelisim-light-768",
+      "path": "/players/10325?sekme=gelisim",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-dark-1280",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-panel-dark-1280",
+      "path": "/career/academy?oyuncu=28241",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bulunamadi-dark-1280",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bos-dark-1280",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "gelisim-dark-1280",
+      "path": "/career/growth",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "oyuncu-gelisim-dark-1280",
+      "path": "/players/10325?sekme=gelisim",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-light-1280",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-panel-light-1280",
+      "path": "/career/academy?oyuncu=28241",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bulunamadi-light-1280",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "altyapi-bos-light-1280",
+      "path": "/career/academy",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "gelisim-light-1280",
+      "path": "/career/growth",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "oyuncu-gelisim-light-1280",
+      "path": "/players/10325?sekme=gelisim",
+      "hiddenLeak": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    }
+  ]
+}

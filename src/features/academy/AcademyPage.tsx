@@ -21,6 +21,7 @@ function HighlightCard({ card, onOpen }: { card: Highlight; onOpen: (id: number)
   return (
     <article className="glass-3 flex min-w-0 flex-1 flex-col gap-1 rounded-[var(--radius-sm)] p-3">
       <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-2">{title}</h3>
+
       {card.kind === 'PLAN_NEEDED' ? (
         <a href="#oyuncular" className="text-sm font-semibold text-accent underline-offset-2 hover:underline">{card.text} → öneriye bak</a>
       ) : (
@@ -56,8 +57,12 @@ function Body({ academy, careerId }: { academy: Academy; careerId: number }) {
     <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         {cards.length > 0 && (
-          <section aria-label="Öne çıkanlar" className="flex flex-col gap-2 min-[640px]:flex-row">
-            {cards.map((c) => <HighlightCard key={c.kind} card={c} onOpen={open} />)}
+          <section aria-labelledby="one-cikanlar" className="flex flex-col gap-2">
+            {/* Başlık sırası h1 → h2 → h3 (kart başlıkları h3). */}
+            <h2 id="one-cikanlar" className="sr-only">Öne çıkanlar</h2>
+            <div className="flex flex-col gap-2 min-[640px]:flex-row">
+              {cards.map((c) => <HighlightCard key={c.kind} card={c} onOpen={open} />)}
+            </div>
           </section>
         )}
         <Panel title="Oyuncular" actions={(

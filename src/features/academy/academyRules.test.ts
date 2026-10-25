@@ -32,6 +32,9 @@ describe('academyRules', () => {
     const ranged = highlights([p(1, { potential: null, potentialRange: '70–74' }), p(2, { potential: null, potentialRange: '80–84' })])
     expect(ranged.find((c) => c.kind === 'TOP_POTENTIAL')).toMatchObject({ player: { playerId: 2 }, text: 'POT 80–84' })
     expect(highlights([p(1, { potential: null })]).some((c) => c.kind === 'TOP_POTENTIAL')).toBe(false)
+    // Aynı bantta gelen sıra (gerçek POT) kartı belirlemez: OVR, sonra ad.
+    const tie = highlights([p(1, { name: 'Zeki', potential: null, potentialRange: '80–84', overall: 50 }), p(2, { name: 'Ali', potential: null, potentialRange: '80–84', overall: 50 })])
+    expect(tie.find((c) => c.kind === 'TOP_POTENTIAL')).toMatchObject({ player: { name: 'Ali' } })
   })
 
   it('Plan seçilmeli: Dengeli dışı plan önerilen oyuncu sayısı; hepsi Dengeli ya da plansızsa kart yok', () => {

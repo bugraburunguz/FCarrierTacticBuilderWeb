@@ -70,7 +70,9 @@ export function highlights(players: readonly AcademyPlayer[]): Highlight[] {
     const text = backupStrength === undefined || backupStrength === null ? `${position} için yedek yok; 1 sezonda yer bulur` : `1 sezon sonra ${position} yedeğini geçer`
     cards.push({ kind: 'READY', player: ready, text, estimated: true })
   }
-  const top = players.filter((p) => potentialKey(p) >= 0).sort((a, b) => potentialKey(b) - potentialKey(a))[0]
+  // Eşitlikte OVR, sonra ad: aralık modunda gelen sıra (bant içi gerçek POT) kartı belirlemez.
+  const top = players.filter((p) => potentialKey(p) >= 0)
+    .sort((a, b) => potentialKey(b) - potentialKey(a) || (b.overall ?? 0) - (a.overall ?? 0) || a.name.localeCompare(b.name, 'tr'))[0]
   if (top) {
     cards.push({ kind: 'TOP_POTENTIAL', player: top, text: `POT ${potText(top)}` })
   }

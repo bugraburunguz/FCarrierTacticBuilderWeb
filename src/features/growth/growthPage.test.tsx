@@ -94,6 +94,12 @@ describe('Gelişim (sade)', () => {
     expect(within(panel).getByRole('list', { name: 'Plan karşılaştırması' })).toBeInTheDocument()
   })
 
+  it('Masa "Süre ver ya da kirala" bağlantısı (?oyuncu=) plan listesinde olmayan kadro oyuncusu için de paneli açar', async () => {
+    renderPage('/career/growth?oyuncu=3')
+    expect(await screen.findByRole('complementary', { name: 'Oyuncu 3' })).toBeInTheDocument()
+    expect(endpoints.youthDetail).toHaveBeenCalledWith(1, 3)
+  })
+
   it('mobilde satır ayrı sayfayı açar, geri dönüş Gelişim', async () => {
     mobile.value = true
     renderPage()

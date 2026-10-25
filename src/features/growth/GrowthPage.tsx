@@ -58,7 +58,9 @@ export function GrowthPage() {
     const { risers, fallers } = movers((diff.data?.rows ?? []).filter((r) => members.has(r.playerId)))
     return [...risers, ...fallers]
   }, [diff.data, members])
-  const selected = youth.data?.find((p) => p.playerId === selectedId)
+  // Masa'nın "Süre ver ya da kirala" bağlantısı plan listesinde olmayan kadro oyuncusunu da açar (panel ucu kadro oyuncusu için çalışır).
+  const selected = selectedId === undefined ? undefined
+    : youth.data?.find((p) => p.playerId === selectedId) ?? (members.has(selectedId) ? { playerId: selectedId, name: members.get(selectedId)!.name } : undefined)
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />

@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useId, type ReactNode } from 'react'
-import { ErrorState, Skeleton, SourceTag } from '../../design/components/primitives'
+import { EmptyState, ErrorState, Skeleton, SourceTag } from '../../design/components/primitives'
 import { PlanComparison } from './PlanComparison'
 import { teamText, youthDetailQuery } from './youthDetail'
+
+const NOT_FOUND = 404
 
 function Block({ title, children }: { title: string; children: ReactNode }) {
   const id = useId()
@@ -22,6 +24,9 @@ export function YouthDetailBody({ careerId, playerId }: { careerId: number; play
   const detail = useQuery(youthDetailQuery(careerId, playerId))
   if (detail.isLoading) {
     return <Skeleton className="h-72" />
+  }
+  if (detail.isError && (detail.error as { status?: number }).status === NOT_FOUND) {
+    return <EmptyState>Bu oyuncu altyapıda ya da kadroda değil.</EmptyState>
   }
   if (detail.isError || !detail.data) {
     return <ErrorState message="Oyuncu önerisi yüklenemedi." onRetry={() => detail.refetch()} />

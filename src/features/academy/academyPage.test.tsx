@@ -145,6 +145,19 @@ describe('AcademyPage', () => {
     expect(await screen.findByRole('heading', { name: 'Ne yapmalıyım?' })).toBeInTheDocument()
   })
 
+  it('mobil oyuncu sayfası: kapsam dışı oyuncu (404) kalıcı boş durum, yeniden dene yok', async () => {
+    vi.mocked(endpoints.youthDetail).mockRejectedValue(Object.assign(new Error('yok'), { status: 404 }))
+    renderAt('/career/academy/999')
+    expect(await screen.findByText('Bu oyuncu altyapıda ya da kadroda değil.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Tekrar dene/ })).toBeNull()
+  })
+
+  it('başlık sırası: Öne çıkanlar ve Oyuncular h2', async () => {
+    renderAt()
+    expect(await screen.findByRole('heading', { level: 2, name: 'Öne çıkanlar' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Oyuncular' })).toBeInTheDocument()
+  })
+
   it('aralık modu: POT bant olarak', async () => {
     vi.mocked(endpoints.academy).mockResolvedValue({ ...ACADEMY, players: [row(50, { name: 'Bantlı', potential: null, potentialRange: '70–74' })] })
     renderAt()
