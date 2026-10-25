@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { FormationSlot, Role } from '../api/types'
+import type { FormationSlot, Role, RoleAlternative } from '../api/types'
 import { eaRoleKey } from './eaRoles'
 import { firstFocus, ovrBand, rankRoleGroups, remapAssignments, roleGroups, swapSlots } from './squadBuilder'
 
@@ -70,5 +70,8 @@ describe('squad builder yardımcıları', () => {
     expect(ranked[0].options.map((o) => o.roleId)).toEqual(['if_a', 'if_b'])
     expect(ranked[1].options.map((o) => o.roleId)).toEqual(['w_a', 'w_b'])
     expect(rankRoleGroups(groups, undefined)).toBe(groups)
+    // İnceleme: normsuz rol (yalnız Güç, mutlak ölçek) oturmalı rollerin önüne geçmez.
+    const withUnnormed = new Map<string, RoleAlternative>([...fits, ['wp_a', { roleId: 'wp_a', roleName: 'WP', currentFit: 90, levelFit: null }]])
+    expect(rankRoleGroups(groups, withUnnormed).map((g) => g.base)).toEqual(['Inside Forward', 'Winger', 'Wide Playmaker'])
   })
 })

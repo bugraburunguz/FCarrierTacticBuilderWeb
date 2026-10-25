@@ -71,5 +71,14 @@ export function useTacticRisks({ careerId, setup, tactic, assigned }: TacticRisk
       key: `${f.code}-${f.instance.side ?? ''}`, title: f.title, high: f.severity === 'RISK', detail: f.text, advice: f.recommendation?.text,
     })),
   ], [check.data, analysis.data])
-  return { risks, loading: check.isLoading, error: check.isError, ready: check.isSuccess }
+  // İnceleme: iki kaynak birlikte — analiz yüklenirken ya da alınamadıyken "risk yok" denmez (analiz kovası 60/dk, /fit/lineup ile ortak).
+  const analysisAsked = settledRequest !== ''
+  return {
+    risks,
+    loading: check.isLoading || (analysisAsked && analysis.isLoading),
+    error: check.isError,
+    /** Diziliş kuralları alınamadı: liste yalnız kurulum kontrollerinden. */
+    partial: analysisAsked && analysis.isError,
+    ready: check.isSuccess && (!analysisAsked || analysis.isSuccess),
+  }
 }

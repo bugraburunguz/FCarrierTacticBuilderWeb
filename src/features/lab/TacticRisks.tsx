@@ -5,7 +5,7 @@ import { useTacticRisks, type TacticRiskInput } from './useTacticRisks'
 /** Lab › "Taktik riskleri": useTacticRisks listesi (Masa sayısıyla aynı); her risk başlık, kanıt ve öneriyle. */
 export function TacticRisks(props: TacticRiskInput) {
   const { careerId, setup } = props
-  const { risks, loading, error } = useTacticRisks(props)
+  const { risks, loading, error, partial } = useTacticRisks(props)
   if (careerId === undefined || !setup) {
     return null
   }
@@ -15,7 +15,8 @@ export function TacticRisks(props: TacticRiskInput) {
         <h4 className="text-sm font-semibold">Taktik riskleri</h4>
         <SourceTag source={{ kind: 'draft' }} />
       </header>
-      {loading ? <p className="text-xs text-ink-2">Kontrol ediliyor…</p> : error ? <p className="text-xs text-ink-2">Riskler alınamadı.</p> : risks.length === 0 ? (
+      {partial && <p role="status" className="text-xs text-warn">Diziliş kuralları alınamadı; yalnız kurulum kontrolleri gösteriliyor.</p>}
+      {loading ? <p className="text-xs text-ink-2">Kontrol ediliyor…</p> : error ? <p className="text-xs text-ink-2">Riskler alınamadı.</p> : risks.length === 0 ? (partial ? null :
         <p className="text-xs text-ink-2">Belirgin risk yok.</p>
       ) : (
         <ul className="flex flex-col gap-2">

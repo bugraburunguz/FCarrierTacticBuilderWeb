@@ -18,6 +18,8 @@ import { LabBuilder } from './LabBuilder'
 import { cloneReplicaToDraft } from './labSources'
 import { WizardTab } from './WizardTab'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { eaRoleKey, useEaRoles } from '../../lib/eaRoles'
+import { roleBaseName } from '../../lib/squadBuilder'
 
 /** Ana taktikten (yoksa başlangıç önerisinden) yeni taslak; sınırda labStore mesajı döner. */
 function createFrom(careerId: number, active: ActiveTactic | undefined, role?: { slotId: string; roleId: string }): { id?: string; message?: string } {
@@ -69,14 +71,21 @@ export function TacticsLabPage() {
   const main = active?.main
   const [message, setMessage] = useState<string>()
   const wantedSlot = params.get('slot') ?? undefined
-  const wantedRole = params.get('rol') ?? undefined
+  const requestedRole = params.get('rol') ?? undefined
+  // ?rol= yalnız katalogda olan ve oyunda (EA listesi) seçilebilen bir rolse uygulanır; liste gelene kadar beklenir, alınamazsa yok sayılır.
+  const eaRoles = useEaRoles()
+  const roleCatalog = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000, enabled: requestedRole !== undefined })
+  const roleCheckPending = requestedRole !== undefined && (eaRoles.status === 'loading' || roleCatalog.isLoading)
+  const catalogRole = roleCatalog.data?.find((r) => r.id === requestedRole)
+  const wantedRole = catalogRole && eaRoles.allowed && catalogRole.positions.some((p) => eaRoles.allowed!.has(eaRoleKey(p, roleBaseName(catalogRole), catalogRole.focus)))
+    ? requestedRole : undefined
   const [openSlot, setOpenSlot] = useState<string>()
   const consumed = useRef<string | undefined>(undefined)
 
   // ?slot= : ana taktikten (temiz bir ana taktik taslağı yoksa) yeni taslak açılır; slot, yeni taslağın kurucusu bağlanınca seçilir
   // (openSlot taslak açılışıyla aynı geçişte yazılır, yoksa kurucu eski taslakta slot seçebilir). Parametre adresten düşer.
   useEffect(() => {
-    if (!wantedSlot || id === undefined || isLoading || consumed.current === wantedSlot) {
+    if (!wantedSlot || id === undefined || isLoading || roleCheckPending || consumed.current === wantedSlot) {
       return
     }
     consumed.current = wantedSlot
@@ -90,7 +99,7 @@ export function TacticsLabPage() {
     next.delete('slot')
     next.delete('rol')
     setParams(next, { replace: true })
-  }, [wantedSlot, wantedRole, id, isLoading, draft, active, params, setParams])
+  }, [wantedSlot, wantedRole, roleCheckPending, id, isLoading, draft, active, params, setParams])
 
   const onNew = () => (id === undefined ? undefined : createFrom(id, active).message)
   const toBuilder = () => {

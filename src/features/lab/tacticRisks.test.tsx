@@ -34,6 +34,15 @@ describe('TacticRisks', () => {
     expect(endpoints.setupCheck).toHaveBeenCalledWith({ careerId: 7, buildUp: 'Short', depth: 91 })
   })
 
+  it('İnceleme: diziliş kuralları alınamazsa "risk yok" denmez; kurulum riskleri yine listelenir ve eksik kısım söylenir', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([] as never)
+    vi.mocked(endpoints.tacticAnalysis).mockRejectedValue(new Error('429'))
+    const tactic = { formation: '4-3-3', slots: [] }
+    render(<TacticRisks careerId={7} setup={{ buildUp: 'Balanced', depth: 50 }} tactic={tactic} assigned={{}} />, { wrapper: wrap(client()) })
+    expect(await screen.findByText('Diziliş kuralları alınamadı; yalnız kurulum kontrolleri gösteriliyor.')).toBeInTheDocument()
+    expect(screen.queryByText('Belirgin risk yok.')).toBeNull()
+  })
+
   it('risk yoksa "Belirgin risk yok"', async () => {
     vi.mocked(endpoints.setupCheck).mockResolvedValue([{ title: 'Orta blok: savunma okuması', status: 'GREEN', detail: 'x', advice: 'y', players: [] }] as never)
     render(<TacticRisks careerId={7} setup={{ buildUp: 'Balanced', depth: 50 }} />, { wrapper: wrap(client()) })

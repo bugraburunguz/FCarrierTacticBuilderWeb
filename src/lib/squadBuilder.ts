@@ -39,8 +39,12 @@ export function roleGroups(roles: Role[], position: string, allowed: Set<string>
   return [...groups.entries()].map(([base, options]) => ({ base, options }))
 }
 
-/** Bir rol alternatifinin sıralama ölçüsü: Rol oturması, norm yoksa Güç. */
-export const roleFitBasis = (fit: Pick<RoleAlternative, 'currentFit' | 'levelFit'>): number => fit.levelFit ?? fit.currentFit
+/** Normsuz rolü (yalnız Güç, mutlak ölçek) oturmalı rollerin (göreli yüzdelik, 0-100) arkasına iten kaydırma. */
+const UNNORMED_OFFSET = 1000
+
+/** Bir rol alternatifinin sıralama ölçüsü: Rol oturması; norm yoksa Güç, ama hep oturmalı rollerin arkasında (iki ölçek karşılaştırılmaz). */
+export const roleFitBasis = (fit: Pick<RoleAlternative, 'currentFit' | 'levelFit'>): number =>
+  (fit.levelFit === undefined || fit.levelFit === null ? fit.currentFit - UNNORMED_OFFSET : fit.levelFit)
 
 /**
  * FIT-2 madde 6: rol seçici bu oyuncuya göre — odaklar ve gruplar en uygun önce (grubun en iyi odağı). Değeri bilinmeyen rol sonda, kendi

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { RoleAlternative } from '../../api/types'
 import { alternativeFitText } from '../../lib/fitLabels'
 import { firstFocus, rankRoleGroups, type RoleGroup } from '../../lib/squadBuilder'
@@ -26,7 +26,7 @@ export function RoleFocusModal(props: Props) {
 }
 
 export function RoleFocusPanel({ groups: given, lock, currentRoleId, onApply, onClose, fits }: Props) {
-  const groups = useMemo(() => rankRoleGroups(given, fits), [given, fits])
+  const groups = rankRoleGroups(given, fits)
   const fitOf = (roleId: string) => fits?.get(roleId)
   const initial = groups.find((g) => g.options.some((o) => o.roleId === currentRoleId)) ?? groups[0]
   const [base, setBase] = useState(initial?.base)
@@ -73,7 +73,8 @@ export function RoleFocusPanel({ groups: given, lock, currentRoleId, onApply, on
             className={`rounded-md border px-2.5 py-1 text-[11.5px] ${o.roleId === roleId ? 'border-accent text-accent' : 'border-line text-muted'}`}
           >
             {o.focus}
-            {fitOf(o.roleId) && <span className="text-muted"> · %{Math.round(fitOf(o.roleId)!.levelFit ?? fitOf(o.roleId)!.currentFit)}</span>}
+            {/* Oturma biliniyorsa yalnız yüzde; norm yoksa sayının adı (Güç) yazılır, iki ölçek karışmasın. */}
+            {fitOf(o.roleId) && <span className="text-muted"> · {fitOf(o.roleId)!.levelFit == null ? alternativeFitText(fitOf(o.roleId)!) : `%${Math.round(fitOf(o.roleId)!.levelFit!)}`}</span>}
           </button>
         ))}
       </div>

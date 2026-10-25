@@ -199,6 +199,8 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
   })
 
   it('FIT-2 madde 6: ?slot=&rol= (Masa "Rolü değiştir") temiz taslak olsa da yeni taslak açar; önerilen rol slota uygulanmış, slot seçili gelir', async () => {
+    endpoints.roles.mockResolvedValue([{ id: 'playmaker_attack', baseRole: 'Playmaker', name: 'Playmaker (Attack)', positions: ['CM'], focus: 'Attack', weapons: [], accelerate: [], movementTags: [] }])
+    endpoints.eaRoles.mockResolvedValue([{ position: 'CM', baseRole: 'Playmaker', focus: 'Attack' }])
     draft('Temiz ana', false)
     labStore.patch(7, labStore.get(7).drafts[0].id, (d) => ({ origin: { kind: 'main', ref: '2' }, dirty: false, tactic: d.tactic }))
     renderAt('/career/tactics-lab?sekme=kurucu&slot=LCM&rol=playmaker_attack')
@@ -208,6 +210,16 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(created.name).toContain('LCM')
     expect(await screen.findByText(/^CM — /)).toBeInTheDocument()
     await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/slot=|rol=/))
+  })
+
+  it('İnceleme: ?rol= oyunda olmayan ya da bilinmeyen rolse uygulanmaz; yalnız slot seçili ana taktik taslağı açılır', async () => {
+    endpoints.roles.mockResolvedValue([{ id: 'playmaker_attack', baseRole: 'Playmaker', name: 'Playmaker (Attack)', positions: ['CM'], focus: 'Attack', weapons: [], accelerate: [], movementTags: [] }])
+    endpoints.eaRoles.mockResolvedValue([{ position: 'CM', baseRole: 'Playmaker', focus: 'Attack' }])
+    renderAt('/career/tactics-lab?sekme=kurucu&slot=LCM&rol=uydurma_rol')
+    await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(1))
+    expect(labStore.get(7).drafts[0].tactic.slots.LCM?.roleId).not.toBe('uydurma_rol')
+    expect(labStore.get(7).drafts[0].name).not.toContain('rolü')
+    expect(await screen.findByText(/^CM — /)).toBeInTheDocument()
   })
 
   it('FIT-2 madde 6: "Daha uygun rol" rozeti (oyunda olan rol) tek dokunuşla taslağa uygulanır; rol seçici bu oyuncunun oturmasıyla', async () => {
