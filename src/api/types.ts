@@ -667,6 +667,41 @@ export interface DevelopmentRecommendation {
   reason?: 'CLEAR_TARGET' | 'NO_CLEAR_TARGET' | 'SMALL_GAIN' | 'NO_OPTIONS'
 }
 
+/**
+ * ACADEMY: GET /careers/{id}/academy. career_youthplayers alanlarının anlamı doğrulanmadı (youthVerified false); arayüz yalnız monthsInSquad'ı gösterir
+ * (karar 3). found false iken teamId/name dolu olabilir: takım bulundu, export'ta görünen oyuncusu yok.
+ */
+export interface AcademyPlayer {
+  playerId: number
+  name: string
+  age?: number | null
+  positions: string[]
+  overall?: number | null
+  /** Aralık modunda (SCOUT_RANGE) null. */
+  potential?: number | null
+  potentialRange?: string | null
+  monthsInSquad?: number | null
+  playerTier?: number | null
+  potentialVariance?: number | null
+  swingLowPotential?: number | null
+  youthVerified: boolean
+  /** FIT-3 en iyi mevki ve kanatta taraf gerekçesi. */
+  bestPosition?: string | null
+  sideReason?: string | null
+  /** FIT-3 gelişim önericisi (tahmin); kapsam dışıysa null. */
+  plan?: { name: string; text: string; balanced: boolean } | null
+  /** "A takıma al": 1 sezon sonraki tahmini Güç slotun yedeğini geçiyorsa (ya da yedek yoksa). Yalnız öneri; uygulama oyunda. */
+  promote?: { position: string; strength1: number; backupName?: string | null; backupStrength?: number | null; text: string } | null
+}
+
+export interface Academy {
+  found: boolean
+  teamId?: number | null
+  name?: string | null
+  message?: string | null
+  players: AcademyPlayer[]
+}
+
 export interface DevelopmentWeakSlot {
   slotId: string
   position: string

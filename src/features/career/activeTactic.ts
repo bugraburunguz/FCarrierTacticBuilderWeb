@@ -104,6 +104,8 @@ export function useMakeMainTactic(careerId: number) {
       // FAZ 4a: ana taktik varken öneri gösterilmez ama önbellekte eski kalmasın; Masa/Kadro rol uyumu yeni dizilişten yeniden hesaplanır.
       void client.invalidateQueries({ queryKey: starterTacticKey(careerId) })
       void client.invalidateQueries({ queryKey: ['slot-fit'] })
+      // ACADEMY-b: "A takıma al" ve plan hedefleri ana taktiğin mevkilerinden.
+      void client.invalidateQueries({ queryKey: ['academy', careerId] })
     },
   })
 }

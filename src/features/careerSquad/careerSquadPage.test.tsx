@@ -31,6 +31,9 @@ vi.mock('../../api/endpoints', () => ({
   endpoints: {
     careers: vi.fn(), squad: vi.fn(), events: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), lineup: vi.fn(),
     positionAdvice: vi.fn(() => Promise.resolve([])),
+    academy: vi.fn(() => Promise.resolve({ found: true, teamId: 9, name: 'Kulüp Youth Academy', message: null, players: [{ playerId: 50, name: 'Genç Altyapı',
+      age: 16, positions: ['ST'], overall: 50, potential: 70, potentialRange: null, monthsInSquad: 4, playerTier: 1, potentialVariance: 3, swingLowPotential: 0,
+      youthVerified: false, bestPosition: 'ST', sideReason: null, plan: null, promote: null }] })),
     developmentRecommendations: vi.fn(() => Promise.resolve([{ playerId: 4, playerName: 'Genç 4', age: 19, overall: 60, balanced: false, options: [], estimated: true,
       recommended: { gain: 3.2 }, text: 'Genç 4 · CM Box to Box planı → 2 sezonda CM gücü 70 (Dengeli: 67)' }])),
     formations: vi.fn(() => Promise.resolve([f442])),
@@ -92,11 +95,18 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.queryByText('Kadro boş.')).toBeNull()
   })
 
-  it('sekmeler: Diziliş · Liste · Derinlik · Hareketler; Kariyer sekmesi yok', async () => {
+  it('sekmeler: Diziliş · Liste · Derinlik · Altyapı · Hareketler; Kariyer sekmesi yok', async () => {
     renderAt()
     expect(await screen.findByRole('tab', { name: 'Diziliş', selected: true })).toBeInTheDocument()
-    expect(screen.getAllByRole('tab').map((t) => t.textContent?.replace(/\s*\(\d+\)$/, ''))).toEqual(['Diziliş', 'Liste', 'Derinlik', 'Hareketler'])
+    expect(screen.getAllByRole('tab').map((t) => t.textContent?.replace(/\s*\(\d+\)$/, ''))).toEqual(['Diziliş', 'Liste', 'Derinlik', 'Altyapı', 'Hareketler'])
     expect(screen.queryByRole('tab', { name: /Kariyer/ })).toBeNull()
+  })
+
+  it('ACADEMY-b: Altyapı sekmesi oyuncu sayısını taşır ve ?sekme=altyapi ile açılır', async () => {
+    renderAt('/career/squad?sekme=altyapi')
+    expect(await screen.findByRole('tab', { name: 'Altyapı (1)', selected: true })).toBeInTheDocument()
+    expect(await screen.findByRole('link', { name: 'Genç Altyapı' })).toBeInTheDocument()
+    expect(endpoints.academy).toHaveBeenCalledWith(7)
   })
 
   it('diziliş: ana taktik salt okunur piyon sahada ("Kararın"); sürükleme/taşıma yok; piyon oyuncu sayfasını açar', async () => {

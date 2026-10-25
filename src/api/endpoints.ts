@@ -7,6 +7,7 @@ import type {
   CreditCosts,
   DevelopmentRecommendation,
   DevelopmentWeakSlot,
+  Academy,
   Career,
   CareerPlayer,
   CareerPlayerContract,
@@ -222,6 +223,8 @@ export const endpoints = {
   /** FIT-3 madde 11: gençler için gelişim planı önerisi (tahmin · kalibre edilmedi). */
   developmentRecommendations: (careerId: number, weakSlots: DevelopmentWeakSlot[]) =>
     api.post<DevelopmentRecommendation[]>(`/careers/${careerId}/development/recommendations`, { weakSlots }),
+  /** ACADEMY: kariyerin altyapısı (A takım kadrosu dışında). */
+  academy: (careerId: number) => api.get<Academy>(`/careers/${careerId}/academy`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   /** locked (KARIYER-UX Q2): slotId → oyuncu sabit kalır, kalan slotları sunucu doldurur. */

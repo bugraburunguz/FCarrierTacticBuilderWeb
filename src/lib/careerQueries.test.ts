@@ -27,6 +27,15 @@ describe('careerQueries', () => {
     }
   })
 
+  it('ACADEMY-b: altyapı kariyer kapsamında (içe aktarma ve spoiler ayarı sonrası eski kesin POT kalmaz)', async () => {
+    const client = seed()
+    client.setQueryData(['academy', 7], { ok: true })
+    client.setQueryData(['academy', 8], { ok: true })
+    await invalidateCareerScope(client, 7)
+    expect(stale(client, ['academy', 7])).toBe(true)
+    expect(stale(client, ['academy', 8])).toBe(false)
+  })
+
   it('FIT-3 inceleme: gelişim önerileri, kurulum kontrolü ve taktik analizi de kariyer kapsamında (içe aktarma sonrası eski kalmaz)', async () => {
     const client = new QueryClient()
     const keys = [['development-recommendations', 7, '[]'], ['setup-check', 7, 'Balanced', 50], ['tactic-analysis', 7, '{}'], ['development-recommendations', 8, '[]']]
