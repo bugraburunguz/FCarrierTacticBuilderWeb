@@ -14,6 +14,22 @@ export const signedWhole = (value: number): string => {
   return whole > 0 ? `+${whole}` : whole === 0 ? '0' : String(whole)
 }
 
+/**
+ * FIT-1 madde 1 (Buğra kararı): iki metrik, iki ayrı ad. Güç = currentFit (0–100, mutlak: oyuncu o slotta ne kadar etkili).
+ * Rol oturması = levelFit (0–100, göreli: profili, kendi seviyesindekilere göre rol için ne kadar tipik). Takım düzeyi: Takım gücü ve Rol oturması.
+ */
+export const FIT_TERMS = {
+  strength: { name: 'Güç', team: 'Takım gücü', help: 'Güç: oyuncunun bu slottaki rolde ne kadar etkili olduğu (0–100, mutlak). Takım gücü 11 oyuncunun ortalaması.' },
+  roleFit: { name: 'Rol oturması', team: 'Rol oturması', help: 'Rol oturması: oyuncunun profilinin, kendi OVR seviyesindeki oyunculara göre bu rol için ne kadar tipik olduğu (0–100, göreli).' },
+} as const
+
+export type FitMetric = typeof FIT_TERMS.strength.name | typeof FIT_TERMS.roleFit.name
+
+/** Kariyer ekranları (FIT-1): "Rol oturması %38", "Güç 65". */
+export const roleFitText = (value: number) => `${FIT_TERMS.roleFit.name} %${Math.round(value)}`
+export const strengthText = (value: number) => `${FIT_TERMS.strength.name} ${Math.round(value)}`
+
+/** UT ekranlarının eski adları (UT görünümü değişmez); kariyer roleFitText/strengthText kullanır. */
 export const levelText = (value: number) => `Seviyesine göre %${Math.round(value)}`
 export const rolePointsText = (value: number) => `Rol puanı ${Math.round(value)}`
 export const futureText = (value: number) => `Gelecek sezon ${Math.round(value)}`
@@ -21,8 +37,9 @@ export const deltaText = (value: number) => `Mevcut oyuncuya göre ${signedWhole
 export const ovrGapText = (value: number) => `İlk 11 ortalamasına göre ${signedWhole(value)}`
 
 export const FIT_HELP = {
-  level: 'Oyuncunun kendi OVR seviyesindeki oyunculara göre bu role uyumu. Rozet rengi bu değerden gelir.',
-  rolePoints: 'Rolün istediği özelliklerle oyuncunun özelliklerinin ham eşleşmesi (0-100). Seviyeden bağımsızdır.',
+  level: `${FIT_TERMS.roleFit.help} Rozet rengi bu değerden gelir.`,
+  rolePoints: FIT_TERMS.strength.help,
+  // Not: FIT_HELP yalnız kariyer öneri satırlarında; UT ROLES_HELP aşağıda değişmedi.
   future: 'Bir sezonluk gelişim/yaşlanma sonrası aynı rol puanı. Potansiyel gizli modunda gösterilmez.',
   delta: 'Bu mevkideki mevcut oyuncunun AYNI roldeki puanıyla fark.',
   ovrGap: 'Oyuncunun OVR\'si ile senin ilk 11 ortalaman arasındaki fark; yüksekse bu seviyeye inmesi zordur.',
@@ -34,6 +51,12 @@ export const ROLES_HELP = {
   rolePoints: 'Rol puanı: rol vektörüne göre ham uygunluk.',
 } as const
 
+/** Kariyer oyuncu sayfası › Roller (FIT-1): aynı iki metrik, kariyer adlarıyla. */
+export const CAREER_ROLES_HELP = {
+  badge: `Rozetteki yüzde: ${FIT_TERMS.roleFit.help}`,
+  rolePoints: FIT_TERMS.strength.help,
+} as const
+
 export interface FitInput {
   levelFit?: number | null
   currentFit?: number | null
@@ -43,19 +66,52 @@ export interface FitInput {
 }
 
 export interface FitDisplay {
-  /** Gösterilen yüzde: seviyesine göre (levelFit); yoksa rol puanı. */
+  /** Rozette gösterilen yüzde: Rol oturması (levelFit); yoksa Güç. Adı `metric`. */
   pct: number
   state: FitState
+  /** Güç (currentFit); `strength` ile aynı, eski adı. */
   rolePoints: number
+  /** Güç (currentFit, 0–100). */
+  strength: number
+  /** Rol oturması (levelFit, 0–100); norm yoksa yok. */
+  roleFit?: number
+  /** `pct`'nin adı: rozet title/aria metninde yazılır. */
+  metric: FitMetric
 }
 
-/** Aynı RoleFit → her ekranda aynı sayı ve rozet durumu. */
+/** Aynı RoleFit → her ekranda aynı sayı ve rozet durumu (FIT-1: tek kaynak). */
 export function fitDisplay(fit: FitInput): FitDisplay {
-  const rolePoints = Math.round(fit.currentFit ?? fit.score ?? 0)
-  const pct = Math.round(fit.levelFit ?? fit.currentFit ?? fit.score ?? 0)
+  const strength = Math.round(fit.currentFit ?? fit.score ?? 0)
+  const roleFit = fit.levelFit === undefined || fit.levelFit === null ? undefined : Math.round(fit.levelFit)
   const state: FitState = fit.fitLabel ? { GOOD: 'good', AT_LEVEL: 'neutral', WEAK: 'ok', WRONG_ROLE: 'bad' }[fit.fitLabel] as FitState : FIT_STATE_OF[toneOf(fit.badge)]
-  return { pct, state, rolePoints }
+  return { pct: roleFit ?? strength, state, rolePoints: strength, strength, roleFit, metric: roleFit === undefined ? FIT_TERMS.strength.name : FIT_TERMS.roleFit.name }
 }
+
+/** Rozet/kart title ve aria metni: hangi sayının ne olduğu adıyla ("Rol oturması %38 · Güç 65"). */
+export function fitTitle(display: Pick<FitDisplay, 'strength' | 'roleFit'>): string {
+  return display.roleFit === undefined ? strengthText(display.strength) : `${roleFitText(display.roleFit)} · ${strengthText(display.strength)}`
+}
+
+const average = (values: number[]) => (values.length === 0 ? undefined : Math.round(values.reduce((a, b) => a + b, 0) / values.length))
+
+/** Takım gücü: dizilen oyuncuların Güç ortalaması. */
+export const teamStrength = (displays: Pick<FitDisplay, 'strength'>[]) => average(displays.map((d) => d.strength))
+
+/** Takım Rol oturması: oturması bilinen oyuncuların ortalaması. */
+export const teamRoleFit = (displays: Pick<FitDisplay, 'roleFit'>[]) => average(displays.flatMap((d) => (d.roleFit === undefined ? [] : [d.roleFit])))
+
+/** FIT-1 madde 2: iki eksenli zayıf halka sınıfı (sunucu /fit/lineup slot.weakClass; eşikler sunucuda). */
+export type WeakClass = 'KALITE_ACIGI' | 'ROL_UYUMSUZ' | 'IKISI' | 'UYGUN'
+
+export const WEAK_CLASS_TEXT: Record<Exclude<WeakClass, 'UYGUN'>, string> = {
+  KALITE_ACIGI: 'Kalite açığı',
+  ROL_UYUMSUZ: 'Rol uyumsuz',
+  IKISI: 'Kalite açığı + rol uyumsuz',
+}
+
+/** Zayıf halka mı: sunucu sınıfı varsa o; yoksa (eski sunucu) etiket kuralı. */
+export const isWeakClass = (weakClass: WeakClass | undefined | null, label?: FitLabel | null): boolean =>
+  weakClass ? weakClass !== 'UYGUN' : isWeakFit(label)
 
 /** Rozet metinleri (kısa metin + erişilebilir ad): FitBadge dahil her yer buradan okur. */
 export const FIT_STATE_TEXT: Record<FitState, { text: string; label: string }> = {
@@ -70,4 +126,4 @@ export const TAILORED_TEXT = 'Biçilmiş kaftan'
 export const TAILORED_BADGE = { text: 'BİÇİLMİŞ KAFTAN', label: 'Rol için biçilmiş kaftan' } as const
 
 /** Kadro düzeyi uyum etiketi (replika uygulama, kadro özeti): tek yerde yazılır. */
-export const SQUAD_FIT_TEXT = 'Kadro uyumu'
+export const SQUAD_FIT_TEXT = FIT_TERMS.strength.team
