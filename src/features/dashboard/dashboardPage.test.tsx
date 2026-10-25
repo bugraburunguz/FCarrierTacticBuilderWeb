@@ -18,7 +18,7 @@ vi.mock('../../api/endpoints', () => {
       resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })), fitRole: vi.fn(), playerFacets: vi.fn(),
       snapshots: vi.fn(), events: vi.fn(), updateCareer: vi.fn(), careerBackup: vi.fn(), careerRestore: vi.fn(), deleteCareer: vi.fn(),
       userTactics: none, saveUserTactic: vi.fn(), setMainTactic: vi.fn(), playerTags: none, snapshotDiff: vi.fn(() => Promise.resolve({ rows: [] })),
-      fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(),
+      fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(), setupCheck: vi.fn(() => Promise.resolve([])),
     },
   }
 })
@@ -115,8 +115,8 @@ describe('Kariyer Masası hata durumları', () => {
 describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
   it('ana taktik varsa: takım uyumu ve zayıf halkalar ana taktikten, "Kararın" etiketiyle; saha yok', async () => {
     renderPage()
-    const fit = await screen.findByRole('region', { name: 'Takım uyumu' })
-    expect(await within(fit).findByRole('img', { name: /Takım uyumu %43/ })).toBeInTheDocument()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('img', { name: /Takım gücü %65/ })).toBeInTheDocument()
     expect(within(fit).getByText('Kararın')).toBeInTheDocument()
     expect(screen.queryByText('Otomatik öneri · ana taktik değil')).toBeNull()
     expect(endpoints.starterTactic).not.toHaveBeenCalled()
@@ -231,8 +231,8 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     renderPage()
     expect(await screen.findByText('1 oyuncu kadroda yok, otomatik dolduruldu')).toBeInTheDocument()
     expect(endpoints.lineup).toHaveBeenCalledWith(1, expect.objectContaining({ formation: '4-3-3' }), { CM1: 1, CM2: 2 })
-    const fit = screen.getByRole('region', { name: 'Takım uyumu' })
-    expect(await within(fit).findByRole('img', { name: /Takım uyumu %43/ })).toBeInTheDocument()
+    const fit = screen.getByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('img', { name: /Takım gücü %65/ })).toBeInTheDocument()
   })
 
   it('finansal sağlık: bütçe Δ önceki IMPORT\'a göre, maaş kullanımı, bilinmeyen maaş notu, döneme kalan gün', async () => {
@@ -310,19 +310,50 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(box).queryByText(/21668/)).toBeNull()
   })
 
+  it('FIT-1: Takım gücü (Güç ortalaması) ve Rol oturması ayrı adlarla; zayıf halka kartında iki sayı adıyla ve sınıf başlığı', async () => {
+    vi.mocked(endpoints.lineup).mockImplementation(((c: number, t: unknown, locked?: Record<string, number>) =>
+      lineupFromFitRole(endpoints.fitRole as never)(c, t as never, locked).then((r: { slots: { slotId: string }[] }) => ({
+        ...r, slots: r.slots.map((s) => ({ ...s, weakClass: s.slotId === 'CM2' ? 'IKISI' : 'UYGUN' })),
+      }))) as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('img', { name: /Takım gücü %65/ })).toBeInTheDocument()
+    expect(within(fit).getByText('Rol oturması %43')).toBeInTheDocument()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const cards = await within(weak).findAllByRole('listitem')
+    expect(cards).toHaveLength(1)
+    expect(cards[0]).toHaveTextContent('Kalite açığı + rol uyumsuz')
+    expect(cards[0]).toHaveTextContent('Rol oturması %12 · Güç 40')
+    expect(cards[0]).toHaveTextContent('Rol için eksik')
+  })
+
+  it('FIT-1 madde 5: ana taktiğin taktik riski sayısı Masa\'da küçük satır; Lab bağlantısı', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([
+      { title: 'Yüksek hat: stoperlerde hız', status: 'RED', detail: 'x', advice: 'y', players: [] },
+      { title: 'Kısa pasla çıkış: pas güvenliği', status: 'YELLOW', detail: 'x', advice: 'y', players: [] },
+      { title: 'Kısa pasla çıkış: kaleci dağıtımı', status: 'GREEN', detail: 'x', advice: 'y', players: [] },
+    ] as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    const link = await within(fit).findByRole('link', { name: /2 taktik riski/ })
+    expect(link).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu')
+    expect(endpoints.setupCheck).toHaveBeenCalledWith(expect.objectContaining({ careerId: 1 }))
+  })
+
   it('FAZ 6a-F: göçten gelen "Önceki taslak" adı ana taktik adı olarak görünmez', async () => {
     vi.mocked(endpoints.mainTactic).mockResolvedValue({ ...MAIN, name: 'Önceki taslak' } as never)
     renderPage()
-    const fit = await screen.findByRole('region', { name: 'Takım uyumu' })
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
     expect(await within(fit).findByText('Ana taktik · 4-3-3')).toBeInTheDocument()
     expect(screen.queryByText(/Önceki taslak/)).toBeNull()
   })
 
-  it('FAZ 6a-G: zayıf halka başlığında yüzdenin anlamı (bilgi ikonu + title)', async () => {
+  it('FAZ 6a-G / FIT-1: zayıf halka başlığında iki sayının anlamı (bilgi ikonu + title)', async () => {
     renderPage()
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
-    const note = within(weak).getByText('Uyum: oyuncunun seviyesine göre rol uyumu')
-    expect(note.closest('[title]')).toHaveAttribute('title', expect.stringContaining('seviyesindeki oyuncular'))
+    const note = within(weak).getByText('Rol oturması ve Güç')
+    expect(note.closest('[title]')).toHaveAttribute('title', expect.stringContaining('seviyesindeki oyunculara göre'))
+    expect(note.closest('[title]')).toHaveAttribute('title', expect.stringContaining('ne kadar etkili'))
   })
 
   it('FAZ 6a-C: ≥1280 px üç sütun (sol: 3 iş + zayıf halkalar · orta: uyum · sağ: finans + uyarılar + zaman çizelgesi)', async () => {
@@ -335,7 +366,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
       expect(columns.map((c) => c.getAttribute('data-masa-col'))).toEqual(['left', 'middle', 'right'])
       const names = (col: Element) => [...col.querySelectorAll(':scope > section[aria-label]')].map((s) => s.getAttribute('aria-label'))
       expect(names(columns[0])).toEqual(['Bu dönemin 3 işi', 'Zayıf halkalar'])
-      expect(names(columns[1])).toEqual(['Takım uyumu'])
+      expect(names(columns[1])).toEqual(['Takım gücü'])
       expect(names(columns[2])).toEqual(['Finansal sağlık', 'Acil uyarılar', 'Zaman çizelgesi'])
     } finally {
       window.matchMedia = original
@@ -344,7 +375,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
 
   it('her panelin başlığında veri katmanı etiketi', async () => {
     renderPage()
-    for (const name of ['Finansal sağlık', 'Acil uyarılar', 'Takım uyumu', 'Zayıf halkalar', 'Zaman çizelgesi']) {
+    for (const name of ['Finansal sağlık', 'Acil uyarılar', 'Takım gücü', 'Zayıf halkalar', 'Zaman çizelgesi']) {
       const box = await screen.findByRole('region', { name })
       await waitFor(() => expect(box.querySelector('[data-source]')).not.toBeNull())
     }
