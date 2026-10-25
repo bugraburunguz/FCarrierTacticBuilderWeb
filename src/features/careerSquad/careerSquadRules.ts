@@ -1,6 +1,6 @@
 import type { CareerPlayer } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft } from '../../lib/contract'
-import { depthRows, GROUP_LABEL, groupOf, type PositionGroup } from '../../lib/deskRules'
+import { depthRows, GROUP_LABEL, groupCapacity, groupOf, type PositionGroup } from '../../lib/deskRules'
 
 /** Kadro Analizi kuralları (KARIYER-UX FAZ 3, 15 §4.2): saf fonksiyonlar, katman 1 (kayıt) girdisi. */
 
@@ -31,31 +31,59 @@ export type DepthTier = 'starter' | 'backup' | 'youth'
 export type DepthUrgency = 'short' | 'no-backup' | 'youth-only' | 'ok'
 export const YOUTH_MAX_AGE = 21
 
+export interface GroupRosterPlayer {
+  id: number
+  name: string
+  position: string
+  overall: number
+  age?: number
+  tier: DepthTier
+  /** Ana mevkisi bu grupta mı (değilse ikincil mevkiyle kapasiteye katılır). */
+  primary: boolean
+  /** Başka grupta ilk 11 ise o slotun mevkisi: burada yedek sayılmaz. */
+  startsAt?: string
+}
+
 export interface GroupRoster {
   group: PositionGroup
   label: string
+  /** Eşikte sayılan (birincil + ⌊ikincil/2⌋); ayrım primary/secondary. */
   have: number
+  primary: number
+  secondary: number
   need: number
   short: number
   urgency: DepthUrgency
-  players: { id: number; name: string; position: string; overall: number; age?: number; tier: DepthTier }[]
+  players: GroupRosterPlayer[]
 }
 
 /**
- * Derinlik: mevki grubu başına eldeki/gereken (deskRules.depthRows, Masa derinlik işiyle aynı eşik) ve oyuncular, reytinge göre.
- * KARIYER-UX 6: `starters` verilirse oyuncular ilk 11 / yedek / genç olarak ayrılır ve aciliyet yedek durumunu da hesaba katar;
- * verilmezse (ilk 11 bilinmiyor) herkes yedek ya da genç, aciliyet yalnız eksik/yeterli.
+ * Derinlik (FAZ 6a-B, tek tanım): grup kapasitesi deskRules.groupCapacity (Masa derinlik işiyle aynı sayı ve eşik); oyuncular reytinge göre.
+ * `starters` (oyuncu → ana taktikte oynadığı slotun mevkisi; yoksa başlangıç önerisi) verilirse oyuncu, oynadığı slotun grubunda İlk 11'dir
+ * (ana mevkisi başka olsa da). Başka grupta ilk 11 olan oyuncu burada listelenir ama yedek sayılmaz. Verilmezse herkes yedek ya da genç,
+ * aciliyet yalnız eksik/yeterli.
  */
-export function groupRoster(squad: CareerPlayer[], starters?: ReadonlySet<number>): GroupRoster[] {
+export function groupRoster(squad: CareerPlayer[], starters?: ReadonlyMap<number, string>): GroupRoster[] {
   const active = squad.filter((c) => !c.loanedOut)
-  const tierOf = (c: CareerPlayer): DepthTier => (starters?.has(c.player.id) ? 'starter' : c.player.age !== undefined && c.player.age <= YOUTH_MAX_AGE ? 'youth' : 'backup')
+  const groups = groupCapacity(squad)
+  const startGroup = (id: number) => groupOf(starters?.get(id))
   return depthRows(squad).map((row) => {
-    const players = active
-      .filter((c) => groupOf(c.player.positions[0]) === row.group)
+    const capacity = groups.get(row.group) ?? { primary: [], secondary: [] }
+    const members = new Set([...capacity.primary, ...capacity.secondary, ...active.filter((c) => startGroup(c.player.id) === row.group)])
+    const players: GroupRosterPlayer[] = [...members]
       .sort((a, b) => b.player.overall - a.player.overall)
-      .map((c) => ({ id: c.player.id, name: c.player.name, position: c.player.positions[0], overall: c.player.overall, age: c.player.age, tier: tierOf(c) }))
-    const backups = players.filter((p) => p.tier === 'backup').length
-    const youth = players.filter((p) => p.tier === 'youth').length
+      .map((c) => {
+        const startsIn = startGroup(c.player.id)
+        const tier: DepthTier = startsIn === row.group ? 'starter' : c.player.age !== undefined && c.player.age <= YOUTH_MAX_AGE ? 'youth' : 'backup'
+        return {
+          id: c.player.id, name: c.player.name, position: c.player.positions[0], overall: c.player.overall, age: c.player.age, tier,
+          primary: groupOf(c.player.positions[0]) === row.group,
+          startsAt: startsIn !== undefined && startsIn !== row.group ? starters!.get(c.player.id) : undefined,
+        }
+      })
+    const available = players.filter((p) => p.startsAt === undefined)
+    const backups = available.filter((p) => p.tier === 'backup').length
+    const youth = available.filter((p) => p.tier === 'youth').length
     const urgency: DepthUrgency = row.short > 0 ? 'short'
       : starters === undefined || backups > 0 ? 'ok'
         : youth > 0 ? 'youth-only' : 'no-backup'

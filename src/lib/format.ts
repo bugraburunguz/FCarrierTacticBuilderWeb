@@ -10,10 +10,6 @@ export function formatEur(value: number | undefined | null): string {
   return euro.format(value)
 }
 
-export function formatScore(value: number | undefined | null): string {
-  return value === undefined || value === null ? '—' : `%${Math.round(value)}`
-}
-
 export const ATTR_LABELS: Record<string, string> = {
   Acceleration: 'Hızlanma',
   SprintSpeed: 'Sprint hızı',

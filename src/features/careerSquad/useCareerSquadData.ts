@@ -2,16 +2,23 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer, RosterEventType } from '../../api/types'
+import { invalidateCareerScope } from '../../lib/careerQueries'
 import { analyzeDepth } from '../../lib/depth'
 import type { TacticState } from '../../lib/tactic'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useUtRules } from '../../state/rulesStore'
 import { useMainTacticFits } from '../career/useMainTacticFits'
 
-/** Kariyer verisi değişince tazelenen sorgular (kariyer listesi, kadro, hareketler, ana taktik dizilişi). */
+/**
+ * Kariyer verisi değişince (hareket, geri alma) o kariyere bağlı her şey tazelenir: kadro, bütçe/facets, uyum (slot-fit), başlangıç önerisi,
+ * oyuncu sayfaları (REVIEW Y3; önceden yalnız 6 anahtar, bütçe ve uyum 2-5 dk bayat kalıyordu).
+ */
 export function useInvalidateCareer() {
   const queryClient = useQueryClient()
-  return () => Promise.all(['careers', 'squad', 'events', 'career-moves', 'main-tactic', 'lineup'].map((k) => queryClient.invalidateQueries({ queryKey: [k] })))
+  const careerId = useActiveCareerId()
+  return () => (careerId === undefined
+    ? queryClient.invalidateQueries({ queryKey: ['careers'] })
+    : invalidateCareerScope(queryClient, careerId))
 }
 
 export type OutMove = { mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer }
@@ -29,7 +36,8 @@ export function useCareerSquadData() {
   const id = career?.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const events = useQuery({ queryKey: ['events', id], queryFn: () => endpoints.events(id!), enabled: id !== undefined })
-  const positionAdvice = useQuery({ queryKey: ['position-advice', id, squad.data?.length], queryFn: () => endpoints.positionAdvice(id!), enabled: id !== undefined && (squad.data?.length ?? 0) > 0, staleTime: 120_000 })
+  // FIT-3: oyuncu › Roller (RoleBasedAdvice) ile aynı anahtar (pahalı uç tek kez); kadro değişince careerQueries kapsamı tazeler.
+  const positionAdvice = useQuery({ queryKey: ['position-advice', id], queryFn: () => endpoints.positionAdvice(id!), enabled: id !== undefined && (squad.data?.length ?? 0) > 0, staleTime: 120_000 })
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
   const fits = useMainTacticFits(id, squad.data)

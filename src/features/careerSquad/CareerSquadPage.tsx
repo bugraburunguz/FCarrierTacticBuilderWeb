@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { CareerSelect } from '../../components/CareerSelect'
 import { SquadCards } from '../../components/SquadCards'
 import { SquadList } from '../../components/SquadList'
 import { SquadTagsView } from '../../components/SquadTagsView'
 import { TransferDialog } from '../../components/TransferDialog'
-import { Button, EmptyState, Panel, Segmented, Skeleton, StatTile, TabPanel, Tabs, type DataSource } from '../../design/components/primitives'
+import { Button, EmptyState, ErrorState, Panel, Segmented, Skeleton, StatTile, TabPanel, Tabs, type DataSource } from '../../design/components/primitives'
 import { GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
 import { parseGrouping, SQUAD_GROUPINGS } from '../../lib/squadGroups'
 import { endpoints } from '../../api/endpoints'
@@ -18,6 +18,8 @@ import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
 import { squadStats } from './careerSquadRules'
 import { DepthTab } from './DepthTab'
 import { useCareerSquadData } from './useCareerSquadData'
+import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { fitTitle } from '../../lib/fitLabels'
 
 const PREFIX = 'kadro'
 type View = 'list' | 'cards' | 'tags'
@@ -32,6 +34,7 @@ const decimal =(value?: number) => (value === undefined ? undefined : value.toLo
 /**
  * Kadro Analizi (/career/squad, KARIYER-UX FAZ 3, 15 §4.2): "Elimde ne var?". Düzenleme yok; kararlar yalnız hamleler ve geri alma.
  * Diziliş: ana taktik (yoksa başlangıç önerisi) salt okunur piyon sahada, piyon oyuncu sayfasını açar. Liste, Derinlik, Hareketler `?sekme=`.
+ * ACADEMY-b: Altyapı ayrı sayfa (/career/academy); eski `?sekme=altyapi` bağlantısı oraya yönlenir.
  * Katman 1-2; Lab taslağı ve eski tek kopya taktik deposu okunmaz (kariyerUxGates).
  */
 export function CareerSquadPage() {
@@ -51,18 +54,32 @@ export function CareerSquadPage() {
   const wanted = params.get('grup') as PositionGroup | null
   // Liste ve Kartlar ?grup=mevki|hat (varsayılan mevki); Derinlik'in grup değerleri burada geçersiz sayılır ve mevkiye düşer.
   const grouping = parseGrouping(params.get('grup'))
-  const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, r.display])), [k.fits.rows])
-  // KARIYER-UX 6: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden.
+  // FIT-1: rozet ve piyon metni sayıların adıyla ("Rol oturması %38 · Güç 65").
+  const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, { ...r.display, title: fitTitle(r.display) }])), [k.fits.rows])
+  // KARIYER-UX 6 / FAZ 6a-B: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden; oyuncu oynadığı slotun mevkisiyle.
   const lineup = k.fits.main.active?.lineup
-  const starters = useMemo(() => (lineup ? new Set(Object.values(lineup).filter((id): id is number => typeof id === 'number')) : undefined), [lineup])
+  const starters = useMemo(() => {
+    if (!lineup || !k.formation) {
+      return undefined
+    }
+    const positionOf = new Map(k.formation.slots.map((s) => [s.slotId, s.position]))
+    return new Map(Object.entries(lineup).flatMap(([slotId, id]) => (typeof id === 'number' && positionOf.has(slotId) ? [[id, positionOf.get(slotId)!] as const] : [])))
+  }, [lineup, k.formation])
 
+  if (params.get('sekme') === 'altyapi') {
+    return <Navigate to="/career/academy" replace />
+  }
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
+  }
+  // REVIEW Y5: hata boş durum gibi görünmez. Eldeki veri varken başarısız yenileme sayfayı düşürmez.
+  if (k.careers.isError && !k.careers.data) {
+    return <ErrorState message="Kariyerler yüklenemedi." onRetry={() => k.careers.refetch()} />
   }
   const career = k.career
   if (!career) {
     return (
-      <div className="mx-auto max-w-[1280px] py-2">
+      <div className={`mx-auto ${CAREER_PAGE_WIDTH} py-2`}>
         <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Kadro</h1>
         <EmptyState action={<Link to="/career/new" className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-on-accent">Yeni kariyer başlat</Link>}>
           Kadronu görmek için bir kariyer seç ya da yeni kariyer başlat.
@@ -77,11 +94,12 @@ export function CareerSquadPage() {
   const gameDate = career.gameDate
 
   return (
-    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-2">
+    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
       <header className="flex flex-col gap-2">
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kadro</h1>
         <CareerSelect />
       </header>
+      {k.squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => k.squad.refetch()} />}
       <Tabs label="Kadro sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
 
       <TabPanel idPrefix={PREFIX} id="dizilis" active={tab === 'dizilis'}>
@@ -112,7 +130,9 @@ export function CareerSquadPage() {
             <Segmented label="Görünüm" value={view} options={VIEWS} onChange={setView} />
           </div>
         )}>
-          {k.squad.isLoading ? (
+          {k.squad.isError && !k.squad.data ? (
+            <p className="text-sm text-ink-2">Liste gösterilemiyor.</p>
+          ) : k.squad.isLoading ? (
             <Skeleton className="h-64" />
           ) : players.length === 0 ? (
             <EmptyState action={<Button onClick={() => setTab('hareketler')}>Transfer piyasası</Button>}>Kadro boş.</EmptyState>
@@ -128,6 +148,7 @@ export function CareerSquadPage() {
 
       <TabPanel idPrefix={PREFIX} id="derinlik" active={tab === 'derinlik'}>
         <DepthTab squad={players} needs={k.needs} formation={k.formation} gameDate={gameDate} record={record} starters={starters}
+          careerId={career.id} tacticRows={k.fits.rows} tacticPending={k.fits.main.isLoading || k.fits.pending}
           wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} />
       </TabPanel>
 

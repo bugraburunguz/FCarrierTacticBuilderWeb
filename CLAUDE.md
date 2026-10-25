@@ -1,10 +1,10 @@
 # CLAUDE.md — FC Assist Web (FCarrierTacticBuilderWeb)
 
 React 19 + TypeScript + Vite + Tailwind v4 + TanStack Query. Backend: `/api/v1` (FCarrierTacticBuilderBackend).
-Tasarım sistemi kuralları: `docs/review/02_DESIGN_SYSTEM_REDESIGN.md` (varsa önce oku).
+Tasarım dili ve token'lar: `docs/review/v2/11_GLASSMORPHISM_TASARIM_V3.md` (tek kaynak). `docs/review/02_DESIGN_SYSTEM_REDESIGN.md` tarihsel; 11 ile çelişirse 11 kazanır.
 
 ## Kurallar
-- Renk/ölçü için yalnız semantik token (`bg-panel`, `text-sub`, `border-line` ...). Yeni kodda Tailwind
+- Renk/ölçü için yalnız semantik token (`text-ink`, `text-ink-2`, `glass-1..3` ...; tanımlar `src/design/tokens.css`). Yeni kodda Tailwind
   `emerald/teal/slate/sky` sınıfları ve hex yok (kart tasarım config'i hariç).
 - Emoji ile durum gösterme yok; `FitBadge`, `ChemDiamonds`, ikon seti kullan.
 - Oyuncu kartı yalnız `components/card/PlayerCard` ile; saha yalnız `components/pitch/Pitch` ile.
@@ -12,7 +12,7 @@ Tasarım sistemi kuralları: `docs/review/02_DESIGN_SYSTEM_REDESIGN.md` (varsa �
 - Büyük kullanıcı verisi (kulüp kartları, capture) IndexedDB'de; localStorage yalnız küçük tercih.
 - Ağır hesap (SBC çözücü, delta önizleme) Web Worker'da.
 - Mutlak URL yok: `import.meta.env.BASE_URL` / `<Link>` (GitHub Pages alt yolu).
-- Her PR: `npm test`, `npm run lint`, `npm run build` yeşil; UI değişikliğinde Playwright görsel snapshot.
+- Her PR: `npm test`, `npm run lint`, `npm run build` yeşil; UI değişikliğinde `scripts/*-shots.mjs` ile ekran görüntüsü (otomatik görsel snapshot karşılaştırması yok).
 - Kullanıcıya görünen metin Türkçe, kısa; açıklama paragrafı yerine `HelpPopover`.
 
 ## Çalışma kuralları

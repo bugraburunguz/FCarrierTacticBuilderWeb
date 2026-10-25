@@ -8,7 +8,7 @@ import { PlayerCard } from '../../components/card/PlayerCard'
 import { HelpPopover } from '../../components/ui'
 import { Chip } from '../../design/components/primitives'
 import { cardPlayerOfSummary } from '../../lib/cardPlayer'
-import { deltaText, FIT_HELP, fitDisplay, futureText, levelText, ovrGapText, rolePointsText } from '../../lib/fitLabels'
+import { deltaText, FIT_HELP, fitDisplay, futureText, ovrGapText, roleFitText, strengthText } from '../../lib/fitLabels'
 import { formatEur } from '../../lib/format'
 
 const THUMB = 44
@@ -48,8 +48,8 @@ export function RecommendationRow({ item, showRole = false, action, extra, cardW
         {/* <480px: uyum sütunu satırın altına iner (ad ve kulüp satırı dar sütuna sıkışmasın). */}
         <div className="flex shrink-0 flex-col items-end gap-1 max-[479px]:w-full max-[479px]:flex-row max-[479px]:flex-wrap max-[479px]:items-center max-[479px]:gap-x-3">
           <FitBadge state={fit.state} compact tailored={item.narrative?.tailored} />
-          {item.levelFit !== undefined && <span title={FIT_HELP.level} className="text-xs font-semibold tabular-nums">{levelText(item.levelFit)}</span>}
-          <span title={FIT_HELP.rolePoints} className="text-xs tabular-nums text-ink-2">{rolePointsText(item.currentFit)}</span>
+          {item.levelFit !== undefined && <span title={FIT_HELP.level} className="text-xs font-semibold tabular-nums">{roleFitText(item.levelFit)}</span>}
+          <span title={FIT_HELP.rolePoints} className="text-xs tabular-nums text-ink-2">{strengthText(item.currentFit)}</span>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-1.5 text-xs">

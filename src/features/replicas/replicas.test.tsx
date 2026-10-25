@@ -225,10 +225,19 @@ describe('kadromla uygula', () => {
   it('kariyerde seviyeye göre %, boş ve zayıf slotlar "Öner" bağlantısı alır', () => {
     renderApply(applyOf('CAREER', [slot({}), slot({ slotId: 'LW', position: 'LW', state: 'WEAK', suggest: true, player: player(2, 'Bora Kanat'), levelFit: 41 }), slot({ slotId: 'RW', position: 'RW', state: 'EMPTY', suggest: true, player: null, currentFit: null, levelFit: null })]))
     expect(screen.getByText('Kariyer kadron')).toBeInTheDocument()
-    expect(screen.getByText('Seviyesine göre %74')).toBeInTheDocument()
+    expect(screen.getByText('Rol oturması %74')).toBeInTheDocument()
     const suggest = screen.getAllByRole('link', { name: /için oyuncu öner/ })
     expect(suggest.map((a) => a.getAttribute('href'))).toEqual(['/career/transfer?pos=LW', '/career/transfer?pos=RW'])
     expect(screen.getByText('Boş')).toBeInTheDocument()
+  })
+
+  it('FIT-1: takım değeri başlığı kariyerde "Takım gücü", UT\'de eski "Kadro uyumu" (UT değişmez)', () => {
+    const { unmount } = renderApply(applyOf('CAREER', [slot({})]))
+    expect(screen.getByText('Takım gücü')).toBeInTheDocument()
+    unmount()
+    renderApply(applyOf('SAMPLE', [slot({})], 'ut'))
+    expect(screen.getByText('Kadro uyumu')).toBeInTheDocument()
+    expect(screen.queryByText('Takım gücü')).toBeNull()
   })
 
   it('mevki dışı atama listede "ST→LW" etiketiyle işaretlenir; doğal atamada etiket yok', () => {

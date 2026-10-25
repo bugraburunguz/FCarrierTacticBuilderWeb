@@ -21,7 +21,8 @@ export function DeskSettings({ career }: { career: Career }) {
     mutationFn: () => endpoints.updateCareer(career.id, { spoilerMode: spoiler, wageBudgetEur: wage, windowEndsOn: windowEnds || undefined, challengeId: challenge }),
     onSuccess: () => {
       setNotice('Kaydedildi.')
-      ;['careers', 'squad', 'lineup'].forEach((k) => client.invalidateQueries({ queryKey: [k] }))
+      // ACADEMY-b: spoiler modu değişince altyapının kesin POT'u önbellekte kalmaz.
+      ;['careers', 'squad', 'lineup', 'academy'].forEach((k) => client.invalidateQueries({ queryKey: [k] }))
     },
   })
   const backup = useMutation({

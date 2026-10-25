@@ -1,0 +1,73 @@
+{
+  "career": 383,
+  "report": [
+    {
+      "shot": "masa-dark-375",
+      "texts": [
+        "Takım gücü",
+        "Rol oturması",
+        "Kalite açığı",
+        "taktik riski"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-375",
+      "texts": [
+        "Takım gücü",
+        "Rol oturması",
+        "Taktik riskleri",
+        "Öneri:"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "karsilastir-dark-375",
+      "texts": [
+        "Takım gücü",
+        "Rol oturması"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "masa-dark-1280",
+      "texts": [
+        "Takım gücü",
+        "Rol oturması",
+        "Kalite açığı",
+        "taktik riski"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-1280",
+      "texts": [
+        "Takım gücü",
+        "Rol oturması",
+        "Taktik riskleri",
+        "Öneri:"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "karsilastir-dark-1280",
+      "texts": [
+        "Takım gücü",
+        "Rol oturması"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    }
+  ]
+}

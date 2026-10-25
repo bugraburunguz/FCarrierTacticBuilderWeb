@@ -6,8 +6,8 @@ describe('importWarningText (LE-02)', () => {
     expect(importWarningText('CAREER_PLAYERS_SKIPPED_NO_POSITIONS', { skippedNoPosition: 10 })).toContain('10 kariyer-üretimi oyuncu atlandı')
   })
 
-  it('kariyer dışı uyarısı "Kariyer algılanmadı" der', () => {
-    expect(importWarningText('NOT_IN_CAREER', {})).toMatch(/^Kariyer algılanmadı/)
+  it('kariyer dışı uyarısı neyin gelmediğini ve ne yapılacağını söyler (FAZ 6a-A)', () => {
+    expect(importWarningText('NOT_IN_CAREER', {})).toBe('Bu export ana menüden; maaş, sözleşme ve oyun tarihi gelmez. Kariyer içinden export al.')
   })
 
   it('bilinmeyen kod olduğu gibi gösterilir', () => {

@@ -13,7 +13,7 @@ export interface PitchSlot {
   y: number
   player?: CardPlayer
   chem?: 0 | 1 | 2 | 3
-  fit?: { pct: number; state: FitState }
+  fit?: { pct: number; state: FitState; metric?: string; title?: string }
   price?: string
   /** Oyuncu bu mevkide doğal değil: kartın üstünde küçük "Mevki dışı" işareti. */
   outOfPosition?: boolean
@@ -48,8 +48,11 @@ const FIT_RING: Record<FitState, string> = { good: 'var(--good)', ok: 'var(--war
  * Piyon uyum metni. Halka rengi yüzdeden değil sunucunun rol etiketinden gelir (fitDisplay: GOOD / AT_LEVEL / WEAK / WRONG_ROLE); yüzde seviye
  * uyumu (levelFit). Yüksek yüzde kırmızı olabilir: kural metinde yazılı ki kullanıcı çelişki sanmasın (KARIYER-UX FAZ 1 düzeltme 3).
  */
-function pawnFitText(fit: { pct: number; state: FitState }): string {
-  return `uyum %${fit.pct} · ${FIT_STATE_TEXT[fit.state].label} (renk rol etiketinden, yüzde seviye uyumu)`
+function pawnFitText(fit: { pct: number; state: FitState; title?: string }): string {
+  // FIT-1: kariyerde iki sayı adıyla ("Rol oturması %38 · Güç 65"); başlık verilmezse eski metin.
+  return fit.title
+    ? `${fit.title} · ${FIT_STATE_TEXT[fit.state].label} (renk rol etiketinden)`
+    : `uyum %${fit.pct} · ${FIT_STATE_TEXT[fit.state].label} (renk rol etiketinden, yüzde seviye uyumu)`
 }
 const surname = (name: string) => name.trim().split(/\s+/).slice(-1)[0] ?? name
 

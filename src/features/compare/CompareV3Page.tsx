@@ -9,7 +9,8 @@ import { ErrorBox, Input } from '../../components/ui'
 import { useIsMobile } from '../../design/components/MobileSheet'
 import { PageHeader } from '../../design/components/PageHeader'
 import { Button, Chip, EmptyState, ErrorState, Panel, Skeleton } from '../../design/components/primitives'
-import { fitDisplay, rolePointsText } from '../../lib/fitLabels'
+import { fitDisplay, fitTitle, rolePointsText, strengthText } from '../../lib/fitLabels'
+import { useMode } from '../../state/modeStore'
 import { ATTR_LABELS } from '../../lib/format'
 import { playStyleName } from '../../lib/playstyles'
 import { compareStore, MAX_COMPARE } from '../../state/compareStore'
@@ -113,12 +114,14 @@ function Stacked({ loaded, sections }: { loaded: PlayerDetail[]; sections: { tit
 /** Rol uyumu satırı: sıra ve "Rol puanı" ham rol puanından (sunucu sırası); rozet ve yüzdesi seviyesinden (fitDisplay, V3-07c 0a). */
 function FitRow({ rank, name, result }: { rank: number; name: string; result: FitRoleResult }) {
   const d = fitDisplay(result.roleFit)
+  // FIT-1: kariyerde iki metrik adıyla (Güç, Rol oturması); UT eski adlarla.
+  const career = useMode() === 'career'
   return (
     <li className="glass-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[var(--radius-sm)] p-2.5 text-sm">
       <span className={`w-6 text-ink-2 ${NUM}`}>{rank}.</span>
       <span className="min-w-0 flex-1 font-semibold">{name}</span>
-      <span className={NUM}>{rolePointsText(d.rolePoints)}</span>
-      <FitBadge state={d.state} pct={d.pct} />
+      <span className={NUM}>{career ? strengthText(d.strength) : rolePointsText(d.rolePoints)}</span>
+      <FitBadge state={d.state} pct={d.pct} metric={career ? d.metric : undefined} title={career ? fitTitle(d) : undefined} />
       <span className="w-full pl-9 text-xs text-ink-2">Bu rolde ≈ {result.roleFit.projectedRating} oynar{result.roleFit.outOfPosition ? ' · mevki dışı' : ''}{result.intentFit ? ` · davranış uyumu %${Math.round(result.intentFit.score)}` : ''}</span>
     </li>
   )

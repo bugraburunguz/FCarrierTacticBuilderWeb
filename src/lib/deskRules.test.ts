@@ -24,6 +24,37 @@ describe('deskRules', () => {
     expect(rows.find((r) => r.group === 'CB')?.short).toBe(2)
   })
 
+  it('FIT-1: sunucu sınıfı varsa 3 işin zayıf halkası ondan (UYGUN girmez, KALITE_ACIGI girer); başlık sınıfı yazar', () => {
+    const slots: DeskSlot[] = [
+      { ...slot('a', 'ST', 10, 3, 'WRONG_ROLE'), weakClass: 'UYGUN' },
+      { ...slot('b', 'CB', 70, 2, 'GOOD'), weakClass: 'KALITE_ACIGI' },
+    ]
+    expect(weakSlots(slots).map((w) => w.slotId)).toEqual(['b'])
+    const fill = rankActions({ squad, slots, tags: {} }).find((a) => a.kind === 'FILL')!
+    expect(fill.title).toBe('CB: Kalite açığı')
+  })
+
+  it('FIT-1 inceleme: sınıf varken sıra Masa kartlarıyla aynı (IKISI > KALITE_ACIGI > ROL_UYUMSUZ, sonra Güç); kalite açığı işlerden düşmez', () => {
+    const slots: DeskSlot[] = [
+      { ...slot('a', 'ST', 20, 3, 'WEAK'), weakClass: 'ROL_UYUMSUZ', strength: 70 },
+      { ...slot('b', 'CB', 80, 2, 'GOOD'), weakClass: 'KALITE_ACIGI', strength: 50 },
+      { ...slot('c', 'GK', 75, 1, 'GOOD'), weakClass: 'KALITE_ACIGI', strength: 45 },
+    ]
+    expect(weakSlots(slots).map((w) => w.slotId)).toEqual(['c', 'b', 'a'])
+    const fills = rankActions({ squad, slots, tags: {} }).filter((a) => a.kind === 'FILL')
+    expect(fills.map((a) => a.slotId)).toEqual(['c', 'b'])
+    expect(fills.every((f) => f.priority > 70)).toBe(true)
+  })
+
+  it('FIT-2 madde 6: ROL_UYUMSUZ işi önerilen rolle Lab\'a (yeni taslak, rol uygulanmış); öneri yoksa yalnız slot', () => {
+    const slots: DeskSlot[] = [
+      { ...slot('a', 'LW', 30, 3, 'WEAK'), weakClass: 'ROL_UYUMSUZ', strength: 80, betterRoleId: 'inside_forward_attack' },
+      { ...slot('b', 'RW', 32, 2, 'WEAK'), weakClass: 'ROL_UYUMSUZ', strength: 82 },
+    ]
+    const fills = rankActions({ squad, slots, tags: {} }).filter((a) => a.kind === 'FILL')
+    expect(fills.map((a) => a.to)).toEqual(['/career/tactics-lab?sekme=kurucu&slot=a&rol=inside_forward_attack', '/career/tactics-lab?sekme=kurucu&slot=b'])
+  })
+
   it('zayıf halka yalnız sarı/kırmızı bant (seviyesine göre), en zayıf başta; seviyesinde olan değil', () => {
     const weak = weakSlots([slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2), slot('c', 'GK', 10, 1), slot('d', 'CM', 55, 4)])
     expect(weak.map((w) => w.slotId)).toEqual(['c', 'a'])
@@ -78,14 +109,49 @@ describe('iş sıralaması (V3-06e)', () => {
   })
 })
 
+describe('ACADEMY-b: "Altyapıdan A takıma al" işi', () => {
+  const promote = { position: 'CDM', strength1: 62, backupName: 'Smith', backupStrength: 60, text: 'Kyle · 1 sezon sonra tahmini CDM gücü 62, yedek Smith 60. Bu bir tahmin; A takıma alma oyunda yapılır.' }
+  const youth = (id: number, extra: object = {}) => ({ playerId: id, name: `Genç ${id}`, positions: ['CM'], youthVerified: false, promote: null, ...extra })
+
+  it('"A takıma al" önerisi olan altyapı oyuncusu için iş; yedeği en çok geçen öncelikli; altyapı verilmezse iş yok', () => {
+    const academy = [youth(1, { promote }), youth(2, { promote: { ...promote, strength1: 70 } }), youth(3)]
+    const jobs = rankActions({ squad: [], slots: [], tags: {}, academy: academy as never }).filter((a) => a.kind === 'PROMOTE')
+    expect(jobs).toHaveLength(2)
+    expect(jobs[0]).toMatchObject({ title: 'Altyapıdan A takıma al: Genç 2', to: '/career/academy?oyuncu=2' })
+    expect(jobs[0].reason).toContain('tahmin')
+    expect(rankActions({ squad: [], slots: [], tags: {} }).some((a) => a.kind === 'PROMOTE')).toBe(false)
+    expect(jobLayer('PROMOTE')).toBe('tactic')
+  })
+
+  it('3 iş içinde türüne bir yer; zayıf halkanın (FILL) altında, satışın üstünde', () => {
+    const academy = [youth(1, { promote })]
+    const ranked = rankActions({ squad: [player(3, 'ST', 70, 32, { valueEur: 6_000_000 })], slots: [slot('a', 'ST', 10, 9)], tags: {}, academy: academy as never })
+    expect(ranked.map((a) => a.kind).slice(0, 3)).toEqual(['FILL', 'PROMOTE', 'SELL'])
+  })
+})
+
 describe('"Bu dönemin 3 işi" tek kaynak (KARIYER-UX FAZ 2 düzeltme 3)', () => {
   const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000, contractUntil: '2027-03-01' }), player(4, 'CM', 60, 19, { potential: 78 })]
   const slots = [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)]
 
-  it('ilk 3 iş = rankActions sırası; Masa zayıf halkada gösterilen slotu dışarıda bırakabilir', () => {
+  it('Masa zayıf halkada gösterilen slotu dışarıda bırakabilir', () => {
     const input = { squad, slots, tags: {}, gameDate: '2027-01-15' }
-    expect(seasonJobs(input)).toEqual(rankActions(input).slice(0, 3))
-    expect(seasonJobs(input, { exclude: new Set(['a']) }).some((j) => j.slotId === 'a')).toBe(false)
+    expect(seasonJobs(input, { exclude: new Set(['a']) }).jobs.some((j) => j.slotId === 'a')).toBe(false)
+  })
+
+  it('FAZ 6a-D: aynı türden en çok bir iş (öncelik sırasıyla); aynı türün kalanları "benzer" olarak ayrılır', () => {
+    const young = [player(21, 'CM', 60, 19, { potential: 80 }), player(22, 'CM', 59, 20, { potential: 79 }), player(23, 'CM', 58, 18, { potential: 78 })]
+    const input = { squad: young, slots: [], tags: {} }
+    const ranked = rankActions(input)
+    expect(ranked.filter((a) => a.kind === 'LOAN')).toHaveLength(3)
+    const { jobs, similar } = seasonJobs(input)
+    const kinds = jobs.map((j) => j.kind)
+    expect(new Set(kinds).size).toBe(kinds.length)
+    expect(jobs.length).toBeLessThanOrEqual(3)
+    const loan = jobs.find((j) => j.kind === 'LOAN')!
+    expect(loan).toEqual(ranked.find((a) => a.kind === 'LOAN'))
+    expect(similar.LOAN).toHaveLength(2)
+    expect(jobs.map((j) => ranked.indexOf(j))).toEqual([...jobs.map((j) => ranked.indexOf(j))].sort((a, b) => a - b))
   })
 
   it('iş başına veri katmanı: diziliş/etiket kuralları taktik kaynağından, sözleşme ve derinlik kayıttan', () => {

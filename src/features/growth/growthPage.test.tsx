@@ -1,135 +1,131 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { AcademyPlayer } from '../../api/types'
 import { endpoints } from '../../api/endpoints'
 import { careerStore } from '../../state/careerStore'
 import { GrowthPage } from './GrowthPage'
 
+const mobile = vi.hoisted(() => ({ value: false }))
+vi.mock('../../design/components/MobileSheet', async (orig) => ({ ...(await orig<object>()), useIsMobile: () => mobile.value }))
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE' } }) }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), development: vi.fn(), updateRatings: vi.fn() },
+  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), youth: vi.fn(), youthDetail: vi.fn(), development: vi.fn() },
 }))
 
 const member = (id: number, extra: object = {}) => ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 60 + id, potential: 75, age: 25, valuationEstimated: false, ...extra }, onLoan: false })
 const snap = (id: number, season?: number) => ({ id, takenAt: `2026-10-0${id}T10:00:00Z`, season, source: 'IMPORT', playerCount: 3 })
+const youth = (id: number, extra: Partial<AcademyPlayer> = {}): AcademyPlayer => ({
+  playerId: id, name: `Genç ${id}`, age: 19, positions: ['CM'], overall: 62, potential: 84, potentialRange: null, youthVerified: false, bestPosition: 'CM',
+  conversionPosition: 'CDM', plan: { name: 'Deep-Lying Playmaker', label: 'CDM · Deep-Lying Playmaker', text: 't', balanced: false }, promote: null, status: null,
+  loanedOut: false, ...extra,
+})
 
 function Where() {
-  return <p data-testid="where">{useLocation().search}</p>
+  const l = useLocation()
+  return <p data-testid="where">{l.pathname + l.search}</p>
 }
 
 function renderPage(path = '/career/growth') {
   return render(
     <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
       <MemoryRouter initialEntries={[path]}>
-        <Routes><Route path="/career/growth" element={<><GrowthPage /><Where /></>} /></Routes>
+        <Routes>
+          <Route path="/career/growth" element={<GrowthPage />} />
+          <Route path="*" element={null} />
+        </Routes>
+        <Where />
       </MemoryRouter>
     </QueryClientProvider>,
   )
 }
 
 beforeEach(() => {
+  mobile.value = false
   careerStore.set(1)
   vi.mocked(endpoints.careers).mockResolvedValue([{ id: 1, clubName: 'Crewe', gameVersionId: 27, clubId: 9, squadSize: 3 }] as never)
   vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2, { overall: 75, potential: 75, age: 21 }), member(3)] as never)
   vi.mocked(endpoints.snapshots).mockResolvedValue([snap(3, 2), snap(2, 2), snap(1, 1)] as never)
-  vi.mocked(endpoints.snapshotDiff).mockReset().mockResolvedValue({ changed: 3, transfers: 0, added: 0, removed: 0, rows: [
+  vi.mocked(endpoints.youth).mockResolvedValue([youth(11, { name: 'Figueiredo', age: 18 }), youth(12, { name: 'Kiralık Genç', loanedOut: true, conversionPosition: null })])
+  vi.mocked(endpoints.youthDetail).mockResolvedValue({ playerId: 11, name: 'Figueiredo', positions: ['CM'], academy: false,
+    advice: { sentence: 'CDM · Deep-Lying Playmaker planını seç: 2 sezonda CDM OVR 70 (Dengeli 67).', estimated: true, plans: [{ label: 'Dengeli', kind: 'GENERAL', position: 'CDM', overall1: 64, overall2: 67 }] },
+    position: { bestPosition: 'CM', listedPositions: ['CM'] }, team: { position: 'CDM', source: 'MAIN', slots: 1, strengths: [60, 64, 68] } })
+  vi.mocked(endpoints.snapshotDiff).mockReset().mockResolvedValue({ changed: 4, transfers: 0, added: 0, removed: 0, rows: [
     { playerId: 1, name: 'Oyuncu 1', kind: 'CHANGED', overallFrom: 58, overallTo: 61 },
     { playerId: 3, name: 'Oyuncu 3', kind: 'CHANGED', overallFrom: 64, overallTo: 63 },
     { playerId: 2, name: 'Oyuncu 2', kind: 'CHANGED', overallFrom: 70, overallTo: 75 },
+    // Kadroda olmayan (başka takım) satırı listede yok.
+    { playerId: 99, name: 'Yabancı', kind: 'CHANGED', overallFrom: 50, overallTo: 60 },
   ] } as never)
-  vi.mocked(endpoints.playerHistory).mockReset().mockImplementation(((_c: number, p: number) => Promise.resolve([
-    { snapshotId: 1, takenAt: '2026-10-01T10:00:00Z', overall: 55 + p, potential: 75, gameDate: '2027-01-15' },
-    { snapshotId: 2, takenAt: '2026-10-02T10:00:00Z', overall: 58 + p, potential: 75, gameDate: '2027-03-16' },
-    { snapshotId: 3, takenAt: '2026-10-03T10:00:00Z', overall: 60 + p, potential: 76, gameDate: '2027-07-14' },
-  ])) as never)
 })
 
-describe('Gelişim (v3)', () => {
-  it('oyuncu seçimi ↔ adres çubuğu (?oyuncu=); geçmiş seçili oyuncu için istenir', async () => {
-    renderPage('/career/growth?oyuncu=3')
-    const select = await screen.findByRole('combobox', { name: 'Oyuncu' })
-    await waitFor(() => expect(select).toHaveValue('3'))
-    await waitFor(() => expect(endpoints.playerHistory).toHaveBeenCalledWith(1, 3))
-    fireEvent.change(select, { target: { value: '1' } })
-    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('oyuncu=1'))
-    await waitFor(() => expect(endpoints.playerHistory).toHaveBeenCalledWith(1, 1))
-  })
-
-  it('grafik: svg role="img" + özet etiket, x ekseni oyun tarihi; "Tablo olarak göster" aynı veriyi gösterir', async () => {
-    renderPage('/career/growth?oyuncu=1')
-    const chart = await screen.findByRole('img', { name: /OVR 56 → 61, POT 76; 3 içe aktarma, oyun tarihine göre/ })
-    expect(chart).toBeInTheDocument()
-    const region = screen.getByRole('region', { name: 'OVR geçmişi' })
-    expect(within(region).getByText('Oyun tarihi')).toBeInTheDocument()
-    fireEvent.click(within(region).getByRole('button', { name: 'Tablo olarak göster' }))
-    const table = within(region).getByRole('table', { name: /OVR ve POT geçmişi/ })
-    const rows = within(table).getAllByRole('row').slice(1).map((r) => within(r).getAllByRole('cell').map((c) => c.textContent))
-    expect(rows).toEqual([['15.01.2027', '56', '75'], ['16.03.2027', '59', '75'], ['14.07.2027', '61', '76']])
-  })
-
-  it('plato uyarısı deskRules kuralıyla (≤ 24 yaş, OVR ≥ POT), metinle', async () => {
-    renderPage('/career/growth?oyuncu=2')
-    expect(await screen.findByRole('status', { name: 'Plato' })).toHaveTextContent('potansiyeline ulaştı')
-    const view = screen.getByTestId('where')
-    expect(view).toBeInTheDocument()
-  })
-
-  it('platoda olmayan oyuncuda uyarı yok', async () => {
-    renderPage('/career/growth?oyuncu=1')
-    await screen.findByRole('img', { name: /OVR 56/ })
-    expect(screen.queryByRole('status', { name: 'Plato' })).toBeNull()
-  })
-
-  it('en çok yükselenler (azalan) ve düşenler ayrı; tablo görünümü aynı sıra', async () => {
+/** ACADEMY-b §3: "Kadromdaki gençler doğru gelişiyor mu?" — gelişim planları + son içe aktarmadan beri düz liste; seçici ve grafik yok. */
+describe('Gelişim (sade)', () => {
+  it('oyuncu seçici ve geçmiş grafiği yok; geçmiş ucu çağrılmaz', async () => {
     renderPage()
-    const up = await screen.findByRole('region', { name: 'En çok yükselenler' })
-    await waitFor(() => expect(within(up).getByRole('img', { name: /Oyuncu 2 \+5, Oyuncu 1 \+3/ })).toBeInTheDocument())
-    const down = screen.getByRole('region', { name: 'Düşenler' })
-    expect(within(down).getByRole('img', { name: /Oyuncu 3 −1/ })).toBeInTheDocument()
-    fireEvent.click(within(up).getByRole('button', { name: 'Tablo olarak göster' }))
-    expect(within(up).getAllByRole('row').slice(1).map((r) => r.textContent)).toEqual(['Oyuncu 270 → 75+5', 'Oyuncu 158 → 61+3'])
+    expect(await screen.findByRole('heading', { level: 1, name: 'Gelişim' })).toBeInTheDocument()
+    expect(screen.queryByRole('combobox')).toBeNull()
+    expect(screen.queryByRole('img', { name: /OVR geçmişi/ })).toBeNull()
+    expect(endpoints.playerHistory).not.toHaveBeenCalled()
+    expect(endpoints.development).not.toHaveBeenCalled()
   })
 
-  it('yükselen ve düşen çubukları ortak ölçek (iki listenin mutlak en büyük farkı): −1, +5\'in beşte biri (V3-07a)', async () => {
-    renderPage()
-    const up = await screen.findByRole('region', { name: 'En çok yükselenler' })
-    const upBar = await waitFor(() => within(up).getByRole('img').querySelector('rect')!)
-    const downBar = within(screen.getByRole('region', { name: 'Düşenler' })).getByRole('img').querySelector('rect')!
-    const upWidth = Number(upBar.getAttribute('width'))
-    const downWidth = Number(downBar.getAttribute('width'))
-    expect(downWidth).toBeCloseTo(upWidth / 5, 0)
-  })
-
-  it('aralık seçici: son iki içe aktarma (varsayılan) / sezon başı → şimdi (sezon verisi varsa) → snapshotDiff from/to', async () => {
-    renderPage()
-    await screen.findByRole('region', { name: 'En çok yükselenler' })
-    expect(endpoints.snapshotDiff).toHaveBeenCalledWith(1, undefined, undefined)
-    fireEvent.click(screen.getByRole('radio', { name: 'Sezon başı → şimdi' }))
-    await waitFor(() => expect(endpoints.snapshotDiff).toHaveBeenCalledWith(1, 2, 3))
-  })
-
-  it('tek içe aktarma: "en az iki içe aktarma gerekir" + İçe aktar bağlantısı', async () => {
+  it('gelişim planları: Altyapı satır biçimi (A takım ≤ 23 + kiralıktaki gençler); tek içe aktarmayla da görünür', async () => {
     vi.mocked(endpoints.snapshots).mockResolvedValue([snap(1, 1)] as never)
     renderPage()
-    expect(await screen.findByText('Gelişimi görmek için en az iki içe aktarma gerekir.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'İçe aktar' })).toHaveAttribute('href', '/career/import')
+    const plans = await screen.findByRole('region', { name: 'Gelişim planları' })
+    const list = await within(plans).findByRole('list', { name: 'Gelişim planları' })
+    const row = within(list).getByRole('button', { name: /Figueiredo/ })
+    expect(row).toHaveTextContent('CM → CDM önerilir')
+    expect(row).toHaveTextContent('62 → 84')
+    expect(row).toHaveTextContent('Önerilen plan: CDM · Deep-Lying Playmaker')
+    expect(within(list).getByRole('button', { name: /Kiralık Genç/ })).toHaveTextContent('Kiralıkta')
+    // Tek içe aktarma: yalnız fark bölümü bekler.
+    const since = screen.getByRole('region', { name: 'Son içe aktarmadan beri' })
+    expect(within(since).getByText('İkinci içe aktarmadan sonra görünür.')).toBeInTheDocument()
     expect(endpoints.snapshotDiff).not.toHaveBeenCalled()
   })
 
-  it('oyuncunun geçmişi yok; hata durumu', async () => {
-    vi.mocked(endpoints.playerHistory).mockResolvedValueOnce([] as never)
-    const view = renderPage('/career/growth?oyuncu=1')
-    expect(await screen.findByText('Bu oyuncunun içe aktarma geçmişi yok.')).toBeInTheDocument()
-    view.unmount()
-    vi.mocked(endpoints.playerHistory).mockRejectedValueOnce(new Error('500'))
-    renderPage('/career/growth?oyuncu=1')
-    expect(await screen.findByText('Gelişim geçmişi yüklenemedi.')).toBeInTheDocument()
+  it('satır aynı paneli açar (?oyuncu=); Masa bağlantısı ?oyuncu= ile paneli açık getirir', async () => {
+    renderPage('/career/growth?oyuncu=11')
+    const panel = await screen.findByRole('complementary', { name: 'Figueiredo' })
+    expect(await within(panel).findByRole('heading', { name: 'Ne yapmalıyım?' })).toBeInTheDocument()
+    expect(within(panel).getByRole('list', { name: 'Plan karşılaştırması' })).toBeInTheDocument()
   })
 
-  it('yalnız mevcut uçlar: eski gelişim ucu çağrılmaz', async () => {
-    renderPage('/career/growth?oyuncu=1')
-    await screen.findByRole('img', { name: /OVR 56/ })
-    expect(endpoints.development).not.toHaveBeenCalled()
+  it('Masa "Süre ver ya da kirala" bağlantısı (?oyuncu=) plan listesinde olmayan kadro oyuncusu için de paneli açar', async () => {
+    renderPage('/career/growth?oyuncu=3')
+    expect(await screen.findByRole('complementary', { name: 'Oyuncu 3' })).toBeInTheDocument()
+    expect(endpoints.youthDetail).toHaveBeenCalledWith(1, 3)
+  })
+
+  it('mobilde satır ayrı sayfayı açar, geri dönüş Gelişim', async () => {
+    mobile.value = true
+    renderPage()
+    fireEvent.click(await screen.findByRole('button', { name: /Figueiredo/ }))
+    expect(screen.getByTestId('where')).toHaveTextContent('/career/academy/11?geri=gelisim')
+  })
+
+  it('son içe aktarmadan beri: düz liste ▲/▼, fark ve önce→şimdi; yalnız kadro; plato satır içinde', async () => {
+    renderPage()
+    const since = await screen.findByRole('region', { name: 'Son içe aktarmadan beri' })
+    const items = (await within(since).findAllByRole('listitem')).map((li) => li.textContent)
+    expect(items).toEqual(['▲ Oyuncu 2 +5 (70→75) ⚠ POT\'a ulaştı', '▲ Oyuncu 1 +3 (58→61)', '▼ Oyuncu 3 −1 (64→63)'])
+    expect(since.textContent).not.toContain('Yabancı')
+  })
+
+  it('aralık seçici: Son iki içe aktarma | Sezon başı → şimdi (snapshotDiff from/to)', async () => {
+    renderPage()
+    const since = await screen.findByRole('region', { name: 'Son içe aktarmadan beri' })
+    fireEvent.click(await within(since).findByRole('radio', { name: 'Sezon başı → şimdi' }))
+    expect(await within(since).findAllByRole('listitem')).not.toHaveLength(0)
+    expect(endpoints.snapshotDiff).toHaveBeenLastCalledWith(1, 2, 3)
+  })
+
+  it('genç yoksa planlar bölümü boş durum', async () => {
+    vi.mocked(endpoints.youth).mockResolvedValue([])
+    renderPage()
+    expect(await screen.findByText('Gelişim planı önerilecek genç yok (≤ 23 yaş, potansiyeli OVR\'den en az 5 yüksek).')).toBeInTheDocument()
   })
 })

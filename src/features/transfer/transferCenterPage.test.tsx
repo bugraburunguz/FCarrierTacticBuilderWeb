@@ -73,11 +73,22 @@ beforeEach(() => {
 })
 
 const fetchCandidates = async () => {
-  await screen.findByRole('button', { name: /Oyuncu 2 · Seviyesine göre %12/, pressed: true })
+  await screen.findByRole('button', { name: /Oyuncu 2 · Rol oturması %12/, pressed: true })
   fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir/ }))
   return screen.findByText('Aday Forvet')
 }
 const plan = () => screen.findByRole('region', { name: 'Bütçe planı' })
+
+/** REVIEW Y5: kısa liste ya da etiketler alınamazsa bütçe planı "0" ile yanlış hesaplanmaz; hata görünür. */
+describe('Transfer hata durumları', () => {
+  it('kısa liste alınamazsa "Kısa liste yüklenemedi" + Tekrar dene; kalan bütçe gösterilmez', async () => {
+    vi.mocked(endpoints.shortlist).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    expect(await screen.findByText('Kısa liste yüklenemedi.')).toBeInTheDocument()
+    const budget = await screen.findByRole('region', { name: 'Bütçe planı' })
+    expect(within(budget).getByText('Kalan').closest('div')).toHaveTextContent('—')
+  })
+})
 
 describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
   it('sekmeler Adaylar · Kısa liste · Satış (?sekme=); varsayılan Adaylar adrese yazılmaz', async () => {
@@ -93,21 +104,30 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
 
   it('İhtiyaçlar Masa zayıf halka kuralıyla; çip seçimi ↔ adres çubuğu; "Tüm kadro" seçeneği', async () => {
     renderPage()
-    const weak = await screen.findByRole('button', { name: /Oyuncu 2 · Seviyesine göre %12/ })
-    expect(screen.getByRole('button', { name: /Oyuncu 1 · Seviyesine göre %38/ })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /Seviyesine göre %80/ })).toBeNull()
+    const weak = await screen.findByRole('button', { name: /Oyuncu 2 · Rol oturması %12/ })
+    expect(screen.getByRole('button', { name: /Oyuncu 1 · Rol oturması %38/ })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Rol oturması %80/ })).toBeNull()
     expect(weak).toHaveAttribute('aria-pressed', 'true')
-    fireEvent.click(screen.getByRole('button', { name: /Oyuncu 1 · Seviyesine göre %38/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Oyuncu 1 · Rol oturması %38/ }))
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('ihtiyac=slot-CM1'))
     fireEvent.click(screen.getByRole('button', { name: 'Tüm kadro' }))
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('kadro=tum'))
-    expect(await screen.findByRole('button', { name: /Oyuncu 3 · Seviyesine göre %80/ })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Oyuncu 3 · Rol oturması %80/ })).toBeInTheDocument()
+  })
+
+  it('FAZ 6a-J: ihtiyaç çipleri yatayda kesilmez, satıra sarar (yatay kaydırma yok)', async () => {
+    renderPage()
+    const chip = await screen.findByRole('button', { name: /Oyuncu 2 · Rol oturması %12/ })
+    const list = chip.closest('ul')!
+    expect(list.className).toContain('flex-wrap')
+    expect(list.className).not.toContain('overflow-x-auto')
+    expect(chip.innerHTML).not.toContain('whitespace-nowrap')
   })
 
   it('ana taktik yoksa başlangıç önerisi kullanılır ve "Otomatik öneri" etiketi görünür', async () => {
     vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
     renderPage()
-    expect(await screen.findByRole('button', { name: /Oyuncu 2 · Seviyesine göre %12/ })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Oyuncu 2 · Rol oturması %12/ })).toBeInTheDocument()
     const needs = screen.getByRole('region', { name: 'İhtiyaçlar' })
     expect(within(needs).getByText(/Otomatik öneri/)).toBeInTheDocument()
   })
@@ -118,19 +138,19 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     renderPage()
     fireEvent.click(await screen.findByRole('button', { name: 'Tüm kadroyu göster' }))
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('kadro=tum'))
-    expect(await screen.findByRole('button', { name: /Oyuncu 3 · Seviyesine göre %80/ })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Oyuncu 3 · Rol oturması %80/ })).toBeInTheDocument()
   })
 
   it('ihtiyac=slot-{id}: o slot seçili ve öneri o slot için istenir (slotId)', async () => {
     renderPage('/career/transfer?ihtiyac=slot-CM1')
-    expect(await screen.findByRole('button', { name: /Oyuncu 1 · Seviyesine göre %38/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(await screen.findByRole('button', { name: /Oyuncu 1 · Rol oturması %38/ })).toHaveAttribute('aria-pressed', 'true')
     fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir/ }))
     await waitFor(() => expect(endpoints.careerRecommendations).toHaveBeenCalledWith(1, expect.objectContaining({ slotId: 'CM1', position: 'CM', roleId: 'box_to_box_balanced' })))
   })
 
   it('pos + rol (yeni) ve role (eski takma ad) ihtiyacı seçer', async () => {
     renderPage('/career/transfer?pos=CM&rol=box_to_box_balanced')
-    expect(await screen.findByRole('button', { name: /Oyuncu 2 · Seviyesine göre %12/, pressed: true })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Oyuncu 2 · Rol oturması %12/, pressed: true })).toBeInTheDocument()
   })
 
   it('bütçe planı: bütçe − kısa liste + satış planı = kalan', async () => {
@@ -181,6 +201,16 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     await waitFor(() => expect(add).toBeEnabled())
     fireEvent.click(add)
     await waitFor(() => expect(endpoints.shortlistAdd).toHaveBeenCalledWith(1, 50, expect.objectContaining({ note: expect.stringContaining('CM') })))
+  })
+
+  it('REVIEW Y6: ücretli öneri sonucu sekme değişince kaybolmaz (yeniden ödeme gerekmez)', async () => {
+    renderPage()
+    await fetchCandidates()
+    expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('tab', { name: /Kısa liste/ }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Adaylar' }))
+    expect(await screen.findByText('Aday Forvet')).toBeInTheDocument()
+    expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
   })
 
   it('kısa liste sekmesi: oyuncu adıyla, pazarlık tavanı MoneyInput kaydeder, çıkar', async () => {

@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef } from 'react'
 import { endpoints } from '../../api/endpoints'
 import { useAuth } from '../../auth/AuthContext'
-import { fitDisplay } from '../../lib/fitLabels'
+import { fitDisplay, fitTitle } from '../../lib/fitLabels'
 import { canPlaySlot } from '../../lib/positions'
 import { roleBaseName } from '../../lib/squadBuilder'
 import { useActiveCareerId } from '../../state/careerStore'
@@ -12,6 +12,7 @@ import { careerSlotTabs } from './careerSlotTabs'
 import type { SlotTab, SlotView, SquadBinding } from './types'
 import { useLineupFits } from './useLineupFits'
 import { useSquadWorkspace } from './useSquadWorkspace'
+import { worstReason } from '../dashboard/dashboardRules'
 
 /** Kurucunun durum kaynağı: v3 Lab `useLabBinding` (aktif taslak), v2 `useCareerBinding` (eski tek kopya depo). Kararlı (modül düzeyi) bir hook olmalı. */
 export type CareerBuilderBinding = (careerId: number | undefined, squad: CareerPlayer[] | undefined) => { binding: SquadBinding<number>; playerById: Map<number, PlayerSummary> }
@@ -44,7 +45,7 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
   const slotTags = (slotId: string) => state.tags[slotId] ?? []
 
   // FAZ 4b: rol uyumu tek /fit/lineup isteğiyle (dizilenler kilitli); kariyer yoksa uyum yok.
-  const { fitBySlot } = useLineupFits(ws, playerById, hasCareer ? careerId : undefined)
+  const { fitBySlot, rows: fitRows } = useLineupFits(ws, playerById, hasCareer ? careerId : undefined)
 
   const views: SlotView[] = ws.slots.map((slot) => {
     const player = playerById.get(assignments[slot.slotId])
@@ -57,11 +58,12 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
       y: slot.y,
       player: player && { id: player.id, assetId: player.faceAssetId, name: player.name, overall: player.overall, faceUrl: player.faceUrl, club: player.club, league: player.league, nationality: player.nationality, faceStats: player.faceStats, faceLabels: player.faceLabels, faceStatsApproximate: player.faceStatsApproximate },
       roleLabel: role ? `${roleBaseName(role)} · ${role.focus}` : '…',
-      fit: fit && { pct: fitDisplay(fit).pct, state: fitDisplay(fit).state, band: fit.badge },
+      fit: fit && { pct: fitDisplay(fit).pct, state: fitDisplay(fit).state, band: fit.badge, metric: fitDisplay(fit).metric, title: fitTitle(fitDisplay(fit)), strength: fitDisplay(fit).strength, roleFit: fitDisplay(fit).roleFit },
       selected: selection?.slotId === slot.slotId,
     }
   })
-  const weakReasons: Record<string, string | undefined> = Object.fromEntries([...fitBySlot].map(([slotId, fit]) => [slotId, fit?.reasons[0]]))
+  // FAZ 6a-H: ham motor katkısı ("Curve +2.9") değil, en büyük eksi katkı Türkçe ("Dayanıklılık −7,5"); Masa zayıf halka kartıyla aynı kural.
+  const weakReasons: Record<string, string | undefined> = Object.fromEntries([...fitBySlot].map(([slotId, fit]) => [slotId, worstReason(fit?.reasons)]))
 
   const autoFill = useMutation({
     mutationFn: () => endpoints.lineup(careerId!, ws.tactic),
@@ -130,6 +132,8 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
     preset,
     views,
     weakReasons,
+    /** FIT-2 madde 6: dizili slotların satırları (rol alternatifleri ve "daha uygun rol" dahil). */
+    fitRows,
     autoFill,
     canAutoFill,
     changeFormation,

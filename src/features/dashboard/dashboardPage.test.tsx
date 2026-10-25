@@ -18,7 +18,7 @@ vi.mock('../../api/endpoints', () => {
       resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })), fitRole: vi.fn(), playerFacets: vi.fn(),
       snapshots: vi.fn(), events: vi.fn(), updateCareer: vi.fn(), careerBackup: vi.fn(), careerRestore: vi.fn(), deleteCareer: vi.fn(),
       userTactics: none, saveUserTactic: vi.fn(), setMainTactic: vi.fn(), playerTags: none, snapshotDiff: vi.fn(() => Promise.resolve({ rows: [] })),
-      fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(),
+      fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(), setupCheck: vi.fn(() => Promise.resolve([])), tacticAnalysis: vi.fn(() => Promise.resolve({ metrics: { band: 'BALANCED', depth: 50 }, findings: [], notEvaluated: [] })),
     },
   }
 })
@@ -78,11 +78,45 @@ beforeEach(() => {
   vi.mocked(endpoints.updateCareer).mockReset().mockResolvedValue(CAREER as never)
 })
 
+/** REVIEW Y5: hata boş durum gibi görünmez ("kariyerin yok", "kadro boş" değil); tekrar denenebilir. */
+describe('Kariyer Masası hata durumları', () => {
+  it('kariyer listesi alınamazsa "yüklenemedi" + Tekrar dene; "Henüz kariyerin yok" yazmaz', async () => {
+    vi.mocked(endpoints.careers).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Kariyerler yüklenemedi.')
+    expect(screen.getByRole('button', { name: 'Tekrar dene' })).toBeInTheDocument()
+    expect(screen.queryByText(/Henüz kariyerin yok/)).toBeNull()
+  })
+
+  it('veri varken arka plan yenilemesi başarısız olursa sayfa hata ekranına düşmez; eldeki veri kalır', async () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/career/dashboard']}>
+          <Routes><Route path="/career/dashboard" element={<DashboardPage />} /></Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    )
+    expect((await screen.findAllByRole('heading', { name: 'Kariyer Masası' })).length).toBeGreaterThan(0)
+    vi.mocked(endpoints.careers).mockRejectedValue(new Error('ağ'))
+    await client.refetchQueries({ queryKey: ['careers'] }).catch(() => undefined)
+    await waitFor(() => expect(client.getQueryState(['careers'])?.status).toBe('error'))
+    expect(screen.queryByText('Kariyerler yüklenemedi.')).toBeNull()
+    expect(screen.getAllByRole('heading', { name: 'Kariyer Masası' }).length).toBeGreaterThan(0)
+  })
+
+  it('kadro alınamazsa üstte "Kadro yüklenemedi" + Tekrar dene', async () => {
+    vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    expect(await screen.findByText('Kadro yüklenemedi.')).toBeInTheDocument()
+  })
+})
+
 describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
   it('ana taktik varsa: takım uyumu ve zayıf halkalar ana taktikten, "Kararın" etiketiyle; saha yok', async () => {
     renderPage()
-    const fit = await screen.findByRole('region', { name: 'Takım uyumu' })
-    expect(await within(fit).findByRole('img', { name: /Takım uyumu %43/ })).toBeInTheDocument()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('img', { name: /Takım gücü %65/ })).toBeInTheDocument()
     expect(within(fit).getByText('Kararın')).toBeInTheDocument()
     expect(screen.queryByText('Otomatik öneri · ana taktik değil')).toBeNull()
     expect(endpoints.starterTactic).not.toHaveBeenCalled()
@@ -126,16 +160,31 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(weakCard).getByRole('link', { name: /Lab'da dene/ })).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu&slot=CM1')
   })
 
-  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; iş başına kural kaynağı etiketi', async () => {
+  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; kaynak yalnız panel başlığında ("Ana taktiğe göre"), satırlarda etiket yok (FAZ 6a-D)', async () => {
     renderPage()
     const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
     const panel = screen.getByRole('tabpanel')
     expect(panel.querySelector('section')).toBe(jobs)
     const items = await within(jobs).findAllByRole('listitem')
     expect(items.length).toBeGreaterThan(0)
-    expect(jobs.querySelector('header [data-source="decision"]')).not.toBeNull()
-    const contract = items.find((li) => li.textContent?.includes('Sözleşme: Oyuncu 4'))
-    expect(contract?.querySelector('[data-source="record"]')).not.toBeNull()
+    await waitFor(() => expect(jobs.querySelector('header [data-source="decision"]')?.textContent).toContain('Ana taktiğe göre'))
+    items.forEach((li) => expect(li.querySelector('[data-source]')).toBeNull())
+    expect(within(jobs).queryByText('Kararın')).toBeNull()
+  })
+
+  it('FAZ 6a-D: aynı türden tek iş; kalanlar "+N benzer" ile açılır', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue([
+      member(1, { wageEur: 5_000 }), member(2, { wageEur: 5_000 }), member(3, { wageEur: 5_000 }),
+      member(21, {}, { age: 19, overall: 60, potential: 80 }), member(22, {}, { age: 20, overall: 59, potential: 79 }), member(23, {}, { age: 18, overall: 58, potential: 78 }),
+    ] as never)
+    renderPage()
+    const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
+    await waitFor(() => expect(within(jobs).getAllByText('Kiralık')).toHaveLength(1))
+    const more = within(jobs).getByRole('button', { name: '+2 benzer' })
+    expect(more).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(more)
+    expect(more).toHaveAttribute('aria-expanded', 'true')
+    expect(within(jobs).getByRole('list', { name: 'Benzer işler · Kiralık' }).querySelectorAll('li')).toHaveLength(2)
   })
 
   it('tek IMPORT varsa Δ çipi hiç gösterilmez', async () => {
@@ -182,8 +231,8 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     renderPage()
     expect(await screen.findByText('1 oyuncu kadroda yok, otomatik dolduruldu')).toBeInTheDocument()
     expect(endpoints.lineup).toHaveBeenCalledWith(1, expect.objectContaining({ formation: '4-3-3' }), { CM1: 1, CM2: 2 })
-    const fit = screen.getByRole('region', { name: 'Takım uyumu' })
-    expect(await within(fit).findByRole('img', { name: /Takım uyumu %43/ })).toBeInTheDocument()
+    const fit = screen.getByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('img', { name: /Takım gücü %65/ })).toBeInTheDocument()
   })
 
   it('finansal sağlık: bütçe Δ önceki IMPORT\'a göre, maaş kullanımı, bilinmeyen maaş notu, döneme kalan gün', async () => {
@@ -220,12 +269,139 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(await within(box).findByText('Transfer dönemi sonu')).toBeInTheDocument()
     expect(within(box).getByText('Oyuncu 5 · kiralık bitiyor')).toBeInTheDocument()
     expect(await within(box).findByText(/Satış · Satılan Oyuncu/)).toBeInTheDocument()
-    expect(within(box).getAllByText(/İçe aktarma · 30 oyuncu/).length).toBeGreaterThan(0)
+    // FAZ 6a-E: kadro bilgisi olmayan görüntüde yalnız tür (dünya oyuncu sayısı yazılmaz).
+    expect(within(box).getAllByText(/^İçe aktarma$/).length).toBeGreaterThan(0)
+  })
+
+  it('FAZ 6a-A: kayıt verisi eksikse tek bant (ne eksik, neyi etkiliyor, nasıl tamamlanır); boş kutular yerine yalnız mevcut veri', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValue([{ ...CAREER, gameDate: undefined }] as never)
+    vi.mocked(endpoints.playerFacets).mockResolvedValue({ contractData: false, loanData: false })
+    vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2), member(3)] as never)
+    renderPage()
+    const banner = await screen.findByRole('region', { name: 'Kayıt verisi eksik' })
+    await waitFor(() => expect(within(banner).getAllByRole('listitem')).toHaveLength(3))
+    expect(banner).toHaveTextContent('Oyun tarihi')
+    expect(banner).toHaveTextContent('Maaş ve sözleşme')
+    expect(within(banner).getByRole('link', { name: /Kariyer içinden yeniden içe aktar/ })).toHaveAttribute('href', '/career/import')
+    expect(screen.queryByRole('region', { name: 'Acil uyarılar' })).toBeNull()
+    const finance = screen.getByRole('region', { name: 'Finansal sağlık' })
+    expect(within(finance).queryByText('Maaş bütçesi kullanımı')).toBeNull()
+    expect(within(finance).queryByText('Dönem sonuna')).toBeNull()
+    expect(within(finance).getByText('Transfer bütçesi')).toBeInTheDocument()
+    const timeline = screen.getByRole('region', { name: 'Zaman çizelgesi' })
+    expect(within(timeline).queryByText('Yaklaşan')).toBeNull()
+    expect(screen.queryByText(/Oyun tarihi yok/)).toBeNull()
+  })
+
+  it('FAZ 6a-A: veri tamsa bant yok', async () => {
+    renderPage()
+    await screen.findByRole('region', { name: 'Acil uyarılar' })
+    expect(screen.queryByRole('region', { name: 'Kayıt verisi eksik' })).toBeNull()
+  })
+
+  it('FAZ 6a-E: geçmişte aynı gün içe aktarmalar tek satır, kadro sayısıyla (dünya oyuncu sayısı yok)', async () => {
+    vi.mocked(endpoints.snapshots).mockResolvedValue([
+      { id: 9, takenAt: '2026-10-19T12:00:00Z', source: 'IMPORT', playerCount: 21668, squadCount: 31, squadJoined: ['Yeni Oyuncu'], squadLeft: [] },
+      { id: 8, takenAt: '2026-10-19T09:00:00Z', source: 'IMPORT', playerCount: 21668, squadCount: 30 },
+    ] as never)
+    renderPage()
+    const box = await screen.findByRole('region', { name: 'Zaman çizelgesi' })
+    expect(await within(box).findByText(/İçe aktarma ×2 · kadro: 31 oyuncu · giren: Yeni Oyuncu/)).toBeInTheDocument()
+    expect(within(box).queryByText(/21668/)).toBeNull()
+  })
+
+  it('FIT-2 madde 6: ROL_UYUMSUZ kartı daha uygun rolü yazar; "Rolü değiştir" önerilen rolle Lab\'da yeni taslak açar', async () => {
+    const better = { roleId: 'inside_forward_attack', roleName: 'Inside Forward (Attack)', currentFit: 70, levelFit: 71 }
+    vi.mocked(endpoints.lineup).mockImplementation(((c: number, t: unknown, locked?: Record<string, number>) =>
+      lineupFromFitRole(endpoints.fitRole as never)(c, t as never, locked).then((r: { slots: { slotId: string }[] }) => ({
+        ...r, slots: r.slots.map((s) => (s.slotId === 'CM2' ? { ...s, weakClass: 'ROL_UYUMSUZ', betterRole: better } : { ...s, weakClass: 'UYGUN' })),
+      }))) as never)
+    renderPage()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const [card] = await within(weak).findAllByRole('listitem')
+    expect(card).toHaveTextContent('Daha uygun rol: Inside Forward (Attack) · oturma %71')
+    const href = '/career/tactics-lab?sekme=kurucu&slot=CM2&rol=inside_forward_attack'
+    expect(within(card).getByRole('link', { name: /Rolü değiştir/ })).toHaveAttribute('href', href)
+  })
+
+  it('FIT-1: Takım gücü (Güç ortalaması) ve Rol oturması ayrı adlarla; zayıf halka kartında iki sayı adıyla ve sınıf başlığı', async () => {
+    vi.mocked(endpoints.lineup).mockImplementation(((c: number, t: unknown, locked?: Record<string, number>) =>
+      lineupFromFitRole(endpoints.fitRole as never)(c, t as never, locked).then((r: { slots: { slotId: string }[] }) => ({
+        ...r, slots: r.slots.map((s) => ({ ...s, weakClass: s.slotId === 'CM2' ? 'IKISI' : 'UYGUN' })),
+      }))) as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('img', { name: /Takım gücü %65/ })).toBeInTheDocument()
+    expect(within(fit).getByText('Rol oturması %43')).toBeInTheDocument()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const cards = await within(weak).findAllByRole('listitem')
+    expect(cards).toHaveLength(1)
+    expect(cards[0]).toHaveTextContent('Kalite açığı + rol uyumsuz')
+    expect(cards[0]).toHaveTextContent('Rol oturması %12 · Güç 40')
+    expect(cards[0]).toHaveTextContent('Rol için eksik')
+  })
+
+  it('FIT-1 madde 5: ana taktiğin taktik riski sayısı Masa\'da küçük satır; Lab bağlantısı', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([
+      { title: 'Yüksek hat: stoperlerde hız', status: 'RED', detail: 'x', advice: 'y', players: [] },
+      { title: 'Kısa pasla çıkış: pas güvenliği', status: 'YELLOW', detail: 'x', advice: 'y', players: [] },
+      { title: 'Kısa pasla çıkış: kaleci dağıtımı', status: 'GREEN', detail: 'x', advice: 'y', players: [] },
+    ] as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    const link = await within(fit).findByRole('link', { name: /2 taktik riski/ })
+    expect(link).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu')
+    expect(endpoints.setupCheck).toHaveBeenCalledWith(expect.objectContaining({ careerId: 1 }))
+  })
+
+  it('FIT-2 madde 7: Masa\'daki sayı Lab ile aynı liste — kurulum kontrolleri + ana taktiğin diziliş kuralları (bilgi sayılmaz)', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([{ title: 'Yüksek hat: stoperlerde hız', status: 'RED', detail: 'x', advice: 'y', players: [] }] as never)
+    vi.mocked(endpoints.tacticAnalysis).mockResolvedValue({ metrics: { band: 'BALANCED', depth: 50 }, notEvaluated: [], findings: [
+      { code: 'striker_isolated', title: 'Santrfor yalnız', severity: 'WARN', instance: {}, evidence: [], text: 't' },
+      { code: 'midfield_thin', title: 'Orta saha ince', severity: 'INFO', instance: {}, evidence: [], text: 't' },
+    ] } as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('link', { name: /2 taktik riski/ })).toBeInTheDocument()
+    expect(endpoints.tacticAnalysis).toHaveBeenCalledWith(expect.objectContaining({ careerId: 1, assigned: expect.objectContaining({}) }))
+  })
+
+  it('FAZ 6a-F: göçten gelen "Önceki taslak" adı ana taktik adı olarak görünmez', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue({ ...MAIN, name: 'Önceki taslak' } as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByText('Ana taktik · 4-3-3')).toBeInTheDocument()
+    expect(screen.queryByText(/Önceki taslak/)).toBeNull()
+  })
+
+  it('FAZ 6a-G / FIT-1: zayıf halka başlığında iki sayının anlamı (bilgi ikonu + title)', async () => {
+    renderPage()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const note = within(weak).getByText('Rol oturması ve Güç')
+    expect(note.closest('[title]')).toHaveAttribute('title', expect.stringContaining('seviyesindeki oyunculara göre'))
+    expect(note.closest('[title]')).toHaveAttribute('title', expect.stringContaining('ne kadar etkili'))
+  })
+
+  it('FAZ 6a-C: ≥1280 px üç sütun (sol: 3 iş + zayıf halkalar · orta: uyum · sağ: finans + uyarılar + zaman çizelgesi)', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('1280'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined })) as never
+    try {
+      renderPage()
+      await screen.findByRole('region', { name: 'Zayıf halkalar' })
+      const columns = [...document.querySelectorAll('[data-masa-col]')]
+      expect(columns.map((c) => c.getAttribute('data-masa-col'))).toEqual(['left', 'middle', 'right'])
+      const names = (col: Element) => [...col.querySelectorAll(':scope > section[aria-label]')].map((s) => s.getAttribute('aria-label'))
+      expect(names(columns[0])).toEqual(['Bu dönemin 3 işi', 'Zayıf halkalar'])
+      expect(names(columns[1])).toEqual(['Takım gücü'])
+      expect(names(columns[2])).toEqual(['Finansal sağlık', 'Acil uyarılar', 'Zaman çizelgesi'])
+    } finally {
+      window.matchMedia = original
+    }
   })
 
   it('her panelin başlığında veri katmanı etiketi', async () => {
     renderPage()
-    for (const name of ['Finansal sağlık', 'Acil uyarılar', 'Takım uyumu', 'Zayıf halkalar', 'Zaman çizelgesi']) {
+    for (const name of ['Finansal sağlık', 'Acil uyarılar', 'Takım gücü', 'Zayıf halkalar', 'Zaman çizelgesi']) {
       const box = await screen.findByRole('region', { name })
       await waitFor(() => expect(box.querySelector('[data-source]')).not.toBeNull())
     }

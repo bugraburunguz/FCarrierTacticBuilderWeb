@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { firstFocus, type RoleGroup } from '../../lib/squadBuilder'
+import type { RoleAlternative } from '../../api/types'
+import { alternativeFitText } from '../../lib/fitLabels'
+import { firstFocus, rankRoleGroups, type RoleGroup } from '../../lib/squadBuilder'
 import { AppDialog } from '../../design/components/AppDialog'
 
 interface Props {
@@ -10,6 +12,8 @@ interface Props {
   currentRoleId: string
   onApply: (roleId: string) => void
   onClose: () => void
+  /** FIT-2 madde 6 (kariyer): slottaki oyuncunun rollere göre Güç/Rol oturması; verilirse roller en uygun önce ve sayısıyla. UT vermez. */
+  fits?: Map<string, RoleAlternative>
 }
 
 /** Taslak yerel tutulur; yalnızca Uygula'da dışarı yazılır. */
@@ -21,7 +25,9 @@ export function RoleFocusModal(props: Props) {
   )
 }
 
-export function RoleFocusPanel({ groups, lock, currentRoleId, onApply, onClose }: Props) {
+export function RoleFocusPanel({ groups: given, lock, currentRoleId, onApply, onClose, fits }: Props) {
+  const groups = rankRoleGroups(given, fits)
+  const fitOf = (roleId: string) => fits?.get(roleId)
   const initial = groups.find((g) => g.options.some((o) => o.roleId === currentRoleId)) ?? groups[0]
   const [base, setBase] = useState(initial?.base)
   const [roleId, setRoleId] = useState(initial?.options.find((o) => o.roleId === currentRoleId)?.roleId ?? (initial ? firstFocus(initial).roleId : ''))
@@ -51,6 +57,7 @@ export function RoleFocusPanel({ groups, lock, currentRoleId, onApply, onClose }
           >
             <input type="radio" name="role" className="accent-accent" checked={g.base === base} onChange={() => pickBase(g)} />
             {g.base}
+            {fitOf(g.options[0].roleId) && <span className="ml-auto text-[11.5px] text-muted">{alternativeFitText(fitOf(g.options[0].roleId)!)}</span>}
           </label>
         ))}
       </div>
@@ -66,6 +73,8 @@ export function RoleFocusPanel({ groups, lock, currentRoleId, onApply, onClose }
             className={`rounded-md border px-2.5 py-1 text-[11.5px] ${o.roleId === roleId ? 'border-accent text-accent' : 'border-line text-muted'}`}
           >
             {o.focus}
+            {/* Oturma biliniyorsa yalnız yüzde; norm yoksa sayının adı (Güç) yazılır, iki ölçek karışmasın. */}
+            {fitOf(o.roleId) && <span className="text-muted"> · {fitOf(o.roleId)!.levelFit == null ? alternativeFitText(fitOf(o.roleId)!) : `%${Math.round(fitOf(o.roleId)!.levelFit!)}`}</span>}
           </button>
         ))}
       </div>

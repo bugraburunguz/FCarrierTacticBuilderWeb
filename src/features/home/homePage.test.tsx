@@ -68,7 +68,9 @@ describe('Ana sayfa (v3, mod başına)', () => {
     const card = await screen.findByRole('region', { name: 'Kariyerine devam et' })
     expect(within(card).getByText('Crewe 2026')).toBeInTheDocument()
     expect(await within(card).findByText(/Son içe aktarma 10\.10\.2026/)).toBeInTheDocument()
-    expect(await within(card).findByText('%50')).toBeInTheDocument()
+    // FIT-1: Takım gücü = Güç ortalaması (fikstürde her oyuncunun Güç'ü 70).
+    expect(within(card).getByText('Takım gücü')).toBeInTheDocument()
+    expect(await within(card).findByText('%70')).toBeInTheDocument()
     // KARIYER-UX FAZ 2 düzeltme 3: Masa ile aynı bileşen (SeasonJobs) ve fonksiyon (deskRules.seasonJobs), ana taktikten.
     const jobs = await within(card).findByRole('region', { name: 'Bu dönemin 3 işi' })
     expect(await within(jobs).findByText(/CM: zayıf halka/)).toBeInTheDocument()

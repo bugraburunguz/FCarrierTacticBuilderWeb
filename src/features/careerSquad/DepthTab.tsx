@@ -6,6 +6,8 @@ import { Chip, EmptyState, Panel, type DataSource } from '../../design/component
 import type { PositionNeed } from '../../lib/depth'
 import { ageProfile, type PositionGroup } from '../../lib/deskRules'
 import { DepthMap } from '../squad/kadro/DepthMap'
+import type { SlotFitRow } from '../squad/useSlotFits'
+import { DevelopmentRecommendations } from '../growth/DevelopmentRecommendations'
 import { ageBands, contractTimeline, groupRoster, YOUTH_MAX_AGE, type DepthTier, type GroupRoster } from './careerSquadRules'
 
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -26,7 +28,11 @@ function GroupSection({ roster, open, onToggle, focus }: { roster: GroupRoster; 
         className="flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-accent">
         <span className="flex flex-wrap items-center gap-2">
           {roster.label}
-          <span className="font-[var(--font-num)] tabular-nums text-ink-2">{roster.have}/{roster.need}</span>
+          <span className="font-[var(--font-num)] tabular-nums text-ink-2"
+            title="Sayılan: birincil + ikincilin yarısı (ikincil oyuncu iki grubu birden tam doldurmaz)">
+            {roster.have}/{roster.need}
+          </span>
+          <span className="text-xs font-normal text-ink-2">{roster.primary} birincil · {roster.secondary} ikincil</span>
           <UrgencyChip roster={roster} />
         </span>
         <ChevronDown size={16} aria-hidden="true" className={open ? 'rotate-180' : ''} />
@@ -45,7 +51,9 @@ function GroupSection({ roster, open, onToggle, focus }: { roster: GroupRoster; 
                       {players.map((p) => (
                         <li key={p.id} className="flex items-baseline justify-between gap-2">
                           <Link to={`/players/${p.id}`} className="min-w-0 truncate underline-offset-2 hover:underline">{p.name}</Link>
-                          <span className="shrink-0 text-xs text-ink-2">{p.position} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age}` : ''}</span>
+                          <span className="shrink-0 text-xs text-ink-2">
+                            {p.position}{!p.primary && ' (ikincil)'}{p.startsAt && ` · ilk 11: ${p.startsAt}`} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age}` : ''}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -149,15 +157,19 @@ function ContractTimeline({ squad, gameDate }: { squad: CareerPlayer[]; gameDate
  * Derinlik sekmesi (KARIYER-UX FAZ 3, 15 §4.2): mevki grubunda kim/kaç (Masa derinlik işiyle aynı eşik), mevki yoğunluk haritası
  * (ana taktiğe göre), yaş profili ve sözleşme bitiş zaman çizgisi. `?grup=` o grubu açık ve odaklı getirir (Masa'nın derinlik bağlantısı).
  */
-export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters }: {
+export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters, careerId, tacticRows = [], tacticPending = false }: {
   squad: CareerPlayer[]
+  /** FIT-3 madde 11: kompakt gelişim planı önerileri için (zayıf slotlar ana taktik satırlarından). */
+  careerId?: number
+  tacticRows?: SlotFitRow[]
+  tacticPending?: boolean
   needs: PositionNeed[]
   formation?: Formation
   wanted?: PositionGroup
   gameDate?: string
   record?: DataSource
-  /** İlk 11 (ana taktik, yoksa başlangıç önerisi); bilinmiyorsa matris yalnız yedek/genç ayırır. */
-  starters?: ReadonlySet<number>
+  /** İlk 11: oyuncu → oynadığı slotun mevkisi (ana taktik, yoksa başlangıç önerisi); bilinmiyorsa matris yalnız yedek/genç ayırır. */
+  starters?: ReadonlyMap<number, string>
 }) {
   const roster = groupRoster(squad, starters)
   const [open, setOpen] = useState<Set<PositionGroup>>(() => new Set(wanted ? [wanted] : roster.map((r) => r.group)))
@@ -181,6 +193,9 @@ export function DepthTab({ squad, needs, formation, wanted, gameDate, record, st
           {roster.map((r) => <GroupSection key={r.group} roster={r} open={open.has(r.group)} onToggle={() => toggle(r.group)} focus={r.group === wanted} />)}
         </ul>
       </Panel>
+      <div className="min-[1100px]:col-span-2">
+        <DevelopmentRecommendations careerId={careerId} rows={tacticRows} pending={tacticPending} compact />
+      </div>
       <Panel title="Mevki yoğunluğu" label="Mevki yoğunluğu" source={record}>
         <DepthMap squad={squad} needs={needs} formation={formation} />
       </Panel>

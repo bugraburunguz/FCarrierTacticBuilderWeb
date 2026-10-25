@@ -27,6 +27,15 @@ export const DEFAULT_TACTIC: TacticState = { formation: '4-3-3', slots: {} }
 /** slotId → oyuncu kimliği (base_player.id). */
 export type Lineup = Record<string, number>
 
+/** KARIYER-UX FAZ 1 göçünün eski taslak adı; ana taktik adı olarak gösterilmez (FAZ 6a-F). */
+const LEGACY_DRAFT_NAME = 'Önceki taslak'
+
+/** Ana taktik adı: kullanıcının verdiği ad; göçten gelen ya da boş ad "Ana taktik · <formasyon>" (FAZ 6a-F). */
+export function mainTacticName(name: string | null | undefined, formation: string): string {
+  const trimmed = name?.trim()
+  return !trimmed || trimmed === LEGACY_DRAFT_NAME ? `Ana taktik · ${formation}` : trimmed
+}
+
 export function toTacticRequest(state: TacticState): TacticRequest {
   const slots: SlotSelection[] = Object.entries(state.slots).map(([slotId, selection]) => ({
     slotId,

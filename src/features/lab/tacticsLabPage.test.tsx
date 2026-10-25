@@ -113,7 +113,17 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(1))
     expect(labStore.get(7).drafts[0]).toMatchObject({ name: 'Eski ana', origin: { kind: 'main' } })
     expect(await screen.findByRole('button', { name: "En iyi 11'i diz" })).toBeInTheDocument()
-    expect(screen.getByText('Taslak · kaydedilmedi')).toBeInTheDocument()
+    // Taslak etiketi taslak çubuğunda (FIT-1 "Taktik riskleri" paneli de aynı kaynak etiketini taşır).
+    expect(screen.getAllByText('Taslak · kaydedilmedi').length).toBeGreaterThan(0)
+  })
+
+  it('FAZ 6a-F: Lab\'da tek ad alanı (taslak adı); ayrı "Kadro adı" alanı yok', async () => {
+    renderAt()
+    const button = await screen.findByRole('button', { name: /Yeni taslak/ })
+    await waitFor(() => expect(button).toBeEnabled())
+    fireEvent.click(button)
+    expect(await screen.findByRole('button', { name: "En iyi 11'i diz" })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Kadro adı')).toBeNull()
   })
 
   it('ana taktik yoksa yeni taslak başlangıç önerisinden', async () => {
@@ -188,6 +198,51 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     await waitFor(() => expect(screen.getByTestId('where').textContent).not.toContain('slot='))
   })
 
+  it('FIT-2 madde 6: ?slot=&rol= (Masa "Rolü değiştir") temiz taslak olsa da yeni taslak açar; önerilen rol slota uygulanmış, slot seçili gelir', async () => {
+    endpoints.roles.mockResolvedValue([{ id: 'playmaker_attack', baseRole: 'Playmaker', name: 'Playmaker (Attack)', positions: ['CM'], focus: 'Attack', weapons: [], accelerate: [], movementTags: [] }])
+    endpoints.eaRoles.mockResolvedValue([{ position: 'CM', baseRole: 'Playmaker', focus: 'Attack' }])
+    draft('Temiz ana', false)
+    labStore.patch(7, labStore.get(7).drafts[0].id, (d) => ({ origin: { kind: 'main', ref: '2' }, dirty: false, tactic: d.tactic }))
+    renderAt('/career/tactics-lab?sekme=kurucu&slot=LCM&rol=playmaker_attack')
+    await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(2))
+    const created = labStore.get(7).drafts.find((d) => d.id === labStore.get(7).activeId)!
+    expect(created.tactic.slots.LCM?.roleId).toBe('playmaker_attack')
+    expect(created.name).toContain('LCM')
+    expect(await screen.findByText(/^CM — /)).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/slot=|rol=/))
+  })
+
+  it('İnceleme: ?rol= oyunda olmayan ya da bilinmeyen rolse uygulanmaz; yalnız slot seçili ana taktik taslağı açılır', async () => {
+    endpoints.roles.mockResolvedValue([{ id: 'playmaker_attack', baseRole: 'Playmaker', name: 'Playmaker (Attack)', positions: ['CM'], focus: 'Attack', weapons: [], accelerate: [], movementTags: [] }])
+    endpoints.eaRoles.mockResolvedValue([{ position: 'CM', baseRole: 'Playmaker', focus: 'Attack' }])
+    renderAt('/career/tactics-lab?sekme=kurucu&slot=LCM&rol=uydurma_rol')
+    await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(1))
+    expect(labStore.get(7).drafts[0].tactic.slots.LCM?.roleId).not.toBe('uydurma_rol')
+    expect(labStore.get(7).drafts[0].name).not.toContain('rolü')
+    expect(await screen.findByText(/^CM — /)).toBeInTheDocument()
+  })
+
+  it('FIT-2 madde 6: "Daha uygun rol" rozeti (oyunda olan rol) tek dokunuşla taslağa uygulanır; rol seçici bu oyuncunun oturmasıyla', async () => {
+    const better = { roleId: 'playmaker_attack', roleName: 'Playmaker (Attack)', currentFit: 70, levelFit: 71 }
+    endpoints.roles.mockResolvedValue([
+      { id: 'r', baseRole: 'Box to Box', name: 'Box to Box (Balanced)', positions: ['CM'], focus: 'Balanced', weapons: [], accelerate: [], movementTags: [] },
+      { id: 'playmaker_attack', baseRole: 'Playmaker', name: 'Playmaker (Attack)', positions: ['CM'], focus: 'Attack', weapons: [], accelerate: [], movementTags: [] },
+    ])
+    endpoints.eaRoles.mockResolvedValue([{ position: 'CM', baseRole: 'Box to Box', focus: 'Balanced' }, { position: 'CM', baseRole: 'Playmaker', focus: 'Attack' }])
+    const fits = lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)] ?? 'CM')
+    endpoints.lineup.mockImplementation((c: number, t: unknown, locked?: Record<string, number>) => (locked
+      ? fits(c, t, locked).then((r) => ({ ...r, slots: r.slots.map((s) => (s.slotId === 'LCM'
+        ? { ...s, betterRole: better, roleAlternatives: [better, { roleId: 'r', roleName: 'Box to Box (Balanced)', currentFit: 66, levelFit: 40 }] } : s)) }))
+      : Promise.resolve({ slots: SLOTS.map((slotId, i) => ({ slotId, playerId: i + 1 })) })))
+    const d = draft('Deneme')
+    renderAt('/career/tactics-lab?sekme=kurucu')
+    const uyum = await screen.findByRole('region', { name: 'Uyum' })
+    const suggestion = await within(uyum).findByText('Daha uygun rol: Playmaker (Attack) · oturma %71')
+    expect(endpoints.lineup).toHaveBeenCalledWith(7, expect.anything(), expect.anything(), true)
+    await userEvent.click(within(suggestion.closest('li')!).getByRole('button', { name: 'CM: Playmaker (Attack) rolünü uygula' }))
+    await waitFor(() => expect(labStore.get(7).drafts.find((x) => x.id === d.id)?.tactic.slots.LCM?.roleId).toBe('playmaker_attack'))
+  })
+
   it('saha cyber ve varsayılan kart; piyona geçilir', async () => {
     draft('Deneme')
     renderAt()
@@ -247,8 +302,11 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(lcm).toHaveTextContent('−30')
     expect(lcm).toHaveTextContent('düştü')
     expect(lcm).toHaveTextContent('Rol için uygun → Rol için sınırda')
-    const total = screen.getByRole('region', { name: 'Takım uyumu farkı' })
-    expect(within(total).getByText('−3')).toBeInTheDocument()
+    // FIT-1: toplam fark iki metrik adıyla (Takım gücü, Rol oturması).
+    const total = screen.getByRole('region', { name: 'Takım farkı' })
+    const roleFit = within(total).getByRole('group', { name: 'Rol oturması' })
+    expect(within(roleFit).getByText('−3')).toBeInTheDocument()
+    expect(within(total).getByRole('group', { name: 'Takım gücü' })).toBeInTheDocument()
     expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('aynı')
   })
 

@@ -5,6 +5,11 @@ import type {
   CareerRecommendation,
   CareerRecommendationRequest,
   CreditCosts,
+  DevelopmentRecommendation,
+  DevelopmentWeakSlot,
+  Academy,
+  AcademyPlayer,
+  YouthDetail,
   Career,
   CareerPlayer,
   CareerPlayerContract,
@@ -40,6 +45,8 @@ import type {
   TeamProfile,
   TeamSummary,
   SimilarPlayer,
+  TacticAnalysis,
+  TacticAnalysisRequest,
   TacticCodeExport,
   TacticCodeImport,
   SetupCheck,
@@ -59,7 +66,6 @@ import type {
   HistoryPoint,
   PlayerTag,
   PlayerTagKind,
-  SeasonRecord,
   ShortlistItem,
   SnapshotDiff,
   EaRoleOption,
@@ -67,7 +73,6 @@ import type {
   KbItem,
   KbObjectiveGroup,
   KbPricePoint,
-  KbPromo,
   KbSbcSet,
   SbcSetVotes,
   SaveUserTacticBody,
@@ -172,7 +177,6 @@ export const endpoints = {
   kbSbcSet: (id: number) => api.get<KbSbcSet>(`/ut/kb/sbc/${id}`),
   kbObjectives: () => api.get<KbObjectiveGroup[]>('/ut/kb/objectives'),
   kbEvolutions: () => api.get<KbEvolution[]>('/ut/kb/evolutions'),
-  kbPromos: () => api.get<KbPromo[]>('/ut/kb/promos'),
   /** `resource`: EA kaynak kimlikleri (ör. SBC ödül oyuncuları); yalnız bunlar döner. */
   kbItems: (params: { q?: string; minRating?: number; maxRating?: number; pos?: string; type?: string; resource?: number[]; limit?: number; offset?: number }) =>
     api.get<KbItem[]>('/ut/kb/items', { ...params, resource: params.resource?.map(String) }),
@@ -211,7 +215,6 @@ export const endpoints = {
   setMainTactic: (slot: number, careerId: number) => request<UserTactic>(`/user-tactics/${slot}/main`, { method: 'PUT', query: { careerId } }),
   /** Ücretsiz otomatik başlangıç önerisi (D-31); kredi düşmez. */
   starterTactic: (careerId: number) => api.get<StarterTactic>(`/careers/${careerId}/starter-tactic`),
-  deleteUserTactic: (slot: number, careerId?: number) => request<void>(`/user-tactics/${slot}`, { method: 'DELETE', query: { careerId } }),
   resolveTactic: (tactic: TacticRequest) => api.post<ResolvedTactic>('/tactics/resolve', tactic, false),
 
   fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[]; engineVersion?: 'v1' | 'v3' }) =>
@@ -219,10 +222,22 @@ export const endpoints = {
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
+  /** FIT-3 madde 11: gençler için gelişim planı önerisi (tahmin · kalibre edilmedi). */
+  developmentRecommendations: (careerId: number, weakSlots: DevelopmentWeakSlot[]) =>
+    api.post<DevelopmentRecommendation[]>(`/careers/${careerId}/development/recommendations`, { weakSlots }),
+  /** ACADEMY: kariyerin altyapısı (A takım kadrosu dışında). */
+  academy: (careerId: number) => api.get<Academy>(`/careers/${careerId}/academy`),
+  /** ACADEMY-b: Gelişim planları satırları (A takım gençleri, kiralıktakiler dahil). */
+  youth: (careerId: number) => api.get<AcademyPlayer[]>(`/careers/${careerId}/youth`),
+  /** ACADEMY-b paneli: Ne yapmalıyım? · Hangi mevkide? · Takımdaki yeri. */
+  youthDetail: (careerId: number, playerId: number) => api.get<YouthDetail>(`/careers/${careerId}/youth/${playerId}`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   /** locked (KARIYER-UX Q2): slotId → oyuncu sabit kalır, kalan slotları sunucu doldurur. */
-  lineup: (careerId: number, tactic: TacticRequest, locked?: Record<string, number>) => api.post<SquadFit>('/fit/lineup', locked ? { careerId, tactic, locked } : { careerId, tactic }),
+  lineup: (careerId: number, tactic: TacticRequest, locked?: Record<string, number>, roleAlternatives?: boolean) =>
+    api.post<SquadFit>('/fit/lineup', { careerId, tactic, ...(locked ? { locked } : {}), ...(roleAlternatives ? { roleAlternatives } : {}) }),
+  /** FIT-2 madde 7: ücretsiz taktik analizi (kurallar seed'de); kariyerde dizilişle. */
+  tacticAnalysis: (body: TacticAnalysisRequest) => api.post<TacticAnalysis>('/tactics/analysis', body),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number; setup?: SetupBody }) =>
     api.post<Recommendation>('/recommend/preview', body, false),
@@ -254,8 +269,6 @@ export const endpoints = {
   shortlist: (careerId: number) => api.get<ShortlistItem[]>(`/careers/${careerId}/shortlist`),
   shortlistAdd: (careerId: number, playerId: number, body: { note?: string; maxFeeEur?: number } = {}) => request<void>(`/careers/${careerId}/shortlist/${playerId}`, { method: 'PUT', body }),
   shortlistRemove: (careerId: number, playerId: number) => request<void>(`/careers/${careerId}/shortlist/${playerId}`, { method: 'DELETE' }),
-  seasons: (careerId: number) => api.get<SeasonRecord[]>(`/careers/${careerId}/seasons`),
-  putSeason: (careerId: number, season: number, body: Omit<SeasonRecord, 'season'>) => request<void>(`/careers/${careerId}/seasons/${season}`, { method: 'PUT', body }),
   careerBackup: (careerId: number) => api.get<CareerBackup>(`/careers/${careerId}/backup`),
   careerRestore: (careerId: number, backup: CareerBackup) => request<CareerBackup>(`/careers/${careerId}/backup`, { method: 'POST', body: backup }),
   squad: (careerId: number) => api.get<CareerPlayer[]>(`/careers/${careerId}/squad`),

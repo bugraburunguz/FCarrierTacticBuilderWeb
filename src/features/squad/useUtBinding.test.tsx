@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { PlayerDetail } from '../../api/types'
@@ -77,7 +77,8 @@ describe('gereksiz istek yok (hız sınırı)', () => {
     renderProbe()
 
     await waitFor(() => expect(screen.getByTestId('cards')).toHaveTextContent('1/2/3/4/5/6'))
-    await new Promise((r) => setTimeout(r, 50))
+    // REVIEW: sabit bekleme yerine bekleyen efektlerin boşaltılması.
+    await act(async () => { await Promise.resolve() })
     expect(endpoints.player).not.toHaveBeenCalled()
   })
 })

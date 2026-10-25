@@ -125,6 +125,17 @@ async function send(path: string, options: RequestOptions, allowRetry: boolean):
   return res
 }
 
+/** 404'ün kaynağı kariyer mi: kariyer kullanıcının listesinde mi (liste alınamazsa "değil" sayılır, eski davranış). */
+async function careerIsMine(career: unknown): Promise<boolean> {
+  try {
+    const res = await send('/careers', {}, false)
+    const envelope = (await res.json()) as Envelope<{ id: number }[]>
+    return res.ok && envelope.success && (envelope.data ?? []).some((c) => String(c.id) === String(career))
+  } catch {
+    return false
+  }
+}
+
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const res = await send(path, options, true)
   if (res.status === 204) {
@@ -141,8 +152,9 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
   if (!res.ok || !envelope.success) {
     const first = envelope.error?.[0]
-    if (res.status === 404 && first?.code === ErrorCodes.notFound && options.query?.career !== undefined) {
+    if (res.status === 404 && first?.code === ErrorCodes.notFound && options.query?.career !== undefined && !(await careerIsMine(options.query.career))) {
       // Eski/yabancı kariyer kimliği (sunucu 404 döner): kimliği bırak ve kariyersiz (model verisiyle) bir kez yeniden dene.
+      // REVIEW Y1: kariyer listemdeyse 404 başka kaynaktandır (ör. silinmiş oyuncu); kariyer seçimi korunur, hata aşağıda fırlatılır.
       console.warn('[FC Assist] kariyer bulunamadı, careerId temizlendi:', options.query.career)
       careerStore.set(undefined)
       const { career: _dropped, ...rest } = options.query

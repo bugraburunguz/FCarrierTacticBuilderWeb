@@ -1,5 +1,6 @@
 import { Star, StarHalf } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import type { RoleAlternative } from '../../api/types'
 import { HelpPopover } from '../../components/ui'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { RoleFocusModal } from '../../components/squadBuilder/RoleFocusModal'
@@ -49,6 +50,8 @@ export interface SquadViewProps {
   clearLabel?: string
   note?: string
   actions?: ReactNode
+  /** Saha görünümü seçici (kariyer Lab: Kart/Piyon); kendi etiketli satırında, temizle/eylem düğmelerinden ayrı (FAZ 6a-H). Verilmezse yok. */
+  viewToggle?: ReactNode
   header?: ReactNode
   /** Kadro adı alanının localStorage anahtarı (F6); verilmezse alan görünmez. */
   squadNameKey?: string
@@ -187,10 +190,11 @@ function SquadInfo(p: SquadViewProps) {
             ))}
           </dl>
         </details>
-        <p className="flex items-center gap-1 text-xs text-muted">
+        {/* div: HelpPopover <details> taşır; <p> içinde geçersiz iç içelik (konsol hatası, FAZ 6a kapısı). */}
+        <div className="flex items-center gap-1 text-xs text-muted">
           Saha oyuncusu ortalaması
           <HelpPopover label="Yüz ortalaması nasıl hesaplanır">Altı ortalama yalnız saha oyuncularından hesaplanır; kaleci (DIV/HAN/KIC/REF/SPD/POS) dışarıda kalır. "≈": değer ağırlığı doğrulanmamış formülle hesaplandı.</HelpPopover>
-        </p>
+        </div>
       </section>
 
       {p.chem && (
@@ -205,6 +209,12 @@ function SquadInfo(p: SquadViewProps) {
 
       <section aria-label="EA taktik kodu">{p.tacticCode}</section>
 
+      {p.viewToggle && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span aria-hidden="true" className="text-xs font-medium text-ink-2">Saha görünümü</span>
+          {p.viewToggle}
+        </div>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button variant="ghost" onClick={p.onClear} disabled={p.clearDisabled} disabledReason="Kadro zaten boş">{p.clearLabel ?? "Kartları temizle"}</Button>
         {p.actions}
@@ -272,7 +282,8 @@ export function SquadWorkspaceView(p: SquadViewProps) {
 }
 
 /** Rol çipine tıklayınca açılan rol/odak penceresi: iki modda aynı. */
-export function SquadRoleDialog<T>({ ws }: { ws: SquadWorkspaceApi<T> }) {
+/** fitsOf (FIT-2 madde 6, kariyer Lab): slottaki oyuncunun rollere göre değerleri; verilirse seçici en uygun rolü önce gösterir. UT vermez. */
+export function SquadRoleDialog<T>({ ws, fitsOf }: { ws: SquadWorkspaceApi<T>; fitsOf?: (slotId: string) => Map<string, RoleAlternative> | undefined }) {
   const slot = ws.selection?.panel === 'role' ? ws.selectedSlot : undefined
   if (!slot) {
     return null
@@ -288,6 +299,7 @@ export function SquadRoleDialog<T>({ ws }: { ws: SquadWorkspaceApi<T> }) {
         ws.clearSelection()
       }}
       onClose={ws.clearSelection}
+      fits={fitsOf?.(slot.slotId)}
     />
   )
 }

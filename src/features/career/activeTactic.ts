@@ -4,7 +4,7 @@ import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer, StarterTactic, UserTactic } from '../../api/types'
 import type { DataSource } from '../../design/components/primitives'
 import { remapAssignments } from '../../lib/squadBuilder'
-import { DEFAULT_TACTIC, fromStarter, fromUserTactic, toSaveBody, toTacticRequest, type Lineup, type TacticState } from '../../lib/tactic'
+import { DEFAULT_TACTIC, fromStarter, fromUserTactic, mainTacticName, toSaveBody, toTacticRequest, type Lineup, type TacticState } from '../../lib/tactic'
 import { squadStateOf } from '../squad/tacticState'
 import type { SquadBinding } from '../squad/types'
 
@@ -48,7 +48,9 @@ export function useActiveTactic(careerId: number | undefined) {
   const active = useMemo<ActiveTactic | undefined>(() => {
     if (main.data && saved) {
       const filledLineup = fill.data && Object.fromEntries(fill.data.slots.flatMap((s) => (s.playerId === undefined || s.playerId === null ? [] : [[s.slotId, s.playerId]])))
-      return { source: { kind: 'decision' }, tactic: saved.tactic, lineup: filledLineup ?? saved.lineup, dropped, filled: filledLineup !== undefined, main: main.data }
+      // FAZ 6a-F: göçten gelen ("Önceki taslak") ya da boş ad Masa/Kadro/Lab'da "Ana taktik · <formasyon>" görünür.
+      const named = { ...main.data, name: mainTacticName(main.data.name, saved.tactic.formation) }
+      return { source: { kind: 'decision' }, tactic: saved.tactic, lineup: filledLineup ?? saved.lineup, dropped, filled: filledLineup !== undefined, main: named }
     }
     if (needStarter && starter.data) {
       return { source: { kind: 'auto' }, ...fromStarter(starter.data), dropped: 0, filled: false, starter: starter.data }
@@ -102,6 +104,8 @@ export function useMakeMainTactic(careerId: number) {
       // FAZ 4a: ana taktik varken öneri gösterilmez ama önbellekte eski kalmasın; Masa/Kadro rol uyumu yeni dizilişten yeniden hesaplanır.
       void client.invalidateQueries({ queryKey: starterTacticKey(careerId) })
       void client.invalidateQueries({ queryKey: ['slot-fit'] })
+      // ACADEMY-b: "A takıma al" ve plan hedefleri ana taktiğin mevkilerinden.
+      void client.invalidateQueries({ queryKey: ['academy', careerId] })
     },
   })
 }

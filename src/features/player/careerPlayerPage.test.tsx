@@ -4,11 +4,15 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerContract, PlayerDetail, PlayerRoleFit } from '../../api/types'
-import { ROLES_HELP } from '../../lib/fitLabels'
+import { CAREER_ROLES_HELP } from '../../lib/fitLabels'
 import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn(),
+  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn(), playerHistory: vi.fn(() => Promise.resolve([])),
+    positionAdvice: vi.fn(() => Promise.resolve([{ playerId: 7, playerName: 'Ollie Watkins', listedPositions: ['ST'], ownPositionBest: false, bestOverallPosition: 'ST', bestOverall: 72,
+      best: [{ position: 'CAM', roleName: 'Shadow Striker (Attack)', score: 74, natural: false }], sideReason: null,
+      conversion: { position: 'CAM', roleName: 'Shadow Striker (Attack)', strength: 74, fromPosition: 'ST', fromRoleName: 'Poacher (Attack)', fromStrength: 68,
+        text: "ST listeli ama CAM'de daha etkili: CAM · Shadow Striker gücü 74, ST · Poacher 68. CAM mevki planı önerilir." } }])),
     shortlist: vi.fn(() => Promise.resolve([])), shortlistAdd: vi.fn(() => Promise.resolve()), shortlistRemove: vi.fn(() => Promise.resolve()) },
 }))
 
@@ -109,11 +113,23 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     const panel = screen.getByRole('tabpanel')
     const notes = within(panel).getAllByRole('note')
     expect(notes).toHaveLength(1)
-    expect(notes[0]).toHaveTextContent(ROLES_HELP.badge)
-    expect(notes[0]).toHaveTextContent(ROLES_HELP.rolePoints)
+    // FIT-1: kariyerde iki metrik kariyer adlarıyla (Rol oturması, Güç).
+    expect(notes[0]).toHaveTextContent(CAREER_ROLES_HELP.badge)
+    expect(notes[0]).toHaveTextContent(CAREER_ROLES_HELP.rolePoints)
+    expect(within(panel).getAllByText(/^Güç \d+$/).length).toBeGreaterThan(0)
+    expect(within(panel).getAllByRole('img', { name: /Rol oturması %\d+/ }).length).toBeGreaterThan(0)
     expect(within(panel).queryByText(/Seviye referansı/)).toBeNull()
     expect(within(panel).getAllByText('Biçilmiş kaftan')).toHaveLength(1)
     expect(within(panel).getByText('Neden?')).toBeInTheDocument()
+  })
+
+  it('FIT-3 madde 12: Roller\'de rol bazlı en iyi mevki ve dönüşüm önerisi; plan seçenekleri Gelişim sayfasına bağlanır', async () => {
+    renderPage('/players/7?sekme=roller')
+    const box = await screen.findByRole('region', { name: 'Rol bazlı mevki önerisi' })
+    expect(within(box).getByText("ST listeli ama CAM'de daha etkili: CAM · Shadow Striker gücü 74, ST · Poacher 68. CAM mevki planı önerilir.")).toBeInTheDocument()
+    expect(within(box).getByText(/Rol bazlı en iyi: CAM · Shadow Striker \(Attack\) · Güç 74/)).toBeInTheDocument()
+    expect(within(box).getByRole('link', { name: /Plan seçenekleri/ })).toHaveAttribute('href', '/career/growth?oyuncu=7')
+    expect(endpoints.positionAdvice).toHaveBeenCalledWith(CAREER)
   })
 
   it('Roller: <480px\'te rol adı kendi satırında (kısaltılmaz), çip ve rozet alt satırda (ortak RoleRow)', async () => {
@@ -134,6 +150,19 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     await screen.findByRole('heading', { name: 'Ollie Watkins' })
     await waitFor(() => expect(endpoints.playerFacets).toHaveBeenCalledTimes(2))
     expect(screen.queryByText(/Ligin|Lig seviyesinde/)).toBeNull()
+  })
+
+  it('FIT-3: başlık rozetleri (Kadronda + Lig seviyesi yardımı) geçerli DOM iç içeliğiyle; konsolda nesting hatası yok', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true }))
+    renderPage()
+    await screen.findByText('Ligin üstünde (+8)')
+    await screen.findByText('Kadronda')
+    const nesting = error.mock.calls.filter((args) => args.some((a) => typeof a === 'string' && /cannot be a descendant of|cannot contain a nested|validateDOMNesting/.test(a)))
+    error.mockRestore()
+    expect(nesting).toEqual([])
+    const header = screen.getByRole('heading', { name: 'Ollie Watkins' }).closest('header')!
+    expect(header.querySelector('p p, p details, summary p')).toBeNull()
   })
 
   it('Sözleşme: kalan ay oyun tarihine göre, tahmini değer ≈, kova ve alım sonrası bütçe', async () => {
@@ -188,11 +217,25 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(endpoints.development).not.toHaveBeenCalled()
   })
 
-  it('Gelişim: kadrodaki oyuncu için Gelişim sayfasına seçili oyuncuyla (?oyuncu=) bağlantı (V3-06e)', async () => {
+  it('ACADEMY-b: Gelişim sekmesinde OVR/POT geçmiş grafiği (Gelişim sayfasından taşındı); kadro dışı oyuncuda grafik yok', async () => {
     vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true, feasibility: undefined, budgetAfterPurchaseEur: undefined }))
+    vi.mocked(endpoints.playerHistory).mockResolvedValue([
+      { snapshotId: 1, takenAt: '2026-10-01T10:00:00Z', overall: 70, potential: 84, gameDate: '2027-01-15' },
+      { snapshotId: 2, takenAt: '2026-10-02T10:00:00Z', overall: 72, potential: 84, gameDate: '2027-03-16' },
+    ] as never)
     renderPage('/players/7?sekme=gelisim')
     const panel = await screen.findByRole('tabpanel')
-    expect(await within(panel).findByRole('link', { name: 'Gelişim takibi' })).toHaveAttribute('href', '/career/growth?oyuncu=7')
+    const history = await within(panel).findByRole('region', { name: 'OVR geçmişi' })
+    expect(await within(history).findByRole('img', { name: /OVR/ })).toBeInTheDocument()
+    expect(endpoints.playerHistory).toHaveBeenCalledWith(CAREER, 7)
+  })
+
+  it('ACADEMY-b: tek içe aktarmada grafik yerine kısa not', async () => {
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true, feasibility: undefined, budgetAfterPurchaseEur: undefined }))
+    vi.mocked(endpoints.playerHistory).mockResolvedValue([{ snapshotId: 1, takenAt: '2026-10-01T10:00:00Z', overall: 72, potential: 84 }] as never)
+    renderPage('/players/7?sekme=gelisim')
+    const panel = await screen.findByRole('tabpanel')
+    expect(await within(panel).findByText('Grafik ikinci içe aktarmadan sonra görünür.')).toBeInTheDocument()
   })
 
   it('kaleci: Statlar yalnız kaleci grubu', async () => {

@@ -1,7 +1,7 @@
-import type { CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
+import type { AcademyPlayer, CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
 import { deskLink } from './deskLinks'
-import { isWeakFit, levelText, type FitLabel } from './fitLabels'
+import { compareWeakClass, isWeakClass, roleFitText, WEAK_CLASS_ORDER, WEAK_CLASS_TEXT, type FitLabel, type WeakClass } from './fitLabels'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
 export interface DeskSlot {
@@ -10,9 +10,15 @@ export interface DeskSlot {
   roleId: string
   playerId?: number
   playerName?: string
-  /** Seviyesine göre % (levelFit); yoksa rol puanı. */
+  /** Rol oturması % (levelFit); yoksa Güç. */
   pct: number
   fitLabel?: FitLabel | null
+  /** FIT-1 madde 2: sunucunun iki eksenli sınıfı; yoksa etiket kuralı. */
+  weakClass?: WeakClass
+  /** Güç (currentFit); sınıflı sırada ikinci anahtar. Yoksa pct. */
+  strength?: number
+  /** FIT-2 madde 6: sunucunun önerdiği daha uygun rol; ROL_UYUMSUZ işi Lab'da onu uygular. */
+  betterRoleId?: string
 }
 
 /** Kariyer "Menajer Masası" kuralları (13 §3.1, §5): saf fonksiyonlar, sunucuya gitmeden masada gösterilir; her öneri gerekçelidir. */
@@ -41,7 +47,10 @@ const LOAN_MIN_GAP = 6
 
 export interface DepthRow {
   group: PositionGroup
+  /** Eşikte sayılan: birincil + ⌊ikincil/2⌋. */
   have: number
+  primary: number
+  secondary: number
   need: number
   short: number
 }
@@ -59,18 +68,59 @@ export function ageProfile(squad: CareerPlayer[]): { average: number; buckets: {
   }
 }
 
-/** Mevki grubu başına eldeki oyuncu sayısı ve beklenen asgari derinlik (ana mevkiye göre). */
-export function depthRows(squad: CareerPlayer[]): DepthRow[] {
-  const counts = new Map<PositionGroup, number>()
+export interface Capacity {
+  /** Ana (ilk listelenen) mevkisi bu olanlar. */
+  primary: CareerPlayer[]
+  /** Bu mevkiyi ikincil olarak listeleyenler. */
+  secondary: CareerPlayer[]
+}
+
+/**
+ * TEK derinlik tanımı (FAZ 6a-B): mevki kapasitesi oyuncunun listelenen mevkilerinin hepsini sayar; ana mevki birincil, diğerleri ikincil.
+ * Kiralık gönderilen sayılmaz. Mevki yoğunluğu (squadDensity), mevki grupları (groupRoster) ve Masa'nın derinlik işi (depthRows) bundan okur.
+ */
+export function positionCapacity(squad: CareerPlayer[]): Map<string, Capacity> {
+  const capacity = new Map<string, Capacity>()
   squad.filter((c) => !c.loanedOut).forEach((c) => {
-    const group = groupOf(c.player.positions[0])
-    if (group) {
-      counts.set(group, (counts.get(group) ?? 0) + 1)
-    }
+    c.player.positions.forEach((position, index) => {
+      const entry = capacity.get(position) ?? { primary: [], secondary: [] }
+      ;(index === 0 ? entry.primary : entry.secondary).push(c)
+      capacity.set(position, entry)
+    })
   })
+  return capacity
+}
+
+/** Grup kapasitesi: oyuncu grupta bir kez sayılır; ana mevkisi o gruptaysa birincil, yalnız ikincil mevkisi o gruptaysa ikincil. */
+export function groupCapacity(squad: CareerPlayer[]): Map<PositionGroup, Capacity> {
+  const groups = new Map<PositionGroup, Capacity>()
+  positionCapacity(squad).forEach((entry, position) => {
+    const group = groupOf(position)
+    if (!group) {
+      return
+    }
+    const target = groups.get(group) ?? { primary: [], secondary: [] }
+    entry.primary.forEach((c) => target.primary.push(c))
+    entry.secondary.filter((c) => groupOf(c.player.positions[0]) !== group).forEach((c) => target.secondary.push(c))
+    groups.set(group, target)
+  })
+  groups.forEach((entry) => {
+    entry.secondary = [...new Set(entry.secondary)]
+  })
+  return groups
+}
+
+/**
+ * Mevki grubu başına eldeki oyuncu (grup kapasitesi) ve beklenen asgari derinlik. Eşik ağırlıklı: birincil + ⌊ikincil/2⌋ (Buğra kararı,
+ * 6a açık soru 1; depth.analyzeDepth ile aynı kural) — ikincil oyuncu iki grubu birden tam doldurmaz. Birincil/ikincil ayrımı ayrıca döner.
+ */
+export function depthRows(squad: CareerPlayer[]): DepthRow[] {
+  const groups = groupCapacity(squad)
   return (Object.keys(MIN_DEPTH) as PositionGroup[]).map((group) => {
-    const have = counts.get(group) ?? 0
-    return { group, have, need: MIN_DEPTH[group], short: Math.max(0, MIN_DEPTH[group] - have) }
+    const primary = groups.get(group)?.primary.length ?? 0
+    const secondary = groups.get(group)?.secondary.length ?? 0
+    const have = primary + Math.floor(secondary / 2)
+    return { group, have, primary, secondary, need: MIN_DEPTH[group], short: Math.max(0, MIN_DEPTH[group] - have) }
   })
 }
 
@@ -81,17 +131,24 @@ export interface WeakSlot {
   playerName?: string
   fit: number
   label?: FitLabel | null
+  weakClass?: WeakClass
+  strength: number
+  betterRoleId?: string
 }
 
-/** Zayıf halkalar: rozeti sarı (WEAK) ya da kırmızı (WRONG_ROLE) olan slotlar, seviyesine göre en zayıf başta. */
+/**
+ * Zayıf halkalar: sunucu sınıfı UYGUN olmayanlar (FIT-1); sınıf yoksa rozeti sarı/kırmızı olanlar. Sınıf varken sıra Masa kartlarıyla aynı
+ * (fitLabels.compareWeakClass); yoksa en zayıf başta.
+ */
 export function weakSlots(slots: DeskSlot[]): WeakSlot[] {
+  const classed = slots.some((s) => s.weakClass)
   return slots
-    .filter((s) => isWeakFit(s.fitLabel))
-    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel }))
-    .sort((a, b) => a.fit - b.fit)
+    .filter((s) => isWeakClass(s.weakClass, s.fitLabel))
+    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel, weakClass: s.weakClass, strength: s.strength ?? s.pct, betterRoleId: s.betterRoleId }))
+    .sort((a, b) => (classed ? compareWeakClass(a, b) : a.fit - b.fit))
 }
 
-export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH' | 'CONTRACT'
+export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH' | 'CONTRACT' | 'PROMOTE'
 
 export interface DeskAction {
   kind: ActionKind
@@ -109,10 +166,15 @@ interface ActionInput {
   tags: Record<number, string>
   /** Verilirse sözleşme işleri de üretilir (oyun tarihine göre, CONTRACT uyarısıyla aynı kural); v2 Masa vermez. */
   gameDate?: string
+  /** ACADEMY-b: verilirse "Altyapıdan A takıma al" işleri (yalnız sunucunun "A takıma al" önerisi olan oyuncular). */
+  academy?: readonly AcademyPlayer[]
 }
 
 /** Sözleşme işi önceliği: satışın (40+) altında, derinliğin (20 + 5·eksik) üstünde; bitime yaklaştıkça artar. */
 const CONTRACT_PRIORITY = 35
+/** Altyapıdan A takıma al: satışın (40–85) taban üstünde, zayıf halkanın (80–100) altında; yedeği geçme payı en çok 20 ekler. */
+const PROMOTE_PRIORITY = 50
+const PROMOTE_MARGIN_CAP = 20
 
 const money = (value?: number) => (value === undefined ? '—' : value >= 1_000_000 ? `€${(value / 1_000_000).toFixed(1)}M` : `€${Math.round(value / 1000)}K`)
 
@@ -143,19 +205,38 @@ export function sellAdvice(c: CareerPlayer, starters: Set<number>, tags: Record<
   return { kind: 'KEEP', reason: 'Satış ya da kiralama kuralına girmiyor' }
 }
 
-/** "Bu dönemin 3 işi": SquadFit artışı, satış değeri ve genç gelişimi kurallarıyla en etkili üç eylem. */
-export function suggestActions(input: ActionInput): DeskAction[] {
-  return rankActions(input).slice(0, 3)
+/** v2 Masa'nın iş türleri: altyapı verisi verilmediği için "Altyapıdan A takıma al" (PROMOTE) üretilmez. */
+export type LegacyActionKind = Exclude<ActionKind, 'PROMOTE'>
+
+/** "Bu dönemin 3 işi" (v2): SquadFit artışı, satış değeri ve genç gelişimi kurallarıyla en etkili üç eylem; altyapı girdisi yok. */
+export function suggestActions(input: Omit<ActionInput, 'academy'>): (DeskAction & { kind: LegacyActionKind })[] {
+  return rankActions(input).slice(0, 3) as (DeskAction & { kind: LegacyActionKind })[]
 }
 
 const SEASON_JOBS = 3
 
+export interface SeasonJobs {
+  jobs: DeskAction[]
+  /** Gösterilen işle aynı türden kalanlar ("+N benzer"), öncelik sırasıyla. */
+  similar: Partial<Record<ActionKind, DeskAction[]>>
+}
+
 /**
  * "Bu dönemin 3 işi" TEK KAYNAK (KARIYER-UX FAZ 2): Ana sayfa ve Masa bu fonksiyonu ve `features/career/SeasonJobs` bileşenini kullanır.
  * `exclude`: Masa'da "Zayıf halkalar" kartında zaten gösterilen slotların FILL işi tekrar edilmez (V3-06e).
+ * FAZ 6a-D çeşitlilik: öncelik sırasıyla, aynı türden en çok bir iş; aynı türün kalanları `similar`'da. Türler azsa üçten az iş.
  */
-export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): DeskAction[] {
-  return rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId))).slice(0, limit)
+export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): SeasonJobs {
+  const jobs: DeskAction[] = []
+  const similar: SeasonJobs['similar'] = {}
+  for (const action of rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId)))) {
+    if (jobs.some((j) => j.kind === action.kind)) {
+      similar[action.kind] = [...(similar[action.kind] ?? []), action]
+    } else if (jobs.length < limit) {
+      jobs.push(action)
+    }
+  }
+  return { jobs, similar }
 }
 
 /** İşin kural kaynağı (veri katmanı etiketi): diziliş ve etiketlere dayananlar taktik kaynağından (karar ya da öneri), sözleşme/derinlik kayıttan. */
@@ -164,18 +245,23 @@ export function jobLayer(kind: ActionKind): 'tactic' | 'record' {
 }
 
 /** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
-export function rankActions({ squad, slots, tags, gameDate }: ActionInput): DeskAction[] {
+export function rankActions({ squad, slots, tags, gameDate, academy }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))
   const actions: DeskAction[] = []
 
   weakSlots(slots).slice(0, 2).forEach((w, index) => {
+    // FIT-1 madde 2: sunucu sınıfı varsa başlık ve eylem ondan (ROL_UYUMSUZ → Lab'da rol, diğerleri → transfer).
+    const classified = w.weakClass && w.weakClass !== 'UYGUN' ? w.weakClass : undefined
     actions.push({
       slotId: w.slotId,
       kind: 'FILL',
-      title: `${w.position}: zayıf halka (${levelText(w.fit)})`,
-      reason: `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
-      to: deskLink.candidate(w.slotId, w.position, w.roleId),
-      priority: 100 - w.fit - index,
+      title: classified ? `${w.position}: ${WEAK_CLASS_TEXT[classified]}` : `${w.position}: zayıf halka (${roleFitText(w.fit)})`,
+      reason: classified === 'ROL_UYUMSUZ' ? `${w.playerName ?? 'Oyuncu'} güçlü ama rolüne oturmuyor; Lab'da rolünü değiştirmeyi dene.`
+        : classified ? `${w.playerName ?? 'Slot'} takımın en zayıf halkalarından; daha güçlü adayları Transfer Merkezi'nde gör.`
+          : `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
+      to: classified === 'ROL_UYUMSUZ' ? deskLink.lab(w.slotId, w.betterRoleId) : deskLink.candidate(w.slotId, w.position, w.roleId),
+      // Sınıflı halka sunucunun alt grubudur: sınıf sırasıyla en üstte (100/90/80); sınıfsız eski kural.
+      priority: classified ? 100 - WEAK_CLASS_ORDER[classified] * 10 - index : 100 - w.fit - index,
     })
   })
 
@@ -224,6 +310,20 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       }
     })
   }
+
+  // ACADEMY-b: "Altyapıdan A takıma al" — 1 sezon sonraki tahmini Güç'ü slot yedeğini geçen altyapı oyuncusu (sunucu önerisi). Zayıf halkanın altında,
+  // satışın üstünde; yedeği daha çok geçen öncelikli. Uygulama oyunda yapılır.
+  ;(academy ?? []).forEach((y) => {
+    if (y.promote) {
+      actions.push({
+        kind: 'PROMOTE',
+        title: `Altyapıdan A takıma al: ${y.name}`,
+        reason: y.promote.text,
+        to: deskLink.academy(y.playerId),
+        priority: PROMOTE_PRIORITY + Math.min(PROMOTE_MARGIN_CAP, Math.max(0, y.promote.strength1 - (y.promote.backupStrength ?? 0))),
+      })
+    }
+  })
 
   return actions.sort((a, b) => b.priority - a.priority)
 }

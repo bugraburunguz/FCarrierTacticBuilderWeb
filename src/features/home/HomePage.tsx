@@ -15,7 +15,7 @@ import { SbcCard } from '../sbc/SbcCard'
 import { useActiveSbcSets, useNow } from '../sbc/useActiveSbcSets'
 import { SeasonJobs } from '../career/SeasonJobs'
 import { useMainTacticFits } from '../career/useMainTacticFits'
-import { teamFitPct } from '../squad/useSlotFits'
+import { FIT_TERMS, teamStrength } from '../../lib/fitLabels'
 
 const SBC_SHOWN = 4
 const GRID_STYLE = { gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 15rem), 1fr))' }
@@ -40,7 +40,8 @@ function ContinueCareer({ career }: { career: Career }) {
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id) })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id), retry: false })
   const { main, rows, pending } = useMainTacticFits(id, squad.data)
-  const fit = teamFitPct(rows.map((r) => r.display))
+  // FIT-1: Masa ile aynı takım değeri — Takım gücü (Güç ortalaması).
+  const fit = teamStrength(rows.map((r) => r.display))
   const lastImport = (snapshots.data ?? []).find((s) => s.source === 'IMPORT')
   return (
     <Section title="Kariyerine devam et" actions={<Link to="/career/dashboard" className={`${LINK_BUTTON} bg-accent text-on-accent hover:opacity-90`}>Masaya git</Link>}>
@@ -50,11 +51,11 @@ function ContinueCareer({ career }: { career: Career }) {
       </div>
       <dl className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-[160px_1fr]">
         <div className="glass-3 flex flex-col px-3 py-2">
-          <dt className="text-xs font-medium text-ink-2">Takım uyumu</dt>
+          <dt className="text-xs font-medium text-ink-2" title={FIT_TERMS.strength.help}>{FIT_TERMS.strength.team}</dt>
           <dd className="font-[var(--font-num)] text-2xl font-semibold tabular-nums">{fit !== undefined ? `%${fit}` : squad.isLoading ? '…' : '—'}</dd>
         </div>
       </dl>
-      <SeasonJobs careerId={id} squad={squad.data ?? []} rows={rows} tacticSource={main.source} record={lastImport && { kind: 'record', at: lastImport.takenAt }}
+      <SeasonJobs careerId={id} squad={squad.data ?? []} rows={rows} tacticSource={main.source}
         gameDate={career.gameDate} pending={main.isLoading || pending || squad.isLoading} framed={false} />
     </Section>
   )

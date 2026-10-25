@@ -6,8 +6,9 @@ import { endpoints } from '../../api/endpoints'
 import type { ImportSummary } from '../../api/types'
 import { useAuth } from '../../auth/AuthContext'
 import { CareerSelect } from '../../components/CareerSelect'
-import { importWarningText } from '../../lib/importWarnings'
+import { CAREER_EXPORT_GUIDE_CODES, importWarningText } from '../../lib/importWarnings'
 import { EXPORT_DONE_WINDOW } from '../../lib/leExport'
+import { invalidateCareerScope } from '../../lib/careerQueries'
 import { useActiveCareerId } from '../../state/careerStore'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
 import { formatBytes, importChecks } from './importChecks'
@@ -85,12 +86,12 @@ export function CareerImportPage() {
     onSuccess: async (summary) => {
       setResult(summary)
       setTeamId(summary.guessedTeamId)
-      await queryClient.invalidateQueries({ queryKey: ['squad'] })
-      await queryClient.invalidateQueries({ queryKey: ['career-moves'] })
+      // REVIEW Y2: içe aktarma kariyerin her verisini değiştirir (oyun tarihi, facets, snapshot, uyum, oyuncu sayfaları); hepsi tazelenir.
+      await invalidateCareerScope(queryClient, careerId!)
     },
   })
   const teams = useQuery({ queryKey: ['career-teams', careerId, term], queryFn: () => endpoints.careerTeams(careerId!, term), enabled: careerId !== undefined && result !== null })
-  const sync = useMutation({ mutationFn: () => endpoints.syncSquad(careerId!, teamId!), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['squad'] }) })
+  const sync = useMutation({ mutationFn: () => endpoints.syncSquad(careerId!, teamId!), onSuccess: () => invalidateCareerScope(queryClient, careerId!) })
   const ready = !!logFile || FILES.filter((f) => f.required).every((f) => files[f.key])
 
   return (
@@ -157,6 +158,14 @@ export function CareerImportPage() {
           </table>
           <p className="text-xs text-ink-2">{result.freeAgents.toLocaleString('tr-TR')} serbest oyuncu{result.generatedPlayers ? ` · ${result.generatedPlayers} kariyerde üretilmiş oyuncu (yalnız bu kariyerde)` : ''}{result.unmatchedPlayers > 0 ? ` · ${result.unmatchedPlayers} oyuncu katalogda yok, atlandı` : ''}.</p>
           {(result.warnings ?? []).map((code) => <p key={code} role="alert" className="text-sm text-bad">{importWarningText(code, result)}</p>)}
+          {(result.warnings ?? []).some((code) => CAREER_EXPORT_GUIDE_CODES.includes(code)) && (
+            <ol aria-label="Kariyer içinden export" className="flex list-decimal flex-col gap-1 pl-5 text-sm">
+              <li>Güncel script'i indir: <a href={SCRIPT_URL} download className="font-semibold text-accent underline-offset-2 hover:underline">fc27_career_export.lua</a>.</li>
+              <li>Oyunda kariyerini yükle ve kariyer ana ekranında kal (ana menüde değil).</li>
+              <li>Live Editor'de Lua Engine'den script'i çalıştır; "{EXPORT_DONE_WINDOW}" penceresini bekle.</li>
+              <li>Live Editor klasörü → Logs içindeki en yeni <code>live_editor_&lt;tarih&gt;.log</code> dosyasını burada yeniden yükle.</li>
+            </ol>
+          )}
           <div className="flex flex-col gap-2">
             <label htmlFor={teamListId} className="text-xs font-medium text-ink-2">Takım farklıysa ara ve kadroyu o takımdan kur</label>
             <input id={teamListId} value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Takım ara…" className="glass-3 min-h-10 max-w-md rounded-[var(--radius-sm)] px-3 text-sm max-sm:min-h-11" />

@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../api/endpoints'
 import type { Career } from '../api/types'
+import { careerStore } from '../state/careerStore'
 import { labStore } from '../state/labStore'
 import { DeleteCareerButton } from './DeleteCareerButton'
 
@@ -52,6 +53,23 @@ describe('F9: kariyer silme onayı kariyer adını yazdırır', () => {
 
     await waitFor(() => expect(labStore.get(7).drafts).toEqual([]))
     expect(labStore.get(8).drafts).toHaveLength(1)
+  })
+
+  it('REVIEW O4: silinen kariyerin sorguları önbellekten kalkar; aktif seçim kalan kariyere geçer (seçimsiz sayfa kalmaz)', async () => {
+    const client = new QueryClient()
+    client.setQueryData(['careers'], [career, { id: 9, name: 'Diğer' }])
+    client.setQueryData(['squad', 7], [{ id: 1 }])
+    client.setQueryData(['slot-fit', 'lineup', 7, '{}', '{}'], { slots: [] })
+    client.setQueryData(['squad', 9], [{ id: 2 }])
+    careerStore.set(7)
+    render(<QueryClientProvider client={client}><DeleteCareerButton career={career} /></QueryClientProvider>)
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri sil' }))
+    fireEvent.change(await screen.findByLabelText(/Onaylamak için kariyer adını yaz/), { target: { value: 'Magdeburg Yolu' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Kalıcı olarak sil' }))
+    await waitFor(() => expect(client.getQueryData(['squad', 7])).toBeUndefined())
+    expect(client.getQueryData(['slot-fit', 'lineup', 7, '{}', '{}'])).toBeUndefined()
+    expect(client.getQueryData(['squad', 9])).toEqual([{ id: 2 }])
+    expect(careerStore.get()).toBe(9)
   })
 
   it('silme başarısızsa taslaklar kalır', async () => {

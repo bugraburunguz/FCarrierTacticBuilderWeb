@@ -302,6 +302,20 @@ export interface SlotAssignment {
   roleFit?: RoleFit
   intentFit?: IntentFit
   depth?: DepthEntry[]
+  /** FIT-1 madde 2 (/fit/lineup): iki eksenli zayıf halka sınıfı. */
+  weakClass?: 'KALITE_ACIGI' | 'ROL_UYUMSUZ' | 'IKISI' | 'UYGUN'
+  /** FIT-2 madde 6 (/fit/lineup roleAlternatives=true): slot mevkisinin rolleri bu oyuncuya göre, en uygun önce. */
+  roleAlternatives?: RoleAlternative[]
+  /** FIT-2 madde 6: en iyi rol mevcut rolden eşik kadar iyi oturuyorsa. */
+  betterRole?: RoleAlternative
+}
+
+/** Oyuncunun bir roldeki Güç (currentFit) ve Rol oturması (levelFit; norm yoksa yok). */
+export interface RoleAlternative {
+  roleId: string
+  roleName: string
+  currentFit: number
+  levelFit?: number | null
 }
 
 export interface WeakLink {
@@ -416,6 +430,10 @@ export interface CareerSnapshot {
   /** KARIYER-UX FAZ 2 (V44): snapshot anındaki transfer bütçesi ve kadro maaş toplamı (Masa Δ); bilinmiyorsa yok. */
   budgetEur?: number
   squadWageEur?: number
+  /** FAZ 6a-E (V46): görüntü anındaki kadro sayısı ve önceki görüntüye göre giren/çıkan oyuncu adları; bilinmiyorsa yok. */
+  squadCount?: number
+  squadJoined?: string[]
+  squadLeft?: string[]
 }
 
 export interface SnapshotDiffRow {
@@ -554,6 +572,10 @@ export interface ImportSummary {
   squadSynced?: number
   skippedNoPosition?: number
   warnings?: string[]
+  /** FAZ 6a-A: export'taki oyun tarihi (ISO); yoksa alan yok. */
+  gameDate?: string
+  /** FAZ 6a-A: maaş/sözleşme/kiralık bitişi yazılan oyuncu sayısı; eski sunucu göndermez. */
+  contracts?: number
 }
 
 export interface TeamSummary {
@@ -596,6 +618,123 @@ export interface PlayerPositionAdvice {
   ownPositionBest: boolean
   bestOverallPosition?: string
   bestOverall?: number
+  /** FIT-3 madde 13: kanatta taraf tarzla seçildiyse gerekçe. */
+  sideReason?: string | null
+  /** FIT-3 madde 12: rol bazlı dönüşüm önerisi. */
+  conversion?: PositionConversion | null
+}
+
+export interface PositionConversion {
+  position: string
+  roleName: string
+  strength: number
+  fromPosition: string
+  fromRoleName: string
+  fromStrength: number
+  overallAt?: number
+  planName?: string
+  text: string
+}
+
+/** FIT-3 madde 11: POST /careers/{id}/development/recommendations — hepsi tahmin, kalibre edilmedi. */
+export interface DevelopmentOption {
+  planKey: string
+  planName: string
+  kind: 'GENERAL' | 'POSITION' | 'ROLE'
+  position: string
+  roleId: string
+  roleName: string
+  strength1: number
+  strength2: number
+  roleFit2?: number | null
+  balancedStrength2: number
+  gain: number
+  incumbentName?: string | null
+  incumbentStrength2?: number | null
+}
+
+export interface DevelopmentRecommendation {
+  playerId: number
+  playerName: string
+  age?: number
+  overall?: number
+  balanced: boolean
+  recommended?: DevelopmentOption | null
+  options: DevelopmentOption[]
+  text: string
+  estimated: boolean
+  /** FIT-3 kararı: CLEAR_TARGET (net hedef) · NO_CLEAR_TARGET (Dengeli, "esnek gelişsin") · SMALL_GAIN · NO_OPTIONS. */
+  reason?: 'CLEAR_TARGET' | 'NO_CLEAR_TARGET' | 'SMALL_GAIN' | 'NO_OPTIONS'
+}
+
+/**
+ * ACADEMY: GET /careers/{id}/academy. career_youthplayers alanlarının anlamı doğrulanmadı (youthVerified false); arayüz yalnız monthsInSquad'ı gösterir
+ * (karar 3). found false iken teamId/name dolu olabilir: takım bulundu, export'ta görünen oyuncusu yok.
+ */
+export interface AcademyPlayer {
+  playerId: number
+  name: string
+  age?: number | null
+  positions: string[]
+  overall?: number | null
+  /** Aralık modunda (SCOUT_RANGE) null. */
+  potential?: number | null
+  potentialRange?: string | null
+  monthsInSquad?: number | null
+  playerTier?: number | null
+  potentialVariance?: number | null
+  swingLowPotential?: number | null
+  youthVerified: boolean
+  /** FIT-3 en iyi mevki ve kanatta taraf gerekçesi. */
+  bestPosition?: string | null
+  sideReason?: string | null
+  /** FIT-3 dönüşüm önerisinin mevkisi ("CM → CDM önerilir"). */
+  conversionPosition?: string | null
+  /** FIT-3 gelişim önericisi (tahmin); kapsam dışıysa null. label: satırdaki tek etiket ("CDM · Holding", "Dengeli"). */
+  plan?: { name: string; label: string; text: string; balanced: boolean } | null
+  /** "A takıma al": 1 sezon sonraki tahmini Güç slotun yedeğini geçiyorsa (ya da yedek yoksa). Yalnız öneri; uygulama oyunda. */
+  promote?: { position: string; strength1: number; backupName?: string | null; backupStrength?: number | null; text: string } | null
+  /** Altyapıda: READY (Hazır) · GROWING (Gelişiyor) · WAITING (Bekliyor); kadro gençlerinde (Gelişim) null. */
+  status?: AcademyStatus | null
+  /** Kadro genci başka kulübe kiralık (Gelişim). */
+  loanedOut?: boolean
+}
+
+export type AcademyStatus = 'READY' | 'GROWING' | 'WAITING'
+
+/** ACADEMY-b paneli: GET /careers/{id}/youth/{playerId}. Hepsi tahmin. */
+export interface YouthDetail {
+  playerId: number
+  name: string
+  age?: number | null
+  positions: string[]
+  overall?: number | null
+  potential?: number | null
+  potentialRange?: string | null
+  monthsInSquad?: number | null
+  academy: boolean
+  advice: { sentence: string; plans: { label: string; kind: 'GENERAL' | 'ROLE' | 'POSITION'; position: string; overall1: number; overall2: number }[]; estimated: boolean }
+  position: { bestPosition: string; bestOverall?: number | null; listedPositions: string[]; conversionText?: string | null; sideReason?: string | null }
+  /** source: MAIN ana taktik, AUTO başlangıç önerisi ("Otomatik öneri"). strengths: 1–3 sezon tahmini Güç. */
+  team: {
+    position: string; source: 'MAIN' | 'AUTO'; slots: number; starterName?: string | null; starterStrength?: number | null; backupName?: string | null
+    backupStrength?: number | null; strengths: number[]; passBackupSeason?: number | null; passStarterSeason?: number | null
+  }
+}
+
+export interface Academy {
+  found: boolean
+  teamId?: number | null
+  name?: string | null
+  message?: string | null
+  players: AcademyPlayer[]
+}
+
+export interface DevelopmentWeakSlot {
+  slotId: string
+  position: string
+  roleId: string
+  playerId?: number
 }
 
 export interface RankedItem {
@@ -691,9 +830,13 @@ export interface CareerPlayerContract {
 }
 
 export interface SetupCheck {
+  /** FIT-2: seed kimliği (eski sunucu göndermez). */
+  id?: string
   title: string
   status: WeaponState
   detail: string
+  /** FIT-1 madde 5: ne yapılmalı (eski sunucu göndermez). */
+  advice?: string
   players: { id: number; name: string; position: string; value: number; ok: boolean }[]
 }
 
@@ -1349,6 +1492,16 @@ export interface TacticFinding {
   evidence: TacticEvidence[]
   recommendation?: { code: string; text: string }
   text: string
+}
+
+/** POST /tactics/analysis (ücretsiz): slots yalnız rol seçilenler (gerisi formasyon varsayılanı); assigned slotId → oyuncu. */
+export interface TacticAnalysisRequest {
+  formation: string
+  buildUp?: string
+  depth?: number
+  slots: { slotId: string; roleId: string }[]
+  careerId?: number
+  assigned?: Record<string, number>
 }
 
 export interface TacticAnalysis {

@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import type { HistorySeries, Mover } from './growthData'
+import type { HistorySeries } from './growthData'
 
 /**
- * Gelişim grafikleri (V3-06e): paket yok, kendi SVG'miz; sayfadan lazy yüklenir. viewBox kabın gerçek genişliğinden kurulur (1 birim = 1 px) → yazılar
+ * Gelişim grafiği (V3-06e; ACADEMY-b'den beri oyuncu sayfasının Gelişim sekmesinde): paket yok, kendi SVG'miz; lazy yüklenir. viewBox kabın gerçek genişliğinden kurulur (1 birim = 1 px) → yazılar
  * ölçeklenmez, 375px'te de ≥ 12px. Erişilebilirlik: svg role="img" + özet etiket; her grafikte "Tablo olarak göster" aynı veriyi tablo yapar.
  * Renkler 11 §3 token'ları: OVR --accent (düz), POT --ink-2 (kesikli), ızgara --glass-border, yazı --ink-2; yükselen --good, düşen --bad.
  */
 
 const FONT = 12
 const DEFAULT_WIDTH = 640
-const MINUS = '−'
 /** x etiketleri arasında en az bu kadar px (tarih etiketi ≈ 70px): son etikete yakın ara etiket çizilmez. */
 const LABEL_GAP = 84
 
@@ -43,8 +42,6 @@ function ChartFrame({ chart, table }: { chart: ReactNode; table: ReactNode }) {
     </div>
   )
 }
-
-const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `${MINUS}${-n}` : '0')
 
 /** OVR (düz) ve POT (kesikli) zaman serisi; noktalarda tooltip (tarih/sıra, OVR, POT), klavyeyle de odaklanır. */
 export function HistoryChart({ series }: { series: HistorySeries }) {
@@ -111,48 +108,6 @@ export function HistoryChart({ series }: { series: HistorySeries }) {
       <tbody>
         {points.map((p) => (
           <tr key={p.snapshotId} className="border-t border-[var(--glass-border)]"><td className="py-1">{p.label}</td><td className="py-1 text-right tabular-nums">{p.ovr}</td><td className="py-1 text-right tabular-nums">{p.pot}</td></tr>
-        ))}
-      </tbody>
-    </table>
-  )
-  return <ChartFrame chart={chart} table={table} />
-}
-
-/** Yatay bar: iki içe aktarma arası OVR farkı (yükselen --good, düşen --bad; değer metinde, renk tek başına anlam taşımaz). */
-/** scaleMax (V3-07a): yükselen ve düşen grafikleri ortak ölçek (iki listenin mutlak en büyük farkı); verilmezse listenin kendisi. */
-export function MoversChart({ movers, caption, scaleMax }: { movers: Mover[]; caption: string; scaleMax?: number }) {
-  const { ref, width } = useWidth()
-  const row = 30
-  const nameWidth = Math.min(160, Math.round(width * 0.42))
-  const valueWidth = 40
-  const height = movers.length * row + 4
-  const max = Math.max(scaleMax ?? 0, ...movers.map((m) => Math.abs(m.delta)), 1)
-  const barMax = width - nameWidth - valueWidth - 8
-  const summary = movers.map((m) => `${m.name} ${signed(m.delta)}`).join(', ')
-  const chart = (
-    <div ref={ref} className="w-full">
-      <svg role="img" aria-label={summary} viewBox={`0 0 ${width} ${height}`} width={width} height={height} className="block max-w-full">
-        {movers.map((m, i) => {
-          const y = i * row + 4
-          const w = Math.max(3, (Math.abs(m.delta) / max) * barMax)
-          return (
-            <g key={m.playerId}>
-              <text x={0} y={y + 16} fontSize={FONT} fill="var(--ink)">{m.name.length > 20 ? `${m.name.slice(0, 19)}…` : m.name}<title>{m.name}</title></text>
-              <rect x={nameWidth} y={y + 4} width={w} height={16} rx={3} fill={m.delta > 0 ? 'var(--good)' : 'var(--bad)'} />
-              <text x={nameWidth + w + 6} y={y + 16} fontSize={FONT} fontWeight={600} fill="var(--ink)">{signed(m.delta)}</text>
-            </g>
-          )
-        })}
-      </svg>
-    </div>
-  )
-  const table = (
-    <table className="w-full text-sm">
-      <caption className="sr-only">{caption}</caption>
-      <thead className="text-xs text-muted"><tr><th scope="col" className="py-1 text-left font-medium">Oyuncu</th><th scope="col" className="py-1 text-left font-medium">OVR</th><th scope="col" className="py-1 text-right font-medium">Fark</th></tr></thead>
-      <tbody>
-        {movers.map((m) => (
-          <tr key={m.playerId} className="border-t border-[var(--glass-border)]"><td className="py-1">{m.name}</td><td className="py-1 tabular-nums">{m.from} → {m.to}</td><td className="py-1 text-right font-semibold tabular-nums">{signed(m.delta)}</td></tr>
         ))}
       </tbody>
     </table>

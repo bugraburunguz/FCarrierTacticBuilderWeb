@@ -44,7 +44,7 @@ describe('5-3-2 CM → CDM slot taşıması (TAC-09)', () => {
     })
 
     /** KARIYER-UX FAZ 1: tek kopya fc.tactic + fc.lineup → kariyere göre Lab taslağı (bir kez). Eski anahtarlar v2 için kalır. */
-    it('tek kopya taslak, dizilişi olan her kariyere "Önceki taslak" olarak bir kez taşınır', () => {
+    it('tek kopya taslak, dizilişi olan her kariyere "Ana taktik · <formasyon>" adıyla bir kez taşınır (FAZ 6a-F)', () => {
       const tactic = { formation: '4-4-2', setup: { buildUp: 'Short', depth: 60 }, slots: { LST: { tags: [], roleId: 'poacher_attack' } } }
       localStorage.setItem('fc.tactic', JSON.stringify(tactic))
       localStorage.setItem('fc.lineup', JSON.stringify({ '3': { LST: 9 }, '5': { GK: 1 }, '8': {} }))
@@ -53,7 +53,7 @@ describe('5-3-2 CM → CDM slot taşıması (TAC-09)', () => {
       const lab = JSON.parse(localStorage.getItem('fc.lab.v1')!)
       expect(Object.keys(lab).sort()).toEqual(['3', '5'])
       expect(lab['3'].drafts).toHaveLength(1)
-      expect(lab['3'].drafts[0]).toMatchObject({ name: 'Önceki taslak', origin: { kind: 'blank', ref: 'fc.tactic' }, tactic, lineup: { LST: 9 }, dirty: true })
+      expect(lab['3'].drafts[0]).toMatchObject({ name: 'Ana taktik · 4-4-2', origin: { kind: 'blank', ref: 'fc.tactic' }, tactic, lineup: { LST: 9 }, dirty: true })
       expect(lab['3'].activeId).toBe(lab['3'].drafts[0].id)
       expect(lab['5'].drafts[0].lineup).toEqual({ GK: 1 })
       expect(localStorage.getItem('fc.tactic')).not.toBeNull()

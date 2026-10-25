@@ -17,3 +17,21 @@ describe('RoleFocusPanel kilidi (TAC-10)', () => {
     expect(retry).toHaveBeenCalledOnce()
   })
 })
+
+describe('RoleFocusPanel oyuncuya göre (FIT-2 madde 6)', () => {
+  it('rol ve odaklar bu oyuncunun Rol oturmasıyla yazılır, en uygun önce', () => {
+    const groups = [
+      { base: 'Winger', options: [{ focus: 'Balanced', roleId: 'w_b' }] },
+      { base: 'Inside Forward', options: [{ focus: 'Attack', roleId: 'if_a' }] },
+    ]
+    const fits = new Map([
+      ['w_b', { roleId: 'w_b', roleName: 'Winger (Balanced)', currentFit: 60, levelFit: 40 }],
+      ['if_a', { roleId: 'if_a', roleName: 'Inside Forward (Attack)', currentFit: 70, levelFit: 71 }],
+    ])
+    render(<RoleFocusPanel {...base} groups={groups} currentRoleId="w_b" fits={fits} />)
+    const radios = screen.getAllByRole('radio', { name: /Winger|Inside Forward/ })
+    expect(radios.map((r) => r.closest('label')?.textContent)).toEqual(['Inside ForwardRol oturması %71', 'WingerRol oturması %40'])
+    expect(screen.getByRole('radio', { name: /Balanced/ })).toHaveTextContent('%40')
+  })
+})
+
