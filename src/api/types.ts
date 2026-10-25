@@ -663,6 +663,8 @@ export interface DevelopmentRecommendation {
   options: DevelopmentOption[]
   text: string
   estimated: boolean
+  /** FIT-3 kararı: CLEAR_TARGET (net hedef) · NO_CLEAR_TARGET (Dengeli, "esnek gelişsin") · SMALL_GAIN · NO_OPTIONS. */
+  reason?: 'CLEAR_TARGET' | 'NO_CLEAR_TARGET' | 'SMALL_GAIN' | 'NO_OPTIONS'
 }
 
 export interface DevelopmentWeakSlot {

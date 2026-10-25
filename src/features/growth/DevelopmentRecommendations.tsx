@@ -54,7 +54,8 @@ export function DevelopmentRecommendations({ careerId, rows, compact = false, pe
         <Chip tone="warn">{ESTIMATE_TAG}</Chip>
         <HelpPopover label="Gelişim önerisi nasıl hesaplanır?">
           23 yaş ve altı, potansiyeli OVR'sinden en az 5 yüksek oyuncular. Her plan 2 sezon sonrası Güç'le aynı mevki ve rolde Dengeli plana karşı
-          kıyaslanır; fark 2 Güç'ten azsa Dengeli önerilir. Büyüme modeli henüz gerçek içe aktarmalarla kalibre edilmedi.
+          kıyaslanır. En iyi rol başka mevkideki en iyi rolden belirgin önde değilse (net bir hedef yoksa) ya da fark küçükse Dengeli önerilir.
+          Büyüme modeli henüz gerçek içe aktarmalarla kalibre edilmedi.
         </HelpPopover>
       </header>
       {pending || query.isLoading ? <Skeleton className="h-24" /> : query.isError ? <p className="text-sm text-ink-2">Öneriler alınamadı.</p> : shown.length === 0 ? (
