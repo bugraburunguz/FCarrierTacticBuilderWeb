@@ -1,7 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { ApiError } from '../../api/client'
 import { endpoints } from '../../api/endpoints'
-import type { TacticAnalysisRequest, TacticRequest } from '../../api/types'
+import type { TacticAnalysis, TacticAnalysisRequest, TacticRequest } from '../../api/types'
+
+const TOO_MANY_REQUESTS = 429
 import { useDebouncedValue } from '../../lib/useDebouncedValue'
 
 const RISK_DEBOUNCE_MS = 400
@@ -55,30 +58,40 @@ export function useTacticRisks({ careerId, setup, tactic, assigned }: TacticRisk
   const request = careerId !== undefined && setup && tactic?.formation ? JSON.stringify(analysisBody(careerId, setup, tactic, assigned ?? {})) : ''
   const settledRequest = useDebouncedValue(request, RISK_DEBOUNCE_MS)
   const analysis = useQuery({
-    queryKey: ['tactic-analysis', settledRequest],
+    queryKey: ['tactic-analysis', careerId, settledRequest],
     queryFn: () => endpoints.tacticAnalysis(JSON.parse(settledRequest) as TacticAnalysisRequest),
     enabled: settledRequest !== '',
     staleTime: 300_000,
     retry: false,
   })
+  // Karar (FIT-2): analiz sınırı (429) aşılırsa bu kariyerin son başarılı analizi "güncellenemedi" notuyla gösterilir.
+  const client = useQueryClient()
+  const rateLimited = analysis.error instanceof ApiError && analysis.error.status === TOO_MANY_REQUESTS
+  const lastGood = rateLimited
+    ? client.getQueryCache().findAll({ queryKey: ['tactic-analysis', careerId], predicate: (q) => q.state.status === 'success' })
+      .sort((a, b) => b.state.dataUpdatedAt - a.state.dataUpdatedAt)[0]?.state.data as TacticAnalysis | undefined
+    : undefined
+  const findings = analysis.data?.findings ?? lastGood?.findings
   const risks = useMemo<TacticRisk[]>(() => [
     ...(check.data ?? []).filter((c) => c.status !== 'GREEN').map((c) => {
       const weak = c.players.filter((p) => !p.ok).slice(0, EVIDENCE_PLAYERS)
       return { key: c.id ?? c.title, title: c.title, high: c.status === 'RED', detail: c.detail, advice: c.advice,
         evidence: weak.length > 0 ? `Eşiğin altında: ${weak.map((p) => `${p.name} ${p.value}`).join(', ')}` : undefined }
     }),
-    ...(analysis.data?.findings ?? []).filter((f) => f.severity !== 'INFO').map((f) => ({
+    ...(findings ?? []).filter((f) => f.severity !== 'INFO').map((f) => ({
       key: `${f.code}-${f.instance.side ?? ''}`, title: f.title, high: f.severity === 'RISK', detail: f.text, advice: f.recommendation?.text,
     })),
-  ], [check.data, analysis.data])
+  ], [check.data, findings])
   // İnceleme: iki kaynak birlikte — analiz yüklenirken ya da alınamadıyken "risk yok" denmez (analiz kovası 60/dk, /fit/lineup ile ortak).
   const analysisAsked = settledRequest !== ''
   return {
     risks,
     loading: check.isLoading || (analysisAsked && analysis.isLoading),
     error: check.isError,
-    /** Diziliş kuralları alınamadı: liste yalnız kurulum kontrollerinden. */
-    partial: analysisAsked && analysis.isError,
-    ready: check.isSuccess && (!analysisAsked || analysis.isSuccess),
+    /** Diziliş kuralları alınamadı ve elde önceki sonuç yok: liste yalnız kurulum kontrollerinden. */
+    partial: analysisAsked && analysis.isError && !lastGood,
+    /** 429: diziliş kuralları son başarılı sonuçtan (güncellenemedi). */
+    stale: analysisAsked && analysis.isError && lastGood !== undefined,
+    ready: check.isSuccess && (!analysisAsked || analysis.isSuccess || lastGood !== undefined),
   }
 }

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ApiError } from '../../api/client'
 import { endpoints } from '../../api/endpoints'
 import { TacticRisks } from './TacticRisks'
 
@@ -41,6 +42,20 @@ describe('TacticRisks', () => {
     render(<TacticRisks careerId={7} setup={{ buildUp: 'Balanced', depth: 50 }} tactic={tactic} assigned={{}} />, { wrapper: wrap(client()) })
     expect(await screen.findByText('Diziliş kuralları alınamadı; yalnız kurulum kontrolleri gösteriliyor.')).toBeInTheDocument()
     expect(screen.queryByText('Belirgin risk yok.')).toBeNull()
+  })
+
+  it('Karar: analiz 429 dönerse son başarılı diziliş sonucu "güncellenemedi" notuyla kalır', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([] as never)
+    vi.mocked(endpoints.tacticAnalysis).mockResolvedValueOnce({ metrics: { band: 'BALANCED', depth: 50 }, notEvaluated: [], findings: [
+      { code: 'striker_isolated', title: 'Santrfor yalnız', severity: 'WARN', instance: {}, evidence: [], text: 'Tek forvet yalnız.' },
+    ] } as never).mockRejectedValue(new ApiError('Çok fazla istek', 'RATE_LIMIT_EXCEEDED', 429))
+    const qc = client()
+    const a = { formation: '4-3-3', slots: [{ slotId: 'LW', tags: [], roleId: 'inside_forward_attack' }] }
+    const { rerender } = render(<TacticRisks careerId={7} setup={{ buildUp: 'Balanced', depth: 50 }} tactic={a} assigned={{}} />, { wrapper: wrap(qc) })
+    expect(await screen.findByText('Santrfor yalnız')).toBeInTheDocument()
+    rerender(<TacticRisks careerId={7} setup={{ buildUp: 'Balanced', depth: 50 }} tactic={{ ...a, slots: [{ slotId: 'LW', tags: [], roleId: 'winger_attack' }] }} assigned={{}} />)
+    expect(await screen.findByText('Diziliş kuralları güncellenemedi; son başarılı sonuç gösteriliyor.')).toBeInTheDocument()
+    expect(screen.getByText('Santrfor yalnız')).toBeInTheDocument()
   })
 
   it('risk yoksa "Belirgin risk yok"', async () => {
