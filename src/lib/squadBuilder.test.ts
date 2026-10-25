@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { FormationSlot, Role } from '../api/types'
 import { eaRoleKey } from './eaRoles'
-import { firstFocus, ovrBand, remapAssignments, roleGroups, swapSlots } from './squadBuilder'
+import { firstFocus, ovrBand, rankRoleGroups, remapAssignments, roleGroups, swapSlots } from './squadBuilder'
 
 const role = (id: string, name: string, focus: string, positions: string[]): Role => ({ id, baseRole: name, name: `${name} (${focus})`, positions, focus, weapons: [], accelerate: [], movementTags: [] })
 const slot = (slotId: string, position: string): FormationSlot => ({ slotId, position, group: position, defaultRole: '', x: 0, y: 0 })
@@ -51,5 +51,24 @@ describe('squad builder yardımcıları', () => {
     expect(swapSlots({ B: 2 }, 'A', 'B')).toEqual({ A: 2 })
     const same = { A: 1 }
     expect(swapSlots(same, 'A', 'A')).toBe(same)
+  })
+
+  it('FIT-2 madde 6: rol grupları ve odaklar oyuncuya göre (Rol oturması, yoksa Güç) en uygun önce; bilinmeyen rol sonda, sıra korunur', () => {
+    const groups = [
+      { base: 'Winger', options: [{ focus: 'Balanced', roleId: 'w_b' }, { focus: 'Attack', roleId: 'w_a' }] },
+      { base: 'Wide Playmaker', options: [{ focus: 'Attack', roleId: 'wp_a' }] },
+      { base: 'Inside Forward', options: [{ focus: 'Balanced', roleId: 'if_b' }, { focus: 'Attack', roleId: 'if_a' }] },
+    ]
+    const fits = new Map([
+      ['w_b', { roleId: 'w_b', roleName: 'W', currentFit: 60, levelFit: 40 }],
+      ['w_a', { roleId: 'w_a', roleName: 'W', currentFit: 62, levelFit: 48 }],
+      ['if_b', { roleId: 'if_b', roleName: 'IF', currentFit: 66, levelFit: 60 }],
+      ['if_a', { roleId: 'if_a', roleName: 'IF', currentFit: 70, levelFit: 71 }],
+    ])
+    const ranked = rankRoleGroups(groups, fits)
+    expect(ranked.map((g) => g.base)).toEqual(['Inside Forward', 'Winger', 'Wide Playmaker'])
+    expect(ranked[0].options.map((o) => o.roleId)).toEqual(['if_a', 'if_b'])
+    expect(ranked[1].options.map((o) => o.roleId)).toEqual(['w_a', 'w_b'])
+    expect(rankRoleGroups(groups, undefined)).toBe(groups)
   })
 })

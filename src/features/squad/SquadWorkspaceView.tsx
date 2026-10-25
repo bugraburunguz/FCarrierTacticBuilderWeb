@@ -1,5 +1,6 @@
 import { Star, StarHalf } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import type { RoleAlternative } from '../../api/types'
 import { HelpPopover } from '../../components/ui'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { RoleFocusModal } from '../../components/squadBuilder/RoleFocusModal'
@@ -281,7 +282,8 @@ export function SquadWorkspaceView(p: SquadViewProps) {
 }
 
 /** Rol çipine tıklayınca açılan rol/odak penceresi: iki modda aynı. */
-export function SquadRoleDialog<T>({ ws }: { ws: SquadWorkspaceApi<T> }) {
+/** fitsOf (FIT-2 madde 6, kariyer Lab): slottaki oyuncunun rollere göre değerleri; verilirse seçici en uygun rolü önce gösterir. UT vermez. */
+export function SquadRoleDialog<T>({ ws, fitsOf }: { ws: SquadWorkspaceApi<T>; fitsOf?: (slotId: string) => Map<string, RoleAlternative> | undefined }) {
   const slot = ws.selection?.panel === 'role' ? ws.selectedSlot : undefined
   if (!slot) {
     return null
@@ -297,6 +299,7 @@ export function SquadRoleDialog<T>({ ws }: { ws: SquadWorkspaceApi<T> }) {
         ws.clearSelection()
       }}
       onClose={ws.clearSelection}
+      fits={fitsOf?.(slot.slotId)}
     />
   )
 }

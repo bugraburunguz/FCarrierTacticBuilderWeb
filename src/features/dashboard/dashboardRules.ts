@@ -1,4 +1,4 @@
-import type { Career, CareerPlayer, CareerSnapshot } from '../../api/types'
+import type { Career, CareerPlayer, CareerSnapshot, RoleAlternative } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from '../../lib/contract'
 import { deskLink } from '../../lib/deskLinks'
 import { SNAPSHOT_LABEL } from '../../lib/deskRules'
@@ -33,6 +33,8 @@ export interface WeakLinkCard {
   reason?: string
   /** Birincil eylem: WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir, rol yanlış; Lab FAZ 4), WEAK → transferde aday. */
   primary: 'ROLE' | 'TRANSFER'
+  /** FIT-2 madde 6: sunucunun eşiğini geçen daha uygun rol; "Rolü değiştir" onu Lab'da uygular. */
+  betterRole?: RoleAlternative
 }
 
 const REASON = /^(\S+) ([+-])(\d+(?:\.\d+)?)$/
@@ -77,6 +79,7 @@ export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[
         pct: Math.round(level(r)), strength: r.display.strength, roleFit: r.display.roleFit, weakClass, classText: weakClass ? WEAK_CLASS_TEXT[weakClass] : undefined,
         state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: worstReason(r.fit.reasons),
         primary: weakClass ? (weakClass === 'ROL_UYUMSUZ' ? 'ROLE' : 'TRANSFER') : r.fit.fitLabel === 'WRONG_ROLE' ? 'ROLE' : 'TRANSFER',
+        betterRole: r.betterRole,
       }
     })
 }

@@ -46,6 +46,15 @@ describe('deskRules', () => {
     expect(fills.every((f) => f.priority > 70)).toBe(true)
   })
 
+  it('FIT-2 madde 6: ROL_UYUMSUZ işi önerilen rolle Lab\'a (yeni taslak, rol uygulanmış); öneri yoksa yalnız slot', () => {
+    const slots: DeskSlot[] = [
+      { ...slot('a', 'LW', 30, 3, 'WEAK'), weakClass: 'ROL_UYUMSUZ', strength: 80, betterRoleId: 'inside_forward_attack' },
+      { ...slot('b', 'RW', 32, 2, 'WEAK'), weakClass: 'ROL_UYUMSUZ', strength: 82 },
+    ]
+    const fills = rankActions({ squad, slots, tags: {} }).filter((a) => a.kind === 'FILL')
+    expect(fills.map((a) => a.to)).toEqual(['/career/tactics-lab?sekme=kurucu&slot=a&rol=inside_forward_attack', '/career/tactics-lab?sekme=kurucu&slot=b'])
+  })
+
   it('zayıf halka yalnız sarı/kırmızı bant (seviyesine göre), en zayıf başta; seviyesinde olan değil', () => {
     const weak = weakSlots([slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2), slot('c', 'GK', 10, 1), slot('d', 'CM', 55, 4)])
     expect(weak.map((w) => w.slotId)).toEqual(['c', 'a'])

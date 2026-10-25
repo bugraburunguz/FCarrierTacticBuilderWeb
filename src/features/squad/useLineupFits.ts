@@ -36,7 +36,8 @@ export function useLineupFits(ws: SquadWorkspaceApi<number>, playerById: Map<num
   const body = useMemo(() => JSON.parse(request) as LineupBody, [request])
   const query = useQuery({
     queryKey: ['slot-fit', 'lineup', careerId, request],
-    queryFn: () => endpoints.lineup(careerId!, body.tactic, body.locked),
+    // FIT-2 madde 6: rol alternatifleri aynı istekte (Lab rol seçici, "Daha uygun rol", Masa "Rolü değiştir").
+    queryFn: () => endpoints.lineup(careerId!, body.tactic, body.locked, true),
     enabled: careerId !== undefined && Boolean(body.tactic.formation) && !stale && Object.keys(body.locked).length > 0,
     staleTime: 300_000,
     retry: false,
@@ -53,7 +54,8 @@ export function useLineupFits(ws: SquadWorkspaceApi<number>, playerById: Map<num
       }
       const fit = { ...s.roleFit, roleName: s.roleFit.roleName ?? s.roleName, reasons: s.roleFit.reasons ?? [] } as RoleFit
       bySlot.set(s.slotId, fit)
-      out.push({ slotId: s.slotId, position: s.position, roleId: s.roleId, roleName: s.roleName, playerId: player.id, playerName: player.name, fit, display: fitDisplay(fit), weakClass: s.weakClass })
+      out.push({ slotId: s.slotId, position: s.position, roleId: s.roleId, roleName: s.roleName, playerId: player.id, playerName: player.name, fit, display: fitDisplay(fit), weakClass: s.weakClass,
+        roleAlternatives: s.roleAlternatives, betterRole: s.betterRole })
     })
     const order = new Map(slots.map((s, i) => [s.slotId, i]))
     out.sort((a, b) => (order.get(a.slotId) ?? 0) - (order.get(b.slotId) ?? 0))

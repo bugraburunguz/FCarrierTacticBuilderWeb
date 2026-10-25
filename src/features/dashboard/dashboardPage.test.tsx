@@ -18,7 +18,7 @@ vi.mock('../../api/endpoints', () => {
       resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })), fitRole: vi.fn(), playerFacets: vi.fn(),
       snapshots: vi.fn(), events: vi.fn(), updateCareer: vi.fn(), careerBackup: vi.fn(), careerRestore: vi.fn(), deleteCareer: vi.fn(),
       userTactics: none, saveUserTactic: vi.fn(), setMainTactic: vi.fn(), playerTags: none, snapshotDiff: vi.fn(() => Promise.resolve({ rows: [] })),
-      fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(), setupCheck: vi.fn(() => Promise.resolve([])),
+      fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(), setupCheck: vi.fn(() => Promise.resolve([])), tacticAnalysis: vi.fn(() => Promise.resolve({ metrics: { band: 'BALANCED', depth: 50 }, findings: [], notEvaluated: [] })),
     },
   }
 })
@@ -310,6 +310,20 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(box).queryByText(/21668/)).toBeNull()
   })
 
+  it('FIT-2 madde 6: ROL_UYUMSUZ kartı daha uygun rolü yazar; "Rolü değiştir" önerilen rolle Lab\'da yeni taslak açar', async () => {
+    const better = { roleId: 'inside_forward_attack', roleName: 'Inside Forward (Attack)', currentFit: 70, levelFit: 71 }
+    vi.mocked(endpoints.lineup).mockImplementation(((c: number, t: unknown, locked?: Record<string, number>) =>
+      lineupFromFitRole(endpoints.fitRole as never)(c, t as never, locked).then((r: { slots: { slotId: string }[] }) => ({
+        ...r, slots: r.slots.map((s) => (s.slotId === 'CM2' ? { ...s, weakClass: 'ROL_UYUMSUZ', betterRole: better } : { ...s, weakClass: 'UYGUN' })),
+      }))) as never)
+    renderPage()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const [card] = await within(weak).findAllByRole('listitem')
+    expect(card).toHaveTextContent('Daha uygun rol: Inside Forward (Attack) · oturma %71')
+    const href = '/career/tactics-lab?sekme=kurucu&slot=CM2&rol=inside_forward_attack'
+    expect(within(card).getByRole('link', { name: /Rolü değiştir/ })).toHaveAttribute('href', href)
+  })
+
   it('FIT-1: Takım gücü (Güç ortalaması) ve Rol oturması ayrı adlarla; zayıf halka kartında iki sayı adıyla ve sınıf başlığı', async () => {
     vi.mocked(endpoints.lineup).mockImplementation(((c: number, t: unknown, locked?: Record<string, number>) =>
       lineupFromFitRole(endpoints.fitRole as never)(c, t as never, locked).then((r: { slots: { slotId: string }[] }) => ({
@@ -338,6 +352,18 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     const link = await within(fit).findByRole('link', { name: /2 taktik riski/ })
     expect(link).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu')
     expect(endpoints.setupCheck).toHaveBeenCalledWith(expect.objectContaining({ careerId: 1 }))
+  })
+
+  it('FIT-2 madde 7: Masa\'daki sayı Lab ile aynı liste — kurulum kontrolleri + ana taktiğin diziliş kuralları (bilgi sayılmaz)', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([{ title: 'Yüksek hat: stoperlerde hız', status: 'RED', detail: 'x', advice: 'y', players: [] }] as never)
+    vi.mocked(endpoints.tacticAnalysis).mockResolvedValue({ metrics: { band: 'BALANCED', depth: 50 }, notEvaluated: [], findings: [
+      { code: 'striker_isolated', title: 'Santrfor yalnız', severity: 'WARN', instance: {}, evidence: [], text: 't' },
+      { code: 'midfield_thin', title: 'Orta saha ince', severity: 'INFO', instance: {}, evidence: [], text: 't' },
+    ] } as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım gücü' })
+    expect(await within(fit).findByRole('link', { name: /2 taktik riski/ })).toBeInTheDocument()
+    expect(endpoints.tacticAnalysis).toHaveBeenCalledWith(expect.objectContaining({ careerId: 1, assigned: expect.objectContaining({}) }))
   })
 
   it('FAZ 6a-F: göçten gelen "Önceki taslak" adı ana taktik adı olarak görünmez', async () => {

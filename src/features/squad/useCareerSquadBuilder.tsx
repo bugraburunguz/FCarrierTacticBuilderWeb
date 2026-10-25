@@ -45,7 +45,7 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
   const slotTags = (slotId: string) => state.tags[slotId] ?? []
 
   // FAZ 4b: rol uyumu tek /fit/lineup isteğiyle (dizilenler kilitli); kariyer yoksa uyum yok.
-  const { fitBySlot } = useLineupFits(ws, playerById, hasCareer ? careerId : undefined)
+  const { fitBySlot, rows: fitRows } = useLineupFits(ws, playerById, hasCareer ? careerId : undefined)
 
   const views: SlotView[] = ws.slots.map((slot) => {
     const player = playerById.get(assignments[slot.slotId])
@@ -132,6 +132,8 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
     preset,
     views,
     weakReasons,
+    /** FIT-2 madde 6: dizili slotların satırları (rol alternatifleri ve "daha uygun rol" dahil). */
+    fitRows,
     autoFill,
     canAutoFill,
     changeFormation,

@@ -17,6 +17,8 @@ export interface DeskSlot {
   weakClass?: WeakClass
   /** Güç (currentFit); sınıflı sırada ikinci anahtar. Yoksa pct. */
   strength?: number
+  /** FIT-2 madde 6: sunucunun önerdiği daha uygun rol; ROL_UYUMSUZ işi Lab'da onu uygular. */
+  betterRoleId?: string
 }
 
 /** Kariyer "Menajer Masası" kuralları (13 §3.1, §5): saf fonksiyonlar, sunucuya gitmeden masada gösterilir; her öneri gerekçelidir. */
@@ -131,6 +133,7 @@ export interface WeakSlot {
   label?: FitLabel | null
   weakClass?: WeakClass
   strength: number
+  betterRoleId?: string
 }
 
 /**
@@ -141,7 +144,7 @@ export function weakSlots(slots: DeskSlot[]): WeakSlot[] {
   const classed = slots.some((s) => s.weakClass)
   return slots
     .filter((s) => isWeakClass(s.weakClass, s.fitLabel))
-    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel, weakClass: s.weakClass, strength: s.strength ?? s.pct }))
+    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel, weakClass: s.weakClass, strength: s.strength ?? s.pct, betterRoleId: s.betterRoleId }))
     .sort((a, b) => (classed ? compareWeakClass(a, b) : a.fit - b.fit))
 }
 
@@ -248,7 +251,7 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       reason: classified === 'ROL_UYUMSUZ' ? `${w.playerName ?? 'Oyuncu'} güçlü ama rolüne oturmuyor; Lab'da rolünü değiştirmeyi dene.`
         : classified ? `${w.playerName ?? 'Slot'} takımın en zayıf halkalarından; daha güçlü adayları Transfer Merkezi'nde gör.`
           : `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
-      to: classified === 'ROL_UYUMSUZ' ? deskLink.lab(w.slotId) : deskLink.candidate(w.slotId, w.position, w.roleId),
+      to: classified === 'ROL_UYUMSUZ' ? deskLink.lab(w.slotId, w.betterRoleId) : deskLink.candidate(w.slotId, w.position, w.roleId),
       // Sınıflı halka sunucunun alt grubudur: sınıf sırasıyla en üstte (100/90/80); sınıfsız eski kural.
       priority: classified ? 100 - WEAK_CLASS_ORDER[classified] * 10 - index : 100 - w.fit - index,
     })

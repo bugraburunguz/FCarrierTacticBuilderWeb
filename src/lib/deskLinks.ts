@@ -5,7 +5,8 @@ const query = (path: string, params: Record<string, string | number>) => `${path
 /** Masa geçişleri (KARIYER-UX 15 §4.1): hedef sayfaların kalıcı rota ve parametreleri. deskRules ve Masa yalnız bunları üretir. */
 export const deskLink = {
   candidate: (slotId: string, position: string, roleId: string) => query('/career/transfer', { ihtiyac: `slot-${slotId}`, pos: position, rol: roleId }),
-  lab: (slotId?: string) => (slotId ? query('/career/tactics-lab', { sekme: 'kurucu', slot: slotId }) : '/career/tactics-lab'),
+  /** roleId (FIT-2 madde 6): önerilen rol o slota uygulanmış yeni taslak. */
+  lab: (slotId?: string, roleId?: string) => (slotId ? query('/career/tactics-lab', { sekme: 'kurucu', slot: slotId, ...(roleId ? { rol: roleId } : {}) }) : '/career/tactics-lab'),
   contract: (playerId: number) => query(`/players/${playerId}`, { sekme: 'sozlesme' }),
   loans: () => query('/career/squad', { sekme: 'hareketler' }),
   sell: (playerId: number) => query('/career/transfer', { sekme: 'satis', oyuncu: playerId }),
