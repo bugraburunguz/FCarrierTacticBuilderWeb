@@ -160,16 +160,31 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(weakCard).getByRole('link', { name: /Lab'da dene/ })).toHaveAttribute('href', '/career/tactics-lab?sekme=kurucu&slot=CM1')
   })
 
-  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; iş başına kural kaynağı etiketi', async () => {
+  it('"Bu dönemin 3 işi" Masa\'nın en üstünde; kaynak yalnız panel başlığında ("Ana taktiğe göre"), satırlarda etiket yok (FAZ 6a-D)', async () => {
     renderPage()
     const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
     const panel = screen.getByRole('tabpanel')
     expect(panel.querySelector('section')).toBe(jobs)
     const items = await within(jobs).findAllByRole('listitem')
     expect(items.length).toBeGreaterThan(0)
-    expect(jobs.querySelector('header [data-source="decision"]')).not.toBeNull()
-    const contract = items.find((li) => li.textContent?.includes('Sözleşme: Oyuncu 4'))
-    expect(contract?.querySelector('[data-source="record"]')).not.toBeNull()
+    await waitFor(() => expect(jobs.querySelector('header [data-source="decision"]')?.textContent).toContain('Ana taktiğe göre'))
+    items.forEach((li) => expect(li.querySelector('[data-source]')).toBeNull())
+    expect(within(jobs).queryByText('Kararın')).toBeNull()
+  })
+
+  it('FAZ 6a-D: aynı türden tek iş; kalanlar "+N benzer" ile açılır', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue([
+      member(1, { wageEur: 5_000 }), member(2, { wageEur: 5_000 }), member(3, { wageEur: 5_000 }),
+      member(21, {}, { age: 19, overall: 60, potential: 80 }), member(22, {}, { age: 20, overall: 59, potential: 79 }), member(23, {}, { age: 18, overall: 58, potential: 78 }),
+    ] as never)
+    renderPage()
+    const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
+    await waitFor(() => expect(within(jobs).getAllByText('Kiralık')).toHaveLength(1))
+    const more = within(jobs).getByRole('button', { name: '+2 benzer' })
+    expect(more).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(more)
+    expect(more).toHaveAttribute('aria-expanded', 'true')
+    expect(within(jobs).getByRole('list', { name: 'Benzer işler · Kiralık' }).querySelectorAll('li')).toHaveLength(2)
   })
 
   it('tek IMPORT varsa Δ çipi hiç gösterilmez', async () => {
@@ -254,7 +269,77 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(await within(box).findByText('Transfer dönemi sonu')).toBeInTheDocument()
     expect(within(box).getByText('Oyuncu 5 · kiralık bitiyor')).toBeInTheDocument()
     expect(await within(box).findByText(/Satış · Satılan Oyuncu/)).toBeInTheDocument()
-    expect(within(box).getAllByText(/İçe aktarma · 30 oyuncu/).length).toBeGreaterThan(0)
+    // FAZ 6a-E: kadro bilgisi olmayan görüntüde yalnız tür (dünya oyuncu sayısı yazılmaz).
+    expect(within(box).getAllByText(/^İçe aktarma$/).length).toBeGreaterThan(0)
+  })
+
+  it('FAZ 6a-A: kayıt verisi eksikse tek bant (ne eksik, neyi etkiliyor, nasıl tamamlanır); boş kutular yerine yalnız mevcut veri', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValue([{ ...CAREER, gameDate: undefined }] as never)
+    vi.mocked(endpoints.playerFacets).mockResolvedValue({ contractData: false, loanData: false })
+    vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2), member(3)] as never)
+    renderPage()
+    const banner = await screen.findByRole('region', { name: 'Kayıt verisi eksik' })
+    await waitFor(() => expect(within(banner).getAllByRole('listitem')).toHaveLength(3))
+    expect(banner).toHaveTextContent('Oyun tarihi')
+    expect(banner).toHaveTextContent('Maaş ve sözleşme')
+    expect(within(banner).getByRole('link', { name: /Kariyer içinden yeniden içe aktar/ })).toHaveAttribute('href', '/career/import')
+    expect(screen.queryByRole('region', { name: 'Acil uyarılar' })).toBeNull()
+    const finance = screen.getByRole('region', { name: 'Finansal sağlık' })
+    expect(within(finance).queryByText('Maaş bütçesi kullanımı')).toBeNull()
+    expect(within(finance).queryByText('Dönem sonuna')).toBeNull()
+    expect(within(finance).getByText('Transfer bütçesi')).toBeInTheDocument()
+    const timeline = screen.getByRole('region', { name: 'Zaman çizelgesi' })
+    expect(within(timeline).queryByText('Yaklaşan')).toBeNull()
+    expect(screen.queryByText(/Oyun tarihi yok/)).toBeNull()
+  })
+
+  it('FAZ 6a-A: veri tamsa bant yok', async () => {
+    renderPage()
+    await screen.findByRole('region', { name: 'Acil uyarılar' })
+    expect(screen.queryByRole('region', { name: 'Kayıt verisi eksik' })).toBeNull()
+  })
+
+  it('FAZ 6a-E: geçmişte aynı gün içe aktarmalar tek satır, kadro sayısıyla (dünya oyuncu sayısı yok)', async () => {
+    vi.mocked(endpoints.snapshots).mockResolvedValue([
+      { id: 9, takenAt: '2026-10-19T12:00:00Z', source: 'IMPORT', playerCount: 21668, squadCount: 31, squadJoined: ['Yeni Oyuncu'], squadLeft: [] },
+      { id: 8, takenAt: '2026-10-19T09:00:00Z', source: 'IMPORT', playerCount: 21668, squadCount: 30 },
+    ] as never)
+    renderPage()
+    const box = await screen.findByRole('region', { name: 'Zaman çizelgesi' })
+    expect(await within(box).findByText(/İçe aktarma ×2 · kadro: 31 oyuncu · giren: Yeni Oyuncu/)).toBeInTheDocument()
+    expect(within(box).queryByText(/21668/)).toBeNull()
+  })
+
+  it('FAZ 6a-F: göçten gelen "Önceki taslak" adı ana taktik adı olarak görünmez', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue({ ...MAIN, name: 'Önceki taslak' } as never)
+    renderPage()
+    const fit = await screen.findByRole('region', { name: 'Takım uyumu' })
+    expect(await within(fit).findByText('Ana taktik · 4-3-3')).toBeInTheDocument()
+    expect(screen.queryByText(/Önceki taslak/)).toBeNull()
+  })
+
+  it('FAZ 6a-G: zayıf halka başlığında yüzdenin anlamı (bilgi ikonu + title)', async () => {
+    renderPage()
+    const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
+    const note = within(weak).getByText('Uyum: oyuncunun seviyesine göre rol uyumu')
+    expect(note.closest('[title]')).toHaveAttribute('title', expect.stringContaining('seviyesindeki oyuncular'))
+  })
+
+  it('FAZ 6a-C: ≥1280 px üç sütun (sol: 3 iş + zayıf halkalar · orta: uyum · sağ: finans + uyarılar + zaman çizelgesi)', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('1280'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined })) as never
+    try {
+      renderPage()
+      await screen.findByRole('region', { name: 'Zayıf halkalar' })
+      const columns = [...document.querySelectorAll('[data-masa-col]')]
+      expect(columns.map((c) => c.getAttribute('data-masa-col'))).toEqual(['left', 'middle', 'right'])
+      const names = (col: Element) => [...col.querySelectorAll(':scope > section[aria-label]')].map((s) => s.getAttribute('aria-label'))
+      expect(names(columns[0])).toEqual(['Bu dönemin 3 işi', 'Zayıf halkalar'])
+      expect(names(columns[1])).toEqual(['Takım uyumu'])
+      expect(names(columns[2])).toEqual(['Finansal sağlık', 'Acil uyarılar', 'Zaman çizelgesi'])
+    } finally {
+      window.matchMedia = original
+    }
   })
 
   it('her panelin başlığında veri katmanı etiketi', async () => {

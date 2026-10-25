@@ -59,17 +59,54 @@ export function ageProfile(squad: CareerPlayer[]): { average: number; buckets: {
   }
 }
 
-/** Mevki grubu başına eldeki oyuncu sayısı ve beklenen asgari derinlik (ana mevkiye göre). */
-export function depthRows(squad: CareerPlayer[]): DepthRow[] {
-  const counts = new Map<PositionGroup, number>()
+export interface Capacity {
+  /** Ana (ilk listelenen) mevkisi bu olanlar. */
+  primary: CareerPlayer[]
+  /** Bu mevkiyi ikincil olarak listeleyenler. */
+  secondary: CareerPlayer[]
+}
+
+/**
+ * TEK derinlik tanımı (FAZ 6a-B): mevki kapasitesi oyuncunun listelenen mevkilerinin hepsini sayar; ana mevki birincil, diğerleri ikincil.
+ * Kiralık gönderilen sayılmaz. Mevki yoğunluğu (squadDensity), mevki grupları (groupRoster) ve Masa'nın derinlik işi (depthRows) bundan okur.
+ */
+export function positionCapacity(squad: CareerPlayer[]): Map<string, Capacity> {
+  const capacity = new Map<string, Capacity>()
   squad.filter((c) => !c.loanedOut).forEach((c) => {
-    const group = groupOf(c.player.positions[0])
-    if (group) {
-      counts.set(group, (counts.get(group) ?? 0) + 1)
-    }
+    c.player.positions.forEach((position, index) => {
+      const entry = capacity.get(position) ?? { primary: [], secondary: [] }
+      ;(index === 0 ? entry.primary : entry.secondary).push(c)
+      capacity.set(position, entry)
+    })
   })
+  return capacity
+}
+
+/** Grup kapasitesi: oyuncu grupta bir kez sayılır; ana mevkisi o gruptaysa birincil, yalnız ikincil mevkisi o gruptaysa ikincil. */
+export function groupCapacity(squad: CareerPlayer[]): Map<PositionGroup, Capacity> {
+  const groups = new Map<PositionGroup, Capacity>()
+  positionCapacity(squad).forEach((entry, position) => {
+    const group = groupOf(position)
+    if (!group) {
+      return
+    }
+    const target = groups.get(group) ?? { primary: [], secondary: [] }
+    entry.primary.forEach((c) => target.primary.push(c))
+    entry.secondary.filter((c) => groupOf(c.player.positions[0]) !== group).forEach((c) => target.secondary.push(c))
+    groups.set(group, target)
+  })
+  groups.forEach((entry) => {
+    entry.secondary = [...new Set(entry.secondary)]
+  })
+  return groups
+}
+
+/** Mevki grubu başına eldeki oyuncu sayısı (grup kapasitesi: birincil + ikincil) ve beklenen asgari derinlik. */
+export function depthRows(squad: CareerPlayer[]): DepthRow[] {
+  const groups = groupCapacity(squad)
   return (Object.keys(MIN_DEPTH) as PositionGroup[]).map((group) => {
-    const have = counts.get(group) ?? 0
+    const entry = groups.get(group)
+    const have = entry ? entry.primary.length + entry.secondary.length : 0
     return { group, have, need: MIN_DEPTH[group], short: Math.max(0, MIN_DEPTH[group] - have) }
   })
 }
@@ -150,12 +187,28 @@ export function suggestActions(input: ActionInput): DeskAction[] {
 
 const SEASON_JOBS = 3
 
+export interface SeasonJobs {
+  jobs: DeskAction[]
+  /** Gösterilen işle aynı türden kalanlar ("+N benzer"), öncelik sırasıyla. */
+  similar: Partial<Record<ActionKind, DeskAction[]>>
+}
+
 /**
  * "Bu dönemin 3 işi" TEK KAYNAK (KARIYER-UX FAZ 2): Ana sayfa ve Masa bu fonksiyonu ve `features/career/SeasonJobs` bileşenini kullanır.
  * `exclude`: Masa'da "Zayıf halkalar" kartında zaten gösterilen slotların FILL işi tekrar edilmez (V3-06e).
+ * FAZ 6a-D çeşitlilik: öncelik sırasıyla, aynı türden en çok bir iş; aynı türün kalanları `similar`'da. Türler azsa üçten az iş.
  */
-export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): DeskAction[] {
-  return rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId))).slice(0, limit)
+export function seasonJobs(input: ActionInput, { exclude, limit = SEASON_JOBS }: { exclude?: ReadonlySet<string>; limit?: number } = {}): SeasonJobs {
+  const jobs: DeskAction[] = []
+  const similar: SeasonJobs['similar'] = {}
+  for (const action of rankActions(input).filter((a) => !(a.kind === 'FILL' && a.slotId && exclude?.has(a.slotId)))) {
+    if (jobs.some((j) => j.kind === action.kind)) {
+      similar[action.kind] = [...(similar[action.kind] ?? []), action]
+    } else if (jobs.length < limit) {
+      jobs.push(action)
+    }
+  }
+  return { jobs, similar }
 }
 
 /** İşin kural kaynağı (veri katmanı etiketi): diziliş ve etiketlere dayananlar taktik kaynağından (karar ya da öneri), sözleşme/derinlik kayıttan. */

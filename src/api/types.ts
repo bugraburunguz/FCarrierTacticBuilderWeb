@@ -416,6 +416,10 @@ export interface CareerSnapshot {
   /** KARIYER-UX FAZ 2 (V44): snapshot anındaki transfer bütçesi ve kadro maaş toplamı (Masa Δ); bilinmiyorsa yok. */
   budgetEur?: number
   squadWageEur?: number
+  /** FAZ 6a-E (V46): görüntü anındaki kadro sayısı ve önceki görüntüye göre giren/çıkan oyuncu adları; bilinmiyorsa yok. */
+  squadCount?: number
+  squadJoined?: string[]
+  squadLeft?: string[]
 }
 
 export interface SnapshotDiffRow {
@@ -554,6 +558,10 @@ export interface ImportSummary {
   squadSynced?: number
   skippedNoPosition?: number
   warnings?: string[]
+  /** FAZ 6a-A: export'taki oyun tarihi (ISO); yoksa alan yok. */
+  gameDate?: string
+  /** FAZ 6a-A: maaş/sözleşme/kiralık bitişi yazılan oyuncu sayısı; eski sunucu göndermez. */
+  contracts?: number
 }
 
 export interface TeamSummary {

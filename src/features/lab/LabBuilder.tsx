@@ -78,7 +78,6 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
         onFormation={b.changeFormation}
         setup={setup}
         onSetup={(next) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_SETUP), ...next } }))}
-        squadNameKey="fc.squadName.career"
         ratingStars={avgOvr}
         allAverages={[{ label: 'Rol uyumu', value: pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : [])))) }, { label: 'Dolu', value: `${placed.length}/11` }]}
         stats={[
@@ -93,7 +92,7 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
               <StatTile label="Kadro uyumu" value={pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : []))))} />
               <StatTile label="En zayıf" value={weakest ? `${weakest.position} %${weakest.fit?.pct}` : undefined} />
             </div>
-            {weakest && weakReasons[weakest.slotId] && <p className="text-xs text-muted">{weakReasons[weakest.slotId]}</p>}
+            {weakest && weakReasons[weakest.slotId] && <p className="text-xs text-muted">En büyük eksi: <span className="text-ink-2">{weakReasons[weakest.slotId]}</span></p>}
             {preset && <Chip tone="info">{preset.name}</Chip>}
             <ErrorBox error={ws.resolved.error ?? autoFill.error ?? b.squad.error} />
           </section>
@@ -103,9 +102,9 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
         clearDisabled={Object.keys(ws.state.assigned).length === 0}
         clearLabel="Oyuncuları temizle"
         note={ws.note}
+        viewToggle={<Segmented label="Saha görünümü" value={marker} options={MARKERS} onChange={setMarker} />}
         actions={
           <>
-            <Segmented label="Saha görünümü" value={marker} options={MARKERS} onChange={setMarker} />
             <Button disabled={!b.canAutoFill} onClick={() => autoFill.mutate()}>
               {autoFill.isPending ? 'Diziliyor…' : "En iyi 11'i diz"}
             </Button>

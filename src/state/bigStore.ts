@@ -75,6 +75,17 @@ export const bigStore = {
   get<T>(name: string): T | undefined {
     return memory.get(name) as T | undefined
   },
+  /** Açılışta hidrate edilmeyen kayıtlar için: bellekte yoksa IndexedDB'den okur (depolama yoksa yok döner). */
+  async load<T>(name: string): Promise<T | undefined> {
+    if (memory.has(name)) {
+      return memory.get(name) as T | undefined
+    }
+    const row = await db.kv.get(name).catch(() => undefined)
+    if (row) {
+      memory.set(name, row.value)
+    }
+    return row?.value as T | undefined
+  },
   /** Bellek anında güncellenir; IndexedDB yazımı arkada yapılır, başarısızlık depolama uyarısı olarak görünür. */
   set(name: string, value: unknown): void {
     memory.set(name, value)

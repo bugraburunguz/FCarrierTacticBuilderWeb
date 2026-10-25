@@ -15,10 +15,10 @@ const row = (slotId: string, playerId: number, fitLabel: string, levelFit: numbe
 
 /** KARIYER-UX FAZ 5 (15 §4.4): Bütçe planı ve İhtiyaçlar. */
 describe('Transfer FAZ 5 hesapları', () => {
-  it('İhtiyaçlar Masa zayıf halka kuralıyla (weakLinks, sınırsız): WEAK/WRONG_ROLE/AT_LEVEL, en zayıf önce; tüm kadroda hepsi; derinlik açıkları sonda', () => {
+  it('İhtiyaçlar Masa zayıf halka kuralıyla (weakLinks, sınırsız): WEAK/WRONG_ROLE (AT_LEVEL değil, FAZ 6a-G), en zayıf önce; tüm kadroda hepsi; derinlik açıkları sonda', () => {
     const rows = [row('CM1', 1, 'AT_LEVEL', 55), row('CM2', 2, 'WEAK', 30), row('CM3', 3, 'GOOD', 80), row('CM4', 4, 'WRONG_ROLE', 40)]
     const needs = needsForTransfer(rows, false, [])
-    expect(needs.filter((n) => n.slotId).map((n) => n.key)).toEqual(['slot-CM2', 'slot-CM4', 'slot-CM1'])
+    expect(needs.filter((n) => n.slotId).map((n) => n.key)).toEqual(['slot-CM2', 'slot-CM4'])
     expect(needs.find((n) => n.key === 'slot-CM2')).toMatchObject({ slotId: 'CM2', position: 'CM', roleId: 'b2b' })
     expect(needsForTransfer(rows, true, []).filter((n) => n.slotId).map((n) => n.key)).toContain('slot-CM3')
     expect(needs.at(-1)?.key).toMatch(/^depth-/)

@@ -116,6 +116,15 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(screen.getByText('Taslak · kaydedilmedi')).toBeInTheDocument()
   })
 
+  it('FAZ 6a-F: Lab\'da tek ad alanı (taslak adı); ayrı "Kadro adı" alanı yok', async () => {
+    renderAt()
+    const button = await screen.findByRole('button', { name: /Yeni taslak/ })
+    await waitFor(() => expect(button).toBeEnabled())
+    fireEvent.click(button)
+    expect(await screen.findByRole('button', { name: "En iyi 11'i diz" })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Kadro adı')).toBeNull()
+  })
+
   it('ana taktik yoksa yeni taslak başlangıç önerisinden', async () => {
     state.main = null
     renderAt()

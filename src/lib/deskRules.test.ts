@@ -82,10 +82,24 @@ describe('"Bu dönemin 3 işi" tek kaynak (KARIYER-UX FAZ 2 düzeltme 3)', () =>
   const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000, contractUntil: '2027-03-01' }), player(4, 'CM', 60, 19, { potential: 78 })]
   const slots = [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)]
 
-  it('ilk 3 iş = rankActions sırası; Masa zayıf halkada gösterilen slotu dışarıda bırakabilir', () => {
+  it('Masa zayıf halkada gösterilen slotu dışarıda bırakabilir', () => {
     const input = { squad, slots, tags: {}, gameDate: '2027-01-15' }
-    expect(seasonJobs(input)).toEqual(rankActions(input).slice(0, 3))
-    expect(seasonJobs(input, { exclude: new Set(['a']) }).some((j) => j.slotId === 'a')).toBe(false)
+    expect(seasonJobs(input, { exclude: new Set(['a']) }).jobs.some((j) => j.slotId === 'a')).toBe(false)
+  })
+
+  it('FAZ 6a-D: aynı türden en çok bir iş (öncelik sırasıyla); aynı türün kalanları "benzer" olarak ayrılır', () => {
+    const young = [player(21, 'CM', 60, 19, { potential: 80 }), player(22, 'CM', 59, 20, { potential: 79 }), player(23, 'CM', 58, 18, { potential: 78 })]
+    const input = { squad: young, slots: [], tags: {} }
+    const ranked = rankActions(input)
+    expect(ranked.filter((a) => a.kind === 'LOAN')).toHaveLength(3)
+    const { jobs, similar } = seasonJobs(input)
+    const kinds = jobs.map((j) => j.kind)
+    expect(new Set(kinds).size).toBe(kinds.length)
+    expect(jobs.length).toBeLessThanOrEqual(3)
+    const loan = jobs.find((j) => j.kind === 'LOAN')!
+    expect(loan).toEqual(ranked.find((a) => a.kind === 'LOAN'))
+    expect(similar.LOAN).toHaveLength(2)
+    expect(jobs.map((j) => ranked.indexOf(j))).toEqual([...jobs.map((j) => ranked.indexOf(j))].sort((a, b) => a - b))
   })
 
   it('iş başına veri katmanı: diziliş/etiket kuralları taktik kaynağından, sözleşme ve derinlik kayıttan', () => {

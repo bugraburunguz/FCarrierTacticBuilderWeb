@@ -12,6 +12,7 @@ import { careerSlotTabs } from './careerSlotTabs'
 import type { SlotTab, SlotView, SquadBinding } from './types'
 import { useLineupFits } from './useLineupFits'
 import { useSquadWorkspace } from './useSquadWorkspace'
+import { worstReason } from '../dashboard/dashboardRules'
 
 /** Kurucunun durum kaynağı: v3 Lab `useLabBinding` (aktif taslak), v2 `useCareerBinding` (eski tek kopya depo). Kararlı (modül düzeyi) bir hook olmalı. */
 export type CareerBuilderBinding = (careerId: number | undefined, squad: CareerPlayer[] | undefined) => { binding: SquadBinding<number>; playerById: Map<number, PlayerSummary> }
@@ -61,7 +62,8 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
       selected: selection?.slotId === slot.slotId,
     }
   })
-  const weakReasons: Record<string, string | undefined> = Object.fromEntries([...fitBySlot].map(([slotId, fit]) => [slotId, fit?.reasons[0]]))
+  // FAZ 6a-H: ham motor katkısı ("Curve +2.9") değil, en büyük eksi katkı Türkçe ("Dayanıklılık −7,5"); Masa zayıf halka kartıyla aynı kural.
+  const weakReasons: Record<string, string | undefined> = Object.fromEntries([...fitBySlot].map(([slotId, fit]) => [slotId, worstReason(fit?.reasons)]))
 
   const autoFill = useMutation({
     mutationFn: () => endpoints.lineup(careerId!, ws.tactic),

@@ -77,6 +77,21 @@ describe('useCareerSquadBuilder', () => {
     expect(screen.getAllByText('EA Taktik Kodu')).toHaveLength(1)
   })
 
+  it('FAZ 6a-H: "En zayıf" nedeni Türkçe ve yalnız eksi katkı (ham "Curve +2.9" yok); saha görünümü temizle düğmesinden ayrı, etiketli', async () => {
+    const fit = (i: number) => ({ playerId: i + 1, playerName: `Oyuncu ${i + 1}`, roleId: 'r', roleName: 'Rol', score: 70, projectedRating: 70, outOfPosition: false, weaponChecks: [],
+      levelFit: i === 0 ? 10 : 80, fitLabel: i === 0 ? 'WRONG_ROLE' : 'GOOD', reasons: i === 0 ? ['Curve +2.9', 'Stamina -7.5'] : [] })
+    vi.mocked(endpoints.lineup).mockImplementation(((_c: number, _t: unknown, locked?: Record<string, number>) => Promise.resolve({
+      slots: SLOTS.map((slotId, i) => ({ slotId, playerId: i + 1, ...(locked ? { roleFit: fit(i) } : {}) })),
+    })) as never)
+    render(<LabBuilder />, { wrapper })
+    expect(await screen.findByText('Dayanıklılık −7,5')).toBeInTheDocument()
+    expect(screen.queryByText(/Curve/)).toBeNull()
+    const view = screen.getByRole('radiogroup', { name: 'Saha görünümü' })
+    const clear = screen.getByRole('button', { name: 'Oyuncuları temizle' })
+    expect(clear.parentElement).not.toContainElement(view)
+    expect(view.parentElement).toHaveTextContent('Saha görünümü')
+  })
+
   it('slot seçilince kariyer slot sekmeleri gelir; davranışları sıfırla seçimi kapatır', async () => {
     const { result } = renderHook(() => useCareerSquadBuilder(useLabBinding), { wrapper })
     await waitFor(() => expect(result.current.ws.formation?.id).toBe('4-4-2'))

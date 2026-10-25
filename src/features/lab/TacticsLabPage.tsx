@@ -17,6 +17,7 @@ import { DraftBar } from './DraftBar'
 import { LabBuilder } from './LabBuilder'
 import { cloneReplicaToDraft } from './labSources'
 import { WizardTab } from './WizardTab'
+import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 
 /** Ana taktikten (yoksa başlangıç önerisinden) yeni taslak; sınırda labStore mesajı döner. */
 function createFrom(careerId: number, active: ActiveTactic | undefined): { id?: string; message?: string } {
@@ -114,7 +115,7 @@ export function TacticsLabPage() {
   }
   if (!career || id === undefined) {
     return (
-      <div className="mx-auto max-w-[1280px] py-2">
+      <div className={`mx-auto ${CAREER_PAGE_WIDTH} py-2`}>
         <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Taktik Laboratuvarı</h1>
         <EmptyState action={<Link to="/career/new" className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-on-accent">Yeni kariyer başlat</Link>}>
           Taslak denemek için bir kariyer seç ya da yeni kariyer başlat.
@@ -124,7 +125,7 @@ export function TacticsLabPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-3 py-2">
+    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
       <header className="flex flex-col gap-2">
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Taktik Laboratuvarı</h1>
         <CareerSelect />

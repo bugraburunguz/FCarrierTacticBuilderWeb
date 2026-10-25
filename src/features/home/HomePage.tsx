@@ -54,7 +54,7 @@ function ContinueCareer({ career }: { career: Career }) {
           <dd className="font-[var(--font-num)] text-2xl font-semibold tabular-nums">{fit !== undefined ? `%${fit}` : squad.isLoading ? '…' : '—'}</dd>
         </div>
       </dl>
-      <SeasonJobs careerId={id} squad={squad.data ?? []} rows={rows} tacticSource={main.source} record={lastImport && { kind: 'record', at: lastImport.takenAt }}
+      <SeasonJobs careerId={id} squad={squad.data ?? []} rows={rows} tacticSource={main.source}
         gameDate={career.gameDate} pending={main.isLoading || pending || squad.isLoading} framed={false} />
     </Section>
   )

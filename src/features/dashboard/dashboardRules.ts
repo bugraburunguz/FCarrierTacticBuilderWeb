@@ -1,8 +1,9 @@
 import type { Career, CareerPlayer, CareerSnapshot } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from '../../lib/contract'
 import { deskLink } from '../../lib/deskLinks'
+import { SNAPSHOT_LABEL } from '../../lib/deskRules'
 import type { FitState } from '../../components/card/FitBadge'
-import { FIT_STATE_TEXT, type FitLabel } from '../../lib/fitLabels'
+import { FIT_STATE_TEXT, isWeakFit } from '../../lib/fitLabels'
 import { ATTR_LABELS } from '../../lib/format'
 import type { SlotFitRow } from '../squad/useSlotFits'
 
@@ -10,8 +11,6 @@ import type { SlotFitRow } from '../squad/useSlotFits'
 
 const WEAK_SHOWN = 3
 const LOAN_ALERT_DAYS = 30
-/** Sunucu etiketine göre öncelik (FAZ 2 kararı 5): sarı/kırmızı önce, seviyesinde sonra; uygun hiç girmez. */
-const LABEL_TIER: Partial<Record<FitLabel, number>> = { WEAK: 0, WRONG_ROLE: 0, AT_LEVEL: 1 }
 
 export interface WeakLinkCard {
   slotId: string
@@ -26,7 +25,7 @@ export interface WeakLinkCard {
   /** Etiket her zaman metin olarak ("Rol için eksik"); renk tek başına anlam taşımaz. */
   labelText: string
   reason?: string
-  /** Birincil eylem: WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir, rol yanlış; Lab FAZ 4), WEAK/AT_LEVEL → transferde aday. */
+  /** Birincil eylem: WRONG_ROLE → rolü değiştir (oyuncu iyi olabilir, rol yanlış; Lab FAZ 4), WEAK → transferde aday. */
   primary: 'ROLE' | 'TRANSFER'
 }
 
@@ -54,18 +53,85 @@ export function worstReason(reasons: readonly string[] | undefined): string | un
   return worst && reasonText(worst.raw)
 }
 
+/**
+ * Zayıf halka tek kuralla (FAZ 6a-G, lib/fitLabels.isWeakFit): yalnız WEAK ve WRONG_ROLE; "Rol için seviyesinde" (AT_LEVEL) ve uygun girmez.
+ * Masa'nın 3 işi (deskRules.weakSlots) ve Transfer İhtiyaçları aynı kuralı kullanır. Üç dolmazsa daha az kart.
+ */
 export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[] {
-  const tier = (r: SlotFitRow) => (r.fit.fitLabel ? LABEL_TIER[r.fit.fitLabel] : undefined)
   const level = (r: SlotFitRow) => r.fit.levelFit ?? r.display.pct
   return rows
-    .filter((r) => tier(r) !== undefined)
-    .sort((a, b) => tier(a)! - tier(b)! || level(a) - level(b) || a.slotId.localeCompare(b.slotId))
+    .filter((r) => isWeakFit(r.fit.fitLabel))
+    .sort((a, b) => level(a) - level(b) || a.slotId.localeCompare(b.slotId))
     .slice(0, limit)
     .map((r) => ({
       slotId: r.slotId, position: r.position, roleId: r.roleId, roleName: r.roleName, playerId: r.playerId, playerName: r.playerName,
       pct: Math.round(level(r)), state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: worstReason(r.fit.reasons),
       primary: r.fit.fitLabel === 'WRONG_ROLE' ? 'ROLE' : 'TRANSFER',
     }))
+}
+
+export interface RecordGap {
+  key: 'gameDate' | 'contracts' | 'loans'
+  missing: string
+  affects: string
+}
+
+/**
+ * Masa'nın "Kayıt verisi eksik" bandı (FAZ 6a-A): kayıtta (içe aktarma) olmayan veriler ve neyi etkiledikleri. Boş kutular tek tek gösterilmez;
+ * bant ne eksik, neyi etkiliyor ve nasıl tamamlanır söyler. Facets yüklenmemişse yalnız oyun tarihi değerlendirilir (eksik uydurulmaz).
+ */
+export function recordGaps(gameDate: string | undefined, facets: { contractData: boolean; loanData: boolean } | undefined): RecordGap[] {
+  const gaps: RecordGap[] = []
+  if (!gameDate) {
+    gaps.push({ key: 'gameDate', missing: 'Oyun tarihi', affects: 'dönem sonuna kalan gün, sözleşme ve kiralık uyarıları, yaklaşan tarihler' })
+  }
+  if (facets && !facets.contractData) {
+    gaps.push({ key: 'contracts', missing: 'Maaş ve sözleşme', affects: 'maaş bütçesi kullanımı, sözleşme bitişleri' })
+  }
+  if (facets && !facets.loanData) {
+    gaps.push({ key: 'loans', missing: 'Kiralık bitişi', affects: 'kiralık dönüş uyarıları' })
+  }
+  return gaps
+}
+
+const NAMES_SHOWN = 3
+const names = (list: string[]) => (list.length > NAMES_SHOWN ? `${list.slice(0, NAMES_SHOWN).join(', ')} +${list.length - NAMES_SHOWN}` : list.join(', '))
+
+/**
+ * Zaman çizelgesinin görüntü satırları (FAZ 6a-E): aynı UTC gününe düşen aynı kaynaklı görüntüler tek satır ("İçe aktarma ×3"); metin dünya
+ * oyuncu sayısı değil kadro sayısı ve gün içindeki net giren/çıkan. Kadro bilgisi olmayan (eski) görüntüde yalnız tür.
+ */
+export function snapshotTimeline(snapshots: CareerSnapshot[]): { key: string; at: string; text: string }[] {
+  const groups: CareerSnapshot[][] = []
+  const newestFirst = [...snapshots].sort((a, b) => b.takenAt.localeCompare(a.takenAt))
+  for (const s of newestFirst) {
+    const last = groups.at(-1)
+    if (last && last[0].source === s.source && last[0].takenAt.slice(0, 10) === s.takenAt.slice(0, 10)) {
+      last.push(s)
+    } else {
+      groups.push([s])
+    }
+  }
+  return groups.map((group) => {
+    const newest = group[0]
+    const joined: string[] = []
+    const left: string[] = []
+    ;[...group].reverse().forEach((s) => {
+      ;(s.squadJoined ?? []).forEach((n) => (left.includes(n) ? left.splice(left.indexOf(n), 1) : joined.push(n)))
+      ;(s.squadLeft ?? []).forEach((n) => (joined.includes(n) ? joined.splice(joined.indexOf(n), 1) : left.push(n)))
+    })
+    const parts = [`${SNAPSHOT_LABEL[newest.source] ?? 'Güncelleme'}${group.length > 1 ? ` ×${group.length}` : ''}`]
+    if (newest.squadCount !== undefined) {
+      parts.push(`kadro: ${newest.squadCount} oyuncu`)
+    }
+    if (joined.length > 0) {
+      parts.push(`giren: ${names(joined)}`)
+    }
+    if (left.length > 0) {
+      parts.push(`çıkan: ${names(left)}`)
+    }
+    return { key: `s${newest.id}`, at: newest.takenAt, text: parts.join(' · ') }
+  })
 }
 
 export interface FinanceSummary {
