@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { CareerSelect } from '../../components/CareerSelect'
 import { SquadCards } from '../../components/SquadCards'
 import { SquadList } from '../../components/SquadList'
@@ -34,6 +34,7 @@ const decimal =(value?: number) => (value === undefined ? undefined : value.toLo
 /**
  * Kadro Analizi (/career/squad, KARIYER-UX FAZ 3, 15 §4.2): "Elimde ne var?". Düzenleme yok; kararlar yalnız hamleler ve geri alma.
  * Diziliş: ana taktik (yoksa başlangıç önerisi) salt okunur piyon sahada, piyon oyuncu sayfasını açar. Liste, Derinlik, Hareketler `?sekme=`.
+ * ACADEMY-b: Altyapı ayrı sayfa (/career/academy); eski `?sekme=altyapi` bağlantısı oraya yönlenir.
  * Katman 1-2; Lab taslağı ve eski tek kopya taktik deposu okunmaz (kariyerUxGates).
  */
 export function CareerSquadPage() {
@@ -65,6 +66,9 @@ export function CareerSquadPage() {
     return new Map(Object.entries(lineup).flatMap(([slotId, id]) => (typeof id === 'number' && positionOf.has(slotId) ? [[id, positionOf.get(slotId)!] as const] : [])))
   }, [lineup, k.formation])
 
+  if (params.get('sekme') === 'altyapi') {
+    return <Navigate to="/career/academy" replace />
+  }
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
   }

@@ -1,29 +1,27 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle } from 'lucide-react'
-import { lazy, Suspense, useId, useMemo, useState, type ReactNode } from 'react'
+import { useId, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
-import { EmptyState, ErrorState, Segmented, Skeleton } from '../../design/components/primitives'
+import { EmptyState, ErrorState, Segmented, SidePanel, Skeleton } from '../../design/components/primitives'
+import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { isPlateau } from '../../lib/deskRules'
 import { useActiveCareerId } from '../../state/careerStore'
-import { usePageParams } from '../player/playerPage'
-import { historySeries, movers, seasonStartRange } from './growthData'
-import { useMainTacticFits } from '../career/useMainTacticFits'
-import { DevelopmentRecommendations } from './DevelopmentRecommendations'
+import { useYouthOpener } from '../academy/useYouthOpener'
+import { YouthList } from '../academy/YouthList'
+import { YouthDetailBody } from '../academy/YouthDetailBody'
+import { movers, seasonStartRange, type Mover } from './growthData'
 
-// Grafikler ayrı parça (lazy): sayfa iskeleti önce gelir.
-const HistoryChart = lazy(() => import('./GrowthCharts').then((m) => ({ default: m.HistoryChart })))
-const MoversChart = lazy(() => import('./GrowthCharts').then((m) => ({ default: m.MoversChart })))
-
-const MOVERS_SHOWN = 8
 type Range = 'last' | 'season'
 
-function Section({ title, children, actions, className = '' }: { title: string; children: ReactNode; actions?: ReactNode; className?: string }) {
+function Section({ title, children, actions, subtitle }: { title: string; children: ReactNode; actions?: ReactNode; subtitle?: string }) {
   const id = useId()
   return (
-    <section aria-labelledby={id} className={`glass-2 flex min-w-0 flex-col gap-3 p-3 sm:p-4 ${className}`}>
+    <section aria-labelledby={id} className="glass-2 flex min-w-0 flex-col gap-3 p-3 sm:p-4">
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id={id} className="font-display text-xl font-semibold leading-6">{title}</h2>
+        <div>
+          <h2 id={id} className="font-display text-xl font-semibold leading-6">{title}</h2>
+          {subtitle && <p className="text-xs text-ink-2">{subtitle}</p>}
+        </div>
         {actions}
       </header>
       {children}
@@ -31,113 +29,96 @@ function Section({ title, children, actions, className = '' }: { title: string; 
   )
 }
 
+/** "▲ Nyoni +3 (66→69)" — düz metin; yön ok ve işaretle de yazar (renk tek başına anlam taşımaz). */
+const moverText = (m: Mover) => `${m.delta > 0 ? '▲' : '▼'} ${m.name} ${m.delta > 0 ? '+' : '−'}${Math.abs(m.delta)} (${m.from}→${m.to})`
+
 /**
- * Gelişim v3 (V3-06e, 08 §10): oyuncu seçici (?oyuncu=) → OVR/POT geçmişi grafiği (x = kayıt anındaki oyun tarihi, yoksa içe aktarma sırası),
- * plato uyarısı (deskRules.isPlateau), kadro geneli en çok yükselenler / düşenler (snapshotDiff; aralık: son iki içe aktarma ya da sezon başı → şimdi).
- * Yalnız mevcut uçlar: squad, snapshots, snapshotDiff, playerHistory. Yeni puanlama ya da projeksiyon yok.
+ * Gelişim (ACADEMY-b §3): "Kadromdaki gençler doğru gelişiyor mu?". Gelişim planları (A takım ≤ 23 yaş, potansiyeli OVR'den ≥ 5 yüksek + kiralıktaki
+ * gençler; Altyapı satır biçimi ve paneli; geçmiş istemez) ve "Son içe aktarmadan beri" düz listesi (▲/▼, fark, önce→şimdi; plato satır içinde; iki
+ * içe aktarma ister). Oyuncu seçici ve geçmiş grafiği oyuncu sayfasının Gelişim sekmesinde.
  */
 export function GrowthPage() {
   const careerId = useActiveCareerId()
-  const { params, set } = usePageParams()
   const [range, setRange] = useState<Range>('last')
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
   const id = career?.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
+  const youth = useQuery({ queryKey: ['youth', id], queryFn: () => endpoints.youth(id!), enabled: id !== undefined, staleTime: 300_000 })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
-  // FIT-3 madde 11: plan önerisi takımın zayıf slotlarını (ana taktik, Masa ile aynı kaynak) bilir.
-  const { rows: tacticRows, pending: tacticPending, main } = useMainTacticFits(id, squad.data)
   const enough = (snapshots.data?.length ?? 0) >= 2
   const season = useMemo(() => seasonStartRange(snapshots.data ?? []), [snapshots.data])
   const span = range === 'season' && season ? season : undefined
   const diff = useQuery({ queryKey: ['snapshot-diff', id, span?.from, span?.to, snapshots.data?.length], queryFn: () => endpoints.snapshotDiff(id!, span?.from, span?.to), enabled: id !== undefined && enough, retry: false })
+  const { open, close, selectedId } = useYouthOpener('gelisim')
 
-  const players = squad.data ?? []
-  // ?oyuncu= (v3); eski ?player= bağlantıları da açılır.
-  const wanted = Number(params.get('oyuncu') ?? params.get('player'))
-  const selected = players.find((c) => c.player.id === wanted) ?? players[0]
-  const selectedId = selected?.player.id
-  const history = useQuery({ queryKey: ['history', id, selectedId], queryFn: () => endpoints.playerHistory(id!, selectedId!), enabled: id !== undefined && selectedId !== undefined && enough, retry: false })
-  const series = useMemo(() => (history.data && history.data.length > 0 ? historySeries(history.data) : undefined), [history.data])
-  const moved = useMemo(() => movers(diff.data?.rows ?? []), [diff.data])
-  // Ortak ölçek: −1, +14'ün yanında kısa görünür (iki listenin mutlak en büyük farkı).
-  const scaleMax = Math.max(0, ...[...moved.risers, ...moved.fallers].map((m) => Math.abs(m.delta)))
+  const members = useMemo(() => new Map((squad.data ?? []).map((c) => [c.player.id, c.player])), [squad.data])
+  // Yalnız kadro: fark tüm kayıt dünyasını kapsar (altyapı ve başka takımlar dahil).
+  const moved = useMemo(() => {
+    const { risers, fallers } = movers((diff.data?.rows ?? []).filter((r) => members.has(r.playerId)))
+    return [...risers, ...fallers]
+  }, [diff.data, members])
+  // Masa'nın "Süre ver ya da kirala" bağlantısı plan listesinde olmayan kadro oyuncusunu da açar (panel ucu kadro oyuncusu için çalışır).
+  const selected = selectedId === undefined ? undefined
+    : youth.data?.find((p) => p.playerId === selectedId) ?? (members.has(selectedId) ? { playerId: selectedId, name: members.get(selectedId)!.name } : undefined)
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
   }
+  const heading = <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Gelişim</h1>
   if (!career) {
     return (
-      <div className="mx-auto max-w-[1280px] py-2">
-        <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Gelişim</h1>
+      <div className={`mx-auto ${CAREER_PAGE_WIDTH} py-2`}>
+        {heading}
         <EmptyState action={<Link to="/career/new" className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-on-accent">Yeni kariyer başlat</Link>}>Önce bir kariyer başlat.</EmptyState>
       </div>
     )
   }
 
-  const importLink = <Link to="/career/import" className="inline-flex min-h-10 items-center rounded-[var(--radius-sm)] bg-accent px-3 text-sm font-semibold text-on-accent hover:opacity-90 max-sm:min-h-11">İçe aktar</Link>
-
   return (
-    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-2">
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Gelişim</h1>
-        {players.length > 0 && (
-          <label className="flex max-w-md flex-col gap-1 text-xs font-medium text-ink-2">
-            Oyuncu
-            <select value={selectedId ?? ''} onChange={(e) => set({ oyuncu: e.target.value, player: undefined })}
-              className="glass-3 min-h-10 rounded-[var(--radius-sm)] px-3 text-sm text-ink max-sm:min-h-11">
-              {players.map((c) => <option key={c.player.id} value={c.player.id}>{c.player.name} · {c.player.positions[0]} · {c.player.overall}</option>)}
-            </select>
-          </label>
-        )}
-      </header>
-
-      <DevelopmentRecommendations careerId={id} rows={tacticRows} pending={main.isLoading || tacticPending || squad.isLoading} />
-
-      {snapshots.isLoading ? <Skeleton className="h-64" /> : snapshots.isError ? <ErrorState message="İçe aktarma geçmişi yüklenemedi." onRetry={() => snapshots.refetch()} /> : !enough ? (
-        <EmptyState action={importLink}>Gelişimi görmek için en az iki içe aktarma gerekir.</EmptyState>
-      ) : (
-        <>
-          <Section title="OVR geçmişi">
-            {selected && isPlateau(selected.player) && (
-              <div role="status" aria-label="Plato" className="flex items-start gap-2 rounded-[var(--radius-sm)] border border-[var(--warn)] px-3 py-2 text-sm text-warn">
-                <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
-                <span><b>Plato:</b> {selected.player.name} potansiyeline ulaştı ({selected.player.overall}/{selected.player.potential}); bundan sonra yükselişi sınırlı olabilir.</span>
-              </div>
-            )}
-            {history.isLoading ? <Skeleton className="h-60" /> : history.isError ? <ErrorState message="Gelişim geçmişi yüklenemedi." onRetry={() => history.refetch()} /> : !series ? (
-              <EmptyState>Bu oyuncunun içe aktarma geçmişi yok.</EmptyState>
+    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
+      <header>{heading}</header>
+      <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <Section title="Gelişim planları" subtitle="A takımda 23 yaş ve altı + kiralıktaki gençler · tahmin">
+            {youth.isLoading ? <Skeleton className="h-40" /> : youth.isError && !youth.data ? (
+              <ErrorState message="Gelişim planları yüklenemedi." onRetry={() => youth.refetch()} />
+            ) : (youth.data ?? []).length === 0 ? (
+              <p className="text-sm text-ink-2">Gelişim planı önerilecek genç yok (≤ 23 yaş, potansiyeli OVR'den en az 5 yüksek).</p>
             ) : (
-              <Suspense fallback={<Skeleton className="h-60" />}>
-                <HistoryChart series={series} />
-              </Suspense>
+              <YouthList players={youth.data!} label="Gelişim planları" onOpen={open} selectedId={selectedId} />
             )}
           </Section>
 
-          <div className="flex items-center gap-2">
+          <Section title="Son içe aktarmadan beri" actions={enough ? (
             <Segmented label="Aralık" value={range} onChange={setRange}
               options={[{ id: 'last', label: 'Son iki içe aktarma' }, ...(season ? [{ id: 'season' as const, label: 'Sezon başı → şimdi' }] : [])]} />
-          </div>
-          {diff.isError ? <ErrorState message="Kadro farkı yüklenemedi." onRetry={() => diff.refetch()} /> : (
-            <div className="flex flex-col gap-3 min-[1024px]:flex-row min-[1024px]:items-start">
-              <Section title="En çok yükselenler" className="min-[1024px]:flex-1">
-                {diff.isLoading ? <Skeleton className="h-40" /> : moved.risers.length === 0 ? <p className="text-sm text-ink-2">Bu aralıkta OVR'ı yükselen yok.</p> : (
-                  <Suspense fallback={<Skeleton className="h-40" />}>
-                    <MoversChart movers={moved.risers.slice(0, MOVERS_SHOWN)} caption="En çok yükselenler: OVR farkı" scaleMax={scaleMax} />
-                  </Suspense>
-                )}
-              </Section>
-              <Section title="Düşenler" className="min-[1024px]:flex-1">
-                {diff.isLoading ? <Skeleton className="h-40" /> : moved.fallers.length === 0 ? <p className="text-sm text-ink-2">Bu aralıkta OVR'ı düşen yok.</p> : (
-                  <Suspense fallback={<Skeleton className="h-40" />}>
-                    <MoversChart movers={moved.fallers.slice(0, MOVERS_SHOWN)} caption="Düşenler: OVR farkı" scaleMax={scaleMax} />
-                  </Suspense>
-                )}
-              </Section>
-            </div>
-          )}
-        </>
-      )}
+          ) : undefined}>
+            {snapshots.isLoading ? <Skeleton className="h-24" /> : snapshots.isError ? <ErrorState message="İçe aktarma geçmişi yüklenemedi." onRetry={() => snapshots.refetch()} /> : !enough ? (
+              <p className="text-sm text-ink-2">İkinci içe aktarmadan sonra görünür.</p>
+            ) : diff.isLoading ? <Skeleton className="h-24" /> : diff.isError ? <ErrorState message="Kadro farkı yüklenemedi." onRetry={() => diff.refetch()} /> : moved.length === 0 ? (
+              <p className="text-sm text-ink-2">Bu aralıkta OVR'ı değişen yok.</p>
+            ) : (
+              <ul className="flex flex-col gap-1 text-sm tabular-nums">
+                {moved.map((m) => {
+                  const player = members.get(m.playerId)
+                  return (
+                    <li key={m.playerId}>
+                      <span className={m.delta > 0 ? 'text-good' : 'text-bad'}>{moverText(m)}</span>
+                      {player && isPlateau(player) && <span className="text-warn">{" ⚠ POT'a ulaştı"}</span>}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </Section>
+        </div>
+        {selected && id !== undefined && (
+          <SidePanel title={selected.name} onClose={close}>
+            <div className="overflow-y-auto"><YouthDetailBody careerId={id} playerId={selected.playerId} /></div>
+          </SidePanel>
+        )}
+      </div>
     </div>
   )
 }

@@ -1,20 +1,41 @@
-import type { UseQueryResult } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { useQuery, type UseQueryResult } from '@tanstack/react-query'
+import { lazy, Suspense, useId, useMemo, type ReactNode } from 'react'
+import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerContract, PlayerSummary } from '../../api/types'
+import { historySeries } from '../growth/growthData'
 import { HelpPopover } from '../../components/ui'
 import { ErrorState, Skeleton, StatTile } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
 import { BucketChip } from '../careerPlayers/BucketChip'
 import { potentialText } from './playerPage'
 
+// Grafik ayrı parça (lazy): sekme iskeleti önce gelir.
+const HistoryChart = lazy(() => import('../growth/GrowthCharts').then((m) => ({ default: m.HistoryChart })))
+
 const dateText = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
+/** ACADEMY-b: OVR/POT geçmişi (Gelişim sayfasından taşındı); iki içe aktarma ister. */
+function HistorySection({ careerId, playerId }: { careerId: number; playerId: number }) {
+  const id = useId()
+  const history = useQuery({ queryKey: ['history', careerId, playerId], queryFn: () => endpoints.playerHistory(careerId, playerId), retry: false })
+  const series = useMemo(() => (history.data && history.data.length >= 2 ? historySeries(history.data) : undefined), [history.data])
+  return (
+    <section aria-labelledby={id} className="flex flex-col gap-2">
+      <h3 id={id} className="font-display text-base font-semibold">OVR geçmişi</h3>
+      {history.isLoading ? <Skeleton className="h-60" /> : history.isError ? <ErrorState message="Gelişim geçmişi yüklenemedi." onRetry={() => history.refetch()} /> : !series ? (
+        <p className="text-sm text-ink-2">Grafik ikinci içe aktarmadan sonra görünür.</p>
+      ) : (
+        <Suspense fallback={<Skeleton className="h-60" />}><HistoryChart series={series} /></Suspense>
+      )}
+    </section>
+  )
+}
+
 /**
- * Gelişim (V3-06b): yalnız mevcut veriden — OVR → POT, gelişim payı ve yaş. Projeksiyon/yaş eğrisi için v3 ucu yok, gösterilmez
- * (eski gelişim ucu WeaponState rozetli, ENG-M8). Ayrıntı ve takip gelişim sayfasında (V3-06e), kadrodaki oyuncu için bağlantı.
+ * Gelişim (V3-06b + ACADEMY-b): mevcut veriden OVR → POT, gelişim payı ve yaş; kadrodaki oyuncuda OVR/POT geçmiş grafiği (Gelişim sayfasındaki
+ * seçici + grafik buraya taşındı). Plan önerisi Gelişim ve Altyapı sayfalarında.
  */
-export function DevelopmentTab({ summary, inSquad }: { summary: PlayerSummary; inSquad: boolean }) {
+export function DevelopmentTab({ summary, inSquad, careerId }: { summary: PlayerSummary; inSquad: boolean; careerId: number }) {
   const pot = potentialText(summary)
   const headroom = summary.potential !== undefined ? summary.potential - summary.overall : undefined
   return (
@@ -32,7 +53,7 @@ export function DevelopmentTab({ summary, inSquad }: { summary: PlayerSummary; i
         </p>
       )}
       {inSquad
-        ? <p className="text-sm"><Link to={`/career/growth?oyuncu=${summary.id}`} className="font-semibold text-accent underline-offset-2 hover:underline">Gelişim takibi</Link>: OVR/POT güncellemeleri ve geçmiş.</p>
+        ? <HistorySection careerId={careerId} playerId={summary.id} />
         : <p className="text-xs text-muted">Gelişim takibi kadrondaki oyuncular içindir.</p>}
     </div>
   )

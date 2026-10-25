@@ -15,7 +15,7 @@ export interface NavGroup {
 
 /**
  * v3 kariyer menüsü (V3-06d, KARIYER-UX FAZ 4a §3): Masa · Kadro · Taktik Lab · Transfer · Oyuncular; masaüstünde sol ray, mobilde alt çubukta bu 5 öğe
- * + "Daha fazla" (Gelişim, Takımlar, İçe aktar, Yeni kariyer). Üstte kariyer sekmeleri yok; Oyuncular ve Taktik Lab alt sekmeleri sayfa içi.
+ * + "Daha fazla" (Altyapı, Gelişim, Takımlar, İçe aktar, Yeni kariyer). Üstte kariyer sekmeleri yok; Oyuncular ve Taktik Lab alt sekmeleri sayfa içi.
  * Eski kurucu/sihirbaz adresleri (/squad/builder, /tactics, /fit) Taktik Lab'da sayılır; Kadro yalnız /career/squad (/squad v3'te hemen yönlenir).
  */
 export const CAREER_NAV: NavGroup[] = [
@@ -29,6 +29,8 @@ export const CAREER_NAV: NavGroup[] = [
     match: ['/career/tactics-lab', '/tactics', '/squad', '/fit', '/recommend', '/scouting', '/replicas'],
   },
   { to: '/career/transfer', label: 'Transfer', match: ['/career/transfer'] },
+  // ACADEMY-b: masaüstünde Transfer'den sonra; mobilde "Daha fazla"nın ilk öğesi (alt çubuk 5 öğede kalır).
+  { to: '/career/academy', label: 'Altyapı', match: ['/career/academy'], mobile: 'more' },
   {
     to: '/players',
     label: 'Oyuncular',

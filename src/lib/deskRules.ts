@@ -1,4 +1,4 @@
-import type { CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
+import type { AcademyPlayer, CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
 import { deskLink } from './deskLinks'
 import { compareWeakClass, isWeakClass, roleFitText, WEAK_CLASS_ORDER, WEAK_CLASS_TEXT, type FitLabel, type WeakClass } from './fitLabels'
@@ -148,7 +148,7 @@ export function weakSlots(slots: DeskSlot[]): WeakSlot[] {
     .sort((a, b) => (classed ? compareWeakClass(a, b) : a.fit - b.fit))
 }
 
-export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH' | 'CONTRACT'
+export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH' | 'CONTRACT' | 'PROMOTE'
 
 export interface DeskAction {
   kind: ActionKind
@@ -166,10 +166,15 @@ interface ActionInput {
   tags: Record<number, string>
   /** Verilirse sözleşme işleri de üretilir (oyun tarihine göre, CONTRACT uyarısıyla aynı kural); v2 Masa vermez. */
   gameDate?: string
+  /** ACADEMY-b: verilirse "Altyapıdan A takıma al" işleri (yalnız sunucunun "A takıma al" önerisi olan oyuncular). */
+  academy?: readonly AcademyPlayer[]
 }
 
 /** Sözleşme işi önceliği: satışın (40+) altında, derinliğin (20 + 5·eksik) üstünde; bitime yaklaştıkça artar. */
 const CONTRACT_PRIORITY = 35
+/** Altyapıdan A takıma al: satışın (40–85) taban üstünde, zayıf halkanın (80–100) altında; yedeği geçme payı en çok 20 ekler. */
+const PROMOTE_PRIORITY = 50
+const PROMOTE_MARGIN_CAP = 20
 
 const money = (value?: number) => (value === undefined ? '—' : value >= 1_000_000 ? `€${(value / 1_000_000).toFixed(1)}M` : `€${Math.round(value / 1000)}K`)
 
@@ -200,9 +205,12 @@ export function sellAdvice(c: CareerPlayer, starters: Set<number>, tags: Record<
   return { kind: 'KEEP', reason: 'Satış ya da kiralama kuralına girmiyor' }
 }
 
-/** "Bu dönemin 3 işi": SquadFit artışı, satış değeri ve genç gelişimi kurallarıyla en etkili üç eylem. */
-export function suggestActions(input: ActionInput): DeskAction[] {
-  return rankActions(input).slice(0, 3)
+/** v2 Masa'nın iş türleri: altyapı verisi verilmediği için "Altyapıdan A takıma al" (PROMOTE) üretilmez. */
+export type LegacyActionKind = Exclude<ActionKind, 'PROMOTE'>
+
+/** "Bu dönemin 3 işi" (v2): SquadFit artışı, satış değeri ve genç gelişimi kurallarıyla en etkili üç eylem; altyapı girdisi yok. */
+export function suggestActions(input: Omit<ActionInput, 'academy'>): (DeskAction & { kind: LegacyActionKind })[] {
+  return rankActions(input).slice(0, 3) as (DeskAction & { kind: LegacyActionKind })[]
 }
 
 const SEASON_JOBS = 3
@@ -237,7 +245,7 @@ export function jobLayer(kind: ActionKind): 'tactic' | 'record' {
 }
 
 /** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
-export function rankActions({ squad, slots, tags, gameDate }: ActionInput): DeskAction[] {
+export function rankActions({ squad, slots, tags, gameDate, academy }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))
   const actions: DeskAction[] = []
 
@@ -302,6 +310,20 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
       }
     })
   }
+
+  // ACADEMY-b: "Altyapıdan A takıma al" — 1 sezon sonraki tahmini Güç'ü slot yedeğini geçen altyapı oyuncusu (sunucu önerisi). Zayıf halkanın altında,
+  // satışın üstünde; yedeği daha çok geçen öncelikli. Uygulama oyunda yapılır.
+  ;(academy ?? []).forEach((y) => {
+    if (y.promote) {
+      actions.push({
+        kind: 'PROMOTE',
+        title: `Altyapıdan A takıma al: ${y.name}`,
+        reason: y.promote.text,
+        to: deskLink.academy(y.playerId),
+        priority: PROMOTE_PRIORITY + Math.min(PROMOTE_MARGIN_CAP, Math.max(0, y.promote.strength1 - (y.promote.backupStrength ?? 0))),
+      })
+    }
+  })
 
   return actions.sort((a, b) => b.priority - a.priority)
 }

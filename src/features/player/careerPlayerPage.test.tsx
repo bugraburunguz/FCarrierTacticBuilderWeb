@@ -8,7 +8,7 @@ import { CAREER_ROLES_HELP } from '../../lib/fitLabels'
 import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn(),
+  endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn(), playerHistory: vi.fn(() => Promise.resolve([])),
     positionAdvice: vi.fn(() => Promise.resolve([{ playerId: 7, playerName: 'Ollie Watkins', listedPositions: ['ST'], ownPositionBest: false, bestOverallPosition: 'ST', bestOverall: 72,
       best: [{ position: 'CAM', roleName: 'Shadow Striker (Attack)', score: 74, natural: false }], sideReason: null,
       conversion: { position: 'CAM', roleName: 'Shadow Striker (Attack)', strength: 74, fromPosition: 'ST', fromRoleName: 'Poacher (Attack)', fromStrength: 68,
@@ -217,11 +217,25 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(endpoints.development).not.toHaveBeenCalled()
   })
 
-  it('Gelişim: kadrodaki oyuncu için Gelişim sayfasına seçili oyuncuyla (?oyuncu=) bağlantı (V3-06e)', async () => {
+  it('ACADEMY-b: Gelişim sekmesinde OVR/POT geçmiş grafiği (Gelişim sayfasından taşındı); kadro dışı oyuncuda grafik yok', async () => {
     vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true, feasibility: undefined, budgetAfterPurchaseEur: undefined }))
+    vi.mocked(endpoints.playerHistory).mockResolvedValue([
+      { snapshotId: 1, takenAt: '2026-10-01T10:00:00Z', overall: 70, potential: 84, gameDate: '2027-01-15' },
+      { snapshotId: 2, takenAt: '2026-10-02T10:00:00Z', overall: 72, potential: 84, gameDate: '2027-03-16' },
+    ] as never)
     renderPage('/players/7?sekme=gelisim')
     const panel = await screen.findByRole('tabpanel')
-    expect(await within(panel).findByRole('link', { name: 'Gelişim takibi' })).toHaveAttribute('href', '/career/growth?oyuncu=7')
+    const history = await within(panel).findByRole('region', { name: 'OVR geçmişi' })
+    expect(await within(history).findByRole('img', { name: /OVR/ })).toBeInTheDocument()
+    expect(endpoints.playerHistory).toHaveBeenCalledWith(CAREER, 7)
+  })
+
+  it('ACADEMY-b: tek içe aktarmada grafik yerine kısa not', async () => {
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true, feasibility: undefined, budgetAfterPurchaseEur: undefined }))
+    vi.mocked(endpoints.playerHistory).mockResolvedValue([{ snapshotId: 1, takenAt: '2026-10-01T10:00:00Z', overall: 72, potential: 84 }] as never)
+    renderPage('/players/7?sekme=gelisim')
+    const panel = await screen.findByRole('tabpanel')
+    expect(await within(panel).findByText('Grafik ikinci içe aktarmadan sonra görünür.')).toBeInTheDocument()
   })
 
   it('kaleci: Statlar yalnız kaleci grubu', async () => {

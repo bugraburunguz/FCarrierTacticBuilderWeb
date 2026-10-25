@@ -109,6 +109,27 @@ describe('iş sıralaması (V3-06e)', () => {
   })
 })
 
+describe('ACADEMY-b: "Altyapıdan A takıma al" işi', () => {
+  const promote = { position: 'CDM', strength1: 62, backupName: 'Smith', backupStrength: 60, text: 'Kyle · 1 sezon sonra tahmini CDM gücü 62, yedek Smith 60. Bu bir tahmin; A takıma alma oyunda yapılır.' }
+  const youth = (id: number, extra: object = {}) => ({ playerId: id, name: `Genç ${id}`, positions: ['CM'], youthVerified: false, promote: null, ...extra })
+
+  it('"A takıma al" önerisi olan altyapı oyuncusu için iş; yedeği en çok geçen öncelikli; altyapı verilmezse iş yok', () => {
+    const academy = [youth(1, { promote }), youth(2, { promote: { ...promote, strength1: 70 } }), youth(3)]
+    const jobs = rankActions({ squad: [], slots: [], tags: {}, academy: academy as never }).filter((a) => a.kind === 'PROMOTE')
+    expect(jobs).toHaveLength(2)
+    expect(jobs[0]).toMatchObject({ title: 'Altyapıdan A takıma al: Genç 2', to: '/career/academy?oyuncu=2' })
+    expect(jobs[0].reason).toContain('tahmin')
+    expect(rankActions({ squad: [], slots: [], tags: {} }).some((a) => a.kind === 'PROMOTE')).toBe(false)
+    expect(jobLayer('PROMOTE')).toBe('tactic')
+  })
+
+  it('3 iş içinde türüne bir yer; zayıf halkanın (FILL) altında, satışın üstünde', () => {
+    const academy = [youth(1, { promote })]
+    const ranked = rankActions({ squad: [player(3, 'ST', 70, 32, { valueEur: 6_000_000 })], slots: [slot('a', 'ST', 10, 9)], tags: {}, academy: academy as never })
+    expect(ranked.map((a) => a.kind).slice(0, 3)).toEqual(['FILL', 'PROMOTE', 'SELL'])
+  })
+})
+
 describe('"Bu dönemin 3 işi" tek kaynak (KARIYER-UX FAZ 2 düzeltme 3)', () => {
   const squad = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32, { valueEur: 6_000_000, contractUntil: '2027-03-01' }), player(4, 'CM', 60, 19, { potential: 78 })]
   const slots = [slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2)]

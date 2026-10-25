@@ -92,11 +92,16 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.queryByText('Kadro boş.')).toBeNull()
   })
 
-  it('sekmeler: Diziliş · Liste · Derinlik · Hareketler; Kariyer sekmesi yok', async () => {
+  it('sekmeler: Diziliş · Liste · Derinlik · Hareketler; Kariyer ve Altyapı sekmesi yok (Altyapı ayrı sayfa)', async () => {
     renderAt()
     expect(await screen.findByRole('tab', { name: 'Diziliş', selected: true })).toBeInTheDocument()
     expect(screen.getAllByRole('tab').map((t) => t.textContent?.replace(/\s*\(\d+\)$/, ''))).toEqual(['Diziliş', 'Liste', 'Derinlik', 'Hareketler'])
-    expect(screen.queryByRole('tab', { name: /Kariyer/ })).toBeNull()
+    expect(screen.queryByRole('tab', { name: /Kariyer|Altyapı/ })).toBeNull()
+  })
+
+  it('ACADEMY-b: eski ?sekme=altyapi bağlantısı /career/academy sayfasına yönlenir', async () => {
+    renderAt('/career/squad?sekme=altyapi')
+    await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/career/academy'))
   })
 
   it('diziliş: ana taktik salt okunur piyon sahada ("Kararın"); sürükleme/taşıma yok; piyon oyuncu sayfasını açar', async () => {
