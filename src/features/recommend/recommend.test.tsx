@@ -208,6 +208,19 @@ describe('RecommendationPanel (E3-10)', () => {
     expect(endpoints.careerRecommendations).not.toHaveBeenCalled()
   })
 
+  it('FAZ 6a-J: kayıtlı sonuç farklı rol/filtreyle alınmışsa bayat uyarısı gösterilir', async () => {
+    premium = true
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })
+    const first = renderPanel({ roleId: 'poacher_attack' })
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir/ }))
+    await screen.findByText('Ada Oyuncu')
+    first.unmount()
+
+    renderPanel({ roleId: 'advanced_forward_attack' })
+    expect(await screen.findByText(/^Son öneriler · /)).toBeInTheDocument()
+    expect(screen.getByText(/farklı rol ya da filtrelerle alındı/)).toBeInTheDocument()
+  })
+
   it('kariyer yokken istek atılmaz', async () => {
     renderPanel({ careerId: undefined })
     expect(await screen.findByText(/kariyer seç/i)).toBeInTheDocument()

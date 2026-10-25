@@ -189,10 +189,11 @@ function SquadInfo(p: SquadViewProps) {
             ))}
           </dl>
         </details>
-        <p className="flex items-center gap-1 text-xs text-muted">
+        {/* div: HelpPopover <details> taşır; <p> içinde geçersiz iç içelik (konsol hatası, FAZ 6a kapısı). */}
+        <div className="flex items-center gap-1 text-xs text-muted">
           Saha oyuncusu ortalaması
           <HelpPopover label="Yüz ortalaması nasıl hesaplanır">Altı ortalama yalnız saha oyuncularından hesaplanır; kaleci (DIV/HAN/KIC/REF/SPD/POS) dışarıda kalır. "≈": değer ağırlığı doğrulanmamış formülle hesaplandı.</HelpPopover>
-        </p>
+        </div>
       </section>
 
       {p.chem && (

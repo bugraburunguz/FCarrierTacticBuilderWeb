@@ -28,6 +28,8 @@ export const lastRecommendationsKey = (careerId: number, position: string, slotI
 interface SavedRecommendation {
   at: string
   response: Credited<CareerRecommendation>
+  /** İsteğin gövdesi: şimdiki rol/filtrelerden farklıysa sonuç bayat diye işaretlenir. */
+  request?: CareerRecommendationRequest
 }
 const SAVED_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
@@ -85,9 +87,9 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
   const saved = useQuery({ queryKey: ['last-recommendations', savedKey], queryFn: async () => (await bigStore.load<SavedRecommendation>(savedKey!)) ?? null, enabled: savedKey !== undefined, staleTime: Infinity })
   const run = useMutation({
     mutationFn: (body: CareerRecommendationRequest) => endpoints.careerRecommendations(careerId!, body),
-    onSuccess: (data) => {
+    onSuccess: (data, request) => {
       if (savedKey) {
-        const entry: SavedRecommendation = { at: new Date().toISOString(), response: data }
+        const entry: SavedRecommendation = { at: new Date().toISOString(), response: data, request }
         bigStore.set(savedKey, entry)
         queryClient.setQueryData(['last-recommendations', savedKey], entry)
       }
@@ -209,6 +211,9 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
       {result && !run.isPending && (
         <section aria-label="Öneriler" className="space-y-2">
           {fromSaved && <p className="text-xs font-semibold text-ink-2">Son öneriler · {SAVED_DATE.format(new Date(fromSaved.at))}</p>}
+          {fromSaved && JSON.stringify(fromSaved.request) !== JSON.stringify(body()) && (
+            <p className="text-xs text-warn">Bu sonuç farklı rol ya da filtrelerle alındı; güncel hâli için yeniden getir.</p>
+          )}
           <p className="text-xs text-muted">
             {result.roleName ? `Rol: ${result.roleName}` : 'Tüm roller'}
             {result.userClubStrength !== undefined ? ` · kulüp gücün ${result.userClubStrength}` : ''}

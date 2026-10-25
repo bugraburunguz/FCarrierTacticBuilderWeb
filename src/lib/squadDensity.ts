@@ -99,7 +99,10 @@ export function buildBaseCells(squad: CareerPlayer[], needs: PositionNeed[]): Ma
     const natural = capacity.get(position)?.primary ?? []
     const flex = capacity.get(position)?.secondary ?? []
     const need = needByPosition.get(position)
-    cells.set(position, summarize(position, position, natural, flex, need ? need.state : depthState(position, natural.length), DEPTH_GUIDE[position] ?? [1, 3], need?.required))
+    // FAZ 6a: durum, hücrede gösterilen kapasiteyle (birincil + ikincil) aynı sayıdan; taktiğe göre modda eşik ihtiyaçtan (required).
+    const total = natural.length + flex.length
+    const state: DepthState = need ? (total < need.required ? 'thin' : total > need.required + 1 ? 'dense' : 'ok') : depthState(position, total)
+    cells.set(position, summarize(position, position, natural, flex, state, DEPTH_GUIDE[position] ?? [1, 3], need?.required))
   }
   return cells
 }
@@ -108,7 +111,7 @@ export function buildCell(spec: CellSpec, base: Map<string, Cell>): Cell {
   const baseCell = base.get(spec.base)!
   if (!spec.side && spec.multi) {
     const [min, max] = SIDED_GUIDE
-    const count = baseCell.natural.length
+    const count = baseCell.natural.length + baseCell.flex.length
     return { ...baseCell, position: spec.key, guide: SIDED_GUIDE, required: undefined, state: count < min ? 'thin' : count > max ? 'dense' : 'ok' }
   }
   if (!spec.side) {
@@ -118,14 +121,15 @@ export function buildCell(spec: CellSpec, base: Map<string, Cell>): Cell {
   const natural = baseCell.natural.filter((p) => playsSide(p, side))
   const flex = baseCell.flex.filter((p) => playsSide(p, side))
   const [min, max] = SIDED_GUIDE
-  const state: DepthState = natural.length < min ? 'thin' : natural.length > max ? 'dense' : 'ok'
+  const total = natural.length + flex.length
+  const state: DepthState = total < min ? 'thin' : total > max ? 'dense' : 'ok'
   return summarize(spec.key, spec.base, natural, flex, state, SIDED_GUIDE)
 }
 
 /** Bölge özeti: oyuncu sayısı, ort. overall/yaş, az ve çok olan mevkiler. */
 export function regionSummaries(squad: CareerPlayer[], cells: Map<string, Cell>) {
   return REGIONS.map((region) => {
-    const players = squad.filter((s) => region.positions.includes(primaryPosition(s.player.positions)))
+    const players = squad.filter((s) => !s.loanedOut && region.positions.includes(primaryPosition(s.player.positions)))
     const regionCells = region.positions.map((p) => cells.get(p)!).filter(Boolean)
     return {
       label: region.label,

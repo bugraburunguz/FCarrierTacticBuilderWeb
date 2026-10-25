@@ -1,0 +1,109 @@
+{
+  "career": 379,
+  "report": [
+    {
+      "shot": "masa-dark-375",
+      "contentWidth": 343,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "kadro-derinlik-dark-375",
+      "contentWidth": 343,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-375",
+      "contentWidth": 343,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "transfer-dark-375",
+      "contentWidth": 343,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "masa-dark-1280",
+      "contentWidth": 1160,
+      "columns": [
+        "left",
+        "middle",
+        "right"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "kadro-derinlik-dark-1280",
+      "contentWidth": 1160,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-1280",
+      "contentWidth": 1160,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "transfer-dark-1280",
+      "contentWidth": 1160,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "masa-dark-1455",
+      "contentWidth": 1200,
+      "columns": [
+        "left",
+        "middle",
+        "right"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "kadro-derinlik-dark-1455",
+      "contentWidth": 1200,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-1455",
+      "contentWidth": 1200,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "transfer-dark-1455",
+      "contentWidth": 1200,
+      "columns": [],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    }
+  ]
+}
