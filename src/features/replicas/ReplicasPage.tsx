@@ -25,6 +25,7 @@ import {
   rankByFit,
   sortByClubSeason,
   toggle,
+  yearRange,
   type ReplicaFilters,
 } from './replicaFilter'
 import { useReplicaFits } from './useReplicaFits'
@@ -32,7 +33,11 @@ import { useReplicaFits } from './useReplicaFits'
 const STALE_MS = 600_000
 const SKELETONS = 6
 
-function FilterFields({ filters, set, formationOptions }: { filters: ReplicaFilters; set: (patch: Partial<ReplicaFilters>) => void; formationOptions: string[] }) {
+function FilterFields({ filters, set, formationOptions, years }: {
+  filters: ReplicaFilters; set: (patch: Partial<ReplicaFilters>) => void; formationOptions: string[]
+  /** FAZ 6a-K: dönem sınırları veriden. */
+  years?: { min: number; max: number }
+}) {
   return (
     <>
           <label className="flex flex-col gap-1 text-xs font-medium text-muted">
@@ -47,9 +52,9 @@ function FilterFields({ filters, set, formationOptions }: { filters: ReplicaFilt
           <fieldset className="flex flex-col gap-1 text-xs font-medium text-muted">
             <legend className="mb-1">Dönem (yıl)</legend>
             <div className="flex items-center gap-1.5">
-              <Input type="number" inputMode="numeric" min={1950} max={2030} aria-label="Başlangıç yılı" placeholder="1990" value={filters.from ?? ''} onChange={(e) => set({ from: e.target.value === '' ? undefined : Number(e.target.value) })} className="w-[84px]" />
+              <Input type="number" inputMode="numeric" min={years?.min} max={years?.max} aria-label="Başlangıç yılı" placeholder={years ? String(years.min) : undefined} value={filters.from ?? ''} onChange={(e) => set({ from: e.target.value === '' ? undefined : Number(e.target.value) })} className="w-[84px]" />
               <span aria-hidden="true">–</span>
-              <Input type="number" inputMode="numeric" min={1950} max={2030} aria-label="Bitiş yılı" placeholder="2025" value={filters.to ?? ''} onChange={(e) => set({ to: e.target.value === '' ? undefined : Number(e.target.value) })} className="w-[84px]" />
+              <Input type="number" inputMode="numeric" min={years?.min} max={years?.max} aria-label="Bitiş yılı" placeholder={years ? String(years.max) : undefined} value={filters.to ?? ''} onChange={(e) => set({ to: e.target.value === '' ? undefined : Number(e.target.value) })} className="w-[84px]" />
             </div>
           </fieldset>
       </>
@@ -136,6 +141,7 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: STALE_MS })
   const formationById = useMemo(() => new Map((formations.data ?? []).map((f) => [f.id, f])), [formations.data])
   const formationOptions = useMemo(() => [...new Set((replicas.data ?? []).map((r) => r.eaFormation))].sort((a, b) => a.localeCompare(b, 'tr', { numeric: true })), [replicas.data])
+  const years = useMemo(() => yearRange(replicas.data ?? []), [replicas.data])
   const base = useMemo(() => sortByClubSeason(filterReplicas(replicas.data ?? [], filters)), [replicas.data, filters])
   const counts = useMemo(() => leagueCounts(replicas.data ?? [], filters), [replicas.data, filters])
   // Uyum, sıralamadan önceki görünür sıranın ilk 12'si için sorulur (sıralama sorulan kümeyi değiştirmez).
@@ -160,7 +166,7 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
             <Search size={16} aria-hidden="true" className="pointer-events-none absolute bottom-3 left-3 text-muted" />
             <Input type="search" value={filters.query} onChange={(e) => set({ query: e.target.value })} placeholder="Takım, hoca ya da sezon" className="pl-9" />
           </label>
-          {!mobile && <FilterFields filters={filters} set={set} formationOptions={formationOptions} />}
+          {!mobile && <FilterFields filters={filters} set={set} formationOptions={formationOptions} years={years} />}
           {mobile && (
             <Button onClick={() => setSheet(true)} aria-haspopup="dialog" className="gap-2">
               <SlidersHorizontal size={16} aria-hidden="true" />
@@ -220,7 +226,7 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
       {mobile && sheet && (
         <MobileSheet title="Filtreler" onClose={() => setSheet(false)}>
           <div className="flex flex-col gap-3">
-            <FilterFields filters={filters} set={set} formationOptions={formationOptions} />
+            <FilterFields filters={filters} set={set} formationOptions={formationOptions} years={years} />
             <div className="flex gap-2">
               <Button onClick={() => set({ formation: '', from: undefined, to: undefined })}>Temizle</Button>
               <Button variant="primary" onClick={() => setSheet(false)}>{shown.length} replikayı göster</Button>

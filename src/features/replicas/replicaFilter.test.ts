@@ -12,6 +12,7 @@ import {
   rankByFit,
   sortByClubSeason,
   startYear,
+  yearRange,
 } from './replicaFilter'
 
 const make = (over: Partial<ReplicaSummary>): ReplicaSummary => ({
@@ -29,6 +30,14 @@ const LIST = [
   make({ id: 'g', club: 'Inter', coach: 'Simone Inzaghi', season: '2024-25', league: 'IT_SERIE_A', category: 'LEGENDARY_SQUAD', eaFormation: '5-3-2', buildUp: 'BALANCED' }),
 ]
 const ids = (list: ReplicaSummary[]) => list.map((r) => r.id)
+
+/** FAZ 6a-K: dönem aralığı sabit "1990–2025" değil, veriden (en eski ve en yeni sezonun başlangıç yılı). */
+describe('dönem aralığı veriden', () => {
+  it('en eski ve en yeni başlangıç yılı; sezonu tanınmayan sayılmaz; veri yoksa yok', () => {
+    expect(yearRange([make({ season: '1988-89' }), make({ season: '2026-27' }), make({ season: '2010-11' }), make({ season: '?' })])).toEqual({ min: 1988, max: 2026 })
+    expect(yearRange([])).toBeUndefined()
+  })
+})
 
 describe('replika filtreleri', () => {
   it('sezonun başlangıç yılını okur', () => {

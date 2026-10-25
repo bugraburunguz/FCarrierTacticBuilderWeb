@@ -30,6 +30,15 @@ export function startYear(season: string): number | undefined {
   return match ? Number(match[1]) : undefined
 }
 
+/** Dönem süzgecinin sınırları (FAZ 6a-K): verideki en eski ve en yeni sezonun başlangıç yılı; sabit aralık yok. Veri yoksa undefined. */
+export function yearRange(replicas: readonly ReplicaSummary[]): { min: number; max: number } | undefined {
+  const years = replicas.flatMap((r) => {
+    const year = startYear(r.season)
+    return year === undefined ? [] : [year]
+  })
+  return years.length === 0 ? undefined : { min: Math.min(...years), max: Math.max(...years) }
+}
+
 /** Türkçe/aksanlı harfler ve büyük-küçük harf farkı olmadan karşılaştırma. */
 export function normalizeText(text: string): string {
   return text
