@@ -82,8 +82,9 @@ describe('RecommendationRow (E3-10)', () => {
     expect(screen.getByText(/24 yaş/)).toBeInTheDocument()
     expect(screen.getByText(/Arsenal \(Premier League\)/)).toBeInTheDocument()
     expect(screen.getByText(/İlk 11 ortalamasına göre [+]2/)).toBeInTheDocument()
-    expect(screen.getByText("Seviyesine göre %75")).toBeInTheDocument()
-    expect(screen.getByText("Rol puanı 91")).toBeInTheDocument()
+    // FIT-1: aday kartında iki metrik adıyla.
+    expect(screen.getByText('Rol oturması %75')).toBeInTheDocument()
+    expect(screen.getByText('Güç 91')).toBeInTheDocument()
     expect(screen.getByText("Mevcut oyuncuya göre +5")).toBeInTheDocument()
     expect(screen.getByText("Gelecek sezon 93")).toBeInTheDocument()
     expect(screen.getByText(/€25,00 Mn/)).toBeInTheDocument()

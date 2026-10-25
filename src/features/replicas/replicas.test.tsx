@@ -225,7 +225,7 @@ describe('kadromla uygula', () => {
   it('kariyerde seviyeye göre %, boş ve zayıf slotlar "Öner" bağlantısı alır', () => {
     renderApply(applyOf('CAREER', [slot({}), slot({ slotId: 'LW', position: 'LW', state: 'WEAK', suggest: true, player: player(2, 'Bora Kanat'), levelFit: 41 }), slot({ slotId: 'RW', position: 'RW', state: 'EMPTY', suggest: true, player: null, currentFit: null, levelFit: null })]))
     expect(screen.getByText('Kariyer kadron')).toBeInTheDocument()
-    expect(screen.getByText('Seviyesine göre %74')).toBeInTheDocument()
+    expect(screen.getByText('Rol oturması %74')).toBeInTheDocument()
     const suggest = screen.getAllByRole('link', { name: /için oyuncu öner/ })
     expect(suggest.map((a) => a.getAttribute('href'))).toEqual(['/career/transfer?pos=LW', '/career/transfer?pos=RW'])
     expect(screen.getByText('Boş')).toBeInTheDocument()

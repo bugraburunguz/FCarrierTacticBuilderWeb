@@ -37,7 +37,8 @@ export interface PlayerCardProps {
   /** Piksel genişliği; verilirse `size` yok sayılır. */
   width?: number
   chem?: 0 | 1 | 2 | 3
-  fit?: { pct: number; state: FitState }
+  /** metric/title: FIT-1 kariyer rozetinde sayının adı ve ayrıntısı; UT vermez. */
+  fit?: { pct: number; state: FitState; metric?: string; title?: string }
   price?: string
   className?: string
   /**
@@ -204,7 +205,7 @@ export function PlayerCard({ player, size = 'md', width, chem, fit, price, class
           {surname}
         </div>
       )}
-      {fit && <FitBadge state={fit.state} pct={fit.pct} className="absolute -right-1 -top-1" compact={w < 100} />}
+      {fit && <FitBadge state={fit.state} pct={fit.pct} metric={fit.metric} title={fit.title} className="absolute -right-1 -top-1" compact={w < 100} />}
       {(chem !== undefined || price) && (
         <div className="absolute left-0 right-0 flex items-center justify-center gap-1" style={{ bottom: -Math.max(8, w * 0.1) }}>
           {chem !== undefined && <ChemDiamonds value={chem} size={Math.max(7, Math.round(w * 0.11))} />}

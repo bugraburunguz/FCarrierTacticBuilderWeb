@@ -1,7 +1,7 @@
 import type { CareerPlayer, PlayerTag, ShortlistItem } from '../../api/types'
 import type { FitState } from '../../components/card/FitBadge'
 import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP } from '../../lib/deskRules'
-import { levelText } from '../../lib/fitLabels'
+import { levelText, roleFitText } from '../../lib/fitLabels'
 import { weakLinks } from '../dashboard/dashboardRules'
 import { needsFromFits, type SlotFitRow } from '../squad/useSlotFits'
 
@@ -18,8 +18,8 @@ export interface TransferNeed {
   state?: FitState
 }
 
-const slotNeed = (r: { slotId: string; position: string; roleId: string; roleName: string; playerName: string }, pct: number, state: FitState): TransferNeed =>
-  ({ key: `slot-${r.slotId}`, slotId: r.slotId, position: r.position, roleId: r.roleId, label: `${r.position} · ${r.roleName}`, detail: `${r.playerName} · ${levelText(pct)}`, state })
+const slotNeed = (r: { slotId: string; position: string; roleId: string; roleName: string; playerName: string }, pct: number, state: FitState, text: (pct: number) => string = levelText): TransferNeed =>
+  ({ key: `slot-${r.slotId}`, slotId: r.slotId, position: r.position, roleId: r.roleId, label: `${r.position} · ${r.roleName}`, detail: `${r.playerName} · ${text(pct)}`, state })
 
 const depthNeeds = (squad: CareerPlayer[]): TransferNeed[] => depthRows(squad).filter((d) => d.short > 0)
   .map((d) => ({ key: `depth-${d.group}`, ...TRANSFER_ROLE_BY_GROUP[d.group], label: `${GROUP_LABEL[d.group]} · derinlik`, detail: `${d.have}/${d.need} oyuncu` }))
@@ -34,9 +34,10 @@ export function transferNeeds(fitRows: SlotFitRow[], all: boolean, squad: Career
  * (seviyesine göre artan). Ardından derinlik açıkları.
  */
 export function needsForTransfer(fitRows: SlotFitRow[], all: boolean, squad: CareerPlayer[]): TransferNeed[] {
+  // FIT-1: v3 kariyer adıyla ("Rol oturması %12"); v2 transferNeeds eski metni korur.
   const slots = all
-    ? [...fitRows].sort((a, b) => a.display.pct - b.display.pct).map((r) => slotNeed(r, r.display.pct, r.display.state))
-    : weakLinks(fitRows, Number.POSITIVE_INFINITY).map((w) => slotNeed(w, w.pct, w.state))
+    ? [...fitRows].sort((a, b) => a.display.pct - b.display.pct).map((r) => slotNeed(r, r.display.pct, r.display.state, roleFitText))
+    : weakLinks(fitRows, Number.POSITIVE_INFINITY).map((w) => slotNeed(w, w.pct, w.state, roleFitText))
   return [...slots, ...depthNeeds(squad)]
 }
 

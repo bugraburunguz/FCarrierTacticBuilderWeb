@@ -24,7 +24,9 @@ describe('İhtiyaçlar = yeni motor (E3-10b)', () => {
     expect(teamFitPct(rows.map((r) => r.display))).toBe(Math.round((38 + 12 + 55 + 80) / 4))
     expect(teamFitPct([])).toBeUndefined()
     const source = readFileSync('src/features/lab/LabBuilder.tsx', 'utf8')
-    expect(source).toMatch(/label="Kadro uyumu" value=\{pctText\(teamFitPct\(/)
+    // FIT-1: Lab yan paneli iki takım değeri adıyla (Takım gücü, Rol oturması) fitLabels sözlüğünden.
+    expect(source).toMatch(/label=\{FIT_TERMS\.strength\.team\} value=\{pctText\(teamStrength\(/)
+    expect(source).toMatch(/label=\{FIT_TERMS\.roleFit\.team\} value=\{pctText\(teamRoleFit\(/)
     expect(source).not.toMatch(/reduce\(\(s, v\) => s \+ \(v\.fit\?\.pct/)
   })
 

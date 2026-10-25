@@ -19,6 +19,7 @@ import { squadStats } from './careerSquadRules'
 import { DepthTab } from './DepthTab'
 import { useCareerSquadData } from './useCareerSquadData'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { fitTitle } from '../../lib/fitLabels'
 
 const PREFIX = 'kadro'
 type View = 'list' | 'cards' | 'tags'
@@ -52,7 +53,8 @@ export function CareerSquadPage() {
   const wanted = params.get('grup') as PositionGroup | null
   // Liste ve Kartlar ?grup=mevki|hat (varsayılan mevki); Derinlik'in grup değerleri burada geçersiz sayılır ve mevkiye düşer.
   const grouping = parseGrouping(params.get('grup'))
-  const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, r.display])), [k.fits.rows])
+  // FIT-1: rozet ve piyon metni sayıların adıyla ("Rol oturması %38 · Güç 65").
+  const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, { ...r.display, title: fitTitle(r.display) }])), [k.fits.rows])
   // KARIYER-UX 6 / FAZ 6a-B: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden; oyuncu oynadığı slotun mevkisiyle.
   const lineup = k.fits.main.active?.lineup
   const starters = useMemo(() => {

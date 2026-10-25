@@ -704,6 +704,8 @@ export interface SetupCheck {
   title: string
   status: WeaponState
   detail: string
+  /** FIT-1 madde 5: ne yapılmalı (eski sunucu göndermez). */
+  advice?: string
   players: { id: number; name: string; position: string; value: number; ok: boolean }[]
 }
 

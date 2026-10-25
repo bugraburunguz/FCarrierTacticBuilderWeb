@@ -6,14 +6,14 @@ import { FitBadge } from '../../components/card/FitBadge'
 import { FitNarrativeView } from '../../components/FitNarrativeView'
 import { HelpPopover } from '../../components/ui'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
-import { fitDisplay, ROLES_HELP, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
+import { CAREER_ROLES_HELP, fitDisplay, fitTitle, ROLES_HELP, rolePointsText, strengthText, TAILORED_TEXT } from '../../lib/fitLabels'
 import { sortRoles } from '../cards/utPlayer'
 
 const STALE_MS = 120_000
 const ROLES_SHOWN = 5
 
 /** Yüzde yalnız rozette (seviyesine göre); rol puanı ayrı sayıdır ve yalnız seviye değeri varken yazılır (yoksa rozetteki sayı odur). */
-function RoleRow({ role, tailored }: { role: PlayerRoleFit; tailored: boolean }) {
+function RoleRow({ role, tailored, career = false }: { role: PlayerRoleFit; tailored: boolean; career?: boolean }) {
   const d = fitDisplay({ levelFit: role.levelFit, currentFit: role.currentFit, score: role.score, fitLabel: role.fitLabel ?? null, badge: role.badge })
   return (
     <li className="glass-3 flex flex-col gap-1 p-2.5">
@@ -21,8 +21,9 @@ function RoleRow({ role, tailored }: { role: PlayerRoleFit; tailored: boolean })
         {/* <480px: ad tam satırda (kısaltılmaz), çip + rozet + rol puanı alt satıra iner (V3-06c/0b). */}
         <span className="min-w-0 flex-1 truncate text-sm font-medium max-[479px]:basis-full max-[479px]:whitespace-normal max-[479px]:break-words" title={role.roleName}>{role.roleName}</span>
         {tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
-        <FitBadge state={d.state} pct={d.pct} />
-        {role.levelFit !== undefined && role.levelFit !== null && <span className="text-xs text-muted">{rolePointsText(d.rolePoints)}</span>}
+        {/* FIT-1: kariyerde iki metrik adıyla (rozet: Rol oturması, yanında Güç); UT eski adlarla. */}
+        <FitBadge state={d.state} pct={d.pct} metric={career ? d.metric : undefined} title={career ? fitTitle(d) : undefined} />
+        {role.levelFit !== undefined && role.levelFit !== null && <span className="text-xs text-muted">{career ? strengthText(d.strength) : rolePointsText(d.rolePoints)}</span>}
       </div>
       {role.narrative && (
         <details className="text-xs">
@@ -42,6 +43,9 @@ function RoleRow({ role, tailored }: { role: PlayerRoleFit; tailored: boolean })
 export function RolesTab({ playerId, positions, careerId }: { playerId: number; positions: string[]; careerId?: number }) {
   const query = useQuery({ queryKey: ['player-roles-v3', playerId, careerId], queryFn: () => endpoints.playerRoles(playerId, careerId, 'v3'), staleTime: STALE_MS })
   const [open, setOpen] = useState<Record<string, boolean>>({})
+  // FIT-1: kariyer kaydıyla açılan sayfa kariyer adlarını kullanır (UT oyuncu sayfası careerId vermez, değişmez).
+  const career = careerId !== undefined
+  const help = career ? CAREER_ROLES_HELP : ROLES_HELP
   if (query.isLoading) {
     return <div aria-busy="true" aria-label="Yükleniyor" className="flex flex-col gap-2">{Array.from({ length: 5 }, (_, i) => <Skeleton key={i} className="h-12" />)}</div>
   }
@@ -59,8 +63,8 @@ export function RolesTab({ playerId, positions, careerId }: { playerId: number; 
       <div className="flex items-center gap-2 text-xs text-muted">
         Uygunluk nasıl okunur?
         <HelpPopover label="Rozet ve rol puanı">
-          <p>{ROLES_HELP.badge}</p>
-          <p className="mt-1">{ROLES_HELP.rolePoints}</p>
+          <p>{help.badge}</p>
+          <p className="mt-1">{help.rolePoints}</p>
         </HelpPopover>
       </div>
       {shownPositions.map((position, index) => {
@@ -74,7 +78,7 @@ export function RolesTab({ playerId, positions, careerId }: { playerId: number; 
             </h2>
             <ul className="flex flex-col gap-1.5">
               {(all ? roles : roles.slice(0, ROLES_SHOWN)).map((r, i) => (
-                <RoleRow key={r.roleId} role={r} tailored={i === 0 && r.narrative?.tailored === true} />
+                <RoleRow key={r.roleId} role={r} career={career} tailored={i === 0 && r.narrative?.tailored === true} />
               ))}
             </ul>
             {roles.length > ROLES_SHOWN && (

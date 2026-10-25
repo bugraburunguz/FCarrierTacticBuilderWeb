@@ -4,10 +4,9 @@ import { endpoints } from '../../api/endpoints'
 import type { RoleFit, SquadFit, UserTactic } from '../../api/types'
 import { Field, Select } from '../../components/ui'
 import { EmptyState, Panel, Skeleton, StatTile } from '../../design/components/primitives'
-import { FIT_STATE_TEXT, fitDisplay } from '../../lib/fitLabels'
+import { FIT_STATE_TEXT, FIT_TERMS, fitDisplay, teamRoleFit, teamStrength } from '../../lib/fitLabels'
 import { fromUserTactic, toTacticRequest, type Lineup, type TacticState } from '../../lib/tactic'
 import type { CareerLab } from '../../state/labStore'
-import { teamFitPct } from '../squad/useSlotFits'
 import { matchSlots, type CompareSide } from './compareMatch'
 
 interface Side {
@@ -35,7 +34,10 @@ function useSideFits(careerId: number, side: Side | undefined) {
 
 interface SlotFit {
   playerId?: number
+  /** Rol oturması (levelFit); yoksa Güç (fitDisplay.pct). */
   pct?: number
+  /** FIT-1: Güç (currentFit). */
+  strength?: number
   label?: string
   /** Slotun rolü (motorun çözdüğü rol adı). */
   role?: string
@@ -47,7 +49,7 @@ function slotFits(data: SquadFit | undefined, lineup: Lineup): Map<string, SlotF
       return []
     }
     const display = fitDisplay(s.roleFit as RoleFit)
-    return [[s.slotId, { playerId: s.playerId, pct: display.pct, label: FIT_STATE_TEXT[display.state].label, role: s.roleName || undefined }] as const]
+    return [[s.slotId, { playerId: s.playerId, pct: display.pct, strength: display.strength, label: FIT_STATE_TEXT[display.state].label, role: s.roleName || undefined }] as const]
   }))
 }
 
@@ -81,9 +83,16 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
     return { formation: side?.tactic.formation ?? '', slots: (data?.slots ?? []).map((s) => ({ slotId: s.slotId, position: layout.get(s.slotId)?.position ?? s.position, x: layout.get(s.slotId)?.x ?? 50 })) }
   }
   const match = matchSlots(sideSlots(a, fitsA.data), sideSlots(b, fitsB.data))
-  const teamA = teamFitPct([...mapA.values()].flatMap((f) => (f.pct === undefined ? [] : [{ pct: f.pct }])))
-  const teamB = teamFitPct([...mapB.values()].flatMap((f) => (f.pct === undefined ? [] : [{ pct: f.pct }])))
-  const teamDiff = teamA !== undefined && teamB !== undefined ? teamB - teamA : undefined
+  // FIT-1: iki takım değeri iki adla — Takım gücü (Güç ortalaması) ve Rol oturması.
+  const roleA = teamRoleFit([...mapA.values()].map((f) => ({ roleFit: f.pct })))
+  const roleB = teamRoleFit([...mapB.values()].map((f) => ({ roleFit: f.pct })))
+  const strengthA = teamStrength([...mapA.values()].flatMap((f) => (f.strength === undefined ? [] : [{ strength: f.strength }])))
+  const strengthB = teamStrength([...mapB.values()].flatMap((f) => (f.strength === undefined ? [] : [{ strength: f.strength }])))
+  const diffOf = (x?: number, y?: number) => (x !== undefined && y !== undefined ? y - x : undefined)
+  const totals = [
+    { name: FIT_TERMS.strength.team, a: strengthA, b: strengthB, diff: diffOf(strengthA, strengthB), unit: '' },
+    { name: FIT_TERMS.roleFit.team, a: roleA, b: roleB, diff: diffOf(roleA, roleB), unit: '%' },
+  ]
   const cell = (f: SlotFit | undefined) => (f?.pct === undefined ? '—' : `${f.playerId !== undefined ? nameOf.get(f.playerId) ?? `#${f.playerId}` : ''} %${f.pct}`)
 
   return (
@@ -92,11 +101,18 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
         <Field label="A"><Select value={a?.id} onChange={(e) => setA(e.target.value)}>{sides.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</Select></Field>
         <Field label="B"><Select value={b?.id} onChange={(e) => setB(e.target.value)}>{sides.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</Select></Field>
       </div>
-      <Panel title="Takım uyumu farkı" label="Takım uyumu farkı">
-        <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-3">
-          <StatTile label="A" value={teamA === undefined ? undefined : `%${teamA}`} />
-          <StatTile label="B" value={teamB === undefined ? undefined : `%${teamB}`} />
-          <StatTile label="Fark (B − A)" value={teamDiff === undefined ? undefined : signed(teamDiff)} suffix={teamDiff === undefined ? undefined : trend(teamDiff)} />
+      <Panel title="Takım farkı" label="Takım farkı">
+        <div className="flex flex-col gap-3">
+          {totals.map((t) => (
+            <div key={t.name} role="group" aria-label={t.name} className="flex flex-col gap-1">
+              <h4 className="text-xs font-semibold text-ink-2">{t.name}</h4>
+              <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-3">
+                <StatTile label="A" value={t.a === undefined ? undefined : `${t.unit}${t.a}`} />
+                <StatTile label="B" value={t.b === undefined ? undefined : `${t.unit}${t.b}`} />
+                <StatTile label="Fark (B − A)" value={t.diff === undefined ? undefined : signed(t.diff)} suffix={t.diff === undefined ? undefined : trend(t.diff)} />
+              </div>
+            </div>
+          ))}
         </div>
       </Panel>
       <Panel title="Slot slot" label="Slot slot">
