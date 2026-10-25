@@ -25,8 +25,10 @@ describe('DevelopmentRecommendations', () => {
     vi.mocked(endpoints.developmentRecommendations).mockReset().mockResolvedValue([
       { playerId: 7, playerName: 'Figueiredo', age: 19, overall: 64, balanced: false, recommended: option, options: [option], estimated: true,
         text: 'Figueiredo · CDM Deep-Lying Playmaker planı → 2 sezonda CDM gücü 71 (Dengeli: 67; Nyoni\'nin tahmini 68)' },
-      { playerId: 8, playerName: 'Genç', age: 20, overall: 60, balanced: true, recommended: null, options: [], estimated: true,
+      { playerId: 8, playerName: 'Genç', age: 20, overall: 60, balanced: true, recommended: null, options: [], estimated: true, reason: 'SMALL_GAIN',
         text: 'Genç · Dengeli plan yeterli: özel planlar 2 sezonda en çok +1 Güç getiriyor' },
+      { playerId: 9, playerName: 'Esnek', age: 18, overall: 58, balanced: true, recommended: null, options: [], estimated: true, reason: 'NO_CLEAR_TARGET',
+        text: 'Esnek · Dengeli plan: Henüz net bir mevkisi yok, esnek gelişsin' },
     ] as never)
   })
 
@@ -42,6 +44,7 @@ describe('DevelopmentRecommendations', () => {
     expect(items[0]).toHaveTextContent("Figueiredo · CDM Deep-Lying Playmaker planı → 2 sezonda CDM gücü 71 (Dengeli: 67; Nyoni'nin tahmini 68)")
     expect(items[0]).toHaveTextContent('+3,8')
     expect(within(panel).getByText(/Dengeli plan yeterli/)).toBeInTheDocument()
+    expect(within(panel).getByText(/Henüz net bir mevkisi yok, esnek gelişsin/)).toBeInTheDocument()
   })
 
   it('İnceleme: ana taktik satırları beklenirken istek gitmez (zayıf slotlar gelince ikinci istek olmasın)', async () => {
