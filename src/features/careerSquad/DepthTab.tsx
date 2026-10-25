@@ -26,7 +26,11 @@ function GroupSection({ roster, open, onToggle, focus }: { roster: GroupRoster; 
         className="flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-accent">
         <span className="flex flex-wrap items-center gap-2">
           {roster.label}
-          <span className="font-[var(--font-num)] tabular-nums text-ink-2">{roster.have}/{roster.need}</span>
+          <span className="font-[var(--font-num)] tabular-nums text-ink-2"
+            title="Sayılan: birincil + ikincilin yarısı (ikincil oyuncu iki grubu birden tam doldurmaz)">
+            {roster.have}/{roster.need}
+          </span>
+          <span className="text-xs font-normal text-ink-2">{roster.primary} birincil · {roster.secondary} ikincil</span>
           <UrgencyChip roster={roster} />
         </span>
         <ChevronDown size={16} aria-hidden="true" className={open ? 'rotate-180' : ''} />
