@@ -51,8 +51,13 @@ const measure = {
   academy: academy.players.map((p) => `${p.name} ${p.age} ${p.status} ${p.plan?.label ?? '-'}${p.promoteInfo ? ` · ${p.promoteInfo.text}` : ''}`),
   balanced: youth.filter((p) => p.plan?.balanced).length,
   youth: youth.length,
-  youthPlans: youth.map((p) => `${p.name} ${p.bestPosition}: ${p.plan?.label ?? '-'}`),
+  youthPlans: youth.map((p) => `${p.name} ${p.bestPosition}: ${p.plan?.label ?? '-'}${p.plan?.balanced ? ` — ${p.plan.text.split(' · ').slice(1).join(' · ')}` : ''}`),
 }
+
+// Dengeli "net mevkisi yok" gerekçeli gençlerin seçenekleri (hangi mevki grubuyla yarışıyor).
+const recs = await api('POST', `/careers/${career.id}/development/recommendations`, { weakSlots: [] })
+measure.noClearTarget = recs.filter((r) => r.reason === 'NO_CLEAR_TARGET')
+  .map((r) => `${r.playerName}: ${r.options.map((o) => `${o.position} ${o.roleName} ${o.strength2}`).join(' | ')}`)
 
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
