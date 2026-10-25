@@ -139,6 +139,19 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(screen.queryByText(/Ligin|Lig seviyesinde/)).toBeNull()
   })
 
+  it('FIT-3: başlık rozetleri (Kadronda + Lig seviyesi yardımı) geçerli DOM iç içeliğiyle; konsolda nesting hatası yok', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.mocked(endpoints.playerContract).mockResolvedValue(contract({ inSquad: true }))
+    renderPage()
+    await screen.findByText('Ligin üstünde (+8)')
+    await screen.findByText('Kadronda')
+    const nesting = error.mock.calls.filter((args) => args.some((a) => typeof a === 'string' && /cannot be a descendant of|cannot contain a nested|validateDOMNesting/.test(a)))
+    error.mockRestore()
+    expect(nesting).toEqual([])
+    const header = screen.getByRole('heading', { name: 'Ollie Watkins' }).closest('header')!
+    expect(header.querySelector('p p, p details, summary p')).toBeNull()
+  })
+
   it('Sözleşme: kalan ay oyun tarihine göre, tahmini değer ≈, kova ve alım sonrası bütçe', async () => {
     renderPage('/players/7?sekme=sozlesme')
     const panel = await screen.findByRole('tabpanel')

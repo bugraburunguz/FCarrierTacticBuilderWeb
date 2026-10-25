@@ -55,11 +55,12 @@ export function PlayerDetailLayout({ back, topAside, title, positions, meta, bad
       </div>
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{title}</h1>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-2 sm:text-sm">
+        {/* <div>, <p> değil: rozetlerde HelpPopover (<details> + paragraflı panel) var; <p> içinde geçersiz iç içelik (FIT-3). */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-2 sm:text-sm">
           {badges}
           {positions?.map((p) => <Chip key={p}>{p}</Chip>)}
           {meta}
-        </p>
+        </div>
       </header>
       <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start min-[820px]:gap-4">
         <section aria-label="Kart" className="glass flex flex-col items-center gap-2 p-3 min-[820px]:sticky min-[820px]:top-[var(--header-h)] min-[820px]:w-[340px] min-[820px]:shrink-0 min-[820px]:gap-3 min-[820px]:p-4">
