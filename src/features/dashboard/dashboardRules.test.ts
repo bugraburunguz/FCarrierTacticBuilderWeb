@@ -90,6 +90,17 @@ describe('zayıf halkalar: sunucu etiketiyle seçilir', () => {
     expect(weakLinks([row('S6', 'WEAK', 40), row('S7', 'WEAK', 30), row('S8', 'WRONG_ROLE', 20), row('S9', 'WEAK', 10)]).map((c) => c.slotId)).toEqual(['S9', 'S8', 'S7'])
   })
 
+  it('FIT-2: 11\'de alt üçte bir hep 3 kalite açığı verir; ilk 3\'te rol uyumsuzu yoksa en öndeki rol uyumsuzu 4. kart olur (Rolü değiştir görünsün)', () => {
+    const classed = (slotId: string, weakClass: SlotFitRow['weakClass'], strength: number) => {
+      const r = row(slotId, 'GOOD', 70)
+      return { ...r, weakClass, display: { ...r.display, strength } }
+    }
+    const rows = [classed('S1', 'KALITE_ACIGI', 40), classed('S2', 'KALITE_ACIGI', 42), classed('S3', 'KALITE_ACIGI', 45), classed('S4', 'ROL_UYUMSUZ', 70), classed('S5', 'ROL_UYUMSUZ', 66), classed('S6', 'UYGUN', 60)]
+    expect(weakLinks(rows).map((c) => c.slotId)).toEqual(['S1', 'S2', 'S3', 'S5'])
+    expect(weakLinks(rows.filter((r) => r.weakClass !== 'ROL_UYUMSUZ')).map((c) => c.slotId)).toEqual(['S1', 'S2', 'S3'])
+    expect(weakLinks(rows, Number.POSITIVE_INFINITY).map((c) => c.slotId)).toEqual(['S1', 'S2', 'S3', 'S5', 'S4'])
+  })
+
   it('kartta etiket metni, levelFit yüzdesi ve ilk neden; renk tek başına sunulmaz', () => {
     const [card] = weakLinks([row('S2', 'WRONG_ROLE', 38.4, ['Stamina -7.5', 'SprintSpeed -2.0'])])
     expect(card.labelText).toBe('Rol için eksik')

@@ -40,6 +40,8 @@ import type {
   TeamProfile,
   TeamSummary,
   SimilarPlayer,
+  TacticAnalysis,
+  TacticAnalysisRequest,
   TacticCodeExport,
   TacticCodeImport,
   SetupCheck,
@@ -218,7 +220,10 @@ export const endpoints = {
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   /** locked (KARIYER-UX Q2): slotId → oyuncu sabit kalır, kalan slotları sunucu doldurur. */
-  lineup: (careerId: number, tactic: TacticRequest, locked?: Record<string, number>) => api.post<SquadFit>('/fit/lineup', locked ? { careerId, tactic, locked } : { careerId, tactic }),
+  lineup: (careerId: number, tactic: TacticRequest, locked?: Record<string, number>, roleAlternatives?: boolean) =>
+    api.post<SquadFit>('/fit/lineup', { careerId, tactic, ...(locked ? { locked } : {}), ...(roleAlternatives ? { roleAlternatives } : {}) }),
+  /** FIT-2 madde 7: ücretsiz taktik analizi (kurallar seed'de); kariyerde dizilişle. */
+  tacticAnalysis: (body: TacticAnalysisRequest) => api.post<TacticAnalysis>('/tactics/analysis', body),
   fitSquad: (body: { careerId: number; tactic: TacticRequest }) => api.post<Credited<SquadFit>>('/fit/squad', body),
   previewSlot: (body: { roleId: string; position: string; tags?: string[]; gender?: number; limit?: number; setup?: SetupBody }) =>
     api.post<Recommendation>('/recommend/preview', body, false),

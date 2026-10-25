@@ -8,7 +8,8 @@ import { SquadRoleDialog, SquadWorkspaceView } from '../squad/SquadWorkspaceView
 import { TacticCodeCard } from '../squad/TacticCodeCard'
 import type { SlotPanel } from '../squad/types'
 import { useCareerSquadBuilder } from '../squad/useCareerSquadBuilder'
-import { FIT_TERMS, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { betterRoleText, FIT_TERMS, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { roleGroups } from '../../lib/squadBuilder'
 import { TacticRisks } from './TacticRisks'
 import { useLabBinding } from './useLabBinding'
 
@@ -44,6 +45,13 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
   const panel: SlotPanel | undefined = selection?.panel === 'role' ? undefined : selection?.panel
   const current = slotTabs.find((t) => t.id === panel) ?? slotTabs[0]
   const avgOvr = placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined
+  // FIT-2 madde 6: rol önerici — yalnız oyunda o mevkide olan roller (EA listesi); rol seçici bu oyuncunun değerleriyle sıralı.
+  const inGame = (position: string, roleId: string) => roleGroups(ws.roles.data ?? [], position, ws.eaRoles.allowed).some((g) => g.options.some((o) => o.roleId === roleId))
+  const suggestions = b.fitRows.filter((r) => r.betterRole && inGame(r.position, r.betterRole.roleId))
+  const fitsOf = (slotId: string) => {
+    const alternatives = b.fitRows.find((r) => r.slotId === slotId)?.roleAlternatives
+    return alternatives ? new Map(alternatives.map((a) => [a.roleId, a])) : undefined
+  }
 
   return (
     <>
@@ -96,7 +104,20 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
               <StatTile label={FIT_TERMS.roleFit.team} value={pctText(teamRoleFit(fitDisplays))} />
               <StatTile label="En zayıf" value={weakest ? `${weakest.position} %${weakest.fit?.pct}` : undefined} />
             </div>
-            <TacticRisks careerId={b.careerId} setup={setup} />
+            {suggestions.length > 0 && (
+              <ul aria-label="Rol önerileri" className="flex flex-col gap-1.5">
+                {suggestions.map((r) => (
+                  <li key={r.slotId} className="glass-3 flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-sm)] p-2 text-xs">
+                    <span className="flex min-w-0 flex-col items-start gap-1">
+                      <span className="text-ink-2">{r.position} · {r.playerName}</span>
+                      <span className="font-medium text-info">{betterRoleText(r.betterRole!)}</span>
+                    </span>
+                    <Button variant="ghost" aria-label={`${r.position}: ${r.betterRole!.roleName} rolünü uygula`} onClick={() => ws.setRole(r.slotId, r.betterRole!.roleId)}>Uygula</Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <TacticRisks careerId={b.careerId} setup={setup} tactic={ws.tactic} assigned={ws.state.assigned} />
             {weakest && weakReasons[weakest.slotId] && <p className="text-xs text-muted">En büyük eksi: <span className="text-ink-2">{weakReasons[weakest.slotId]}</span></p>}
             {preset && <Chip tone="info">{preset.name}</Chip>}
             <ErrorBox error={ws.resolved.error ?? autoFill.error ?? b.squad.error} />
@@ -117,7 +138,7 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
           </>
         }
       />
-      <SquadRoleDialog ws={ws} />
+      <SquadRoleDialog ws={ws} fitsOf={fitsOf} />
     </>
   )
 }

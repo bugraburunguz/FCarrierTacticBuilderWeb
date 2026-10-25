@@ -28,6 +28,13 @@ export type FitMetric = typeof FIT_TERMS.strength.name | typeof FIT_TERMS.roleFi
 /** Kariyer ekranları (FIT-1): "Rol oturması %38", "Güç 65". */
 export const roleFitText = (value: number) => `${FIT_TERMS.roleFit.name} %${Math.round(value)}`
 export const strengthText = (value: number) => `${FIT_TERMS.strength.name} ${Math.round(value)}`
+/** FIT-2 madde 6: "Daha uygun rol: Inside Forward (Attack) · oturma %71" (norm yoksa "· Güç 70"). */
+export const betterRoleText = (alt: { roleName: string; currentFit: number; levelFit?: number | null }) =>
+  `Daha uygun rol: ${alt.roleName} · ${alt.levelFit === undefined || alt.levelFit === null ? strengthText(alt.currentFit) : `oturma %${Math.round(alt.levelFit)}`}`
+
+/** FIT-2: rol alternatifinin metni — Rol oturması varsa o, norm yoksa Güç. */
+export const alternativeFitText = (fit: { currentFit: number; levelFit?: number | null }) =>
+  (fit.levelFit === undefined || fit.levelFit === null ? strengthText(fit.currentFit) : roleFitText(fit.levelFit))
 
 /** UT ekranlarının eski adları (UT görünümü değişmez); kariyer roleFitText/strengthText kullanır. */
 export const levelText = (value: number) => `Seviyesine göre %${Math.round(value)}`

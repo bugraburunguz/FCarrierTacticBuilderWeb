@@ -304,6 +304,18 @@ export interface SlotAssignment {
   depth?: DepthEntry[]
   /** FIT-1 madde 2 (/fit/lineup): iki eksenli zayıf halka sınıfı. */
   weakClass?: 'KALITE_ACIGI' | 'ROL_UYUMSUZ' | 'IKISI' | 'UYGUN'
+  /** FIT-2 madde 6 (/fit/lineup roleAlternatives=true): slot mevkisinin rolleri bu oyuncuya göre, en uygun önce. */
+  roleAlternatives?: RoleAlternative[]
+  /** FIT-2 madde 6: en iyi rol mevcut rolden eşik kadar iyi oturuyorsa. */
+  betterRole?: RoleAlternative
+}
+
+/** Oyuncunun bir roldeki Güç (currentFit) ve Rol oturması (levelFit; norm yoksa yok). */
+export interface RoleAlternative {
+  roleId: string
+  roleName: string
+  currentFit: number
+  levelFit?: number | null
 }
 
 export interface WeakLink {
@@ -701,6 +713,8 @@ export interface CareerPlayerContract {
 }
 
 export interface SetupCheck {
+  /** FIT-2: seed kimliği (eski sunucu göndermez). */
+  id?: string
   title: string
   status: WeaponState
   detail: string
@@ -1361,6 +1375,16 @@ export interface TacticFinding {
   evidence: TacticEvidence[]
   recommendation?: { code: string; text: string }
   text: string
+}
+
+/** POST /tactics/analysis (ücretsiz): slots yalnız rol seçilenler (gerisi formasyon varsayılanı); assigned slotId → oyuncu. */
+export interface TacticAnalysisRequest {
+  formation: string
+  buildUp?: string
+  depth?: number
+  slots: { slotId: string; roleId: string }[]
+  careerId?: number
+  assigned?: Record<string, number>
 }
 
 export interface TacticAnalysis {

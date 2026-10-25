@@ -16,8 +16,10 @@ import { droppedText } from '../career/activeTactic'
 import { SeasonJobs } from '../career/SeasonJobs'
 import { StarterTacticPanel } from '../career/StarterTacticPanel'
 import { useMainTacticFits } from '../career/useMainTacticFits'
+import { useTacticRisks } from '../lab/useTacticRisks'
+import { toTacticRequest } from '../../lib/tactic'
 import { useTabParam } from '../player/playerPage'
-import { FIT_TERMS, fitTitle, roleFitText, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { betterRoleText, FIT_TERMS, fitTitle, roleFitText, teamRoleFit, teamStrength } from '../../lib/fitLabels'
 import { CareerSettings } from './CareerSettings'
 import { financeSummary, recordGaps, snapshotTimeline, upcomingEvents, urgentAlerts, weakLinks, withContracts, type RecordGap } from './dashboardRules'
 
@@ -131,15 +133,12 @@ export function DashboardPage() {
   const alerts = useMemo(() => urgentAlerts(players, gameDate, starters), [players, gameDate, starters])
   const upcoming = useMemo(() => (career ? upcomingEvents(career, players, gameDate) : []), [career, players, gameDate])
   const wide = useMediaQuery(WIDE_QUERY)
-  // FIT-1 madde 5: ana taktiğin kurulumu (çıkış + hat) için taktik riskleri; Masa yalnız sayıyı gösterir.
+  // FIT-1 madde 5 / FIT-2 madde 7: ana taktiğin taktik riskleri (Lab ile aynı liste: kurulum + diziliş kuralları); Masa yalnız sayıyı gösterir.
   const setup = isMain ? main.active?.tactic.setup : undefined
-  const setupCheck = useQuery({
-    queryKey: ['setup-check', id, setup?.buildUp, setup?.depth],
-    queryFn: () => endpoints.setupCheck({ careerId: id!, buildUp: setup!.buildUp, depth: setup!.depth }),
-    enabled: id !== undefined && setup !== undefined,
-    staleTime: STALE_MS,
-    retry: false,
-  })
+  const assigned = useMemo(() => Object.fromEntries(rows.map((r) => [r.slotId, r.playerId])), [rows])
+  const mainTactic = isMain ? main.active?.tactic : undefined
+  const tacticRequest = useMemo(() => (mainTactic ? toTacticRequest(mainTactic) : undefined), [mainTactic])
+  const tacticRisks = useTacticRisks({ careerId: id, setup, tactic: tacticRequest, assigned })
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -166,7 +165,7 @@ export function DashboardPage() {
   // FIT-1 madde 1: iki takım değeri, iki ad — Takım gücü (Güç ortalaması) ve Rol oturması.
   const teamFit = isMain ? teamStrength(rows.map((r) => r.display)) : undefined
   const teamFitRole = isMain ? teamRoleFit(rows.map((r) => r.display)) : undefined
-  const risks = (setupCheck.data ?? []).filter((c) => c.status !== 'GREEN').length
+  const risks = tacticRisks.risks.length
   const tacticPending = main.isLoading || (isMain && (pending || squad.isLoading))
   // FAZ 6a-A: eksik kayıt verisi tek bantta; o veriye bağlı kutular katlanır, yalnız mevcut veri görünür.
   const gaps = recordGaps(gameDate, facets.data)
@@ -235,7 +234,7 @@ export function DashboardPage() {
           <p className="text-center text-sm text-ink-2">{tacticLabel(main.active?.main?.name, main.active?.tactic.formation)}</p>
           {main.dropped > 0 && <p role="status" className="text-center text-sm text-warn">{droppedText(main)}</p>}
           {/* FIT-1 madde 5: ana taktiğin taktik riskleri (ayrıntı Lab yan panelinde). */}
-          {setupCheck.isSuccess && (risks > 0
+          {tacticRisks.ready && (risks > 0
             ? <Link to={`${deskLink.lab()}?sekme=kurucu`} className="inline-flex items-center gap-1 text-sm text-warn underline-offset-2 hover:underline"><AlertTriangle size={14} aria-hidden="true" />{risks} taktik riski · Lab'da gör</Link>
             : <p className="text-xs text-ink-2">Belirgin taktik riski yok.</p>)}
         </div>
@@ -266,6 +265,7 @@ export function DashboardPage() {
               </span>
               <span className={w.classText ? 'text-xs text-ink-2' : 'text-sm font-semibold'}>{w.labelText}</span>
               {w.reason && <span className="text-sm text-ink-2">{w.reason}</span>}
+              {w.primary === 'ROLE' && w.betterRole && <span className="text-sm font-medium text-info">{betterRoleText(w.betterRole)}</span>}
               {w.contractMonths !== undefined && (
                 <Link to={deskLink.contract(w.playerId)} className="inline-flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline">
                   <CalendarClock size={14} aria-hidden="true" />Sözleşmesi {w.contractMonths} ay içinde bitiyor
@@ -274,7 +274,7 @@ export function DashboardPage() {
               <span className="mt-auto flex flex-wrap gap-2">
                 {/* WRONG_ROLE: birincil "Rolü değiştir" (Lab'da ana taktikten yeni taslak, slot seçili), ikincil aday. WEAK: birincil aday, ikincil "Lab'da dene". */}
                 {w.primary === 'ROLE' && (
-                  <Link to={deskLink.lab(w.slotId)} data-variant="primary" className={PRIMARY}>
+                  <Link to={deskLink.lab(w.slotId, w.betterRole?.roleId)} data-variant="primary" className={PRIMARY}>
                     <Repeat size={14} aria-hidden="true" />Rolü değiştir
                   </Link>
                 )}

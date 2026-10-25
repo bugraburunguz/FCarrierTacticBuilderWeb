@@ -37,12 +37,23 @@ describe('useLineupFits', () => {
     const { result } = renderHook(() => useLineupFits(ws({ GK: 1, LST: 9 }), players, 7), { wrapper })
     await waitFor(() => expect(result.current.rows).toHaveLength(2))
     expect(endpoints.lineup).toHaveBeenCalledTimes(1)
-    expect(endpoints.lineup).toHaveBeenCalledWith(7, { formation: '4-4-2', slots: [] }, { GK: 1, LST: 9 })
+    expect(endpoints.lineup).toHaveBeenCalledWith(7, { formation: '4-4-2', slots: [] }, { GK: 1, LST: 9 }, true)
     expect(endpoints.fitRole).not.toHaveBeenCalled()
     const lst = result.current.rows.find((r) => r.slotId === 'LST')!
     expect(lst).toMatchObject({ playerId: 9, playerName: 'Oyuncu 9', roleName: 'Forvet', display: { pct: 35, state: 'ok' } })
     expect(lst.fit.reasons).toEqual(['Finishing -4.0'])
     expect(result.current.fitBySlot.get('RST')).toBeUndefined()
+  })
+
+  it('FIT-2 madde 6: aynı istek rol alternatiflerini ve "daha uygun rol"ü taşır (11 ayrı çağrı yok)', async () => {
+    const alts = [{ roleId: 'pf', roleName: 'Poacher', currentFit: 70, levelFit: 72 }, { roleId: 'af', roleName: 'Forvet', currentFit: 66, levelFit: 35 }]
+    endpoints.lineup.mockResolvedValue({ slots: [
+      { slotId: 'LST', position: 'ST', roleId: 'af', roleName: 'Forvet', tags: [], playerId: 9, roleFit: roleFit(9, 35, 'WEAK'), roleAlternatives: alts, betterRole: alts[0] },
+    ] })
+    const { result } = renderHook(() => useLineupFits(ws({ LST: 9 }), players, 7), { wrapper })
+    await waitFor(() => expect(result.current.rows).toHaveLength(1))
+    expect(endpoints.lineup).toHaveBeenCalledTimes(1)
+    expect(result.current.rows[0]).toMatchObject({ roleAlternatives: alts, betterRole: alts[0] })
   })
 
   it('kariyer yoksa ya da dolu slot yoksa istek yok', () => {
