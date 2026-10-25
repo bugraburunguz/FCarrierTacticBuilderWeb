@@ -5,6 +5,8 @@ import type {
   CareerRecommendation,
   CareerRecommendationRequest,
   CreditCosts,
+  DevelopmentRecommendation,
+  DevelopmentWeakSlot,
   Career,
   CareerPlayer,
   CareerPlayerContract,
@@ -217,6 +219,9 @@ export const endpoints = {
   compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
+  /** FIT-3 madde 11: gençler için gelişim planı önerisi (tahmin · kalibre edilmedi). */
+  developmentRecommendations: (careerId: number, weakSlots: DevelopmentWeakSlot[]) =>
+    api.post<DevelopmentRecommendation[]>(`/careers/${careerId}/development/recommendations`, { weakSlots }),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   /** locked (KARIYER-UX Q2): slotId → oyuncu sabit kalır, kalan slotları sunucu doldurur. */

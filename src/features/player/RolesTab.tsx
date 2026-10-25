@@ -8,6 +8,7 @@ import { HelpPopover } from '../../components/ui'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
 import { CAREER_ROLES_HELP, fitDisplay, fitTitle, ROLES_HELP, rolePointsText, strengthText, TAILORED_TEXT } from '../../lib/fitLabels'
 import { sortRoles } from '../cards/utPlayer'
+import { RoleBasedAdvice } from './RoleBasedAdvice'
 
 const STALE_MS = 120_000
 const ROLES_SHOWN = 5
@@ -60,6 +61,7 @@ export function RolesTab({ playerId, positions, careerId }: { playerId: number; 
   }
   return (
     <div className="flex flex-col gap-4">
+      {careerId !== undefined && <RoleBasedAdvice playerId={playerId} careerId={careerId} />}
       <div className="flex items-center gap-2 text-xs text-muted">
         Uygunluk nasıl okunur?
         <HelpPopover label="Rozet ve rol puanı">

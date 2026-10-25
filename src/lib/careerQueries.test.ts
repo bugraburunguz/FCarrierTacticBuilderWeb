@@ -27,6 +27,15 @@ describe('careerQueries', () => {
     }
   })
 
+  it('FIT-3 inceleme: gelişim önerileri, kurulum kontrolü ve taktik analizi de kariyer kapsamında (içe aktarma sonrası eski kalmaz)', async () => {
+    const client = new QueryClient()
+    const keys = [['development-recommendations', 7, '[]'], ['setup-check', 7, 'Balanced', 50], ['tactic-analysis', 7, '{}'], ['development-recommendations', 8, '[]']]
+    keys.forEach((k) => client.setQueryData(k, { ok: true }))
+    await invalidateCareerScope(client, 7)
+    keys.slice(0, 3).forEach((k) => expect(stale(client, k), JSON.stringify(k)).toBe(true))
+    expect(stale(client, keys[3])).toBe(false)
+  })
+
   it('kimlik yalnız kariyer konumunda sayılır: aynı sayıyı taşıyan ilgisiz anahtarlar (cinsiyet, oyuncu/asset id, filtre) silinmez', () => {
     const client = new QueryClient()
     const unrelated = [['leagues', 7], ['clubs', 'ab', 7], ['transfer-search', 'ab', 7], ['ut-player', 7], ['kb-prices', 7, 'ps'], ['slot-fit', 'v3', 7, 'r', 'ST', ''], ['wonderkids', { maxAge: 7 }, 8], ['player', 7, 8]]

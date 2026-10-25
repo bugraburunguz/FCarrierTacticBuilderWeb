@@ -618,6 +618,58 @@ export interface PlayerPositionAdvice {
   ownPositionBest: boolean
   bestOverallPosition?: string
   bestOverall?: number
+  /** FIT-3 madde 13: kanatta taraf tarzla seçildiyse gerekçe. */
+  sideReason?: string | null
+  /** FIT-3 madde 12: rol bazlı dönüşüm önerisi. */
+  conversion?: PositionConversion | null
+}
+
+export interface PositionConversion {
+  position: string
+  roleName: string
+  strength: number
+  fromPosition: string
+  fromRoleName: string
+  fromStrength: number
+  overallAt?: number
+  planName?: string
+  text: string
+}
+
+/** FIT-3 madde 11: POST /careers/{id}/development/recommendations — hepsi tahmin, kalibre edilmedi. */
+export interface DevelopmentOption {
+  planKey: string
+  planName: string
+  kind: 'GENERAL' | 'POSITION' | 'ROLE'
+  position: string
+  roleId: string
+  roleName: string
+  strength1: number
+  strength2: number
+  roleFit2?: number | null
+  balancedStrength2: number
+  gain: number
+  incumbentName?: string | null
+  incumbentStrength2?: number | null
+}
+
+export interface DevelopmentRecommendation {
+  playerId: number
+  playerName: string
+  age?: number
+  overall?: number
+  balanced: boolean
+  recommended?: DevelopmentOption | null
+  options: DevelopmentOption[]
+  text: string
+  estimated: boolean
+}
+
+export interface DevelopmentWeakSlot {
+  slotId: string
+  position: string
+  roleId: string
+  playerId?: number
 }
 
 export interface RankedItem {

@@ -31,6 +31,8 @@ vi.mock('../../api/endpoints', () => ({
   endpoints: {
     careers: vi.fn(), squad: vi.fn(), events: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), lineup: vi.fn(),
     positionAdvice: vi.fn(() => Promise.resolve([])),
+    developmentRecommendations: vi.fn(() => Promise.resolve([{ playerId: 4, playerName: 'Genç 4', age: 19, overall: 60, balanced: false, options: [], estimated: true,
+      recommended: { gain: 3.2 }, text: 'Genç 4 · CM Box to Box planı → 2 sezonda CM gücü 70 (Dengeli: 67)' }])),
     formations: vi.fn(() => Promise.resolve([f442])),
     roles: vi.fn(() => Promise.resolve([])), eaRoles: vi.fn(() => Promise.resolve([])),
     resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-4-2', slots: [] })),
@@ -162,6 +164,13 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Mevki' }))
     expect(screen.getByTestId('where')).not.toHaveTextContent('grup=')
     expect(screen.getByRole('heading', { name: 'ST · Santrfor · 3' })).toBeInTheDocument()
+  })
+
+  it('FIT-3 madde 11: derinlikte kompakt gelişim planı önerileri ("tahmin · kalibre edilmedi")', async () => {
+    renderAt('/career/squad?sekme=derinlik')
+    const panel = await screen.findByRole('region', { name: 'Gelişim planı önerileri' })
+    expect(await within(panel).findByText(/CM Box to Box planı/)).toBeInTheDocument()
+    expect(within(panel).getByText('tahmin · kalibre edilmedi')).toBeInTheDocument()
   })
 
   it('derinlik: ?grup= o grubu açık ve odaklı getirir; diğerleri kapalı', async () => {

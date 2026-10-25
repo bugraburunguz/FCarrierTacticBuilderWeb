@@ -8,6 +8,8 @@ import { isPlateau } from '../../lib/deskRules'
 import { useActiveCareerId } from '../../state/careerStore'
 import { usePageParams } from '../player/playerPage'
 import { historySeries, movers, seasonStartRange } from './growthData'
+import { useMainTacticFits } from '../career/useMainTacticFits'
+import { DevelopmentRecommendations } from './DevelopmentRecommendations'
 
 // Grafikler ayrı parça (lazy): sayfa iskeleti önce gelir.
 const HistoryChart = lazy(() => import('./GrowthCharts').then((m) => ({ default: m.HistoryChart })))
@@ -43,6 +45,8 @@ export function GrowthPage() {
   const id = career?.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
+  // FIT-3 madde 11: plan önerisi takımın zayıf slotlarını (ana taktik, Masa ile aynı kaynak) bilir.
+  const { rows: tacticRows, pending: tacticPending, main } = useMainTacticFits(id, squad.data)
   const enough = (snapshots.data?.length ?? 0) >= 2
   const season = useMemo(() => seasonStartRange(snapshots.data ?? []), [snapshots.data])
   const span = range === 'season' && season ? season : undefined
@@ -87,6 +91,8 @@ export function GrowthPage() {
           </label>
         )}
       </header>
+
+      <DevelopmentRecommendations careerId={id} rows={tacticRows} pending={main.isLoading || tacticPending || squad.isLoading} />
 
       {snapshots.isLoading ? <Skeleton className="h-64" /> : snapshots.isError ? <ErrorState message="İçe aktarma geçmişi yüklenemedi." onRetry={() => snapshots.refetch()} /> : !enough ? (
         <EmptyState action={importLink}>Gelişimi görmek için en az iki içe aktarma gerekir.</EmptyState>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
 import { Chip } from '../design/components/primitives'
+import { HelpPopover } from './ui'
 import { formatEur } from '../lib/format'
 import { squadGroups, type SquadGrouping } from '../lib/squadGroups'
 
@@ -175,8 +176,21 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping }: R
                   <td data-col="positions" className={`py-1.5 pr-2 text-muted ${LG}`}>{positions}</td>
                   <td data-col="best" className="py-1.5 pr-2">
                     {advice?.bestOverallPosition ? (
-                      <span title="Mevki bazlı en yüksek overall">
-                        <b>{advice.bestOverallPosition}</b> <span className="tabular-nums text-muted">{advice.bestOverall}</span>
+                      <span className="flex flex-col items-start gap-1">
+                        <span className="inline-flex items-center gap-1">
+                          <span title="Mevki bazlı en yüksek overall">
+                            <b>{advice.bestOverallPosition}</b> <span className="tabular-nums text-muted">{advice.bestOverall}</span>
+                          </span>
+                          {/* FIT-3 madde 13: kanat tarafı tarzla seçildiyse gerekçe. */}
+                          {advice.sideReason && <HelpPopover label="Taraf gerekçesi">{advice.sideReason}</HelpPopover>}
+                        </span>
+                        {/* FIT-3 madde 12: rol bazlı dönüşüm; ayrıntı oyuncunun Roller sekmesinde. */}
+                        {advice.conversion && (
+                          <Link to={`/players/${entry.player.id}?sekme=roller`} title={advice.conversion.text}
+                            className="inline-flex min-h-6 items-center rounded-full bg-[var(--info-soft)] px-2 text-xs font-medium text-info hover:underline max-sm:min-h-8">
+                            Dönüşüm: {advice.conversion.position}
+                          </Link>
+                        )}
                       </span>
                     ) : (
                       <span className="text-muted">{entry.loanedOut ? 'Kiralıkta' : '—'}</span>

@@ -6,6 +6,8 @@ import { Chip, EmptyState, Panel, type DataSource } from '../../design/component
 import type { PositionNeed } from '../../lib/depth'
 import { ageProfile, type PositionGroup } from '../../lib/deskRules'
 import { DepthMap } from '../squad/kadro/DepthMap'
+import type { SlotFitRow } from '../squad/useSlotFits'
+import { DevelopmentRecommendations } from '../growth/DevelopmentRecommendations'
 import { ageBands, contractTimeline, groupRoster, YOUTH_MAX_AGE, type DepthTier, type GroupRoster } from './careerSquadRules'
 
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -155,8 +157,12 @@ function ContractTimeline({ squad, gameDate }: { squad: CareerPlayer[]; gameDate
  * Derinlik sekmesi (KARIYER-UX FAZ 3, 15 §4.2): mevki grubunda kim/kaç (Masa derinlik işiyle aynı eşik), mevki yoğunluk haritası
  * (ana taktiğe göre), yaş profili ve sözleşme bitiş zaman çizgisi. `?grup=` o grubu açık ve odaklı getirir (Masa'nın derinlik bağlantısı).
  */
-export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters }: {
+export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters, careerId, tacticRows = [], tacticPending = false }: {
   squad: CareerPlayer[]
+  /** FIT-3 madde 11: kompakt gelişim planı önerileri için (zayıf slotlar ana taktik satırlarından). */
+  careerId?: number
+  tacticRows?: SlotFitRow[]
+  tacticPending?: boolean
   needs: PositionNeed[]
   formation?: Formation
   wanted?: PositionGroup
@@ -187,6 +193,9 @@ export function DepthTab({ squad, needs, formation, wanted, gameDate, record, st
           {roster.map((r) => <GroupSection key={r.group} roster={r} open={open.has(r.group)} onToggle={() => toggle(r.group)} focus={r.group === wanted} />)}
         </ul>
       </Panel>
+      <div className="min-[1100px]:col-span-2">
+        <DevelopmentRecommendations careerId={careerId} rows={tacticRows} pending={tacticPending} compact />
+      </div>
       <Panel title="Mevki yoğunluğu" label="Mevki yoğunluğu" source={record}>
         <DepthMap squad={squad} needs={needs} formation={formation} />
       </Panel>

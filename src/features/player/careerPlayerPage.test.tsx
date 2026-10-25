@@ -9,6 +9,10 @@ import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
   endpoints: { player: vi.fn(), playerRoles: vi.fn(), playerContract: vi.fn(), playerFacets: vi.fn(), development: vi.fn(),
+    positionAdvice: vi.fn(() => Promise.resolve([{ playerId: 7, playerName: 'Ollie Watkins', listedPositions: ['ST'], ownPositionBest: false, bestOverallPosition: 'ST', bestOverall: 72,
+      best: [{ position: 'CAM', roleName: 'Shadow Striker (Attack)', score: 74, natural: false }], sideReason: null,
+      conversion: { position: 'CAM', roleName: 'Shadow Striker (Attack)', strength: 74, fromPosition: 'ST', fromRoleName: 'Poacher (Attack)', fromStrength: 68,
+        text: "ST listeli ama CAM'de daha etkili: CAM · Shadow Striker gücü 74, ST · Poacher 68. CAM mevki planı önerilir." } }])),
     shortlist: vi.fn(() => Promise.resolve([])), shortlistAdd: vi.fn(() => Promise.resolve()), shortlistRemove: vi.fn(() => Promise.resolve()) },
 }))
 
@@ -117,6 +121,15 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     expect(within(panel).queryByText(/Seviye referansı/)).toBeNull()
     expect(within(panel).getAllByText('Biçilmiş kaftan')).toHaveLength(1)
     expect(within(panel).getByText('Neden?')).toBeInTheDocument()
+  })
+
+  it('FIT-3 madde 12: Roller\'de rol bazlı en iyi mevki ve dönüşüm önerisi; plan seçenekleri Gelişim sayfasına bağlanır', async () => {
+    renderPage('/players/7?sekme=roller')
+    const box = await screen.findByRole('region', { name: 'Rol bazlı mevki önerisi' })
+    expect(within(box).getByText("ST listeli ama CAM'de daha etkili: CAM · Shadow Striker gücü 74, ST · Poacher 68. CAM mevki planı önerilir.")).toBeInTheDocument()
+    expect(within(box).getByText(/Rol bazlı en iyi: CAM · Shadow Striker \(Attack\) · Güç 74/)).toBeInTheDocument()
+    expect(within(box).getByRole('link', { name: /Plan seçenekleri/ })).toHaveAttribute('href', '/career/growth?oyuncu=7')
+    expect(endpoints.positionAdvice).toHaveBeenCalledWith(CAREER)
   })
 
   it('Roller: <480px\'te rol adı kendi satırında (kısaltılmaz), çip ve rozet alt satırda (ortak RoleRow)', async () => {
