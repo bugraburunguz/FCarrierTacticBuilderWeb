@@ -109,6 +109,15 @@ export const WEAK_CLASS_TEXT: Record<Exclude<WeakClass, 'UYGUN'>, string> = {
   IKISI: 'Kalite açığı + rol uyumsuz',
 }
 
+/** FIT-1: sınıf önceliği (Masa kartları ve 3 iş aynı sırayı kullanır) — önce ikisi, sonra kalite açığı, sonra rol uyumsuzluğu. */
+export const WEAK_CLASS_ORDER: Record<Exclude<WeakClass, 'UYGUN'>, number> = { IKISI: 0, KALITE_ACIGI: 1, ROL_UYUMSUZ: 2 }
+
+/** Sınıflı zayıf halka sırası: sınıf önceliği, sonra Güç artan. */
+export function compareWeakClass(a: { weakClass?: WeakClass; strength: number }, b: { weakClass?: WeakClass; strength: number }): number {
+  const rank = (w?: WeakClass) => (w && w !== 'UYGUN' ? WEAK_CLASS_ORDER[w] : 0)
+  return rank(a.weakClass) - rank(b.weakClass) || a.strength - b.strength
+}
+
 /** Zayıf halka mı: sunucu sınıfı varsa o; yoksa (eski sunucu) etiket kuralı. */
 export const isWeakClass = (weakClass: WeakClass | undefined | null, label?: FitLabel | null): boolean =>
   weakClass ? weakClass !== 'UYGUN' : isWeakFit(label)
@@ -127,3 +136,5 @@ export const TAILORED_BADGE = { text: 'BİÇİLMİŞ KAFTAN', label: 'Rol için 
 
 /** Kadro düzeyi uyum etiketi (replika uygulama, kadro özeti): tek yerde yazılır. */
 export const SQUAD_FIT_TEXT = FIT_TERMS.strength.team
+/** UT ekranlarındaki takım değeri adı (FIT-1 adlandırması yalnız kariyerde). */
+export const UT_SQUAD_FIT_TEXT = 'Kadro uyumu'

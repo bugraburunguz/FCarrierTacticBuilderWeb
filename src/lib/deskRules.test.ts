@@ -34,6 +34,18 @@ describe('deskRules', () => {
     expect(fill.title).toBe('CB: Kalite açığı')
   })
 
+  it('FIT-1 inceleme: sınıf varken sıra Masa kartlarıyla aynı (IKISI > KALITE_ACIGI > ROL_UYUMSUZ, sonra Güç); kalite açığı işlerden düşmez', () => {
+    const slots: DeskSlot[] = [
+      { ...slot('a', 'ST', 20, 3, 'WEAK'), weakClass: 'ROL_UYUMSUZ', strength: 70 },
+      { ...slot('b', 'CB', 80, 2, 'GOOD'), weakClass: 'KALITE_ACIGI', strength: 50 },
+      { ...slot('c', 'GK', 75, 1, 'GOOD'), weakClass: 'KALITE_ACIGI', strength: 45 },
+    ]
+    expect(weakSlots(slots).map((w) => w.slotId)).toEqual(['c', 'b', 'a'])
+    const fills = rankActions({ squad, slots, tags: {} }).filter((a) => a.kind === 'FILL')
+    expect(fills.map((a) => a.slotId)).toEqual(['c', 'b'])
+    expect(fills.every((f) => f.priority > 70)).toBe(true)
+  })
+
   it('zayıf halka yalnız sarı/kırmızı bant (seviyesine göre), en zayıf başta; seviyesinde olan değil', () => {
     const weak = weakSlots([slot('a', 'ST', 30, 3), slot('b', 'CB', 90, 2), slot('c', 'GK', 10, 1), slot('d', 'CM', 55, 4)])
     expect(weak.map((w) => w.slotId)).toEqual(['c', 'a'])

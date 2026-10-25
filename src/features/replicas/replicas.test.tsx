@@ -231,6 +231,15 @@ describe('kadromla uygula', () => {
     expect(screen.getByText('Boş')).toBeInTheDocument()
   })
 
+  it('FIT-1: takım değeri başlığı kariyerde "Takım gücü", UT\'de eski "Kadro uyumu" (UT değişmez)', () => {
+    const { unmount } = renderApply(applyOf('CAREER', [slot({})]))
+    expect(screen.getByText('Takım gücü')).toBeInTheDocument()
+    unmount()
+    renderApply(applyOf('SAMPLE', [slot({})], 'ut'))
+    expect(screen.getByText('Kadro uyumu')).toBeInTheDocument()
+    expect(screen.queryByText('Takım gücü')).toBeNull()
+  })
+
   it('mevki dışı atama listede "ST→LW" etiketiyle işaretlenir; doğal atamada etiket yok', () => {
     renderApply(applyOf('CAREER', [slot({ slotId: 'LW', position: 'LW', outOfPosition: true, playerPosition: 'ST' }), slot({ slotId: 'ST', position: 'ST' })]))
     expect(screen.getByText('ST→LW')).toBeInTheDocument()

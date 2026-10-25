@@ -3,7 +3,7 @@ import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from '../../lib/cont
 import { deskLink } from '../../lib/deskLinks'
 import { SNAPSHOT_LABEL } from '../../lib/deskRules'
 import type { FitState } from '../../components/card/FitBadge'
-import { FIT_STATE_TEXT, isWeakClass, WEAK_CLASS_TEXT, type WeakClass } from '../../lib/fitLabels'
+import { compareWeakClass, FIT_STATE_TEXT, isWeakClass, WEAK_CLASS_TEXT, type WeakClass } from '../../lib/fitLabels'
 import { ATTR_LABELS } from '../../lib/format'
 import type { SlotFitRow } from '../squad/useSlotFits'
 
@@ -59,20 +59,16 @@ export function worstReason(reasons: readonly string[] | undefined): string | un
   return worst && reasonText(worst.raw)
 }
 
-/** FIT-1 madde 2: sınıf önceliği — önce ikisi (transfer), sonra kalite açığı, sonra rol uyumsuzluğu. */
-const CLASS_ORDER: Record<Exclude<WeakClass, 'UYGUN'>, number> = { IKISI: 0, KALITE_ACIGI: 1, ROL_UYUMSUZ: 2 }
-
 /**
  * Zayıf halka tek kural (lib/fitLabels.isWeakClass): sunucunun iki eksenli sınıfı (FIT-1 madde 2) varsa UYGUN olmayanlar; yoksa (eski
  * sunucu) WEAK ve WRONG_ROLE. Masa'nın 3 işi (deskRules.weakSlots) ve Transfer İhtiyaçları aynı kuralı kullanır. Üç dolmazsa daha az kart.
  */
 export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[] {
   const level = (r: SlotFitRow) => r.fit.levelFit ?? r.display.pct
-  const order = (r: SlotFitRow) => (r.weakClass && r.weakClass !== 'UYGUN' ? CLASS_ORDER[r.weakClass] : 0)
   const classed = rows.some((r) => r.weakClass)
   return rows
     .filter((r) => isWeakClass(r.weakClass, r.fit.fitLabel))
-    .sort((a, b) => (classed ? order(a) - order(b) || a.display.strength - b.display.strength : level(a) - level(b)) || a.slotId.localeCompare(b.slotId))
+    .sort((a, b) => (classed ? compareWeakClass({ weakClass: a.weakClass, strength: a.display.strength }, { weakClass: b.weakClass, strength: b.display.strength }) : level(a) - level(b)) || a.slotId.localeCompare(b.slotId))
     .slice(0, limit)
     .map((r) => {
       const weakClass = r.weakClass && r.weakClass !== 'UYGUN' ? r.weakClass : undefined

@@ -1,7 +1,7 @@
 import type { CareerPlayer, PlayerTag, ShortlistItem } from '../../api/types'
 import type { FitState } from '../../components/card/FitBadge'
 import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP } from '../../lib/deskRules'
-import { levelText, roleFitText } from '../../lib/fitLabels'
+import { levelText, roleFitText, strengthText } from '../../lib/fitLabels'
 import { weakLinks } from '../dashboard/dashboardRules'
 import { needsFromFits, type SlotFitRow } from '../squad/useSlotFits'
 
@@ -34,10 +34,11 @@ export function transferNeeds(fitRows: SlotFitRow[], all: boolean, squad: Career
  * (seviyesine göre artan). Ardından derinlik açıkları.
  */
 export function needsForTransfer(fitRows: SlotFitRow[], all: boolean, squad: CareerPlayer[]): TransferNeed[] {
-  // FIT-1: v3 kariyer adıyla ("Rol oturması %12"); v2 transferNeeds eski metni korur.
+  // FIT-1: v3 kariyer adıyla ("Rol oturması %12"; norm yoksa rozetteki sayı Güç'tür → "Güç 45"); v2 transferNeeds eski metni korur.
+  const text = (roleFit?: number) => (roleFit === undefined ? strengthText : roleFitText)
   const slots = all
-    ? [...fitRows].sort((a, b) => a.display.pct - b.display.pct).map((r) => slotNeed(r, r.display.pct, r.display.state, roleFitText))
-    : weakLinks(fitRows, Number.POSITIVE_INFINITY).map((w) => slotNeed(w, w.pct, w.state, roleFitText))
+    ? [...fitRows].sort((a, b) => a.display.pct - b.display.pct).map((r) => slotNeed(r, r.display.pct, r.display.state, text(r.display.roleFit)))
+    : weakLinks(fitRows, Number.POSITIVE_INFINITY).map((w) => slotNeed(w, w.pct, w.state, text(w.roleFit)))
   return [...slots, ...depthNeeds(squad)]
 }
 

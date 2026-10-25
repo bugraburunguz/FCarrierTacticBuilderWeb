@@ -61,4 +61,4 @@ export function teamFitPct(displays: { pct: number }[]): number | undefined {
 
 /** Masa kuralları için aynı satırlar (aynı yüzde, aynı etiket). */
 export const toDeskSlots = (rows: SlotFitRow[]): DeskSlot[] =>
-  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel, weakClass: r.weakClass }))
+  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel, weakClass: r.weakClass, strength: r.display.strength }))
