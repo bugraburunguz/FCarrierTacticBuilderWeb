@@ -18,7 +18,8 @@ export interface SlotView {
   player?: { id: number; assetId?: number; name: string; overall: number; faceUrl?: string; club?: string; league?: string; nationality?: string; faceStats?: number[]; faceLabels?: string[]; faceStatsApproximate?: boolean }
   roleLabel: string
   /** pct ve state aynı RoleFit'ten (fitDisplay: levelFit + sunucu fitLabel); band yalnız v2 PositionCard'ın rengi için. */
-  fit?: { pct: number; state: FitState; band?: WeaponState | null }
+  /** metric/title: FIT-1 kariyer rozetinde sayının adı ve "Rol oturması %X · Güç Y"; UT vermez. */
+  fit?: { pct: number; state: FitState; band?: WeaponState | null; metric?: string; title?: string; strength?: number; roleFit?: number }
   placeholder?: string
   sub?: string
   selected?: boolean

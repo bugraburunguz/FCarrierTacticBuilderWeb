@@ -17,7 +17,7 @@ import { SeasonJobs } from '../career/SeasonJobs'
 import { StarterTacticPanel } from '../career/StarterTacticPanel'
 import { useMainTacticFits } from '../career/useMainTacticFits'
 import { useTabParam } from '../player/playerPage'
-import { teamFitPct } from '../squad/useSlotFits'
+import { FIT_TERMS, fitTitle, roleFitText, teamRoleFit, teamStrength } from '../../lib/fitLabels'
 import { CareerSettings } from './CareerSettings'
 import { financeSummary, recordGaps, snapshotTimeline, upcomingEvents, urgentAlerts, weakLinks, withContracts, type RecordGap } from './dashboardRules'
 
@@ -40,12 +40,12 @@ const signedEur = (value: number) => `${value > 0 ? '+' : value < 0 ? '−' : '�
 const deltaOf = (value: number | undefined): StatDelta | undefined =>
   value === undefined ? undefined : { value, text: signedEur(value), label: 'önceki içe aktarmaya göre' }
 
-/** Takım uyumu göstergesi: yarım daire (0–100), ortada %; anlam metinde (role="img" + etiket). */
+/** Takım gücü göstergesi (FIT-1: Güç ortalaması): yarım daire (0–100), ortada %; anlam metinde (role="img" + etiket). */
 function FitGauge({ pct }: { pct: number }) {
   const r = 80
   const length = Math.PI * r
   return (
-    <figure role="img" aria-label={`Takım uyumu %${pct}`} className="flex flex-col items-center">
+    <figure role="img" aria-label={`${FIT_TERMS.strength.team} %${pct}`} title={FIT_TERMS.strength.help} className="flex flex-col items-center">
       <svg viewBox="0 0 200 116" className="w-full max-w-[240px]" aria-hidden="true">
         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="var(--glass-3)" strokeWidth="16" strokeLinecap="round" />
         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="var(--accent)" strokeWidth="16" strokeLinecap="round" strokeDasharray={`${(length * Math.max(0, Math.min(100, pct))) / 100} ${length}`} />
@@ -131,6 +131,15 @@ export function DashboardPage() {
   const alerts = useMemo(() => urgentAlerts(players, gameDate, starters), [players, gameDate, starters])
   const upcoming = useMemo(() => (career ? upcomingEvents(career, players, gameDate) : []), [career, players, gameDate])
   const wide = useMediaQuery(WIDE_QUERY)
+  // FIT-1 madde 5: ana taktiğin kurulumu (çıkış + hat) için taktik riskleri; Masa yalnız sayıyı gösterir.
+  const setup = isMain ? main.active?.tactic.setup : undefined
+  const setupCheck = useQuery({
+    queryKey: ['setup-check', id, setup?.buildUp, setup?.depth],
+    queryFn: () => endpoints.setupCheck({ careerId: id!, buildUp: setup!.buildUp, depth: setup!.depth }),
+    enabled: id !== undefined && setup !== undefined,
+    staleTime: STALE_MS,
+    retry: false,
+  })
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -154,7 +163,10 @@ export function DashboardPage() {
   const lastImport = (snapshots.data ?? []).find((s) => s.source === 'IMPORT')
   const record: DataSource | undefined = lastImport ? { kind: 'record', at: lastImport.takenAt } : undefined
   const decision: DataSource = { kind: 'decision' }
-  const teamFit = isMain ? teamFitPct(rows.map((r) => r.display)) : undefined
+  // FIT-1 madde 1: iki takım değeri, iki ad — Takım gücü (Güç ortalaması) ve Rol oturması.
+  const teamFit = isMain ? teamStrength(rows.map((r) => r.display)) : undefined
+  const teamFitRole = isMain ? teamRoleFit(rows.map((r) => r.display)) : undefined
+  const risks = (setupCheck.data ?? []).filter((c) => c.status !== 'GREEN').length
   const tacticPending = main.isLoading || (isMain && (pending || squad.isLoading))
   // FAZ 6a-A: eksik kayıt verisi tek bantta; o veriye bağlı kutular katlanır, yalnız mevcut veri görünür.
   const gaps = recordGaps(gameDate, facets.data)
@@ -211,14 +223,21 @@ export function DashboardPage() {
     </Panel>
   )
   const fitPanel = (
-    <Panel title="Takım uyumu" label="Takım uyumu" source={decision} className={wide ? undefined : 'min-[768px]:col-span-2 min-[1100px]:col-span-1'}>
+    <Panel title={FIT_TERMS.strength.team} label={FIT_TERMS.strength.team} source={decision} className={wide ? undefined : 'min-[768px]:col-span-2 min-[1100px]:col-span-1'}>
       {tacticPending ? <Skeleton className="mx-auto h-32 w-56" /> : !isMain ? <NoMainTactic /> : teamFit === undefined ? (
-        <EmptyState>{players.length < 11 ? 'Takım uyumu için kadroda en az 11 oyuncu olmalı.' : 'Ana taktikte dizilen oyuncu yok.'}</EmptyState>
+        <EmptyState>{players.length < 11 ? `${FIT_TERMS.strength.team} için kadroda en az 11 oyuncu olmalı.` : 'Ana taktikte dizilen oyuncu yok.'}</EmptyState>
       ) : (
         <div className="flex flex-col items-center gap-2">
           <FitGauge pct={teamFit} />
+          {teamFitRole !== undefined && (
+            <p title={FIT_TERMS.roleFit.help} className="text-center text-sm font-semibold">{roleFitText(teamFitRole)}</p>
+          )}
           <p className="text-center text-sm text-ink-2">{tacticLabel(main.active?.main?.name, main.active?.tactic.formation)}</p>
           {main.dropped > 0 && <p role="status" className="text-center text-sm text-warn">{droppedText(main)}</p>}
+          {/* FIT-1 madde 5: ana taktiğin taktik riskleri (ayrıntı Lab yan panelinde). */}
+          {setupCheck.isSuccess && (risks > 0
+            ? <Link to={`${deskLink.lab()}?sekme=kurucu`} className="inline-flex items-center gap-1 text-sm text-warn underline-offset-2 hover:underline"><AlertTriangle size={14} aria-hidden="true" />{risks} taktik riski · Lab'da gör</Link>
+            : <p className="text-xs text-ink-2">Belirgin taktik riski yok.</p>)}
         </div>
       )}
     </Panel>
@@ -228,10 +247,9 @@ export function DashboardPage() {
   ) : null
   const weakPanel = (
     <Panel title="Zayıf halkalar" label="Zayıf halkalar" source={decision} actions={(
-      // FAZ 6a-G: kartlardaki yüzdenin anlamı.
-      <span title="Uyum yüzdesi: oyuncunun, bu rolde kendi seviyesindeki oyuncular arasındaki yeri (levelFit). Düşük = rolü seviyesine göre zayıf oynuyor."
-        className="inline-flex items-center gap-1 text-xs text-ink-2">
-        <Info size={14} aria-hidden="true" />Uyum: oyuncunun seviyesine göre rol uyumu
+      // FAZ 6a-G / FIT-1: kartlardaki iki sayının anlamı.
+      <span title={`${FIT_TERMS.roleFit.help} ${FIT_TERMS.strength.help}`} className="inline-flex items-center gap-1 text-xs text-ink-2">
+        <Info size={14} aria-hidden="true" />{FIT_TERMS.roleFit.name} ve {FIT_TERMS.strength.name}
       </span>
     )}>
       {tacticPending ? <Skeleton className="h-32" /> : !isMain ? <NoMainTactic /> : weakest.length === 0 ? (
@@ -240,12 +258,13 @@ export function DashboardPage() {
         <ul className={`grid grid-cols-1 gap-2 ${wide ? '' : 'min-[768px]:grid-cols-3'}`}>
           {weakest.map((w) => (
             <li key={w.slotId} data-fit-state={w.state} className="glass-3 flex flex-col gap-2 p-3">
+              {w.classText && <span className="text-sm font-semibold text-warn">{w.classText}</span>}
               <span className="text-xs font-medium text-muted">{w.position} · {w.roleName}</span>
               <span className="flex flex-wrap items-baseline justify-between gap-2">
                 <b className="text-base">{w.playerName}</b>
-                <span className="font-[var(--font-num)] text-lg tabular-nums">%{w.pct}</span>
+                <span title={FIT_TERMS.roleFit.help} className="font-[var(--font-num)] text-sm tabular-nums">{fitTitle({ strength: w.strength, roleFit: w.roleFit })}</span>
               </span>
-              <span className="text-sm font-semibold">{w.labelText}</span>
+              <span className={w.classText ? 'text-xs text-ink-2' : 'text-sm font-semibold'}>{w.labelText}</span>
               {w.reason && <span className="text-sm text-ink-2">{w.reason}</span>}
               {w.contractMonths !== undefined && (
                 <Link to={deskLink.contract(w.playerId)} className="inline-flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline">

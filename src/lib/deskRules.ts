@@ -1,7 +1,7 @@
 import type { CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
 import { deskLink } from './deskLinks'
-import { isWeakFit, levelText, type FitLabel } from './fitLabels'
+import { compareWeakClass, isWeakClass, roleFitText, WEAK_CLASS_ORDER, WEAK_CLASS_TEXT, type FitLabel, type WeakClass } from './fitLabels'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
 export interface DeskSlot {
@@ -10,9 +10,13 @@ export interface DeskSlot {
   roleId: string
   playerId?: number
   playerName?: string
-  /** Seviyesine göre % (levelFit); yoksa rol puanı. */
+  /** Rol oturması % (levelFit); yoksa Güç. */
   pct: number
   fitLabel?: FitLabel | null
+  /** FIT-1 madde 2: sunucunun iki eksenli sınıfı; yoksa etiket kuralı. */
+  weakClass?: WeakClass
+  /** Güç (currentFit); sınıflı sırada ikinci anahtar. Yoksa pct. */
+  strength?: number
 }
 
 /** Kariyer "Menajer Masası" kuralları (13 §3.1, §5): saf fonksiyonlar, sunucuya gitmeden masada gösterilir; her öneri gerekçelidir. */
@@ -125,14 +129,20 @@ export interface WeakSlot {
   playerName?: string
   fit: number
   label?: FitLabel | null
+  weakClass?: WeakClass
+  strength: number
 }
 
-/** Zayıf halkalar: rozeti sarı (WEAK) ya da kırmızı (WRONG_ROLE) olan slotlar, seviyesine göre en zayıf başta. */
+/**
+ * Zayıf halkalar: sunucu sınıfı UYGUN olmayanlar (FIT-1); sınıf yoksa rozeti sarı/kırmızı olanlar. Sınıf varken sıra Masa kartlarıyla aynı
+ * (fitLabels.compareWeakClass); yoksa en zayıf başta.
+ */
 export function weakSlots(slots: DeskSlot[]): WeakSlot[] {
+  const classed = slots.some((s) => s.weakClass)
   return slots
-    .filter((s) => isWeakFit(s.fitLabel))
-    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel }))
-    .sort((a, b) => a.fit - b.fit)
+    .filter((s) => isWeakClass(s.weakClass, s.fitLabel))
+    .map((s) => ({ slotId: s.slotId, position: s.position, roleId: s.roleId, playerName: s.playerName, fit: s.pct, label: s.fitLabel, weakClass: s.weakClass, strength: s.strength ?? s.pct }))
+    .sort((a, b) => (classed ? compareWeakClass(a, b) : a.fit - b.fit))
 }
 
 export type ActionKind = 'FILL' | 'SELL' | 'LOAN' | 'DEPTH' | 'CONTRACT'
@@ -229,13 +239,18 @@ export function rankActions({ squad, slots, tags, gameDate }: ActionInput): Desk
   const actions: DeskAction[] = []
 
   weakSlots(slots).slice(0, 2).forEach((w, index) => {
+    // FIT-1 madde 2: sunucu sınıfı varsa başlık ve eylem ondan (ROL_UYUMSUZ → Lab'da rol, diğerleri → transfer).
+    const classified = w.weakClass && w.weakClass !== 'UYGUN' ? w.weakClass : undefined
     actions.push({
       slotId: w.slotId,
       kind: 'FILL',
-      title: `${w.position}: zayıf halka (${levelText(w.fit)})`,
-      reason: `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
-      to: deskLink.candidate(w.slotId, w.position, w.roleId),
-      priority: 100 - w.fit - index,
+      title: classified ? `${w.position}: ${WEAK_CLASS_TEXT[classified]}` : `${w.position}: zayıf halka (${roleFitText(w.fit)})`,
+      reason: classified === 'ROL_UYUMSUZ' ? `${w.playerName ?? 'Oyuncu'} güçlü ama rolüne oturmuyor; Lab'da rolünü değiştirmeyi dene.`
+        : classified ? `${w.playerName ?? 'Slot'} takımın en zayıf halkalarından; daha güçlü adayları Transfer Merkezi'nde gör.`
+          : `${w.playerName ?? 'Slot'} bu rolü ${w.label === 'WRONG_ROLE' ? 'oynayamıyor' : 'sınırda oynuyor'}; adayları Transfer Merkezi'nde gör.`,
+      to: classified === 'ROL_UYUMSUZ' ? deskLink.lab(w.slotId) : deskLink.candidate(w.slotId, w.position, w.roleId),
+      // Sınıflı halka sunucunun alt grubudur: sınıf sırasıyla en üstte (100/90/80); sınıfsız eski kural.
+      priority: classified ? 100 - WEAK_CLASS_ORDER[classified] * 10 - index : 100 - w.fit - index,
     })
   })
 

@@ -302,6 +302,8 @@ export interface SlotAssignment {
   roleFit?: RoleFit
   intentFit?: IntentFit
   depth?: DepthEntry[]
+  /** FIT-1 madde 2 (/fit/lineup): iki eksenli zayıf halka sınıfı. */
+  weakClass?: 'KALITE_ACIGI' | 'ROL_UYUMSUZ' | 'IKISI' | 'UYGUN'
 }
 
 export interface WeakLink {
@@ -702,6 +704,8 @@ export interface SetupCheck {
   title: string
   status: WeaponState
   detail: string
+  /** FIT-1 madde 5: ne yapılmalı (eski sunucu göndermez). */
+  advice?: string
   players: { id: number; name: string; position: string; value: number; ok: boolean }[]
 }
 

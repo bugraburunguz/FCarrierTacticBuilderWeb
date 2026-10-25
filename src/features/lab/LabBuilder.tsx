@@ -8,7 +8,8 @@ import { SquadRoleDialog, SquadWorkspaceView } from '../squad/SquadWorkspaceView
 import { TacticCodeCard } from '../squad/TacticCodeCard'
 import type { SlotPanel } from '../squad/types'
 import { useCareerSquadBuilder } from '../squad/useCareerSquadBuilder'
-import { teamFitPct } from '../squad/useSlotFits'
+import { FIT_TERMS, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { TacticRisks } from './TacticRisks'
 import { useLabBinding } from './useLabBinding'
 
 const pctText = (value?: number) => (value === undefined ? undefined : `%${value}`)
@@ -38,6 +39,7 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
 
   const placed = views.filter((v) => v.player)
   const fitted = placed.filter((v) => v.fit)
+  const fitDisplays = fitted.flatMap((v) => (v.fit?.strength === undefined ? [] : [{ strength: v.fit.strength, roleFit: v.fit.roleFit }]))
   const weakest = fitted.length ? fitted.reduce((a, c) => ((a.fit?.pct ?? 0) <= (c.fit?.pct ?? 0) ? a : c)) : undefined
   const panel: SlotPanel | undefined = selection?.panel === 'role' ? undefined : selection?.panel
   const current = slotTabs.find((t) => t.id === panel) ?? slotTabs[0]
@@ -79,19 +81,22 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
         setup={setup}
         onSetup={(next) => ws.patch((cur) => ({ setup: { ...(cur.setup ?? DEFAULT_SETUP), ...next } }))}
         ratingStars={avgOvr}
-        allAverages={[{ label: 'Rol uyumu', value: pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : [])))) }, { label: 'Dolu', value: `${placed.length}/11` }]}
+        allAverages={[{ label: FIT_TERMS.roleFit.team, value: pctText(teamRoleFit(fitDisplays)) }, { label: 'Dolu', value: `${placed.length}/11` }]}
         stats={[
           { label: 'Ort. OVR', value: avgOvr },
           { label: 'Dolu', value: placed.length, suffix: '/ 11' },
         ]}
         averages={ws.averages}
         sections={
-          <section aria-label="Rol uyumu" className="space-y-2">
-            <h3 className="font-display text-lg font-semibold">Rol uyumu</h3>
+          <section aria-label="Uyum" className="space-y-2">
+            {/* FIT-1: iki takım değeri iki adla (Takım gücü = Güç ortalaması, Rol oturması). */}
+            <h3 className="font-display text-lg font-semibold">Uyum</h3>
             <div className="grid grid-cols-2 gap-2">
-              <StatTile label="Kadro uyumu" value={pctText(teamFitPct(fitted.flatMap((v) => (v.fit ? [v.fit] : []))))} />
+              <StatTile label={FIT_TERMS.strength.team} value={pctText(teamStrength(fitDisplays))} />
+              <StatTile label={FIT_TERMS.roleFit.team} value={pctText(teamRoleFit(fitDisplays))} />
               <StatTile label="En zayıf" value={weakest ? `${weakest.position} %${weakest.fit?.pct}` : undefined} />
             </div>
+            <TacticRisks careerId={b.careerId} setup={setup} />
             {weakest && weakReasons[weakest.slotId] && <p className="text-xs text-muted">En büyük eksi: <span className="text-ink-2">{weakReasons[weakest.slotId]}</span></p>}
             {preset && <Chip tone="info">{preset.name}</Chip>}
             <ErrorBox error={ws.resolved.error ?? autoFill.error ?? b.squad.error} />

@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerContract, PlayerDetail, PlayerRoleFit } from '../../api/types'
-import { ROLES_HELP } from '../../lib/fitLabels'
+import { CAREER_ROLES_HELP } from '../../lib/fitLabels'
 import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
@@ -109,8 +109,11 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     const panel = screen.getByRole('tabpanel')
     const notes = within(panel).getAllByRole('note')
     expect(notes).toHaveLength(1)
-    expect(notes[0]).toHaveTextContent(ROLES_HELP.badge)
-    expect(notes[0]).toHaveTextContent(ROLES_HELP.rolePoints)
+    // FIT-1: kariyerde iki metrik kariyer adlarıyla (Rol oturması, Güç).
+    expect(notes[0]).toHaveTextContent(CAREER_ROLES_HELP.badge)
+    expect(notes[0]).toHaveTextContent(CAREER_ROLES_HELP.rolePoints)
+    expect(within(panel).getAllByText(/^Güç \d+$/).length).toBeGreaterThan(0)
+    expect(within(panel).getAllByRole('img', { name: /Rol oturması %\d+/ }).length).toBeGreaterThan(0)
     expect(within(panel).queryByText(/Seviye referansı/)).toBeNull()
     expect(within(panel).getAllByText('Biçilmiş kaftan')).toHaveLength(1)
     expect(within(panel).getByText('Neden?')).toBeInTheDocument()

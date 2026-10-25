@@ -3,7 +3,7 @@ import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from '../../lib/cont
 import { deskLink } from '../../lib/deskLinks'
 import { SNAPSHOT_LABEL } from '../../lib/deskRules'
 import type { FitState } from '../../components/card/FitBadge'
-import { FIT_STATE_TEXT, isWeakFit } from '../../lib/fitLabels'
+import { compareWeakClass, FIT_STATE_TEXT, isWeakClass, WEAK_CLASS_TEXT, type WeakClass } from '../../lib/fitLabels'
 import { ATTR_LABELS } from '../../lib/format'
 import type { SlotFitRow } from '../squad/useSlotFits'
 
@@ -19,8 +19,14 @@ export interface WeakLinkCard {
   roleName: string
   playerId: number
   playerName: string
-  /** Seviyesine göre % (levelFit). */
+  /** Rol oturması % (levelFit); yoksa Güç. */
   pct: number
+  /** FIT-1: Güç (currentFit) ve Rol oturması (levelFit, yoksa yok). */
+  strength: number
+  roleFit?: number
+  /** FIT-1 madde 2: iki eksenli sınıf ve metni (kart başlığı); sınıf yoksa yok. */
+  weakClass?: Exclude<WeakClass, 'UYGUN'>
+  classText?: string
   state: FitState
   /** Etiket her zaman metin olarak ("Rol için eksik"); renk tek başına anlam taşımaz. */
   labelText: string
@@ -54,20 +60,25 @@ export function worstReason(reasons: readonly string[] | undefined): string | un
 }
 
 /**
- * Zayıf halka tek kuralla (FAZ 6a-G, lib/fitLabels.isWeakFit): yalnız WEAK ve WRONG_ROLE; "Rol için seviyesinde" (AT_LEVEL) ve uygun girmez.
- * Masa'nın 3 işi (deskRules.weakSlots) ve Transfer İhtiyaçları aynı kuralı kullanır. Üç dolmazsa daha az kart.
+ * Zayıf halka tek kural (lib/fitLabels.isWeakClass): sunucunun iki eksenli sınıfı (FIT-1 madde 2) varsa UYGUN olmayanlar; yoksa (eski
+ * sunucu) WEAK ve WRONG_ROLE. Masa'nın 3 işi (deskRules.weakSlots) ve Transfer İhtiyaçları aynı kuralı kullanır. Üç dolmazsa daha az kart.
  */
 export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[] {
   const level = (r: SlotFitRow) => r.fit.levelFit ?? r.display.pct
+  const classed = rows.some((r) => r.weakClass)
   return rows
-    .filter((r) => isWeakFit(r.fit.fitLabel))
-    .sort((a, b) => level(a) - level(b) || a.slotId.localeCompare(b.slotId))
+    .filter((r) => isWeakClass(r.weakClass, r.fit.fitLabel))
+    .sort((a, b) => (classed ? compareWeakClass({ weakClass: a.weakClass, strength: a.display.strength }, { weakClass: b.weakClass, strength: b.display.strength }) : level(a) - level(b)) || a.slotId.localeCompare(b.slotId))
     .slice(0, limit)
-    .map((r) => ({
-      slotId: r.slotId, position: r.position, roleId: r.roleId, roleName: r.roleName, playerId: r.playerId, playerName: r.playerName,
-      pct: Math.round(level(r)), state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: worstReason(r.fit.reasons),
-      primary: r.fit.fitLabel === 'WRONG_ROLE' ? 'ROLE' : 'TRANSFER',
-    }))
+    .map((r) => {
+      const weakClass = r.weakClass && r.weakClass !== 'UYGUN' ? r.weakClass : undefined
+      return {
+        slotId: r.slotId, position: r.position, roleId: r.roleId, roleName: r.roleName, playerId: r.playerId, playerName: r.playerName,
+        pct: Math.round(level(r)), strength: r.display.strength, roleFit: r.display.roleFit, weakClass, classText: weakClass ? WEAK_CLASS_TEXT[weakClass] : undefined,
+        state: r.display.state, labelText: FIT_STATE_TEXT[r.display.state].label, reason: worstReason(r.fit.reasons),
+        primary: weakClass ? (weakClass === 'ROL_UYUMSUZ' ? 'ROLE' : 'TRANSFER') : r.fit.fitLabel === 'WRONG_ROLE' ? 'ROLE' : 'TRANSFER',
+      }
+    })
 }
 
 export interface RecordGap {

@@ -113,7 +113,8 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     await waitFor(() => expect(labStore.get(7).drafts).toHaveLength(1))
     expect(labStore.get(7).drafts[0]).toMatchObject({ name: 'Eski ana', origin: { kind: 'main' } })
     expect(await screen.findByRole('button', { name: "En iyi 11'i diz" })).toBeInTheDocument()
-    expect(screen.getByText('Taslak · kaydedilmedi')).toBeInTheDocument()
+    // Taslak etiketi taslak çubuğunda (FIT-1 "Taktik riskleri" paneli de aynı kaynak etiketini taşır).
+    expect(screen.getAllByText('Taslak · kaydedilmedi').length).toBeGreaterThan(0)
   })
 
   it('FAZ 6a-F: Lab\'da tek ad alanı (taslak adı); ayrı "Kadro adı" alanı yok', async () => {
@@ -256,8 +257,11 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(lcm).toHaveTextContent('−30')
     expect(lcm).toHaveTextContent('düştü')
     expect(lcm).toHaveTextContent('Rol için uygun → Rol için sınırda')
-    const total = screen.getByRole('region', { name: 'Takım uyumu farkı' })
-    expect(within(total).getByText('−3')).toBeInTheDocument()
+    // FIT-1: toplam fark iki metrik adıyla (Takım gücü, Rol oturması).
+    const total = screen.getByRole('region', { name: 'Takım farkı' })
+    const roleFit = within(total).getByRole('group', { name: 'Rol oturması' })
+    expect(within(roleFit).getByText('−3')).toBeInTheDocument()
+    expect(within(total).getByRole('group', { name: 'Takım gücü' })).toBeInTheDocument()
     expect(screen.getByRole('listitem', { name: /^GK/ })).toHaveTextContent('aynı')
   })
 

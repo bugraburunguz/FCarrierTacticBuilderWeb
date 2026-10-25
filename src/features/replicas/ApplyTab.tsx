@@ -12,7 +12,7 @@ import { PickBody } from '../squad/ut/PickBody'
 import { AttentionPoints } from './AttentionPoints'
 import { SaveToSlot } from './SaveToSlot'
 import { SOURCE_TEXT } from './labels'
-import { SQUAD_FIT_TEXT } from '../../lib/fitLabels'
+import { SQUAD_FIT_TEXT, UT_SQUAD_FIT_TEXT } from '../../lib/fitLabels'
 import { slotFit } from './slotFit'
 import { useReplicaApply } from './useReplicaApply'
 
@@ -100,7 +100,7 @@ export function ApplyTab({ replicaId, apply, replica }: { replicaId: string; app
       </div>
       <div className="flex gap-2">
         <StatTile label="Dolu slot" value={`${filled}/11`} />
-        <StatTile label={SQUAD_FIT_TEXT} value={Math.round(data.squadFit)} suffix="/100" />
+        <StatTile label={mode === 'career' ? SQUAD_FIT_TEXT : UT_SQUAD_FIT_TEXT} value={Math.round(data.squadFit)} suffix="/100" />
       </div>
       <ol className="flex flex-col gap-1.5" aria-label="Slot atamaları">
         {data.slots.map((s) => (

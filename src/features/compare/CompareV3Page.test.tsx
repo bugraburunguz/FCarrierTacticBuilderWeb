@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import { compareStore } from '../../state/compareStore'
+import { modeStore } from '../../state/modeStore'
 import { CompareV3Page } from './CompareV3Page'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: false }) }))
@@ -91,9 +92,30 @@ describe('CompareV3Page', () => {
     const list = await screen.findByRole('list', { name: 'Role göre uyum' })
     const items = within(list).getAllByRole('listitem')
     expect(items[0]).toHaveTextContent('Yavaş')
-    expect(items[0]).toHaveTextContent('Rol puanı 78')
-    expect(within(items[0]).getAllByLabelText('Rol için seviyesinde, yüzde 45').length).toBeGreaterThan(0)
-    expect(within(items[1]).getAllByLabelText('Rol için uygun, yüzde 80').length).toBeGreaterThan(0)
+    // FIT-1: kariyerde iki metrik adıyla (Güç, Rol oturması); rozetin aria'sı sayının adını söyler.
+    expect(items[0]).toHaveTextContent('Güç 78')
+    expect(within(items[0]).getAllByLabelText('Rol için seviyesinde, Rol oturması %45').length).toBeGreaterThan(0)
+    expect(within(items[1]).getAllByLabelText('Rol için uygun, Rol oturması %80').length).toBeGreaterThan(0)
+  })
+
+  it('FIT-1: UT modunda eski adlar (Rol puanı, yüzde) değişmez', async () => {
+    modeStore.set('ut')
+    try {
+      compareStore.add({ id: 1, name: 'Hızlı', overall: 84, position: 'ST' })
+      compareStore.add({ id: 2, name: 'Yavaş', overall: 86, position: 'ST' })
+      vi.mocked(endpoints.compare).mockResolvedValue([
+        { roleFit: { playerId: 2, playerName: 'Yavaş', score: 78, currentFit: 78, levelFit: 45, fitLabel: 'AT_LEVEL', projectedRating: 85, outOfPosition: false, reasons: [], weaponChecks: [] } },
+        { roleFit: { playerId: 1, playerName: 'Hızlı', score: 74, currentFit: 74, levelFit: 80, fitLabel: 'GOOD', badge: 'GREEN', projectedRating: 84, outOfPosition: false, reasons: [], weaponChecks: [] } },
+      ] as never)
+      renderPage()
+      await screen.findByRole('table', { name: 'Yan yana karşılaştırma' })
+      fireEvent.click(screen.getByRole('button', { name: 'Uyumu hesapla' }))
+      const items = within(await screen.findByRole('list', { name: 'Role göre uyum' })).getAllByRole('listitem')
+      expect(items[0]).toHaveTextContent('Rol puanı 78')
+      expect(within(items[0]).getAllByLabelText('Rol için seviyesinde, yüzde 45').length).toBeGreaterThan(0)
+    } finally {
+      modeStore.set('career')
+    }
   })
 
   it('hata: oyuncu verisi gelmezse sebep + tekrar dene', async () => {

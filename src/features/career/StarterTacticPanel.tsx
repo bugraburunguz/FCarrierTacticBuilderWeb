@@ -4,6 +4,7 @@ import { endpoints } from '../../api/endpoints'
 import type { FitState } from '../../components/card/FitBadge'
 import { Pitch, type PitchSlot } from '../../components/pitch/Pitch'
 import { Button, Chip, EmptyState, ErrorState, Panel, Skeleton } from '../../design/components/primitives'
+import { FIT_TERMS, SQUAD_FIT_TEXT } from '../../lib/fitLabels'
 import { labStore, useLab } from '../../state/labStore'
 import { droppedText, useActiveTactic } from './activeTactic'
 import { MakeMainDialog } from './MakeMainDialog'
@@ -19,7 +20,7 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
   /** Piyona tıklama (Kadro: oyuncu sayfası). Verilmezse piyon tıklanmaz. */
   onPickPlayer?: (playerId: number) => void
   /** Slot başına uyum (Kadro: useMainTacticFits); piyonun erişilebilir adında ve renginde. */
-  fits?: ReadonlyMap<string, { pct: number; state: FitState }>
+  fits?: ReadonlyMap<string, { pct: number; state: FitState; metric?: string; title?: string }>
   /** Panel başlığı; verilmezse formasyon. */
   title?: string
   /** Lab'da düzenle: yeni taslağın kimliği (Lab sayfası FAZ 4). */
@@ -94,7 +95,8 @@ export function StarterTacticPanel({ careerId, onOpenLab, onDetailed, detailedCo
     >
       {auto && active.starter && (
         <p className="mb-3 flex flex-wrap items-center gap-2 text-sm text-ink-2">
-          <span>Kadro uyumu <span className="font-mono text-ink">%{Math.round(active.starter.squadFit)}</span></span>
+          {/* FIT-1: sunucunun squadFit'i 11 oyuncunun Güç ortalaması → "Takım gücü". */}
+          <span title={FIT_TERMS.strength.help}>{SQUAD_FIT_TEXT} <span className="font-mono text-ink">%{Math.round(active.starter.squadFit)}</span></span>
           {active.starter.alternatives.map((a) => <Chip key={a.formationId} title={`Uyum skoru ${a.score.toFixed(1)}`}>{a.formationId}</Chip>)}
         </p>
       )}

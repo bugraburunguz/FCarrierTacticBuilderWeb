@@ -24,6 +24,13 @@ describe('Transfer FAZ 5 hesapları', () => {
     expect(needs.at(-1)?.key).toMatch(/^depth-/)
   })
 
+  it('FIT-1: ihtiyaç metni rozetteki metriğin adıyla — Rol oturması varsa o, norm yoksa Güç', () => {
+    const withRole = { ...row('CM1', 1, 'WEAK', 30), display: { pct: 30, state: 'bad', strength: 55, roleFit: 30 } as never }
+    const noNorm = { ...row('CM2', 2, 'WEAK', 45), display: { pct: 45, state: 'bad', strength: 45 } as never }
+    const details = needsForTransfer([withRole, noNorm], true, []).filter((n) => n.slotId).map((n) => n.detail)
+    expect(details).toEqual(['P1 · Rol oturması %30', 'P2 · Güç 45'])
+  })
+
   it('satış planı geliri = Σ FOR_SALE (istenen bedel, yoksa değer); ikisi de yoksa bilinmeyen sayılır; LOAN_OK gelir değil', () => {
     const squad = [member(1, { valueEur: 2_000_000 }), member(2, {}, { valueEur: 1_000_000 }), member(3), member(4, { valueEur: 9_000_000 })]
     const tags = [{ playerId: 1, tag: 'FOR_SALE', askingPriceEur: 2_500_000 }, { playerId: 2, tag: 'FOR_SALE' }, { playerId: 3, tag: 'FOR_SALE' }, { playerId: 4, tag: 'LOAN_OK' }] as never
