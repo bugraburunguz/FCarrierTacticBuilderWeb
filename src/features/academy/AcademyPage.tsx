@@ -23,7 +23,7 @@ function HighlightCard({ card, onOpen }: { card: Highlight; onOpen: (id: number)
       <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-2">{title}</h3>
 
       {card.kind === 'PLAN_NEEDED' ? (
-        <a href="#oyuncular" className="text-sm font-semibold text-accent underline-offset-2 hover:underline">{card.text} → öneriye bak</a>
+        <a href="#oyuncular" className="text-sm font-semibold text-accent underline-offset-2 hover:underline">{card.text}</a>
       ) : (
         <>
           <button type="button" onClick={() => onOpen(card.player.playerId)} className="text-left text-sm font-semibold hover:underline">

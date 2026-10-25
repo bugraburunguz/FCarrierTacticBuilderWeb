@@ -52,6 +52,7 @@ export function YouthRow({ player, onOpen, selected = false }: { player: Academy
         <span>Önerilen plan: <span className="font-semibold text-ink">{player.plan?.label ?? '—'}</span></span>
         {player.status && <span>Durum: <span className="font-semibold text-ink">{STATUS_LABEL[player.status]}</span></span>}
       </span>
+      {player.promoteInfo && <span className="text-xs text-ink-2">{player.promoteInfo.text}</span>}
     </button>
   )
 }

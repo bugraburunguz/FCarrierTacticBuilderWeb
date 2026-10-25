@@ -698,6 +698,8 @@ export interface AcademyPlayer {
   status?: AcademyStatus | null
   /** Kadro genci başka kulübe kiralık (Gelişim). */
   loanedOut?: boolean
+  /** GROWTH-CAL: 16 yaş altı altyapı oyuncusu — "A takıma al" yok; "16 yaşında A takıma alınabilir · tarih" (kıyas o tarihteki tahminle). */
+  promoteInfo?: { eligibleOn: string; text: string; position?: string | null; strength?: number | null; backupName?: string | null; backupStrength?: number | null } | null
 }
 
 export type AcademyStatus = 'READY' | 'GROWING' | 'WAITING'
@@ -713,7 +715,8 @@ export interface YouthDetail {
   potentialRange?: string | null
   monthsInSquad?: number | null
   academy: boolean
-  advice: { sentence: string; plans: { label: string; kind: 'GENERAL' | 'ROLE' | 'POSITION'; position: string; overall1: number; overall2: number }[]; estimated: boolean }
+  /** assumption (GROWTH-CAL): tahminin varsayımı, tek satır (altyapı/A takım kazanç tavanları). */
+  advice: { sentence: string; plans: { label: string; kind: 'GENERAL' | 'ROLE' | 'POSITION'; position: string; overall1: number; overall2: number }[]; estimated: boolean; assumption?: string | null }
   position: { bestPosition: string; bestOverall?: number | null; listedPositions: string[]; conversionText?: string | null; sideReason?: string | null }
   /** source: MAIN ana taktik, AUTO başlangıç önerisi ("Otomatik öneri"). strengths: 1–3 sezon tahmini Güç. */
   team: {

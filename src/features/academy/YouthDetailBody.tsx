@@ -37,6 +37,7 @@ export function YouthDetailBody({ careerId, playerId }: { careerId: number; play
       <Block title="Ne yapmalıyım?">
         <p className="text-sm">{advice.sentence}</p>
         <PlanComparison plans={advice.plans} />
+        {advice.assumption && <p className="text-xs text-ink-2">{advice.assumption}</p>}
       </Block>
       <Block title="Hangi mevkide?">
         <p className="text-sm">
