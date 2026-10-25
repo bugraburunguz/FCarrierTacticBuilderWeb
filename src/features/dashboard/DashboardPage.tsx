@@ -265,7 +265,7 @@ export function DashboardPage() {
               </span>
               <span className={w.classText ? 'text-xs text-ink-2' : 'text-sm font-semibold'}>{w.labelText}</span>
               {w.reason && <span className="text-sm text-ink-2">{w.reason}</span>}
-              {w.primary === 'ROLE' && w.betterRole && <Chip tone="info">{betterRoleText(w.betterRole)}</Chip>}
+              {w.primary === 'ROLE' && w.betterRole && <span className="text-sm font-medium text-info">{betterRoleText(w.betterRole)}</span>}
               {w.contractMonths !== undefined && (
                 <Link to={deskLink.contract(w.playerId)} className="inline-flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline">
                   <CalendarClock size={14} aria-hidden="true" />Sözleşmesi {w.contractMonths} ay içinde bitiyor

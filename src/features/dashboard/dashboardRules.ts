@@ -68,10 +68,13 @@ export function worstReason(reasons: readonly string[] | undefined): string | un
 export function weakLinks(rows: SlotFitRow[], limit = WEAK_SHOWN): WeakLinkCard[] {
   const level = (r: SlotFitRow) => r.fit.levelFit ?? r.display.pct
   const classed = rows.some((r) => r.weakClass)
-  return rows
+  const sorted = rows
     .filter((r) => isWeakClass(r.weakClass, r.fit.fitLabel))
     .sort((a, b) => (classed ? compareWeakClass({ weakClass: a.weakClass, strength: a.display.strength }, { weakClass: b.weakClass, strength: b.display.strength }) : level(a) - level(b)) || a.slotId.localeCompare(b.slotId))
-    .slice(0, limit)
+  // FIT-2: 11'de alt üçte bir hep 3 kalite açığıdır; ilk kartlarda rol uyumsuzu yoksa en öndeki ek kart olur ("Rolü değiştir" görünsün).
+  const shown = sorted.slice(0, limit)
+  const misfit = sorted.find((r) => r.weakClass === 'ROL_UYUMSUZ')
+  return (misfit && !shown.includes(misfit) ? [...shown, misfit] : shown)
     .map((r) => {
       const weakClass = r.weakClass && r.weakClass !== 'UYGUN' ? r.weakClass : undefined
       return {

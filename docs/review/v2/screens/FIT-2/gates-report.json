@@ -1,0 +1,89 @@
+{
+  "career": 391,
+  "misfit": {
+    "slotId": "RST",
+    "roleId": "poacher_support",
+    "roleName": "Poacher (Support)",
+    "strength": 53
+  },
+  "report": [
+    {
+      "shot": "masa-dark-375",
+      "texts": [
+        "Kalite açığı",
+        "Rol uyumsuz",
+        "Daha uygun rol",
+        "Rolü değiştir",
+        "Rol oturması %"
+      ],
+      "roleChange": "/career/tactics-lab?sekme=kurucu&slot=RST&rol=advanced_forward_attack",
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-375",
+      "texts": [
+        "Daha uygun rol",
+        "Taktik riskleri",
+        "Kontra riski yüksek",
+        "Öneri:"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-rol-secici-dark-375",
+      "texts": [
+        "Daha uygun rol",
+        "Taktik riskleri",
+        "Kontra riski yüksek",
+        "Rol oturması %",
+        "Öneri:"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "masa-dark-1280",
+      "texts": [
+        "Kalite açığı",
+        "Rol uyumsuz",
+        "Daha uygun rol",
+        "Rolü değiştir",
+        "Rol oturması %"
+      ],
+      "roleChange": "/career/tactics-lab?sekme=kurucu&slot=RST&rol=advanced_forward_attack",
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-dark-1280",
+      "texts": [
+        "Daha uygun rol",
+        "Taktik riskleri",
+        "Kontra riski yüksek",
+        "Öneri:"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    },
+    {
+      "shot": "lab-rol-secici-dark-1280",
+      "texts": [
+        "Daha uygun rol",
+        "Taktik riskleri",
+        "Kontra riski yüksek",
+        "Rol oturması %",
+        "Öneri:"
+      ],
+      "overflow": false,
+      "axe": [],
+      "problems": []
+    }
+  ]
+}

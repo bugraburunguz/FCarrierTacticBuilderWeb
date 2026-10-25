@@ -110,7 +110,7 @@ export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string
                   <li key={r.slotId} className="glass-3 flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-sm)] p-2 text-xs">
                     <span className="flex min-w-0 flex-col items-start gap-1">
                       <span className="text-ink-2">{r.position} · {r.playerName}</span>
-                      <Chip tone="info">{betterRoleText(r.betterRole!)}</Chip>
+                      <span className="font-medium text-info">{betterRoleText(r.betterRole!)}</span>
                     </span>
                     <Button variant="ghost" aria-label={`${r.position}: ${r.betterRole!.roleName} rolünü uygula`} onClick={() => ws.setRole(r.slotId, r.betterRole!.roleId)}>Uygula</Button>
                   </li>
