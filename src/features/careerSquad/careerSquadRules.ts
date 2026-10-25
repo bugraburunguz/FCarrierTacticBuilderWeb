@@ -47,7 +47,10 @@ export interface GroupRosterPlayer {
 export interface GroupRoster {
   group: PositionGroup
   label: string
+  /** Eşikte sayılan (birincil + ⌊ikincil/2⌋); ayrım primary/secondary. */
   have: number
+  primary: number
+  secondary: number
   need: number
   short: number
   urgency: DepthUrgency

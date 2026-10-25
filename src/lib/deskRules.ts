@@ -41,7 +41,10 @@ const LOAN_MIN_GAP = 6
 
 export interface DepthRow {
   group: PositionGroup
+  /** Eşikte sayılan: birincil + ⌊ikincil/2⌋. */
   have: number
+  primary: number
+  secondary: number
   need: number
   short: number
 }
@@ -101,13 +104,17 @@ export function groupCapacity(squad: CareerPlayer[]): Map<PositionGroup, Capacit
   return groups
 }
 
-/** Mevki grubu başına eldeki oyuncu sayısı (grup kapasitesi: birincil + ikincil) ve beklenen asgari derinlik. */
+/**
+ * Mevki grubu başına eldeki oyuncu (grup kapasitesi) ve beklenen asgari derinlik. Eşik ağırlıklı: birincil + ⌊ikincil/2⌋ (Buğra kararı,
+ * 6a açık soru 1; depth.analyzeDepth ile aynı kural) — ikincil oyuncu iki grubu birden tam doldurmaz. Birincil/ikincil ayrımı ayrıca döner.
+ */
 export function depthRows(squad: CareerPlayer[]): DepthRow[] {
   const groups = groupCapacity(squad)
   return (Object.keys(MIN_DEPTH) as PositionGroup[]).map((group) => {
-    const entry = groups.get(group)
-    const have = entry ? entry.primary.length + entry.secondary.length : 0
-    return { group, have, need: MIN_DEPTH[group], short: Math.max(0, MIN_DEPTH[group] - have) }
+    const primary = groups.get(group)?.primary.length ?? 0
+    const secondary = groups.get(group)?.secondary.length ?? 0
+    const have = primary + Math.floor(secondary / 2)
+    return { group, have, primary, secondary, need: MIN_DEPTH[group], short: Math.max(0, MIN_DEPTH[group] - have) }
   })
 }
 

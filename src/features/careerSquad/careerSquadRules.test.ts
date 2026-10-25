@@ -79,11 +79,27 @@ describe('FAZ 6a-B tek derinlik tanımı', () => {
     expect(capacity.get('RW')).toMatchObject({ primary: [onel], secondary: [ouazane] })
     expect(capacity.get('RB')!.primary.map((c) => c.player.id)).toEqual([12])
     expect(capacity.get('RB')!.secondary.map((c) => c.player.id)).toEqual([11])
+    // Grup eşiği ağırlıklı: birincil + ⌊ikincil/2⌋ (ikincil oyuncu iki grubu birden tam doldurmaz); ayrım ayrıca verilir.
     const fb = depthRows([onel, ouazane, gutierrez, striker]).find((d) => d.group === 'FB')!
-    expect(fb.have).toBe(2)
+    expect(fb).toMatchObject({ have: 1, primary: 1, secondary: 1 })
     const fbRoster = groupRoster([onel, ouazane, gutierrez, striker]).find((r) => r.group === 'FB')!
     expect(fbRoster.have).toBe(fb.have)
     expect(fbRoster.players.find((p) => p.id === 11)).toMatchObject({ primary: false })
+  })
+})
+
+/** 6a açık soru 1 (Buğra kararı): ikincil mevki grup eşiğinde yarım sayılır; iki CB ikincili iki CDM'yi "yeterli" yapmaz. */
+describe('grup derinliği ağırlıklı', () => {
+  it('2 birincil + 3 ikincil = 3; eksik buna göre', () => {
+    const squad = [
+      member(1, 'CB', 70, 25), member(2, 'CB', 70, 25),
+      member(3, 'CDM', 70, 25, {}, { positions: ['CDM', 'CB'] }), member(4, 'CDM', 70, 25, {}, { positions: ['CDM', 'CB'] }),
+      member(5, 'RB', 70, 25, {}, { positions: ['RB', 'CB'] }),
+    ]
+    const cb = depthRows(squad).find((d) => d.group === 'CB')!
+    expect(cb).toMatchObject({ primary: 2, secondary: 3, have: 3, need: 3, short: 0 })
+    expect(depthRows(squad.slice(0, 4)).find((d) => d.group === 'CB')).toMatchObject({ have: 3, short: 0 })
+    expect(depthRows([member(1, 'CB', 70, 25), member(3, 'CDM', 70, 25, {}, { positions: ['CDM', 'CB'] })]).find((d) => d.group === 'CB')).toMatchObject({ have: 1, short: 2 })
   })
 })
 
