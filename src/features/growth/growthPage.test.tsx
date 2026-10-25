@@ -8,7 +8,11 @@ import { GrowthPage } from './GrowthPage'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE' } }) }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), development: vi.fn(), updateRatings: vi.fn() },
+  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), development: vi.fn(), updateRatings: vi.fn(),
+    mainTactic: vi.fn(() => Promise.resolve(null)), starterTactic: vi.fn(() => Promise.reject(new Error('yok'))), formations: vi.fn(() => Promise.resolve([])),
+    lineup: vi.fn(() => Promise.resolve({ slots: [] })), roles: vi.fn(() => Promise.resolve([])), resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-4-2', slots: [] })),
+    developmentRecommendations: vi.fn(() => Promise.resolve([{ playerId: 2, playerName: 'Oyuncu 2', age: 19, overall: 64, balanced: false, options: [], estimated: true,
+      recommended: null, text: 'Oyuncu 2 · CDM mevki planı → 2 sezonda CDM gücü 71 (Dengeli: 67)' }])) },
 }))
 
 const member = (id: number, extra: object = {}) => ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 60 + id, potential: 75, age: 25, valuationEstimated: false, ...extra }, onLoan: false })
@@ -46,6 +50,15 @@ beforeEach(() => {
 })
 
 describe('Gelişim (v3)', () => {
+  it('FIT-3 madde 11: gelişim planı önerileri içe aktarma sayısından bağımsız görünür, "tahmin · kalibre edilmedi" ile', async () => {
+    vi.mocked(endpoints.snapshots).mockResolvedValue([] as never)
+    renderPage('/career/growth')
+    const panel = await screen.findByRole('region', { name: 'Gelişim planı önerileri' })
+    expect(await within(panel).findByText(/CDM mevki planı → 2 sezonda CDM gücü 71/)).toBeInTheDocument()
+    expect(within(panel).getByText('tahmin · kalibre edilmedi')).toBeInTheDocument()
+    expect(endpoints.developmentRecommendations).toHaveBeenCalledWith(1, [])
+  })
+
   it('oyuncu seçimi ↔ adres çubuğu (?oyuncu=); geçmiş seçili oyuncu için istenir', async () => {
     renderPage('/career/growth?oyuncu=3')
     const select = await screen.findByRole('combobox', { name: 'Oyuncu' })

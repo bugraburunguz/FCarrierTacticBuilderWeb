@@ -34,6 +34,22 @@ describe('SquadList (v3 gruplama)', () => {
     ovr.forEach((td) => expect(td.className).toMatch(/text-right.*tabular-nums|tabular-nums.*text-right/))
   })
 
+  it('FIT-3: en iyi mevki yanında taraf gerekçesi (yardım) ve dönüşüm rozeti (oyuncunun Roller sekmesine)', () => {
+    const advice = [{ ...ADVICE[0], playerId: 2, listedPositions: ['LW'], bestOverallPosition: 'RW', bestOverall: 68,
+      sideReason: 'Orta profili baskın (Orta 78 · Bitiricilik 61) + sağ ayak → RW · Winger',
+      conversion: { position: 'CDM', roleName: 'Holding (Defend)', strength: 72, fromPosition: 'LW', fromRoleName: 'Winger (Attack)', fromStrength: 64,
+        text: "LW listeli ama CDM'de daha etkili: CDM · Holding gücü 72, LW · Winger 64. CDM mevki planı önerilir." } }]
+    renderList({ positionAdvice: advice as never })
+    const row = within(screen.getByRole('table')).getByRole('link', { name: 'Oyuncu 2' }).closest('tr')!
+    const best = row.querySelector('td[data-col="best"]') as HTMLElement
+    expect(best).toHaveTextContent('RW')
+    expect(within(best).getByLabelText('Taraf gerekçesi')).toBeInTheDocument()
+    expect(best).toHaveTextContent('Orta profili baskın (Orta 78 · Bitiricilik 61) + sağ ayak → RW · Winger')
+    const badge = within(best).getByRole('link', { name: /Dönüşüm: CDM/ })
+    expect(badge).toHaveAttribute('href', '/players/2?sekme=roller')
+    expect(badge).toHaveAttribute('title', "LW listeli ama CDM'de daha etkili: CDM · Holding gücü 72, LW · Winger 64. CDM mevki planı önerilir.")
+  })
+
   it('kiralıktaki oyuncunun en iyi mevkisi "Kiralıkta"; maaş verisi hiç yoksa tablo altında not', () => {
     renderList()
     const table = screen.getByRole('table')

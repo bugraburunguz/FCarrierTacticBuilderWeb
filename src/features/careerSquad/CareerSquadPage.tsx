@@ -144,6 +144,7 @@ export function CareerSquadPage() {
 
       <TabPanel idPrefix={PREFIX} id="derinlik" active={tab === 'derinlik'}>
         <DepthTab squad={players} needs={k.needs} formation={k.formation} gameDate={gameDate} record={record} starters={starters}
+          careerId={career.id} tacticRows={k.fits.rows}
           wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} />
       </TabPanel>
 
