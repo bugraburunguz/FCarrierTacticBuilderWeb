@@ -9,7 +9,7 @@ import type { Query, QueryClient } from '@tanstack/react-query'
 const CAREER_AT_1 = new Set([
   'squad', 'events', 'career-moves', 'career-player', 'career-player-contract', 'career-players', 'career-team', 'career-teams', 'lineup',
   'player-facets', 'position-advice', 'shortlist', 'tags', 'user-tactics', 'main-tactic', 'starter-tactic', 'snapshots', 'snapshot-diff', 'history',
-  'development-recommendations', 'setup-check', 'tactic-analysis', 'academy',
+  'development-recommendations', 'setup-check', 'tactic-analysis', 'academy', 'youth', 'youth-detail',
 ])
 const CAREER_AT_2 = new Set(['player', 'player-roles', 'player-roles-v3', 'player-development', 'wonderkids'])
 /** `slot-fit` alt türlerinden kariyerli olanlar (`v3` oyuncu kimliği taşır, kariyersiz). */

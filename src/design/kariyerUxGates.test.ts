@@ -123,3 +123,22 @@ describe('Transfer zinciri taslak ve eski depo okumaz (FAZ 5)', () => {
     expect(files.filter((f) => /CareerTransferPage|useAutoLineup|pages\//.test(f))).toEqual([])
   })
 })
+
+/* ACADEMY-b §4: Altyapı ve Gelişim yalnız sunucu verisi okur (kayıt, ana taktik ya da başlangıç önerisi); taslak ve eski depo yok. */
+describe.each([
+  ['Altyapı', 'features/academy/AcademyPage.tsx'],
+  ['Altyapı oyuncu sayfası', 'features/academy/AcademyPlayerPage.tsx'],
+  ['Gelişim', 'features/growth/GrowthPage.tsx'],
+])('%s zinciri taslak ve eski depo okumaz (ACADEMY-b)', (_name, entry) => {
+  const files = chain(join(ROOT, entry))
+  const importing = (store: string) => files.filter((f) => new RegExp(`from\\s+['"][./]*state/${store}['"]`).test(readFileSync(join(ROOT, f), 'utf8')))
+
+  it('tacticStore / lineupStore / labStore zincirde yok', () => {
+    expect(files.length).toBeGreaterThan(3)
+    expect(importing('(tacticStore|lineupStore|labStore)')).toEqual([])
+  })
+
+  it('v2 sayfaları ve eski gelişim ucu (DevelopmentPlan) zincirde yok', () => {
+    expect(files.filter((f) => /pages\/|DevelopmentPlan\b|CareerGrowthPage/.test(f))).toEqual([])
+  })
+})

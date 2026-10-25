@@ -8,6 +8,8 @@ import type {
   DevelopmentRecommendation,
   DevelopmentWeakSlot,
   Academy,
+  AcademyPlayer,
+  YouthDetail,
   Career,
   CareerPlayer,
   CareerPlayerContract,
@@ -225,6 +227,10 @@ export const endpoints = {
     api.post<DevelopmentRecommendation[]>(`/careers/${careerId}/development/recommendations`, { weakSlots }),
   /** ACADEMY: kariyerin altyapısı (A takım kadrosu dışında). */
   academy: (careerId: number) => api.get<Academy>(`/careers/${careerId}/academy`),
+  /** ACADEMY-b: Gelişim planları satırları (A takım gençleri, kiralıktakiler dahil). */
+  youth: (careerId: number) => api.get<AcademyPlayer[]>(`/careers/${careerId}/youth`),
+  /** ACADEMY-b paneli: Ne yapmalıyım? · Hangi mevkide? · Takımdaki yeri. */
+  youthDetail: (careerId: number, playerId: number) => api.get<YouthDetail>(`/careers/${careerId}/youth/${playerId}`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>
     api.post<Credited<TacticRecommendation>>('/advisor/tactic', body),
   /** locked (KARIYER-UX Q2): slotId → oyuncu sabit kalır, kalan slotları sunucu doldurur. */

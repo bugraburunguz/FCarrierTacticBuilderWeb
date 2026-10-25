@@ -6,10 +6,11 @@ import type { CareerPlayer } from '../../api/types'
 import { Chip, Panel, Skeleton, SourceTag, type DataSource } from '../../design/components/primitives'
 import { seasonJobs, type ActionKind } from '../../lib/deskRules'
 import { toDeskSlots, type SlotFitRow } from '../squad/useSlotFits'
+import { academyQuery } from '../academy/academyQuery'
 
 const TITLE = 'Bu dönemin 3 işi'
 const MIN_SQUAD = 11
-const KIND_LABEL: Record<ActionKind, string> = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik', CONTRACT: 'Sözleşme' }
+const KIND_LABEL: Record<ActionKind, string> = { FILL: 'Transfer', SELL: 'Satış', LOAN: 'Kiralık', DEPTH: 'Derinlik', CONTRACT: 'Sözleşme', PROMOTE: 'Altyapı' }
 
 /**
  * "Bu dönemin 3 işi" (KARIYER-UX FAZ 2 düzeltme 3): Ana sayfa ve Masa'nın ortak bileşeni; kurallar `deskRules.seasonJobs`.
@@ -29,7 +30,10 @@ export function SeasonJobs({ careerId, squad, rows, tacticSource, gameDate, pend
   const id = useId()
   const tagList = useQuery({ queryKey: ['tags', careerId], queryFn: () => endpoints.playerTags(careerId), retry: false })
   const tags = useMemo(() => Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag])), [tagList.data])
-  const { jobs, similar } = useMemo(() => seasonJobs({ squad: [...squad], slots: toDeskSlots(rows), tags, gameDate }, { exclude }), [squad, rows, tags, gameDate, exclude])
+  // ACADEMY-b: "Altyapıdan A takıma al" işi; altyapı alınamazsa iş yalnız çıkmaz (diğer işler etkilenmez).
+  const academy = useQuery({ ...academyQuery(careerId), retry: false })
+  const youth = academy.data?.players
+  const { jobs, similar } = useMemo(() => seasonJobs({ squad: [...squad], slots: toDeskSlots(rows), tags, gameDate, academy: youth }, { exclude }), [squad, rows, tags, gameDate, exclude, youth])
   const [expanded, setExpanded] = useState<ActionKind>()
 
   const body: ReactNode = pending ? <Skeleton className="h-28" /> : jobs.length === 0 ? (

@@ -12,5 +12,7 @@ export const deskLink = {
   sell: (playerId: number) => query('/career/transfer', { sekme: 'satis', oyuncu: playerId }),
   depth: (group: PositionGroup) => query('/career/squad', { sekme: 'derinlik', grup: group }),
   growth: (playerId: number) => query('/career/growth', { oyuncu: playerId }),
+  /** ACADEMY-b: Altyapı'da oyuncunun paneli (mobilde oyuncu sayfası). */
+  academy: (playerId: number) => query('/career/academy', { oyuncu: playerId }),
   settings: () => query('/career/dashboard', { sekme: 'ayarlar' }),
 }

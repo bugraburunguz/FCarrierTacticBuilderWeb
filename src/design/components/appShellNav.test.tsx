@@ -23,7 +23,7 @@ beforeEach(() => modeStore.set('career'))
 
 describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
   it.each([
-    ['/career/dashboard', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'], ['/players', 'Oyuncular'],
+    ['/career/dashboard', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'], ['/career/academy', 'Altyapı'], ['/players', 'Oyuncular'],
     ['/career/squad', 'Kadro'], ['/career/tactics-lab', 'Taktik Lab'], ['/tactics/wizard', 'Taktik Lab'], ['/teams', 'Takımlar'], ['/career/import', 'İçe aktar'],
   ])('%s: sol menüde %s aria-current="page"; üstte Masa/Transfer/Gelişim sekmeleri yok', (path, label) => {
     renderAt(path)
@@ -48,7 +48,7 @@ describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
     expect(within(screen.getByRole('navigation', { name: 'Mobil menü' })).getByRole('link', { name: 'Lab · kaydedilmemiş taslak var' })).toBeInTheDocument()
   })
 
-  it('mobil alt çubuk: Masa, Kadro, Lab, Transfer, Oyuncular, Daha fazla; sheet Gelişim, Takımlar, İçe aktar, Yeni kariyer', () => {
+  it('mobil alt çubuk: Masa, Kadro, Lab, Transfer, Oyuncular, Daha fazla; sheet Altyapı, Gelişim, Takımlar, İçe aktar, Yeni kariyer', () => {
     renderAt('/career/growth')
     const bar = screen.getByRole('navigation', { name: 'Mobil menü' })
     expect(within(bar).getAllByRole('link').map((a) => a.textContent)).toEqual(['Masa', 'Kadro', 'Lab', 'Transfer', 'Oyuncu'])
@@ -57,7 +57,7 @@ describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
     expect(more).toHaveAttribute('aria-current', 'page')
     fireEvent.click(more)
     const sheet = screen.getByRole('dialog', { name: 'Daha fazla' })
-    expect(within(sheet).getAllByRole('link').map((a) => a.textContent)).toEqual(['Gelişim', 'Takımlar', 'İçe aktar', 'Yeni kariyer'])
+    expect(within(sheet).getAllByRole('link').map((a) => a.textContent)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'İçe aktar', 'Yeni kariyer'])
     expect(within(sheet).getByRole('link', { name: 'Gelişim' })).toHaveAttribute('aria-current', 'page')
   })
 

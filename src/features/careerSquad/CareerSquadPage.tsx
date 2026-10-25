@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { CareerSelect } from '../../components/CareerSelect'
 import { SquadCards } from '../../components/SquadCards'
 import { SquadList } from '../../components/SquadList'
@@ -16,7 +16,6 @@ import { MoveHistory, TransferMarket } from '../squad/kadro/MovesTab'
 import { SaveMoves } from '../squad/kadro/SaveMoves'
 import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
 import { squadStats } from './careerSquadRules'
-import { AcademyTab } from './AcademyTab'
 import { DepthTab } from './DepthTab'
 import { useCareerSquadData } from './useCareerSquadData'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
@@ -34,7 +33,8 @@ const decimal =(value?: number) => (value === undefined ? undefined : value.toLo
 
 /**
  * Kadro Analizi (/career/squad, KARIYER-UX FAZ 3, 15 §4.2): "Elimde ne var?". Düzenleme yok; kararlar yalnız hamleler ve geri alma.
- * Diziliş: ana taktik (yoksa başlangıç önerisi) salt okunur piyon sahada, piyon oyuncu sayfasını açar. Liste, Derinlik, Altyapı, Hareketler `?sekme=`.
+ * Diziliş: ana taktik (yoksa başlangıç önerisi) salt okunur piyon sahada, piyon oyuncu sayfasını açar. Liste, Derinlik, Hareketler `?sekme=`.
+ * ACADEMY-b: Altyapı ayrı sayfa (/career/academy); eski `?sekme=altyapi` bağlantısı oraya yönlenir.
  * Katman 1-2; Lab taslağı ve eski tek kopya taktik deposu okunmaz (kariyerUxGates).
  */
 export function CareerSquadPage() {
@@ -44,13 +44,10 @@ export function CareerSquadPage() {
   const players = useMemo(() => k.squad.data ?? [], [k.squad.data])
   const saveMoves = useQuery({ ...careerMovesQuery(k.career?.id ?? 0), enabled: k.career !== undefined })
   const snapshots = useQuery({ queryKey: ['snapshots', k.career?.id], queryFn: () => endpoints.snapshots(k.career!.id), enabled: k.career !== undefined, retry: false })
-  // ACADEMY-b: sekme etiketi oyuncu sayısını taşır; uç analiz kovasında (60/dk), sonuç 5 dk taze.
-  const academy = useQuery({ queryKey: ['academy', k.career?.id], queryFn: () => endpoints.academy(k.career!.id), enabled: k.career !== undefined, staleTime: 300_000 })
   const tabs = [
     { id: 'dizilis' as const, label: 'Diziliş' },
     { id: 'liste' as const, label: `Liste (${players.length})` },
     { id: 'derinlik' as const, label: 'Derinlik' },
-    { id: 'altyapi' as const, label: academy.data?.found ? `Altyapı (${academy.data.players.length})` : 'Altyapı' },
     { id: 'hareketler' as const, label: `Hareketler (${(saveMoves.data?.length ?? 0) + (k.events.data?.length ?? 0)})` },
   ]
   const { tab, setTab, params, set } = useTabParam(tabs)
@@ -69,6 +66,9 @@ export function CareerSquadPage() {
     return new Map(Object.entries(lineup).flatMap(([slotId, id]) => (typeof id === 'number' && positionOf.has(slotId) ? [[id, positionOf.get(slotId)!] as const] : [])))
   }, [lineup, k.formation])
 
+  if (params.get('sekme') === 'altyapi') {
+    return <Navigate to="/career/academy" replace />
+  }
   if (k.careers.isLoading) {
     return <Skeleton className="h-64" />
   }
@@ -150,10 +150,6 @@ export function CareerSquadPage() {
         <DepthTab squad={players} needs={k.needs} formation={k.formation} gameDate={gameDate} record={record} starters={starters}
           careerId={career.id} tacticRows={k.fits.rows} tacticPending={k.fits.main.isLoading || k.fits.pending}
           wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} />
-      </TabPanel>
-
-      <TabPanel idPrefix={PREFIX} id="altyapi" active={tab === 'altyapi'}>
-        <AcademyTab academy={academy.data} loading={academy.isLoading} error={academy.isError} onRetry={() => academy.refetch()} />
       </TabPanel>
 
       <TabPanel idPrefix={PREFIX} id="hareketler" active={tab === 'hareketler'}>

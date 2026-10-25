@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Shirt, Sparkles, Swords, Target, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Shirt, Sparkles, Sprout, Swords, Target, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../../api/client'
@@ -27,6 +27,7 @@ const ICONS: Record<string, LucideIcon> = {
   '/career/desk': LayoutDashboard,
   '/career/transfer': ArrowLeftRight,
   '/career/growth': TrendingUp,
+  '/career/academy': Sprout,
   '/career/new': Plus,
   '/players': Users,
   '/career/squad': Shirt,
