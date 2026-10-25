@@ -26,14 +26,20 @@ function OptionLine({ o }: { o: DevelopmentOption }) {
  * FIT-3 madde 11: 23 yaş ve altı, potansiyeli OVR'sinden ≥ 5 yüksek oyuncular için gelişim planı önerisi. Takımın zayıf slotları (Masa sınıfı
  * KALITE_ACIGI/IKISI) istekle gider; her özel plan Dengeli'ye karşı kıyaslanır. Gelişim sayfası tam liste, Kadro › Derinlik kompakt (yalnız özel plan).
  */
-export function DevelopmentRecommendations({ careerId, rows, compact = false }: { careerId?: number; rows: SlotFitRow[]; compact?: boolean }) {
+export function DevelopmentRecommendations({ careerId, rows, compact = false, pending = false }: {
+  careerId?: number
+  rows: SlotFitRow[]
+  compact?: boolean
+  /** Ana taktik satırları yükleniyor: istek bekler (zayıf slotlar gelince ikinci pahalı istek olmasın). */
+  pending?: boolean
+}) {
   const titleId = useId()
   const weakSlots = useMemo<DevelopmentWeakSlot[]>(() => rows.filter((r) => r.weakClass === 'KALITE_ACIGI' || r.weakClass === 'IKISI')
     .map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId })), [rows])
   const query = useQuery({
     queryKey: ['development-recommendations', careerId, JSON.stringify(weakSlots)],
     queryFn: () => endpoints.developmentRecommendations(careerId!, weakSlots),
-    enabled: careerId !== undefined,
+    enabled: careerId !== undefined && !pending,
     staleTime: STALE_MS,
     retry: false,
   })
@@ -51,7 +57,7 @@ export function DevelopmentRecommendations({ careerId, rows, compact = false }: 
           kıyaslanır; fark 2 Güç'ten azsa Dengeli önerilir. Büyüme modeli henüz gerçek içe aktarmalarla kalibre edilmedi.
         </HelpPopover>
       </header>
-      {query.isLoading ? <Skeleton className="h-24" /> : query.isError ? <p className="text-sm text-ink-2">Öneriler alınamadı.</p> : shown.length === 0 ? (
+      {pending || query.isLoading ? <Skeleton className="h-24" /> : query.isError ? <p className="text-sm text-ink-2">Öneriler alınamadı.</p> : shown.length === 0 ? (
         <p className="text-sm text-ink-2">Kapsamda oyuncu yok (23 yaş ve altı, potansiyeli OVR'sinden en az 5 yüksek).</p>
       ) : (
         <ul className="flex flex-col gap-2">

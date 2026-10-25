@@ -44,6 +44,15 @@ describe('DevelopmentRecommendations', () => {
     expect(within(panel).getByText(/Dengeli plan yeterli/)).toBeInTheDocument()
   })
 
+  it('İnceleme: ana taktik satırları beklenirken istek gitmez (zayıf slotlar gelince ikinci istek olmasın)', async () => {
+    const { rerender } = render(<DevelopmentRecommendations careerId={5} rows={[]} pending />, { wrapper: wrap })
+    await new Promise((r) => setTimeout(r, 30))
+    expect(endpoints.developmentRecommendations).not.toHaveBeenCalled()
+    rerender(<DevelopmentRecommendations careerId={5} rows={[row('CDM', 'CDM', 'holding_defend', 3, 'KALITE_ACIGI')]} pending={false} />)
+    await screen.findByRole('region', { name: 'Gelişim planı önerileri' })
+    await vi.waitFor(() => expect(endpoints.developmentRecommendations).toHaveBeenCalledTimes(1))
+  })
+
   it('kompakt (Derinlik): yalnız özel plan önerilenler', async () => {
     render(<DevelopmentRecommendations careerId={5} rows={[]} compact />, { wrapper: wrap })
     const panel = await screen.findByRole('region', { name: 'Gelişim planı önerileri' })

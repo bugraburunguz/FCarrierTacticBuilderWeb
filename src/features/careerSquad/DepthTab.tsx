@@ -157,11 +157,12 @@ function ContractTimeline({ squad, gameDate }: { squad: CareerPlayer[]; gameDate
  * Derinlik sekmesi (KARIYER-UX FAZ 3, 15 §4.2): mevki grubunda kim/kaç (Masa derinlik işiyle aynı eşik), mevki yoğunluk haritası
  * (ana taktiğe göre), yaş profili ve sözleşme bitiş zaman çizgisi. `?grup=` o grubu açık ve odaklı getirir (Masa'nın derinlik bağlantısı).
  */
-export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters, careerId, tacticRows = [] }: {
+export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters, careerId, tacticRows = [], tacticPending = false }: {
   squad: CareerPlayer[]
   /** FIT-3 madde 11: kompakt gelişim planı önerileri için (zayıf slotlar ana taktik satırlarından). */
   careerId?: number
   tacticRows?: SlotFitRow[]
+  tacticPending?: boolean
   needs: PositionNeed[]
   formation?: Formation
   wanted?: PositionGroup
@@ -193,7 +194,7 @@ export function DepthTab({ squad, needs, formation, wanted, gameDate, record, st
         </ul>
       </Panel>
       <div className="min-[1100px]:col-span-2">
-        <DevelopmentRecommendations careerId={careerId} rows={tacticRows} compact />
+        <DevelopmentRecommendations careerId={careerId} rows={tacticRows} pending={tacticPending} compact />
       </div>
       <Panel title="Mevki yoğunluğu" label="Mevki yoğunluğu" source={record}>
         <DepthMap squad={squad} needs={needs} formation={formation} />
