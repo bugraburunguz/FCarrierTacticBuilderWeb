@@ -60,6 +60,27 @@ describe('birleşik uyarılar', () => {
   })
 })
 
+/** FIT-1 madde 2: sunucunun iki eksenli sınıfı (weakClass) varsa seçim ve kart başlığı ondan; FitLabel kartta ikincil bilgi. */
+describe('zayıf halkalar: iki eksenli sınıf', () => {
+  const classed = (slotId: string, weakClass: SlotFitRow['weakClass'], fitLabel: RoleFit['fitLabel'], levelFit: number, currentFit: number): SlotFitRow => {
+    const r = row(slotId, fitLabel, levelFit)
+    const fit = { ...r.fit, currentFit, score: currentFit }
+    return { ...r, fit, display: fitDisplay(fit), weakClass }
+  }
+
+  it('UYGUN olan (etiketi WRONG_ROLE olsa da) girmez; KALITE_ACIGI (etiketi GOOD olsa da) girer; sıra IKISI → KALITE_ACIGI → ROL_UYUMSUZ, sonra Güç artan', () => {
+    const cards = weakLinks([
+      classed('S1', 'UYGUN', 'WRONG_ROLE', 10, 80), classed('S2', 'KALITE_ACIGI', 'GOOD', 70, 55), classed('S3', 'ROL_UYUMSUZ', 'WRONG_ROLE', 20, 85),
+      classed('S4', 'IKISI', 'WEAK', 30, 50), classed('S5', 'KALITE_ACIGI', 'AT_LEVEL', 50, 52),
+    ], 5)
+    expect(cards.map((c) => c.slotId)).toEqual(['S4', 'S5', 'S2', 'S3'])
+    expect(cards.map((c) => c.classText)).toEqual(['Kalite açığı + rol uyumsuz', 'Kalite açığı', 'Kalite açığı', 'Rol uyumsuz'])
+    expect(cards.find((c) => c.slotId === 'S3')?.primary).toBe('ROLE')
+    expect(cards.find((c) => c.slotId === 'S4')?.primary).toBe('TRANSFER')
+    expect(cards.find((c) => c.slotId === 'S2')).toMatchObject({ strength: 55, roleFit: 70, labelText: 'Rol için uygun' })
+  })
+})
+
 describe('zayıf halkalar: sunucu etiketiyle seçilir', () => {
   it('FAZ 6a-G: yalnız WEAK/WRONG_ROLE; düşük levelFit önce; AT_LEVEL ve GOOD hiç girmez; üç dolmazsa daha az kart', () => {
     const cards = weakLinks([
