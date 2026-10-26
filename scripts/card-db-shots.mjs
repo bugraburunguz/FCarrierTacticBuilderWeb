@@ -1,13 +1,14 @@
 // V3-05a ekran kapıları: UT kart veritabanı (ızgara, kaydırılmış ızgara, filtreli, tablo, mobil sheet, boş durum) 375/768/1280 × koyu/açık; axe + taşma + konsol/ağ.
 // V3-05b-b ölçümleri: ızgara kartlarında en küçük yazı / OVR / soyad (Q18); 1.200px kaydırılmış ızgarada yapışkan filtre çubuğu örtmesi (Q5, ≥820px).
 // Kullanım: node scripts/card-db-shots.mjs [--base http://localhost:8081]   (oturum gerekmez: /players herkese açık)
-// Çıktı: docs/review/v2/screens/V3-05a/*.png ve gates-report.json
+// Çıktı: Claude outputs/screens/V3-05a/ (repo dışı) *.png ve gates-report.json
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { cardMinFont, pageMinFont, stickyBand, stickyCover } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 // V3-05b-c: sayfa geneli en küçük görünür yazı (≥ 11px) her çekimde; kaydırılmış ızgara/tabloda yapışkan üst başlık + filtre çubuğu
 // (+ ≥820px tablo başlığı) bandında içerik görünmez (elementFromPoint).
@@ -20,7 +21,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-05a/', import.meta.url)
+const out = screensDir('V3-05a')
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 

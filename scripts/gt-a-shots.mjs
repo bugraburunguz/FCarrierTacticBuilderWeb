@@ -6,6 +6,7 @@ import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const arg = (name, fallback) => (args.includes(name) ? args[args.indexOf(name) + 1] : fallback)
@@ -15,7 +16,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   process.exit(2)
 }
 const training = JSON.parse(readFileSync(arg('--training'), 'utf8'))
-const outDir = new URL('../docs/review/v2/screens/GT-a/', import.meta.url)
+const outDir = screensDir('GT-a')
 mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 

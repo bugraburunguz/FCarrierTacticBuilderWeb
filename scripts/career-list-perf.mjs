@@ -1,10 +1,11 @@
 // V3-06a performans: kariyer oyuncu listesinde rol sıralaması (FitEngineV3, tüm süzülmüş havuz) ve kova süzgecinin yanıt süresi (p50/p95).
 // Geçici test hesabıyla (yalnız localhost; koşu sonunda yalnız bu hesap silinir) Crewe Alexandra ve Port Vale kulüplerinde kariyer açar
 // (havuz ≈ 22 bin oyuncu, kullanıcının kendi kayıtlarıyla aynı büyüklük). Her rol ilk kez istenir (önbellek ısınmamış), sonra 2. sayfa (önbellekten).
-// Kullanım: node scripts/career-list-perf.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/V3-06a/perf-role-sort.json
+// Kullanım: node scripts/career-list-perf.mjs [--base http://localhost:8081]   Çıktı: Claude outputs/screens/V3-06a/perf-role-sort.json (repo dışı)
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -12,7 +13,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-06a/', import.meta.url)
+const out = screensDir('V3-06a')
 mkdirSync(out, { recursive: true })
 
 await createGateAccount(base, 'gate-')

@@ -6,6 +6,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -13,7 +14,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const outDir = new URL('../docs/review/v2/screens/FIT-1/', import.meta.url)
+const outDir = screensDir('FIT-1')
 mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 

@@ -1,9 +1,10 @@
-// Marka ekran kapıları: üst bar (375/1280 × koyu/açık), giriş sayfası, hakkında; axe + taşma. Çıktı: docs/brand/screens/
+// Marka ekran kapıları: üst bar (375/1280 × koyu/açık), giriş sayfası, hakkında; axe + taşma. Çıktı: Claude outputs/screens/BRAND/ (repo dışı)
 // Kullanım: node scripts/brand-shots.mjs [--base http://localhost:8081]   (oturum gerekmez)
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -11,7 +12,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/brand/screens/', import.meta.url)
+const out = screensDir('BRAND')
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const browser = await chromium.launch({ channel: 'chrome', headless: true })

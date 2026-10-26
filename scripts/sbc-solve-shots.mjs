@@ -5,7 +5,7 @@
 // 3) q17/Q18: çözüm sahası, tüm dizilişler × 375/768/1280×800 (ölçüm scripts/lib/pitchGate.mjs, kadro sayfasıyla ortak).
 // Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa minFont ≥ 11, saha kartı minFont, bant sızıntısı, çözücü süresi (p95).
 // Oturum: geçici yerel test hesabı (yalnız localhost; koşu sonunda yalnız bu hesap silinir). EA'ya istek yok; sayfa yalnız plan gösterir.
-// Kullanım: node scripts/sbc-solve-shots.mjs [--base http://localhost:8081] [--skip-q17]   Çıktı: docs/review/v2/screens/V3-05d/
+// Kullanım: node scripts/sbc-solve-shots.mjs [--base http://localhost:8081] [--skip-q17]   Çıktı: Claude outputs/screens/V3-05d/ (repo dışı)
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -15,6 +15,7 @@ import { sbcClubFixture, sbcMarketFixture, sbcPricesFixture, sbcSetFixture } fro
 import { createGateAccount } from './lib/gateAccount.mjs'
 import { LONGEST, measurePitch, q18Problems } from './lib/pitchGate.mjs'
 import { cardMinFont, pageMinFont, stickyBand } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -22,7 +23,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const OUT = new URL('../docs/review/v2/screens/V3-05d/', import.meta.url)
+const OUT = screensDir('V3-05d')
 const dir = (sub) => {
   const url = new URL(sub, OUT)
   mkdirSync(url, { recursive: true })
