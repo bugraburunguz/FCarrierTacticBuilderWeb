@@ -53,6 +53,9 @@ export function GrowthPage() {
   const id = career?.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const training = useQuery({ queryKey: ['training', id], queryFn: () => endpoints.training(id!), enabled: id !== undefined, staleTime: 300_000 })
+  // GTR-b: satırdaki "Son N ayda" (önceki görüntü yoksa boş liste; hata verirse satır yok, sayfa çalışır).
+  const recent = useQuery({ queryKey: ['growth-recent', id], queryFn: () => endpoints.growthRecent(id!), enabled: id !== undefined, retry: false, staleTime: 300_000 })
+  const recentById = useMemo(() => new Map((recent.data ?? []).map((r) => [r.playerId, r])), [recent.data])
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
   const enough = (snapshots.data?.length ?? 0) >= 2
   const season = useMemo(() => seasonStartRange(snapshots.data ?? []), [snapshots.data])
@@ -100,7 +103,7 @@ export function GrowthPage() {
             return (
               <Section key={s.group} title={s.title} subtitle={`${s.subtitle} · tahmin`}>
                 {players.length === 0 ? <p className="text-sm text-ink-2">Bu yaş bölümünde oyuncu yok.</p>
-                  : <YouthList players={players} label={s.title} onOpen={open} selectedId={selectedId} reason />}
+                  : <YouthList players={players} label={s.title} onOpen={open} selectedId={selectedId} reason recent={recentById} />}
               </Section>
             )
           })}
