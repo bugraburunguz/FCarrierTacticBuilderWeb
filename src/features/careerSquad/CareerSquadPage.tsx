@@ -17,7 +17,7 @@ import { SaveMoves } from '../squad/kadro/SaveMoves'
 import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
 import { squadStats } from './careerSquadRules'
 import { DepthTab } from './DepthTab'
-import type { DepthSlot } from './slotDepth'
+import { buildDepthSlots } from './slotDepth'
 import { useCareerSquadData } from './useCareerSquadData'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { fitTitle } from '../../lib/fitLabels'
@@ -57,20 +57,10 @@ export function CareerSquadPage() {
   const grouping = parseGrouping(params.get('grup'))
   // FIT-1: rozet ve piyon metni sayıların adıyla ("Rol oturması %38 · Güç 65").
   const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, { ...r.display, title: fitTitle(r.display) }])), [k.fits.rows])
-  // GT-b: derinlik matrisinin satırları ana taktiğin (yoksa başlangıç önerisinin) slotları; rol ve kalite sınıfı uyum satırlarından, gelmediyse dizilişten.
+  // GT-b: derinlik matrisinin satırları her zaman ana taktiğin (yoksa başlangıç önerisinin) 11 slotu; rol ve kalite sınıfı uyum satırlarından.
   const lineup = k.fits.main.active?.lineup
-  const depthSlots = useMemo<DepthSlot[]>(() => {
-    if (k.fits.rows.length > 0) {
-      return k.fits.rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, weakClass: r.weakClass }))
-    }
-    if (!lineup || !k.formation) {
-      return []
-    }
-    return k.formation.slots.map((s) => {
-      const id = lineup[s.slotId]
-      return { slotId: s.slotId, position: s.position, roleId: s.defaultRole, playerId: typeof id === 'number' ? id : undefined }
-    })
-  }, [k.fits.rows, lineup, k.formation])
+  const tacticSlots = k.fits.main.active?.tactic.slots
+  const depthSlots = useMemo(() => buildDepthSlots(k.formation, lineup, tacticSlots, k.fits.rows), [k.formation, lineup, tacticSlots, k.fits.rows])
 
   if (params.get('sekme') === 'altyapi') {
     return <Navigate to="/career/academy" replace />

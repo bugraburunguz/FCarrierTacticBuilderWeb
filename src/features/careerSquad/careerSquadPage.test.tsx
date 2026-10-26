@@ -204,6 +204,23 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(within(st).queryByText(/^(Yedek yok|Yalnız genç yedek|İlk 11 ≥ 30 yaş|İlk 11 kalite açığı)$/)).toBeNull()
   })
 
+  it('derinlik: ana taktikteki oyuncu kadroda yoksa (satıldı) slot yine satır, İlk 11 "Yok"', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue(SQUAD.filter((c) => c.player.id !== 9) as never)
+    renderAt('/career/squad?sekme=derinlik')
+    const matrix = await screen.findByRole('list', { name: 'Slot derinliği' })
+    await waitFor(() => expect(within(matrix).getAllByRole('listitem')).toHaveLength(11))
+    expect(within(within(matrix).getByRole('listitem', { name: 'RM slotu' })).getByRole('group', { name: 'İlk 11' })).toHaveTextContent('Yok')
+  })
+
+  it('derinlik: altyapı alınamazsa Genç kolonunda not; aciliyet altyapı verisi olmadan yanlış "Yedek yok" demez', async () => {
+    vi.mocked(endpoints.academy).mockRejectedValue(new Error('ağ'))
+    renderAt('/career/squad?sekme=derinlik')
+    const matrix = await screen.findByRole('list', { name: 'Slot derinliği' })
+    const rm = await within(matrix).findByRole('listitem', { name: 'RM slotu' })
+    expect(await within(rm).findByText('Altyapı yüklenemedi')).toBeInTheDocument()
+    expect(within(rm).queryByText('Yedek yok')).toBeNull()
+  })
+
   it('derinlik: eski ?grup= bağlantısı (Masa) ilgili ilk slot satırına odaklanır', async () => {
     renderAt('/career/squad?sekme=derinlik&grup=MID')
     const row = await screen.findByRole('listitem', { name: 'LCM slotu' })

@@ -6,7 +6,7 @@ import { endpoints } from '../../api/endpoints'
 import type { CareerPlayer } from '../../api/types'
 import { Chip, EmptyState, Panel, type DataSource } from '../../design/components/primitives'
 import { deskLink } from '../../lib/deskLinks'
-import { ageProfile, type PositionGroup } from '../../lib/deskRules'
+import { ageProfile, GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
 import type { SlotFitRow } from '../squad/useSlotFits'
 import { DevelopmentRecommendations } from '../growth/DevelopmentRecommendations'
 import { ageBands, contractTimeline, YOUTH_MAX_AGE } from './careerSquadRules'
@@ -23,22 +23,28 @@ const COLUMNS: { key: 'starter' | 'backup' | 'youth'; label: string }[] = [
   { key: 'youth', label: `Genç (≤${YOUTH_MAX_AGE})` },
 ]
 
-function Cell({ label, value }: { label: string; value?: DepthCell }) {
+function Cell({ label, value, note }: { label: string; value?: DepthCell; note?: string }) {
   return (
     <div role="group" aria-label={label} className="flex min-w-0 flex-col gap-0.5">
       <span className="text-xs text-ink-2">{label}</span>
       {value ? (
-        <span className="min-w-0 truncate text-sm">
-          <Link to={value.academy ? deskLink.academy(value.id) : `/players/${value.id}`} className="underline-offset-2 hover:underline">{value.name}</Link>
-          <span className="font-[var(--font-num)] tabular-nums text-ink-2"> · {value.overall}{value.age ? ` · ${value.age}` : ''}</span>
+        <span className="flex min-w-0 items-center text-sm">
+          <Link to={value.academy ? deskLink.academy(value.id) : `/players/${value.id}`}
+            className="inline-flex min-h-8 min-w-0 items-center truncate underline-offset-2 hover:underline max-sm:min-h-11">{value.name}</Link>
+          <span className="shrink-0 font-[var(--font-num)] tabular-nums text-ink-2">&nbsp;· {value.overall ?? '–'}{value.age ? ` · ${value.age}` : ''}</span>
         </span>
       ) : <span className="text-sm text-muted">Yok</span>}
+      {note && <span className="text-xs text-warn">{note}</span>}
     </div>
   )
 }
 
+/** Altyapı verisinin durumu: hazır değilken "Yedek yok" gösterilmez (altyapı genç ekleyebilir). */
+type AcademyState = 'ready' | 'loading' | 'error'
+
 /** Slot satırı: mevki, tek aciliyet metni, üç kolon ve eylemler ("Transferde aday bul", altyapıda aday varsa "Altyapıda: {ad}"). */
-function SlotRow({ row, focus }: { row: SlotDepthRow; focus: boolean }) {
+function SlotRow({ row: raw, focus, academy }: { row: SlotDepthRow; focus: boolean; academy: AcademyState }) {
+  const row = academy !== 'ready' && raw.urgency === 'NO_BACKUP' ? { ...raw, urgency: undefined } : raw
   const ref = useRef<HTMLLIElement>(null)
   useEffect(() => {
     if (focus) {
@@ -54,7 +60,7 @@ function SlotRow({ row, focus }: { row: SlotDepthRow; focus: boolean }) {
         {row.urgency && <Chip tone={URGENCY_TONE[row.urgency]}>{SLOT_URGENCY_LABEL[row.urgency]}</Chip>}
       </div>
       <div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-3">
-        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} />)}
+        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} note={c.key === 'youth' && academy === 'error' ? 'Altyapı yüklenemedi' : undefined} />)}
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
         <Link to={deskLink.candidate(row.slotId, row.position, row.roleId)} className={LINK}>Transferde aday bul</Link>
@@ -151,6 +157,9 @@ export function DepthTab({ squad, slots, auto = false, wanted, gameDate, record,
   const academy = useQuery({ queryKey: ['academy', careerId], queryFn: () => endpoints.academy(careerId!), enabled: careerId !== undefined, staleTime: 300_000 })
   const rows = slotDepth(slots, squad, academy.data?.players ?? [])
   const focusSlot = slotForGroup(slots, wanted)
+  const academyState: AcademyState = academy.isError ? 'error' : academy.data || careerId === undefined ? 'ready' : 'loading'
+  // Masa'nın derinlik işi grup sayısına göre; formasyonda o gruptan slot yoksa (ör. dar 4-1-2-1-2'de kanat) kısa not.
+  const missingGroup = wanted && slots.length > 0 && !focusSlot ? wanted : undefined
   if (squad.length === 0) {
     return <EmptyState>Kadro boş.</EmptyState>
   }
@@ -159,9 +168,10 @@ export function DepthTab({ squad, slots, auto = false, wanted, gameDate, record,
       {/* GT-b: "Hangi mevkide yedek sorunum var?" — Mevki grupları ve Mevki yoğunluğu yerine tek slot bazlı matris. */}
       <Panel title="Derinlik" label="Derinlik" source={record} className="min-[1100px]:col-span-2"
         actions={auto ? <Chip tone="info">Otomatik öneri</Chip> : undefined}>
+        {missingGroup && <p role="status" className="mb-2 text-sm text-ink-2">Bu formasyonda {GROUP_LABEL[missingGroup].toLocaleLowerCase('tr-TR')} slotu yok.</p>}
         {rows.length === 0 ? <EmptyState>Ana taktik ya da başlangıç önerisi hazır olunca slotlar görünür.</EmptyState> : (
           <ul aria-label="Slot derinliği" className="flex flex-col gap-2">
-            {rows.map((r) => <SlotRow key={r.slotId} row={r} focus={r.slotId === focusSlot} />)}
+            {rows.map((r) => <SlotRow key={r.slotId} row={r} focus={r.slotId === focusSlot} academy={academyState} />)}
           </ul>
         )}
       </Panel>
