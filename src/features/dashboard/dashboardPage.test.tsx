@@ -16,7 +16,7 @@ vi.mock('../../api/endpoints', () => {
     endpoints: {
       careers: vi.fn(), squad: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), lineup: vi.fn(), formations: vi.fn(), roles: none, eaRoles: none,
       resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })), fitRole: vi.fn(), playerFacets: vi.fn(),
-      snapshots: vi.fn(), events: vi.fn(), updateCareer: vi.fn(), careerBackup: vi.fn(), careerRestore: vi.fn(), deleteCareer: vi.fn(),
+      snapshots: vi.fn(), events: vi.fn(), updateCareer: vi.fn(), managerProfile: vi.fn(), careerBackup: vi.fn(), careerRestore: vi.fn(), deleteCareer: vi.fn(),
       userTactics: none, saveUserTactic: vi.fn(), setMainTactic: vi.fn(), playerTags: none, snapshotDiff: vi.fn(() => Promise.resolve({ rows: [] })),
       fitSquad: vi.fn(), recommendTactic: vi.fn(), development: vi.fn(), positionAdvice: vi.fn(), setupCheck: vi.fn(() => Promise.resolve([])), tacticAnalysis: vi.fn(() => Promise.resolve({ metrics: { band: 'BALANCED', depth: 50 }, findings: [], notEvaluated: [] })),
     },
@@ -76,6 +76,32 @@ beforeEach(() => {
   ] as never)
   vi.mocked(endpoints.events).mockResolvedValue([{ id: 3, type: 'SELL', playerId: 4, playerName: 'Satılan Oyuncu', feeEur: 2_000_000, createdAt: '2026-10-12T10:00:00Z' }] as never)
   vi.mocked(endpoints.updateCareer).mockReset().mockResolvedValue(CAREER as never)
+  vi.mocked(endpoints.managerProfile).mockReset().mockRejectedValue(Object.assign(new Error('Bulunamadı'), { status: 404 }))
+})
+
+/** MGR-b §3: kariyer varken Masa'nın üstünde küçük menajer satırı; tıklayınca profil. Profil yoksa satır yok. */
+describe('Masa menajer satırı (MGR-b)', () => {
+  it('profil varsa "Menajer: {ad} · itibar {bant}" profili açar', async () => {
+    vi.mocked(endpoints.managerProfile).mockResolvedValue({
+      profile: { name: 'Buğra', licence: 'PRO', background: 'WORLD_CLASS', style: 'POSSESSION', priorities: [], difficulty: 'EASY' }, reputation: 100, band: 'Dünya çapında',
+    })
+    renderPage()
+    const link = await screen.findByRole('link', { name: 'Menajer: Buğra · itibar Dünya çapında' })
+    expect(link).toHaveAttribute('href', '/career/manager?sonra=masa')
+  })
+
+  it('profil yoksa satır çıkmaz', async () => {
+    renderPage()
+    expect((await screen.findAllByRole('heading', { name: 'Kariyer Masası' })).length).toBeGreaterThan(0)
+    await waitFor(() => expect(endpoints.managerProfile).toHaveBeenCalled())
+    expect(screen.queryByRole('link', { name: /^Menajer:/ })).toBeNull()
+  })
+
+  it('kariyer yokken boş durum kulüp önerilerine (Yeni kariyer) yönlendirir', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValue([] as never)
+    renderPage()
+    expect(await screen.findByRole('link', { name: 'Kulüp önerilerini gör' })).toHaveAttribute('href', '/career/new')
+  })
 })
 
 /** REVIEW Y5: hata boş durum gibi görünmez ("kariyerin yok", "kadro boş" değil); tekrar denenebilir. */

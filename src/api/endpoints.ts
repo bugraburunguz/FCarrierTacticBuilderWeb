@@ -15,7 +15,10 @@ import type {
   CareerPlayerContract,
   CareerPlayerFacets,
   Club,
+  ClubRecommendations,
   Credited,
+  ManagerProfile,
+  ManagerProfileView,
   Formation,
   FitRoleResult,
   LookupItem,
@@ -199,6 +202,12 @@ export const endpoints = {
     api.get<Club[]>('/clubs', { q, limit: options.limit ?? 8, league: options.league, gender: options.gender }),
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),
   nationalities: () => api.get<LookupItem[]>('/nationalities'),
+
+  // MGR-a: menajer profili (yoksa 404) ve ücretsiz kulüp önerisi (gövde boş → kayıtlı profil; kendi hız kovası 5/dk).
+  managerProfile: () => api.get<ManagerProfileView>('/me/manager-profile'),
+  saveManagerProfile: (profile: ManagerProfile) => request<ManagerProfileView>('/me/manager-profile', { method: 'PUT', body: profile }),
+  clubRecommendations: (body: { profile?: ManagerProfile; leagueId?: number; gender?: number } = {}) =>
+    api.post<ClubRecommendations>('/manager/club-recommendations', body),
 
   roles: () => api.get<Role[]>('/roles'),
   behaviorTags: (pos?: string) => api.get<BehaviorTag[]>('/behavior-tags', { pos }),

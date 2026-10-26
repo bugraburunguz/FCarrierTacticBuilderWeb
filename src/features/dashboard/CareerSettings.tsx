@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { Career, CareerBackup } from '../../api/types'
 import { DeleteCareerButton } from '../../components/DeleteCareerButton'
@@ -79,6 +80,13 @@ export function CareerSettings({ career }: { career: Career }) {
           {notice && <span role="status" className="text-xs text-muted">{notice}</span>}
         </div>
         <ErrorBox error={save.error} />
+      </Panel>
+      {/* MGR-b: menajer profili hesaba bağlı (tek); buradan ve Yeni kariyer'den düzenlenir. */}
+      <Panel title="Menajer profili">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm text-ink-2">Geçmiş, diploma ve tercihlerin bütün kariyerlerde kulüp önerilerini yönlendirir.</p>
+          <Link to="/career/manager?sonra=masa" className="glass-3 inline-flex min-h-10 items-center rounded-[var(--radius-sm)] px-3 text-sm font-semibold hover:bg-[var(--glass-hover)] max-sm:min-h-11">Profili düzenle</Link>
+        </div>
       </Panel>
       <Panel title="Yedek ve silme">
         <div className="flex flex-wrap items-center gap-2">

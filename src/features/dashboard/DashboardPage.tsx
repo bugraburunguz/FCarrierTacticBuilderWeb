@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, ArrowRightLeft, CalendarClock, DatabaseZap, FlaskConical, HeartPulse, Info, Repeat, Search } from 'lucide-react'
+import { AlertTriangle, ArrowRightLeft, CalendarClock, DatabaseZap, FlaskConical, HeartPulse, Info, Repeat, Search, UserRound } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
@@ -20,6 +20,7 @@ import { useTacticRisks } from '../lab/useTacticRisks'
 import { toTacticRequest } from '../../lib/tactic'
 import { useTabParam } from '../player/playerPage'
 import { betterRoleText, FIT_TERMS, fitTitle, roleFitText, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { useManagerProfile } from '../manager/managerQuery'
 import { CareerSettings } from './CareerSettings'
 import { financeSummary, recordGaps, snapshotTimeline, upcomingEvents, urgentAlerts, weakLinks, withContracts, type RecordGap } from './dashboardRules'
 
@@ -89,6 +90,19 @@ function PastTimeline({ events, snapshots }: { events: RosterEvent[]; snapshots:
   )
 }
 
+/** MGR-b §3: küçük menajer satırı; tıklayınca profil. Profil yoksa (404) ya da alınamazsa satır yok; başka etkisi yok. */
+function ManagerLine() {
+  const { data } = useManagerProfile()
+  if (!data) {
+    return null
+  }
+  return (
+    <Link to="/career/manager?sonra=masa" className="inline-flex min-h-10 items-center gap-1.5 self-start text-xs text-ink-2 underline-offset-2 hover:text-ink hover:underline max-sm:min-h-11">
+      <UserRound size={14} aria-hidden="true" />Menajer: {data.profile.name || '—'} · itibar {data.band}
+    </Link>
+  )
+}
+
 /** FAZ 6a-A: kayıt verisi eksikse tek bant: ne eksik, neyi etkiliyor, nasıl tamamlanır (boş kutular tek tek gösterilmez). */
 function RecordGapsBanner({ gaps }: { gaps: RecordGap[] }) {
   return (
@@ -151,8 +165,8 @@ export function DashboardPage() {
     return (
       <div className={`mx-auto ${CAREER_PAGE_WIDTH} py-2`}>
         <h1 className="mb-3 font-display text-[26px] font-bold leading-[30px] sm:text-[32px] sm:leading-9">Kariyer Masası</h1>
-        <EmptyState action={<Link to="/career/new" className={PRIMARY}>Yeni kariyer başlat</Link>}>
-          Henüz kariyerin yok. Üç dakikada kulübünü seç, masan hazır olsun.
+        <EmptyState action={<Link to="/career/new" className={PRIMARY}>Kulüp önerilerini gör</Link>}>
+          Henüz kariyerin yok. Menajer profiline göre 6 kulüp önerelim; birini seç, masan hazır olsun.
         </EmptyState>
       </div>
     )
@@ -325,6 +339,7 @@ export function DashboardPage() {
           {record && <SourceTag source={record} />}
         </div>
         <CareerSelect />
+        <ManagerLine />
       </header>
       {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
 
