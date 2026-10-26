@@ -4,9 +4,11 @@
 // mevkiyi listeleyen en yüksek OVR'li oyuncu; formasyonlar backend seed'inden. Ağ dışarı çıkmaz; hesap açılmaz.
 // Kullanım: VITE_UI_V2=off npx vite --port 5174 & sonra node scripts/gt-b-shots.mjs --base http://localhost:5174 --squad <dosya>
 import { AxeBuilder } from '@axe-core/playwright'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
+import { screensDir, screensRoot } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const arg = (name, fallback) => (args.includes(name) ? args[args.indexOf(name) + 1] : fallback)
@@ -16,9 +18,10 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   process.exit(2)
 }
 const rows = JSON.parse(readFileSync(arg('--squad'), 'utf8'))
-const formations = JSON.parse(readFileSync(fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/src/main/resources/seed/formations.json', import.meta.url)), 'utf8'))
-const outDir = new URL('../../Claude outputs/screens/GT-b/', import.meta.url)
-mkdirSync(outDir, { recursive: true })
+// Proje kökü "Claude outputs"un üstü: backend seed'i oradan (ana checkout ya da worktree fark etmez).
+const projectRoot = dirname(dirname(screensRoot()))
+const formations = JSON.parse(readFileSync(join(projectRoot, 'FCarrierTacticBuilderBackend/src/main/resources/seed/formations.json'), 'utf8'))
+const outDir = screensDir('GT-b')
 const file = (n) => fileURLToPath(new URL(n, outDir))
 
 const formation = formations.find((f) => f.id === '4-4-2') ?? formations[0]

@@ -221,6 +221,21 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(within(rm).queryByText('Yedek yok')).toBeNull()
   })
 
+  it('derinlik: Masa\'nın ?slot= bağlantısı o slot satırına odaklanır', async () => {
+    renderAt('/career/squad?sekme=derinlik&slot=RM')
+    const row = await screen.findByRole('listitem', { name: 'RM slotu' })
+    await waitFor(() => expect(document.activeElement).toBe(row))
+  })
+
+  it('derinlik: aynı yedek birden çok slotta sayılıyorsa hücrede "2 slotta yedek" notu', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue([...SQUAD, player(14, 'LB', 70, { positions: ['LB', 'RB'], age: 26 })] as never)
+    renderAt('/career/squad?sekme=derinlik')
+    const lb = await screen.findByRole('listitem', { name: 'LB slotu' })
+    await waitFor(() => expect(within(lb).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Oyuncu 14'))
+    expect(within(lb).getByRole('group', { name: 'Yedek' })).toHaveTextContent('2 slotta yedek')
+    expect(within(screen.getByRole('listitem', { name: 'RB slotu' })).getByRole('group', { name: 'Yedek' })).toHaveTextContent('2 slotta yedek')
+  })
+
   it('derinlik: eski ?grup= bağlantısı (Masa) ilgili ilk slot satırına odaklanır', async () => {
     renderAt('/career/squad?sekme=derinlik&grup=MID')
     const row = await screen.findByRole('listitem', { name: 'LCM slotu' })

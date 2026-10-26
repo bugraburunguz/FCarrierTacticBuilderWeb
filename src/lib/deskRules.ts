@@ -2,6 +2,7 @@ import type { AcademyPlayer, CareerPlayer, CareerSnapshot, RosterEventType } fro
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
 import { deskLink } from './deskLinks'
 import { compareWeakClass, isWeakClass, roleFitText, WEAK_CLASS_ORDER, WEAK_CLASS_TEXT, type FitLabel, type WeakClass } from './fitLabels'
+import { SLOT_URGENCY_LABEL, slotDepth, type SlotDepthRow, type SlotUrgency } from './slotDepth'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
 export interface DeskSlot {
@@ -168,6 +169,8 @@ interface ActionInput {
   gameDate?: string
   /** ACADEMY-b: verilirse "Altyapıdan A takıma al" işleri (yalnız sunucunun "A takıma al" önerisi olan oyuncular). */
   academy?: readonly AcademyPlayer[]
+  /** v3 Masa: derinlik işi slot bazlı (Derinlik ile aynı kural ve metin). Verilmezse (v2) mevki grubu işi. */
+  depthBySlot?: boolean
 }
 
 /** Sözleşme işi önceliği: satışın (40+) altında, derinliğin (20 + 5·eksik) üstünde; bitime yaklaştıkça artar. */
@@ -245,7 +248,23 @@ export function jobLayer(kind: ActionKind): 'tactic' | 'record' {
 }
 
 /** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
-export function rankActions({ squad, slots, tags, gameDate, academy }: ActionInput): DeskAction[] {
+/** Slot bazlı derinlik işi önceliği: sözleşmenin altında, eski grup işiyle aynı bantta (20–35); yedek yok en önde. */
+const DEPTH_PRIORITY: Record<SlotUrgency, number> = { NO_BACKUP: 35, YOUTH_ONLY: 28, OLD_STARTER: 24, QUALITY_GAP: 22 }
+
+function depthReason(row: SlotDepthRow): string {
+  switch (row.urgency) {
+    case 'NO_BACKUP':
+      return `${row.position} slotunda ilk 11 dışında oynayabilecek oyuncu yok; sakatlık ve rotasyonda açık kalır.`
+    case 'YOUTH_ONLY':
+      return `${row.position} slotunda yalnız genç yedek var${row.youth ? ` (${row.youth.name})` : ''}; deneyimli bir yedek düşün.`
+    case 'OLD_STARTER':
+      return `İlk 11'deki ${row.starter?.name ?? 'oyuncu'} ${row.starter?.age ?? 30} yaşında; düşüş başlamadan yerine hazırlık yap.`
+    default:
+      return `${row.starter?.name ?? 'İlk 11 oyuncusu'} takımın kalite açığı; yedeğiyle birlikte değerlendir.`
+  }
+}
+
+export function rankActions({ squad, slots, tags, gameDate, academy, depthBySlot }: ActionInput): DeskAction[] {
   const starters = new Set(slots.flatMap((s) => (s.playerId ? [s.playerId] : [])))
   const actions: DeskAction[] = []
 
@@ -286,15 +305,33 @@ export function rankActions({ squad, slots, tags, gameDate, academy }: ActionInp
     }
   })
 
-  depthRows(squad).filter((d) => d.short > 0).forEach((d) => {
-    actions.push({
-      kind: 'DEPTH',
-      title: `Derinlik: ${GROUP_LABEL[d.group]} ${d.have}/${d.need}`,
-      reason: `${GROUP_LABEL[d.group]} grubunda ${d.short} oyuncu eksik; sakatlık ve rotasyonda açık kalır.`,
-      to: deskLink.depth(d.group),
-      priority: 20 + d.short * 5,
+  if (depthBySlot) {
+    // GT-b: Derinlik ile aynı kural ve metin. Altyapı bilinmiyorken "Yedek yok" üretilmez (altyapı genç ekleyebilir).
+    slotDepth(slots, squad, [...(academy ?? [])]).forEach((row) => {
+      if (!row.urgency || (row.urgency === 'NO_BACKUP' && academy === undefined)) {
+        return
+      }
+      const where = row.slotId === row.position ? row.position : `${row.position} (${row.slotId})`
+      actions.push({
+        slotId: row.slotId,
+        kind: 'DEPTH',
+        title: `Derinlik: ${where} · ${SLOT_URGENCY_LABEL[row.urgency]}`,
+        reason: depthReason(row),
+        to: deskLink.depthSlot(row.slotId),
+        priority: DEPTH_PRIORITY[row.urgency],
+      })
     })
-  })
+  } else {
+    depthRows(squad).filter((d) => d.short > 0).forEach((d) => {
+      actions.push({
+        kind: 'DEPTH',
+        title: `Derinlik: ${GROUP_LABEL[d.group]} ${d.have}/${d.need}`,
+        reason: `${GROUP_LABEL[d.group]} grubunda ${d.short} oyuncu eksik; sakatlık ve rotasyonda açık kalır.`,
+        to: deskLink.depth(d.group),
+        priority: 20 + d.short * 5,
+      })
+    })
+  }
 
   if (gameDate) {
     squad.filter((c) => !c.loanedOut).forEach((c) => {
