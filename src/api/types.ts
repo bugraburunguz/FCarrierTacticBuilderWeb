@@ -718,6 +718,8 @@ export interface YouthDetail {
   /** assumption (GROWTH-CAL): tahminin varsayımı, tek satır (altyapı/A takım kazanç tavanları). */
   advice: { sentence: string; plans: { label: string; kind: 'GENERAL' | 'ROLE' | 'POSITION'; position: string; overall1: number; overall2: number }[]; estimated: boolean; assumption?: string | null }
   position: { bestPosition: string; bestOverall?: number | null; listedPositions: string[]; conversionText?: string | null; sideReason?: string | null }
+  /** Karar (GROWTH-CAL): 16 yaş altı altyapı gencinin terfi tarihi ("16 yaşında A takıma alınabilir · tarih"); panelde küçük satır. */
+  eligibleText?: string | null
   /** source: MAIN ana taktik, AUTO başlangıç önerisi ("Otomatik öneri"). strengths: 1–3 sezon tahmini Güç. */
   team: {
     position: string; source: 'MAIN' | 'AUTO'; slots: number; starterName?: string | null; starterStrength?: number | null; backupName?: string | null

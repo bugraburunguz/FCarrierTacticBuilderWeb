@@ -172,6 +172,17 @@ describe('AcademyPage', () => {
     expect(await within(panel).findByText('Tahmin: 1. sezon altyapıda (en çok +5 OVR), 2. sezon A takımda (en çok +8 OVR).')).toBeInTheDocument()
   })
 
+  it('karar: satırda notu olmayan 16 yaş altı gencin terfi tarihi panelde küçük satır', async () => {
+    vi.mocked(endpoints.academy).mockResolvedValue({ ...ACADEMY, players: [row(61, { name: 'Notsuz Genç', age: 15, promoteInfo: null })] })
+    vi.mocked(endpoints.youthDetail).mockResolvedValue({ ...DETAIL, playerId: 61, name: 'Notsuz Genç', eligibleText: '16 yaşında A takıma alınabilir · 19.08.2028' })
+    renderAt()
+    const item = await rowButton(/Notsuz Genç/)
+    expect(item).not.toHaveTextContent('A takıma alınabilir')
+    fireEvent.click(item)
+    const panel = await screen.findByRole('complementary', { name: 'Notsuz Genç' })
+    expect(await within(panel).findByText('16 yaşında A takıma alınabilir · 19.08.2028')).toBeInTheDocument()
+  })
+
   it('aralık modu: POT bant olarak', async () => {
     vi.mocked(endpoints.academy).mockResolvedValue({ ...ACADEMY, players: [row(50, { name: 'Bantlı', potential: null, potentialRange: '70–74' })] })
     renderAt()

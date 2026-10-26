@@ -58,6 +58,7 @@ export function YouthDetailBody({ careerId, playerId }: { careerId: number; play
           <li>Tahmini Güç: <span className="tabular-nums">{team.strengths.map((s, i) => `${i + 1}. sezon ${Math.round(s)}`).join(' · ')}</span></li>
         </ul>
         <p className="text-sm">{teamText(team)} <span className="text-xs text-muted">(tahmin)</span></p>
+        {detail.data.eligibleText && <p className="text-xs text-muted">{detail.data.eligibleText}</p>}
       </Block>
     </div>
   )
