@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useId, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
+import type { AgeGroup } from '../../api/types'
 import { EmptyState, ErrorState, Segmented, SidePanel, Skeleton } from '../../design/components/primitives'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { isPlateau } from '../../lib/deskRules'
@@ -32,10 +33,17 @@ function Section({ title, children, actions, subtitle }: { title: string; childr
 /** "▲ Nyoni +3 (66→69)" — düz metin; yön ok ve işaretle de yazar (renk tek başına anlam taşımaz). */
 const moverText = (m: Mover) => `${m.delta > 0 ? '▲' : '▼'} ${m.name} ${m.delta > 0 ? '+' : '−'}${Math.abs(m.delta)} (${m.from}→${m.to})`
 
+/** GT-a: yaş bölümleri (sınırlar backend config'i: development.recommend max-age 23, veteran-from-age 30). */
+const AGE_SECTIONS: { group: AgeGroup; title: string; subtitle: string }[] = [
+  { group: 'YOUTH', title: 'Gençler', subtitle: '23 yaş ve altı · büyüme · kiralıktaki gençler dahil' },
+  { group: 'PEAK', title: 'Zirve', subtitle: '24–29 yaş · rolde incelme ya da koruma' },
+  { group: 'VETERAN', title: 'Tecrübeliler', subtitle: '30 yaş ve üstü · düşüşü yavaşlatma' },
+]
+
 /**
- * Gelişim (ACADEMY-b §3): "Kadromdaki gençler doğru gelişiyor mu?". Gelişim planları (A takım ≤ 23 yaş, potansiyeli OVR'den ≥ 5 yüksek + kiralıktaki
- * gençler; Altyapı satır biçimi ve paneli; geçmiş istemez) ve "Son içe aktarmadan beri" düz listesi (▲/▼, fark, önce→şimdi; plato satır içinde; iki
- * içe aktarma ister). Oyuncu seçici ve geçmiş grafiği oyuncu sayfasının Gelişim sekmesinde.
+ * Gelişim (GT-a): "Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?". A takımın her oyuncusu yaşa göre üç bölümde (Gençler, Zirve, Tecrübeliler);
+ * Altyapı satır biçimi ve paneli, satırda tek plan ve tek satır gerekçe (tahmin; geçmiş istemez). "Son içe aktarmadan beri" düz listesi (▲/▼, fark,
+ * önce→şimdi; plato satır içinde; iki içe aktarma ister). Oyuncu seçici ve geçmiş grafiği oyuncu sayfasının Gelişim sekmesinde.
  */
 export function GrowthPage() {
   const careerId = useActiveCareerId()
@@ -44,7 +52,7 @@ export function GrowthPage() {
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
   const id = career?.id
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
-  const youth = useQuery({ queryKey: ['youth', id], queryFn: () => endpoints.youth(id!), enabled: id !== undefined, staleTime: 300_000 })
+  const training = useQuery({ queryKey: ['training', id], queryFn: () => endpoints.training(id!), enabled: id !== undefined, staleTime: 300_000 })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
   const enough = (snapshots.data?.length ?? 0) >= 2
   const season = useMemo(() => seasonStartRange(snapshots.data ?? []), [snapshots.data])
@@ -60,7 +68,7 @@ export function GrowthPage() {
   }, [diff.data, members])
   // Masa'nın "Süre ver ya da kirala" bağlantısı plan listesinde olmayan kadro oyuncusunu da açar (panel ucu kadro oyuncusu için çalışır).
   const selected = selectedId === undefined ? undefined
-    : youth.data?.find((p) => p.playerId === selectedId) ?? (members.has(selectedId) ? { playerId: selectedId, name: members.get(selectedId)!.name } : undefined)
+    : training.data?.find((p) => p.playerId === selectedId) ?? (members.has(selectedId) ? { playerId: selectedId, name: members.get(selectedId)!.name } : undefined)
 
   if (careers.isLoading) {
     return <Skeleton className="h-64" />
@@ -77,18 +85,25 @@ export function GrowthPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header>{heading}</header>
+      <header>
+        {heading}
+        <p className="text-sm text-ink-2">Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?</p>
+      </header>
       <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <Section title="Gelişim planları" subtitle="A takımda 23 yaş ve altı + kiralıktaki gençler · tahmin">
-            {youth.isLoading ? <Skeleton className="h-40" /> : youth.isError && !youth.data ? (
-              <ErrorState message="Gelişim planları yüklenemedi." onRetry={() => youth.refetch()} />
-            ) : (youth.data ?? []).length === 0 ? (
-              <p className="text-sm text-ink-2">Gelişim planı önerilecek genç yok (≤ 23 yaş, potansiyeli OVR'den en az 5 yüksek).</p>
-            ) : (
-              <YouthList players={youth.data!} label="Gelişim planları" onOpen={open} selectedId={selectedId} />
-            )}
-          </Section>
+          {training.isLoading ? <Skeleton className="h-40" /> : training.isError && !training.data ? (
+            <ErrorState message="Antrenman planları yüklenemedi." onRetry={() => training.refetch()} />
+          ) : (training.data ?? []).length === 0 ? (
+            <EmptyState>Antrenman planı önerilecek oyuncu yok. Kariyer içinden içe aktarınca dolar.</EmptyState>
+          ) : AGE_SECTIONS.map((s) => {
+            const players = training.data!.filter((p) => p.ageGroup === s.group)
+            return (
+              <Section key={s.group} title={s.title} subtitle={`${s.subtitle} · tahmin`}>
+                {players.length === 0 ? <p className="text-sm text-ink-2">Bu yaş bölümünde oyuncu yok.</p>
+                  : <YouthList players={players} label={s.title} onOpen={open} selectedId={selectedId} reason />}
+              </Section>
+            )
+          })}
 
           <Section title="Son içe aktarmadan beri" actions={enough ? (
             <Segmented label="Aralık" value={range} onChange={setRange}

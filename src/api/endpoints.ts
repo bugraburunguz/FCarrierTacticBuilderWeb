@@ -15,7 +15,10 @@ import type {
   CareerPlayerContract,
   CareerPlayerFacets,
   Club,
+  ClubRecommendations,
   Credited,
+  ManagerProfile,
+  ManagerProfileView,
   Formation,
   FitRoleResult,
   LookupItem,
@@ -200,6 +203,12 @@ export const endpoints = {
   leagues: (gender?: number) => api.get<LookupItem[]>('/leagues', { gender }),
   nationalities: () => api.get<LookupItem[]>('/nationalities'),
 
+  // MGR-a: menajer profili (yoksa null) ve ücretsiz kulüp önerisi (gövde boş → kayıtlı profil; kendi hız kovası 5/dk).
+  managerProfile: () => api.get<ManagerProfileView | null>('/me/manager-profile'),
+  saveManagerProfile: (profile: ManagerProfile) => request<ManagerProfileView>('/me/manager-profile', { method: 'PUT', body: profile }),
+  clubRecommendations: (body: { profile?: ManagerProfile; leagueId?: number; gender?: number } = {}) =>
+    api.post<ClubRecommendations>('/manager/club-recommendations', body),
+
   roles: () => api.get<Role[]>('/roles'),
   behaviorTags: (pos?: string) => api.get<BehaviorTag[]>('/behavior-tags', { pos }),
   formations: () => api.get<Formation[]>('/formations'),
@@ -229,6 +238,8 @@ export const endpoints = {
   academy: (careerId: number) => api.get<Academy>(`/careers/${careerId}/academy`),
   /** ACADEMY-b: Gelişim planları satırları (A takım gençleri, kiralıktakiler dahil). */
   youth: (careerId: number) => api.get<AcademyPlayer[]>(`/careers/${careerId}/youth`),
+  /** GT-a: tüm takım antrenman planı — A takımın her oyuncusu yaş bölümüyle (kiralıktakilerden yalnız gençler). */
+  training: (careerId: number) => api.get<AcademyPlayer[]>(`/careers/${careerId}/training`),
   /** ACADEMY-b paneli: Ne yapmalıyım? · Hangi mevkide? · Takımdaki yeri. */
   youthDetail: (careerId: number, playerId: number) => api.get<YouthDetail>(`/careers/${careerId}/youth/${playerId}`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>

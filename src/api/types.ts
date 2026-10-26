@@ -700,7 +700,11 @@ export interface AcademyPlayer {
   loanedOut?: boolean
   /** GROWTH-CAL: 16 yaş altı altyapı oyuncusu — "A takıma al" yok; "16 yaşında A takıma alınabilir · tarih" (kıyas o tarihteki tahminle). */
   promoteInfo?: { eligibleOn: string; text: string; position?: string | null; strength?: number | null; backupName?: string | null; backupStrength?: number | null } | null
+  /** GT-a: Gelişim yaş bölümü — Gençler (≤ 23), Zirve (24–29), Tecrübeliler (30+). */
+  ageGroup?: AgeGroup | null
 }
+
+export type AgeGroup = 'YOUTH' | 'PEAK' | 'VETERAN'
 
 export type AcademyStatus = 'READY' | 'GROWING' | 'WAITING'
 
@@ -1622,4 +1626,56 @@ export interface StarterTactic {
   lineup: Record<string, number>
   squadFit: number
   alternatives: { formationId: string; score: number }[]
+}
+
+/** MGR-a: menajer profili (hesaba bağlı, tek) ve kulüp önerisi. formation yok → "Fark etmez"; leagueId/gender isteğe bağlı filtre. */
+export type ManagerLicence = 'NONE' | 'NATIONAL_C' | 'NATIONAL_B' | 'NATIONAL_A' | 'INTERNATIONAL_C' | 'INTERNATIONAL_B' | 'INTERNATIONAL_A' | 'PRO'
+export type ManagerBackground = 'AMATEUR' | 'SEMI_PRO' | 'PRO_LOCAL' | 'PRO_REGIONAL' | 'PRO_NATIONAL' | 'INTERNATIONAL' | 'WORLD_CLASS'
+export type ManagerStyle = 'POSSESSION' | 'BALANCED' | 'COUNTER' | 'HIGH_PRESS'
+export type ManagerPriority = 'YOUTH' | 'QUICK_SUCCESS' | 'FINANCIAL' | 'RESCUE'
+export type ManagerDifficulty = 'EASY' | 'MEDIUM' | 'HARD'
+export type ClubCategory = 'BEST_FIT' | 'YOUTH_PROJECT' | 'RESCUE' | 'STRONG_BUDGET' | 'SAFE' | 'DREAM'
+
+export interface ManagerProfile {
+  name?: string
+  licence: ManagerLicence
+  background: ManagerBackground
+  formation?: string
+  style: ManagerStyle
+  priorities: ManagerPriority[]
+  difficulty: ManagerDifficulty
+  leagueId?: number
+  gender?: number
+}
+
+export interface ManagerProfileView {
+  profile: ManagerProfile
+  reputation: number
+  band: string
+}
+
+export interface ClubRecommendationCard {
+  category: ClubCategory
+  clubId: number
+  clubName: string
+  leagueId?: number
+  league?: string
+  difficulty: ManagerDifficulty
+  evidence: string[]
+  expectation: string
+  formation?: string
+  style: ManagerStyle
+  squadFit?: number
+  roleFit?: number
+  need: number
+  dream: boolean
+}
+
+export interface ClubRecommendations {
+  reputation: number
+  band: string
+  /** false → katalogda kulüp profili yok (içe aktarma gerekli); kartlar boş. */
+  catalogReady: boolean
+  cards: ClubRecommendationCard[]
+  missing: { category: ClubCategory; reason: string }[]
 }

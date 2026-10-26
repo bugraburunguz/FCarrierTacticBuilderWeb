@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { Club } from '../../api/types'
@@ -9,6 +9,7 @@ import { Chip, EmptyState, Skeleton } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
 import { careerStore, useActiveCareerId } from '../../state/careerStore'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
+import { ClubRecommendations } from '../manager/ClubRecommendations'
 
 const INPUT = 'glass-3 min-h-10 w-full rounded-[var(--radius-sm)] px-3 text-sm text-ink placeholder:text-muted max-sm:min-h-11'
 const LABEL = 'text-xs font-medium text-ink-2'
@@ -16,6 +17,7 @@ const LABEL = 'text-xs font-medium text-ink-2'
 /**
  * Yeni kariyer (v3, V3-07a): kulüp ara (katalog kulüpleri), isteğe bağlı ad, sezon, oyun tarihi ve bütçe; oluştur → aktif kariyer → Masa.
  * Bütçe boşsa gönderilmez (bilinmiyor; 0 değil, ENG-02). Oyun tarihi oluşturma isteğinde yok: oluşturduktan sonra kariyere yazılır.
+ * MGR-b: ilk adım kulüp önerisi; "Bu kulüple başla" kulübü bu forma seçer, "Başka kulüp seç" kulüp aramasına odaklar.
  */
 export function NewCareerPage() {
   const navigate = useNavigate()
@@ -28,6 +30,19 @@ export function NewCareerPage() {
   const [season, setSeason] = useState('')
   const [gameDate, setGameDate] = useState('')
   const [budget, setBudget] = useState<number>()
+  const clubInput = useRef<HTMLInputElement>(null)
+  const submitButton = useRef<HTMLButtonElement>(null)
+  const startWith = (picked: Club) => {
+    setClub(picked)
+    setTerm('')
+    submitButton.current?.scrollIntoView?.({ block: 'center' })
+    submitButton.current?.focus({ preventScroll: true })
+  }
+  const pickOther = () => {
+    setClub(undefined)
+    clubInput.current?.scrollIntoView?.({ block: 'center' })
+    clubInput.current?.focus({ preventScroll: true })
+  }
   const clubs = useQuery({ queryKey: ['clubs', term], queryFn: () => endpoints.clubs(term), enabled: term.trim().length >= 2 && !club })
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const create = useMutation({
@@ -53,10 +68,11 @@ export function NewCareerPage() {
   return (
     <div className="mx-auto flex w-full max-w-[960px] flex-col gap-3 py-2">
       <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Yeni kariyer</h1>
+      <ClubRecommendations onStart={startWith} onPickOther={pickOther} />
       <section aria-label="Kariyer bilgileri" className="glass flex flex-col gap-4 p-4 sm:p-5">
         <div className="relative flex flex-col gap-1">
           <label htmlFor={ids.club} className={LABEL}>Kulüp</label>
-          <input id={ids.club} role="combobox" aria-expanded={!club && (clubs.data ?? []).length > 0} aria-controls={ids.list} aria-autocomplete="list" className={INPUT}
+          <input ref={clubInput} id={ids.club} role="combobox" aria-expanded={!club && (clubs.data ?? []).length > 0} aria-controls={ids.list} aria-autocomplete="list" className={INPUT}
             value={club ? club.name : term} placeholder="Kulüp adı yaz…" onChange={(e) => { setClub(undefined); setTerm(e.target.value) }} />
           {!club && (clubs.data ?? []).length > 0 && (
             <ul id={ids.list} role="listbox" aria-label="Kulüpler" className="glass-3 mt-1 max-h-64 overflow-y-auto rounded-[var(--radius-sm)] text-sm">
@@ -91,7 +107,7 @@ export function NewCareerPage() {
           </div>
         </div>
         <ErrorAlert error={create.error} />
-        <button type="button" disabled={!club || create.isPending} onClick={() => create.mutate()} className={`${PRIMARY_BUTTON} sm:w-auto sm:self-start`}>
+        <button ref={submitButton} type="button" disabled={!club || create.isPending} onClick={() => create.mutate()} className={`${PRIMARY_BUTTON} sm:w-auto sm:self-start`}>
           {create.isPending ? 'Oluşturuluyor…' : 'Kariyeri oluştur'}
         </button>
         <p className="text-xs text-ink-2">Kadro kulübün katalogdaki oyuncularıyla başlar. Gerçek kayıt verin varsa sonra <Link to="/career/import" className="font-semibold text-accent underline-offset-2 hover:underline">içe aktar</Link>.</p>
