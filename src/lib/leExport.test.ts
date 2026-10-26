@@ -17,6 +17,12 @@ describe('LE export script kopyası (WEB-BUG-25)', () => {
     expect(script).toContain(EXPORT_DONE_WINDOW)
   })
 
+  it('GTR-a: betik 2.0.4 oynama süresi tablolarını kariyerde dışa aktarır', () => {
+    expect(script).toContain('"FCX2", "2.0.4"')
+    expect(script).toContain('{"career_playermatchratinghistory",0,1}')
+    expect(script).toContain('{"career_playergrowthuserseason",0,1}')
+  })
+
   it('son kullanıcıya geliştirici dili göstermez', () => {
     expect(script).not.toContain('Bana')
     expect(script).not.toContain('projenin')

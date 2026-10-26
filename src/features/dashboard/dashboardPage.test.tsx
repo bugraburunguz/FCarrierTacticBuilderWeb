@@ -90,11 +90,19 @@ describe('Masa menajer satırı (MGR-b)', () => {
     expect(link).toHaveAttribute('href', '/career/manager?sonra=masa')
   })
 
-  it('profil yoksa satır çıkmaz', async () => {
+  it('profil yoksa aynı yerde profil oluşturma satırı (kullanıcı menajer ekranını bulamıyordu)', async () => {
+    renderPage()
+    const link = await screen.findByRole('link', { name: 'Menajer profilini oluştur → kulüp önerileri ve itibar' })
+    expect(link).toHaveAttribute('href', '/career/manager?sonra=masa')
+    expect(screen.queryByRole('link', { name: /^Menajer:/ })).toBeNull()
+  })
+
+  it('profil alınamazsa satır çıkmaz (yanlış "oluştur" çağrısı yok)', async () => {
+    vi.mocked(endpoints.managerProfile).mockRejectedValue(new Error('ağ'))
     renderPage()
     expect((await screen.findAllByRole('heading', { name: 'Kariyer Masası' })).length).toBeGreaterThan(0)
     await waitFor(() => expect(endpoints.managerProfile).toHaveBeenCalled())
-    expect(screen.queryByRole('link', { name: /^Menajer:/ })).toBeNull()
+    expect(screen.queryByRole('link', { name: /Menajer/ })).toBeNull()
   })
 
   it('kariyer yokken boş durum kulüp önerilerine (Yeni kariyer) yönlendirir', async () => {

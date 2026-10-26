@@ -90,14 +90,23 @@ function PastTimeline({ events, snapshots }: { events: RosterEvent[]; snapshots:
   )
 }
 
-/** MGR-b §3: küçük menajer satırı; tıklayınca profil. Profil yoksa (404) ya da alınamazsa satır yok; başka etkisi yok. */
+/** MGR-b §3: küçük menajer satırı; tıklayınca profil. Profil yoksa oluşturma satırı; alınamazsa satır yok; başka etkisi yok. */
 function ManagerLine() {
-  const { data } = useManagerProfile()
+  const { data, missing } = useManagerProfile()
+  const className = 'inline-flex min-h-10 items-center gap-1.5 self-start text-xs text-ink-2 underline-offset-2 hover:text-ink hover:underline max-sm:min-h-11'
+  // Profil yoksa (sunucu: data null) aynı yerde oluşturma çağrısı: kullanıcı menajer ekranını bulamıyordu. Alınamadıysa satır yok.
+  if (missing) {
+    return (
+      <Link to="/career/manager?sonra=masa" className={className}>
+        <UserRound size={14} aria-hidden="true" />Menajer profilini oluştur → kulüp önerileri ve itibar
+      </Link>
+    )
+  }
   if (!data) {
     return null
   }
   return (
-    <Link to="/career/manager?sonra=masa" className="inline-flex min-h-10 items-center gap-1.5 self-start text-xs text-ink-2 underline-offset-2 hover:text-ink hover:underline max-sm:min-h-11">
+    <Link to="/career/manager?sonra=masa" className={className}>
       <UserRound size={14} aria-hidden="true" />Menajer: {data.profile.name || '—'} · itibar {data.band}
     </Link>
   )
