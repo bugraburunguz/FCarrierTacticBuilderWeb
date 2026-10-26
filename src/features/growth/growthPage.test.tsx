@@ -23,7 +23,7 @@ const youth = (id: number, extra: Partial<AcademyPlayer> = {}): AcademyPlayer =>
 })
 const VETERAN = youth(21, {
   name: 'Vardy', age: 34, overall: 80, potential: 80, conversionPosition: null, bestPosition: 'ST', ageGroup: 'VETERAN',
-  plan: { name: 'Poacher', label: 'ST · Poacher', text: 'Vardy · Plansız tahmini −3 OVR, ST · Poacher planıyla −1 (bitiricilik ve pozisyon alma korunur) · tahmin', balanced: false },
+  plan: { name: 'Poacher', label: 'ST · Poacher', text: 'Vardy · Plansız tahmini −3 OVR / −2,6 Güç, ST · Poacher planıyla −1 OVR / −1,2 Güç (bitiricilik ve pozisyon alma korunur) · tahmin', balanced: false },
 })
 const PEAK = youth(31, {
   name: 'Okafor', age: 26, overall: 74, potential: 76, conversionPosition: null, ageGroup: 'PEAK',
@@ -146,7 +146,7 @@ describe('Gelişim (sade)', () => {
     const veterans = within(screen.getByRole('region', { name: 'Tecrübeliler' }))
     const row = veterans.getByRole('button', { name: /Vardy/ })
     expect(row).toHaveTextContent('Önerilen plan: ST · Poacher')
-    expect(row).toHaveTextContent('Plansız tahmini −3 OVR, ST · Poacher planıyla −1 (bitiricilik ve pozisyon alma korunur) · tahmin')
+    expect(row).toHaveTextContent('Plansız tahmini −3 OVR / −2,6 Güç, ST · Poacher planıyla −1 OVR / −1,2 Güç (bitiricilik ve pozisyon alma korunur) · tahmin')
     expect(row.textContent).not.toContain('Vardy · ')
     // Adı bilinmeyen oyuncu: sunucu metni ham adla başlar ("Oyuncu #…"); satırda o da tekrar edilmez.
     expect(peak.getByRole('button', { name: /Okafor/ }).textContent).not.toContain('Okafor · ')
@@ -154,10 +154,10 @@ describe('Gelişim (sade)', () => {
   })
 
   it('gerekçe ham adla başlasa da (adı bilinmeyen oyuncu) satırda ad kırpılır', async () => {
-    vi.mocked(endpoints.training).mockResolvedValue([{ ...VETERAN, name: 'Adı bilinmiyor', plan: { ...VETERAN.plan!, text: 'Oyuncu #202017 · Plansız tahmini −2 OVR, LM mevki planıyla −2 · tahmin' } }])
+    vi.mocked(endpoints.training).mockResolvedValue([{ ...VETERAN, name: 'Adı bilinmiyor', plan: { ...VETERAN.plan!, text: 'Oyuncu #202017 · Plansız tahmini −2 OVR / −5,3 Güç, LM mevki planıyla −1 OVR / −4,7 Güç · tahmin' } }])
     renderPage()
     const row = await within(await screen.findByRole('region', { name: 'Tecrübeliler' })).findByRole('button', { name: /Adı bilinmiyor/ })
-    expect(row).toHaveTextContent('Plansız tahmini −2 OVR, LM mevki planıyla −2 · tahmin')
+    expect(row).toHaveTextContent('Plansız tahmini −2 OVR / −5,3 Güç, LM mevki planıyla −1 OVR / −4,7 Güç · tahmin')
     expect(row.textContent).not.toContain('Oyuncu #202017')
   })
 
