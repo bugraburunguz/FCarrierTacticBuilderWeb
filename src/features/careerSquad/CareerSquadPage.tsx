@@ -17,7 +17,7 @@ import { SaveMoves } from '../squad/kadro/SaveMoves'
 import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
 import { squadStats } from './careerSquadRules'
 import { DepthTab } from './DepthTab'
-import { buildDepthSlots } from './slotDepth'
+import { buildDepthSlots } from '../../lib/slotDepth'
 import { useCareerSquadData } from './useCareerSquadData'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { fitTitle } from '../../lib/fitLabels'
@@ -145,7 +145,7 @@ export function CareerSquadPage() {
       <TabPanel idPrefix={PREFIX} id="derinlik" active={tab === 'derinlik'}>
         <DepthTab squad={players} slots={depthSlots} auto={k.fits.main.source?.kind === 'auto'} gameDate={gameDate} record={record}
           careerId={career.id} tacticRows={k.fits.rows} tacticPending={k.fits.main.isLoading || k.fits.pending}
-          wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} />
+          wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} wantedSlot={params.get('slot') ?? undefined} />
       </TabPanel>
 
       <TabPanel idPrefix={PREFIX} id="hareketler" active={tab === 'hareketler'}>

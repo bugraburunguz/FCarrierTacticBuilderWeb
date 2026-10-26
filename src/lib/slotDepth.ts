@@ -1,7 +1,8 @@
-import type { AcademyPlayer, CareerPlayer } from '../../api/types'
-import { groupOf, type PositionGroup } from '../../lib/deskRules'
-import type { WeakClass } from '../../lib/fitLabels'
-import { YOUTH_MAX_AGE } from './careerSquadRules'
+import type { AcademyPlayer, CareerPlayer } from '../api/types'
+import type { WeakClass } from './fitLabels'
+
+/** Derinlikte "Genç" kolonu ve yaş bandı sınırı. Kural Kadro › Derinlik ile Masa'nın derinlik işinde ortak (GT-b). */
+export const YOUTH_MAX_AGE = 21
 
 /** Matris satırı: ana taktiğin (yoksa başlangıç önerisinin) slotu ve dizilen oyuncu; weakClass /fit/lineup sınıfı (kalite açığı). */
 export interface DepthSlot {
@@ -39,6 +40,8 @@ export interface SlotDepthRow extends DepthSlot {
   urgency?: SlotUrgency
   /** Altyapıda bu mevkide oynayan en yüksek OVR'li oyuncu ("Altyapıda: {ad}"). */
   academyName?: string
+  /** Yedek kaç slotta yedek sayılıyor (farklı mevkili slotlar aynı oyuncuyu paylaşabilir; ≥ 2 ise hücrede not). */
+  backupSlots?: number
 }
 
 const OLD_STARTER_AGE = 30
@@ -58,7 +61,7 @@ export function slotDepth(slots: DepthSlot[], squad: CareerPlayer[], academy: Ac
   const starters = new Set(slots.flatMap((s) => (s.playerId !== undefined ? [s.playerId] : [])))
   const bench = squad.filter((c) => !starters.has(c.player.id) && !c.loanedOut).sort((a, b) => b.player.overall - a.player.overall)
   const seen = new Map<string, number>()
-  return slots.map((s) => {
+  const rows = slots.map((s): SlotDepthRow => {
     const index = seen.get(s.position) ?? 0
     seen.set(s.position, index + 1)
     const plays = (c: CareerPlayer) => c.player.positions.includes(s.position)
@@ -76,6 +79,9 @@ export function slotDepth(slots: DepthSlot[], squad: CareerPlayer[], academy: Ac
           : s.weakClass && QUALITY_GAP.has(s.weakClass) ? 'QUALITY_GAP' : undefined
     return { ...s, starter, backup, youth: youngest, urgency, academyName: academyAt[0]?.name }
   })
+  const backupCount = new Map<number, number>()
+  rows.forEach((r) => r.backup && backupCount.set(r.backup.id, (backupCount.get(r.backup.id) ?? 0) + 1))
+  return rows.map((r) => (r.backup ? { ...r, backupSlots: backupCount.get(r.backup.id) } : r))
 }
 
 /**
@@ -100,9 +106,4 @@ export function buildDepthSlots(
       playerId: typeof id === 'number' ? id : undefined, weakClass: fit?.weakClass,
     }
   })
-}
-
-/** Eski `?grup=` (Masa derinlik bağlantısı) → o grubun ilk slot satırı. */
-export function slotForGroup(slots: DepthSlot[], group: PositionGroup | undefined): string | undefined {
-  return group ? slots.find((s) => groupOf(s.position) === group)?.slotId : undefined
 }

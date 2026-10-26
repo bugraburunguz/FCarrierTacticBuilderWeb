@@ -1,5 +1,7 @@
 import type { CareerPlayer } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft } from '../../lib/contract'
+import { groupOf, type PositionGroup } from '../../lib/deskRules'
+import { YOUTH_MAX_AGE, type DepthSlot } from '../../lib/slotDepth'
 
 /** Kadro Analizi kuralları (KARIYER-UX FAZ 3, 15 §4.2): saf fonksiyonlar, katman 1 (kayıt) girdisi. */
 
@@ -24,8 +26,13 @@ export function squadStats(squad: CareerPlayer[]): SquadStats {
   }
 }
 
-/** Derinlikte "Genç" kolonu ve yaş bandı sınırı (GT-b slot matrisi: slotDepth.ts). */
-export const YOUTH_MAX_AGE = 21
+/** Derinlikte "Genç" kolonu ve yaş bandı sınırı (lib/slotDepth ile aynı sayı). */
+export { YOUTH_MAX_AGE }
+
+/** Eski `?grup=` bağlantısı → o grubun ilk slot satırı (Masa artık `?slot=` verir). */
+export function slotForGroup(slots: DepthSlot[], group: PositionGroup | undefined): string | undefined {
+  return group ? slots.find((s) => groupOf(s.position) === group)?.slotId : undefined
+}
 
 export interface AgeBand {
   key: 'young' | 'prime' | 'veteran'
