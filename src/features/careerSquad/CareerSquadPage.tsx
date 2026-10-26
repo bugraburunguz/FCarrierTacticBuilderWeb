@@ -17,6 +17,7 @@ import { SaveMoves } from '../squad/kadro/SaveMoves'
 import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
 import { squadStats } from './careerSquadRules'
 import { DepthTab } from './DepthTab'
+import { buildDepthSlots } from './slotDepth'
 import { useCareerSquadData } from './useCareerSquadData'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { fitTitle } from '../../lib/fitLabels'
@@ -56,15 +57,10 @@ export function CareerSquadPage() {
   const grouping = parseGrouping(params.get('grup'))
   // FIT-1: rozet ve piyon metni sayıların adıyla ("Rol oturması %38 · Güç 65").
   const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, { ...r.display, title: fitTitle(r.display) }])), [k.fits.rows])
-  // KARIYER-UX 6 / FAZ 6a-B: derinlik matrisinin ilk 11'i ana taktiğin (yoksa başlangıç önerisinin) dizilişinden; oyuncu oynadığı slotun mevkisiyle.
+  // GT-b: derinlik matrisinin satırları her zaman ana taktiğin (yoksa başlangıç önerisinin) 11 slotu; rol ve kalite sınıfı uyum satırlarından.
   const lineup = k.fits.main.active?.lineup
-  const starters = useMemo(() => {
-    if (!lineup || !k.formation) {
-      return undefined
-    }
-    const positionOf = new Map(k.formation.slots.map((s) => [s.slotId, s.position]))
-    return new Map(Object.entries(lineup).flatMap(([slotId, id]) => (typeof id === 'number' && positionOf.has(slotId) ? [[id, positionOf.get(slotId)!] as const] : [])))
-  }, [lineup, k.formation])
+  const tacticSlots = k.fits.main.active?.tactic.slots
+  const depthSlots = useMemo(() => buildDepthSlots(k.formation, lineup, tacticSlots, k.fits.rows), [k.formation, lineup, tacticSlots, k.fits.rows])
 
   if (params.get('sekme') === 'altyapi') {
     return <Navigate to="/career/academy" replace />
@@ -147,7 +143,7 @@ export function CareerSquadPage() {
       </TabPanel>
 
       <TabPanel idPrefix={PREFIX} id="derinlik" active={tab === 'derinlik'}>
-        <DepthTab squad={players} needs={k.needs} formation={k.formation} gameDate={gameDate} record={record} starters={starters}
+        <DepthTab squad={players} slots={depthSlots} auto={k.fits.main.source?.kind === 'auto'} gameDate={gameDate} record={record}
           careerId={career.id} tacticRows={k.fits.rows} tacticPending={k.fits.main.isLoading || k.fits.pending}
           wanted={wanted && wanted in GROUP_LABEL ? wanted : undefined} />
       </TabPanel>

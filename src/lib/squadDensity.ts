@@ -157,26 +157,6 @@ export function slotTop(slot: FormationSlot, slots: FormationSlot[]): number {
   return max === min ? 40 : FIELD_TOP + ((slot.y - min) / (max - min)) * (FIELD_BOTTOM - FIELD_TOP)
 }
 
-const ROW_GAP = 5
-
-/**
- * Taktiğe göre mevki haritasının hatları (KARIYER-UX FAZ 3): kaleci dışı slotlar y'ye göre hatlara (aynı hatta ≤ 5 birim fark), hat içinde
- * soldan sağa; kaleci en altta. Satır düzeni mutlak konumdaki hücre çakışmasını (ör. 4-1-3-2'de CM/CDM) yapısal olarak önler.
- */
-export function formationRows(slots: FormationSlot[]): FormationSlot[][] {
-  const rows: FormationSlot[][] = []
-  ;[...slots].filter((s) => s.position !== 'GK').sort((a, b) => a.y - b.y).forEach((slot) => {
-    const row = rows[rows.length - 1]
-    if (row && slot.y - row[0].y <= ROW_GAP) {
-      row.push(slot)
-    } else {
-      rows.push([slot])
-    }
-  })
-  const keepers = slots.filter((s) => s.position === 'GK')
-  return [...rows, ...(keepers.length ? [keepers] : [])].map((row) => [...row].sort((a, b) => a.x - b.x))
-}
-
 export function footMark(p: CareerPlayer): string {
   if (isTwoFooted(p)) {
     return 'iki ayaklı'
