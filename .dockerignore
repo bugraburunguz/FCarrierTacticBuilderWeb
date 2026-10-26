@@ -1,3 +1,12 @@
 node_modules
 dist
 .git
+
+# OPS-SCREENS: build bağlamına doküman ve ekran görüntüsü girmez. docs/legal kalır: gizlilik metni uygulamaya ?raw ile gömülüyor (PrivacyPage).
+docs
+!docs/legal
+screens
+**/screens
+# Uygulama görselleri public/ altında (favicon, og-image, ikonlar) ve build'de kopyalanır: hariç tutulmaz.
+**/*.png
+!public/**/*.png

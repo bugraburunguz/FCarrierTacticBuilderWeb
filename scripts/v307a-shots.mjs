@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
 import { pageMinFont, stickyBand } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -19,7 +20,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   process.exit(2)
 }
 const dirOf = (sub) => {
-  const url = new URL(`../docs/review/v2/screens/V3-07a/${sub}/`, import.meta.url)
+  const url = screensDir('V3-07a', sub)
   mkdirSync(url, { recursive: true })
   return (n) => fileURLToPath(new URL(n, url))
 }

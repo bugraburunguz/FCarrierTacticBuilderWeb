@@ -7,6 +7,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const [taskId, rawRoute] = args
@@ -33,7 +34,7 @@ const matrix = flag('matrix', 'full')
 // Ek durum: sayfa yüklendikten sonra --click <css seçici> ile tıklanır ve dosya adına --tag eklenir
 const clickSelector = flag('click', undefined)
 const stateTag = flag('tag', clickSelector ? 'state' : '')
-const out = new URL(`../docs/review/v2/screens/${taskId}/`, import.meta.url)
+const out = screensDir(taskId)
 mkdirSync(out, { recursive: true })
 
 const widths = matrix === 'core' ? [375, 1280] : [375, 768, 1280]

@@ -1,11 +1,13 @@
 // REVIEW görsel kanıtı: hata durumları (Y4/Y5) ve satış diyaloğu para girişi (O2). 375/1280 × koyu.
 // Hata durumları gerçek backend'i bozmadan, yalnız bu sayfanın isteği yakalanıp 500 döndürülerek üretilir.
-// Kullanım: node scripts/review-shots.mjs --base http://localhost:5175 --set errors|money [--out docs/review/v2/screens/REVIEW/]
+// Kullanım: node scripts/review-shots.mjs --base http://localhost:5175 --set errors|money [--out <klasör>]   Varsayılan çıktı: Claude outputs/screens/REVIEW/ (repo dışı)
 // Yalnız localhost/127.0.0.1; test hesabı koşu sonunda silinir.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const arg = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d)
@@ -15,7 +17,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const outDir = resolve(arg('--out', 'docs/review/v2/screens/REVIEW/'))
+const outDir = arg('--out') ? resolve(arg('--out')) : fileURLToPath(screensDir('REVIEW'))
 mkdirSync(outDir, { recursive: true })
 
 await createGateAccount(base, 'gate-')

@@ -12,7 +12,7 @@ Tasarım dili ve token'lar: `docs/review/v2/11_GLASSMORPHISM_TASARIM_V3.md` (tek
 - Büyük kullanıcı verisi (kulüp kartları, capture) IndexedDB'de; localStorage yalnız küçük tercih.
 - Ağır hesap (SBC çözücü, delta önizleme) Web Worker'da.
 - Mutlak URL yok: `import.meta.env.BASE_URL` / `<Link>` (GitHub Pages alt yolu).
-- Her PR: `npm test`, `npm run lint`, `npm run build` yeşil; UI değişikliğinde `scripts/*-shots.mjs` ile ekran görüntüsü (otomatik görsel snapshot karşılaştırması yok).
+- Her PR: `npm test`, `npm run lint`, `npm run build` yeşil; UI değişikliğinde `scripts/*-shots.mjs` ile ekran görüntüsü, repo dışında `Claude outputs/screens/<görev-id>/` (otomatik görsel snapshot karşılaştırması yok).
 - Kullanıcıya görünen metin Türkçe, kısa; açıklama paragrafı yerine `HelpPopover`.
 
 ## Çalışma kuralları
@@ -42,8 +42,8 @@ Kurulu: Playwright MCP (`.mcp.json`, `@playwright/mcp@0.0.83`, yalnız `localhos
 
 **Playwright:** Yalnız `localhost`/`127.0.0.1`; başka siteye gitme, giriş formlarına gerçek şifre yazma (test hesabı yalnız yerel). Her UI görevinin sonunda şu döngü:
 1. Stack'i aç (http://localhost:8081).
-2. Değişen sayfanın 375/768/1280 genişlikte, koyu ve açık temada, UT ve kariyer modunda ekran görüntüsünü al; `docs/review/v2/screens/<görev-id>/` altına koy.
+2. Değişen sayfanın ekran görüntüsünü al (matris kök `CLAUDE.md`'deki kurala göre); proje kökündeki `Claude outputs/screens/<görev-id>/` altına koy (repo dışı; betikler `scripts/lib/screensDir.mjs` ile bulur).
 3. Sayfada axe çalıştır.
 4. Konsol hatası ve ağ 4xx/5xx var mı bak.
 5. Sorunları düzelt, döngüyü tekrarla. 11 §8 kapılarının hepsi yeşil olunca görev biter.
-6. Ekran görüntülerini commit'le, PR açıklamasına ekle.
+6. Ekran görüntüleri commit'lenmez (`.gitignore`: `screens/`); PR açıklamasına yolu ve kapı sonuçlarını yaz.

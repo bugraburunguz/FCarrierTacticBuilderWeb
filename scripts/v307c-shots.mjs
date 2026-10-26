@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
 import { pageMinFont, stickyBand } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -18,7 +19,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   process.exit(2)
 }
 // --out: başka görevin regresyon koşusu V3-07c kanıtını ezmesin (örn. --out PROD-PREP/kulubum).
-const outDir = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-07c'}/`, import.meta.url)
+const outDir = screensDir(args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-07c')
 mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 const SAMPLE_CAPTURES = fileURLToPath(new URL('../tests/fixtures/captures/sample-captures.json', import.meta.url))

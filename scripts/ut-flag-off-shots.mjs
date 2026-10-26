@@ -1,11 +1,12 @@
 // V3-06a: VITE_EXTENSION_CAPTURE=off iken UT menüsü ve yakalamaya bağlı sayfalar (CaptureOnly notu). 375/1280 × koyu/açık.
 // Sunucu: bayrak kapalı dev sunucusu, ör. `VITE_EXTENSION_CAPTURE=off VITE_BACKEND_URL=http://localhost:8081 npx vite --port 5173 --strictPort --host 127.0.0.1`.
-// Kullanım: node scripts/ut-flag-off-shots.mjs [--base http://127.0.0.1:5173]   Çıktı: docs/review/v2/screens/V3-06a/ut-flag-off/
+// Kullanım: node scripts/ut-flag-off-shots.mjs [--base http://127.0.0.1:5173]   Çıktı: Claude outputs/screens/V3-06a/ut-flag-off/ (repo dışı)
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { pageMinFont } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://127.0.0.1:5173'
@@ -13,7 +14,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-06a/ut-flag-off/', import.meta.url)
+const out = screensDir('V3-06a', 'ut-flag-off')
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const CAPTURE_ONLY = ['SBC', 'Kadrom', 'Objective', 'Evolution', 'Kulüp içe aktar']
