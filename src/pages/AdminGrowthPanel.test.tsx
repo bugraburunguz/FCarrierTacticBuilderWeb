@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 import { ApiError, request, requestText } from '../api/client'
 import type { GrowthReport } from '../api/types'
 import { AdminGrowthPanel } from './AdminGrowthPanel'
@@ -57,7 +57,9 @@ describe('Admin · Gelişim ölçümü (GTR-b)', () => {
 
   it('CSV indirme aynı aralıkla format=csv ister ve dosyayı indirir', async () => {
     const createObjectURL = vi.fn(() => 'blob:x')
+    const saved = { createObjectURL: URL.createObjectURL, revokeObjectURL: URL.revokeObjectURL }
     Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() })
+    onTestFinished(() => { Object.assign(URL, saved) })
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
     renderPanel()
     fill()
@@ -75,7 +77,7 @@ describe('Admin · Gelişim ölçümü (GTR-b)', () => {
     renderPanel()
     fill()
     fireEvent.click(screen.getByRole('button', { name: 'Raporu getir' }))
-    expect(await screen.findByText('Bu aralıkta iki anlık görüntü yok; tarihleri genişlet.')).toBeInTheDocument()
+    expect(await screen.findByText('Bu kariyerde ya da aralıkta iki anlık görüntü bulunamadı; kimliği ve tarihleri kontrol et.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'CSV indir' })).toBeNull()
   })
 })

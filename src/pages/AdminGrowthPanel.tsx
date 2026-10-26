@@ -24,7 +24,7 @@ interface Params {
 
 /**
  * GTR-b: Gelişim ölçümü (yalnız ADMIN). Kariyer kimliği ve iki oyun tarihi; GET /admin/careers/{id}/growth-report → sade tablo (grafik yok) ve aynı
- * aralıkla CSV indirme. Tarih boşsa sunucu ilk/son anlık görüntüyü alır. Aralıkta iki görüntü yoksa 404 → açık mesaj.
+ * aralıkla CSV indirme. Tarih boşsa sunucu ilk/son anlık görüntüyü alır. Kariyer yoksa ya da aralıkta iki görüntü yoksa 404 → açık mesaj.
  */
 export function AdminGrowthPanel() {
   const [form, setForm] = useState<Params>({ career: '', from: '', to: '' })
@@ -62,7 +62,7 @@ export function AdminGrowthPanel() {
       {params && (
         <Card title="Rapor">
           {report.isLoading ? <p role="status" className="text-sm text-muted">Yükleniyor…</p>
-            : missing ? <EmptyState>Bu aralıkta iki anlık görüntü yok; tarihleri genişlet.</EmptyState>
+            : missing ? <EmptyState>Bu kariyerde ya da aralıkta iki anlık görüntü bulunamadı; kimliği ve tarihleri kontrol et.</EmptyState>
             : report.error ? <ErrorBox error={report.error} />
             : data && (
               <div className="space-y-3">
