@@ -9,8 +9,8 @@ import { deskLink } from '../../lib/deskLinks'
 import { ageProfile, GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
 import type { SlotFitRow } from '../squad/useSlotFits'
 import { DevelopmentRecommendations } from '../growth/DevelopmentRecommendations'
-import { ageBands, contractTimeline, YOUTH_MAX_AGE } from './careerSquadRules'
-import { SLOT_URGENCY_LABEL, slotDepth, slotForGroup, type DepthCell, type DepthSlot, type SlotDepthRow, type SlotUrgency } from './slotDepth'
+import { SLOT_URGENCY_LABEL, slotDepth, type DepthCell, type DepthSlot, type SlotDepthRow, type SlotUrgency } from '../../lib/slotDepth'
+import { ageBands, contractTimeline, slotForGroup, YOUTH_MAX_AGE } from './careerSquadRules'
 
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const decimal = (value: number) => value.toLocaleString('tr-TR', { maximumFractionDigits: 1 })
@@ -60,7 +60,8 @@ function SlotRow({ row: raw, focus, academy }: { row: SlotDepthRow; focus: boole
         {row.urgency && <Chip tone={URGENCY_TONE[row.urgency]}>{SLOT_URGENCY_LABEL[row.urgency]}</Chip>}
       </div>
       <div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-3">
-        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} note={c.key === 'youth' && academy === 'error' ? 'Altyapı yüklenemedi' : undefined} />)}
+        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} note={c.key === 'youth' && academy === 'error' ? 'Altyapı yüklenemedi'
+          : c.key === 'backup' && (row.backupSlots ?? 0) > 1 ? `${row.backupSlots} slotta yedek` : undefined} />)}
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
         <Link to={deskLink.candidate(row.slotId, row.position, row.roleId)} className={LINK}>Transferde aday bul</Link>
@@ -139,7 +140,7 @@ function ContractTimeline({ squad, gameDate }: { squad: CareerPlayer[]; gameDate
  * Derinlik sekmesi (GT-b): "Hangi mevkide yedek sorunum var?" — ana taktiğin (yoksa başlangıç önerisinin, "Otomatik öneri") 11 slotu × İlk 11 · Yedek ·
  * Genç (≤ 21, altyapı dahil), satır başına tek aciliyet metni; yaş profili ve sözleşme bitişleri. Eski `?grup=` o grubun ilk slot satırına odaklanır.
  */
-export function DepthTab({ squad, slots, auto = false, wanted, gameDate, record, careerId, tacticRows = [], tacticPending = false }: {
+export function DepthTab({ squad, slots, auto = false, wanted, wantedSlot, gameDate, record, careerId, tacticRows = [], tacticPending = false }: {
   squad: CareerPlayer[]
   /** GT-b: ana taktiğin (yoksa başlangıç önerisinin) slotları ve dizilen oyuncular; auto → "Otomatik öneri". */
   slots: DepthSlot[]
@@ -148,18 +149,21 @@ export function DepthTab({ squad, slots, auto = false, wanted, gameDate, record,
   careerId?: number
   tacticRows?: SlotFitRow[]
   tacticPending?: boolean
-  /** Eski `?grup=` (Masa derinlik bağlantısı): o grubun ilk slot satırına odak. */
+  /** Eski `?grup=` bağlantısı: o grubun ilk slot satırına odak. */
   wanted?: PositionGroup
+  /** Masa'nın derinlik işi `?slot=`: o slot satırına odak. */
+  wantedSlot?: string
   gameDate?: string
   record?: DataSource
 }) {
   // Altyapı Genç kolonuna girer (≤ 21 kadro gençleriyle birlikte); Altyapı ekranıyla aynı anahtar.
   const academy = useQuery({ queryKey: ['academy', careerId], queryFn: () => endpoints.academy(careerId!), enabled: careerId !== undefined, staleTime: 300_000 })
   const rows = slotDepth(slots, squad, academy.data?.players ?? [])
-  const focusSlot = slotForGroup(slots, wanted)
+  const bySlot = wantedSlot && slots.some((s) => s.slotId === wantedSlot) ? wantedSlot : undefined
+  const focusSlot = bySlot ?? slotForGroup(slots, wanted)
   const academyState: AcademyState = academy.isError ? 'error' : academy.data || careerId === undefined ? 'ready' : 'loading'
-  // Masa'nın derinlik işi grup sayısına göre; formasyonda o gruptan slot yoksa (ör. dar 4-1-2-1-2'de kanat) kısa not.
-  const missingGroup = wanted && slots.length > 0 && !focusSlot ? wanted : undefined
+  // Eski ?grup= bağlantısında formasyonda o gruptan slot yoksa (ör. dar 4-1-2-1-2'de kanat) kısa not.
+  const missingGroup = !bySlot && wanted && slots.length > 0 && !focusSlot ? wanted : undefined
   if (squad.length === 0) {
     return <EmptyState>Kadro boş.</EmptyState>
   }
