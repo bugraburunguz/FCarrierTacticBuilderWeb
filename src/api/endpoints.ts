@@ -6,6 +6,7 @@ import type {
   CareerRecommendationRequest,
   CreditCosts,
   DevelopmentRecommendation,
+  GrowthRecent,
   DevelopmentWeakSlot,
   Academy,
   AcademyPlayer,
@@ -240,6 +241,7 @@ export const endpoints = {
   youth: (careerId: number) => api.get<AcademyPlayer[]>(`/careers/${careerId}/youth`),
   /** GT-a: tüm takım antrenman planı — A takımın her oyuncusu yaş bölümüyle (kiralıktakilerden yalnız gençler). */
   training: (careerId: number) => api.get<AcademyPlayer[]>(`/careers/${careerId}/training`),
+  growthRecent: (careerId: number) => api.get<GrowthRecent[]>(`/careers/${careerId}/growth-recent`),
   /** ACADEMY-b paneli: Ne yapmalıyım? · Hangi mevkide? · Takımdaki yeri. */
   youthDetail: (careerId: number, playerId: number) => api.get<YouthDetail>(`/careers/${careerId}/youth/${playerId}`),
   recommendTactic: (body: { careerId: number; lockFormation?: string; lockPreset?: string; topN?: number; diversityMode?: string; setup?: SetupBody }) =>

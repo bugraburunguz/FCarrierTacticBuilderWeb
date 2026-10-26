@@ -36,6 +36,16 @@ describe('careerQueries', () => {
     expect(stale(client, ['academy', 8])).toBe(false)
   })
 
+  it('GTR-b: Gelişim satırları (antrenman planı ve "Son N ayda") kariyer kapsamında; içe aktarma sonrası eski değişim kalmaz', async () => {
+    const client = new QueryClient()
+    const keys = [['training', 7], ['growth-recent', 7], ['growth-recent', 8]]
+    keys.forEach((k) => client.setQueryData(k, []))
+    await invalidateCareerScope(client, 7)
+    expect(stale(client, keys[0])).toBe(true)
+    expect(stale(client, keys[1])).toBe(true)
+    expect(stale(client, keys[2])).toBe(false)
+  })
+
   it('FIT-3 inceleme: gelişim önerileri, kurulum kontrolü ve taktik analizi de kariyer kapsamında (içe aktarma sonrası eski kalmaz)', async () => {
     const client = new QueryClient()
     const keys = [['development-recommendations', 7, '[]'], ['setup-check', 7, 'Balanced', 50], ['tactic-analysis', 7, '{}'], ['development-recommendations', 8, '[]']]

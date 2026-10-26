@@ -5,13 +5,15 @@ import { useAuth } from '../auth/AuthContext'
 import { useRulesStale } from '../state/rulesStore'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
 import { parseChallengeText } from '../lib/sbcText'
+import { AdminGrowthPanel } from './AdminGrowthPanel'
 
-type Tab = 'queue' | 'entry' | 'contributors' | 'maintenance'
+type Tab = 'queue' | 'entry' | 'contributors' | 'maintenance' | 'growth'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'queue', label: 'Onay kuyruğu' },
   { id: 'entry', label: 'Elle giriş' },
   { id: 'contributors', label: 'Katkıcılar' },
   { id: 'maintenance', label: 'Bakım' },
+  { id: 'growth', label: 'Gelişim ölçümü' },
 ]
 const KINDS = [
   { id: 'sbc-set', label: 'SBC seti' },
@@ -50,6 +52,7 @@ export function AdminUtPage() {
       {tab === 'entry' && <EntryPanel call={call} />}
       {tab === 'contributors' && <ContributorPanel call={call} />}
       {tab === 'maintenance' && <MaintenancePanel call={call} />}
+      {tab === 'growth' && <AdminGrowthPanel />}
     </div>
   )
 }

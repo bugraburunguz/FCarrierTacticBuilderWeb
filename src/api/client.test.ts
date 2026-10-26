@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, api } from './client'
+import { ApiError, api, requestText } from './client'
 import { tokens } from './tokens'
 import { careerStore } from '../state/careerStore'
 
@@ -30,6 +30,19 @@ describe('api client', () => {
     const [url, init] = fetchMock.mock.calls[0]
     expect(url).toBe('/api/v1/me')
     expect((init.headers as Record<string, string>).Authorization).toBe('Bearer access-1')
+  })
+
+  it('GTR-b: requestText düz metni (CSV) oturumla ve text/csv kabulüyle okur; hata zarfı ApiError olur', async () => {
+    tokens.set('access-1', 'refresh-1')
+    fetchMock.mockResolvedValueOnce(new Response('boyut,grup,n\n', { status: 200, headers: { 'Content-Type': 'text/csv' } }))
+    expect(await requestText('/admin/careers/7/growth-report', { query: { format: 'csv' } })).toBe('boyut,grup,n\n')
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('/api/v1/admin/careers/7/growth-report?format=csv')
+    expect((init.headers as Record<string, string>).Accept).toContain('text/csv')
+    expect((init.headers as Record<string, string>).Authorization).toBe('Bearer access-1')
+
+    fetchMock.mockResolvedValueOnce(jsonResponse({ success: false, error: [{ code: 'common.not_found', message: 'Bulunamadı' }] }, 404))
+    await expect(requestText('/admin/careers/7/growth-report')).rejects.toMatchObject({ status: 404, message: 'Bulunamadı' })
   })
 
   it('turns business errors (HTTP 200, success=false) into ApiError with the server message and code', async () => {
