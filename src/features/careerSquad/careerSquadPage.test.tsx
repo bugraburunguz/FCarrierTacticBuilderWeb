@@ -39,6 +39,7 @@ vi.mock('../../api/endpoints', () => ({
     fitRole: vi.fn((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, roleId: 'r', roleName: 'Rol', score: 70, levelFit: 72, fitLabel: 'GOOD', reasons: [], weaponChecks: [], projectedRating: 70, outOfPosition: false } })),
     careerMoves: vi.fn(() => Promise.resolve([])),
     snapshots: vi.fn(() => Promise.resolve([{ id: 1, takenAt: '2026-10-19T12:00:00Z', source: 'IMPORT', playerCount: 13 }])),
+    academy: vi.fn(() => Promise.resolve({ found: true, players: [{ playerId: 90, name: 'Altyapı Kanat', age: 17, positions: ['LM'], overall: 58, youthVerified: false }] })),
     applyEvent: vi.fn(() => Promise.resolve({})),
     undoEvent: vi.fn(() => Promise.resolve({})),
     players: vi.fn(() => Promise.resolve({ items: [{ id: 99, name: 'Aday Oyuncu', overall: 80, positions: ['ST'], club: 'Başka', valuationEstimated: false }], total: 1 })),
@@ -178,28 +179,48 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(within(panel).getByText('tahmin · kalibre edilmedi')).toBeInTheDocument()
   })
 
-  it('derinlik: ?grup= o grubu açık ve odaklı getirir; diğerleri kapalı', async () => {
-    renderAt('/career/squad?sekme=derinlik&grup=MID')
-    const toggle = await screen.findByRole('button', { name: /Orta saha/ })
-    expect(toggle).toHaveAttribute('aria-expanded', 'true')
-    await waitFor(() => expect(document.activeElement).toBe(toggle))
-    expect(screen.getByRole('button', { name: /Kaleci/ })).toHaveAttribute('aria-expanded', 'false')
-    fireEvent.click(screen.getByRole('button', { name: /Kaleci/ }))
-    expect(screen.getByRole('button', { name: /Kaleci/ })).toHaveAttribute('aria-expanded', 'true')
+  /** GT-b: "Hangi mevkide yedek sorunum var?" — Mevki grupları ve Mevki yoğunluğu yerine tek slot bazlı matris. */
+  it('derinlik: ana taktiğin 11 slotu satır; İlk 11 · Yedek · Genç (≤21, altyapı dahil); satır başına tek aciliyet; eski paneller yok', async () => {
+    renderAt('/career/squad?sekme=derinlik')
+    const matrix = await screen.findByRole('list', { name: 'Slot derinliği' })
+    await waitFor(() => expect(within(matrix).getAllByRole('listitem')).toHaveLength(11))
+    expect(screen.queryByRole('region', { name: 'Mevki grupları' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Mevki yoğunluğu' })).toBeNull()
+    const gk = within(matrix).getByRole('listitem', { name: 'GK slotu' })
+    expect(within(gk).getByRole('group', { name: 'İlk 11' })).toHaveTextContent('Oyuncu 1 · 75 · 24')
+    expect(within(gk).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Yok')
+    expect(within(gk).getByRole('group', { name: 'Genç (≤21)' })).toHaveTextContent('Oyuncu 12 · 60 · 19')
+    expect(within(gk).getByText('Yalnız genç yedek')).toBeInTheDocument()
+    // Kanat: yedek yok, altyapıda aday var.
+    const lm = within(matrix).getByRole('listitem', { name: 'LM slotu' })
+    expect(within(lm).getByText('Yalnız genç yedek')).toBeInTheDocument()
+    expect(within(lm).getByText('Altyapıda: Altyapı Kanat')).toBeInTheDocument()
+    const rm = within(matrix).getByRole('listitem', { name: 'RM slotu' })
+    expect(within(rm).getByText('Yedek yok')).toBeInTheDocument()
+    expect(within(rm).getByRole('link', { name: 'Transferde aday bul' })).toHaveAttribute('href', '/career/transfer?ihtiyac=slot-RM&pos=RM&rol=r')
+    // Forvet: kiralıkla gelen 13 yedek.
+    const st = within(matrix).getByRole('listitem', { name: 'LST slotu' })
+    expect(within(st).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Oyuncu 13')
+    expect(within(st).queryByText(/^(Yedek yok|Yalnız genç yedek|İlk 11 ≥ 30 yaş|İlk 11 kalite açığı)$/)).toBeNull()
   })
 
-  it('KARIYER-UX 6: derinlik matrisi — grup başında aciliyet çipi, açılınca İlk 11 · Yedek · Genç (≤21) kolonları (ilk 11 ana taktikten)', async () => {
+  it('derinlik: eski ?grup= bağlantısı (Masa) ilgili ilk slot satırına odaklanır', async () => {
+    renderAt('/career/squad?sekme=derinlik&grup=MID')
+    const row = await screen.findByRole('listitem', { name: 'LCM slotu' })
+    await waitFor(() => expect(document.activeElement).toBe(row))
+    expect(row).toHaveAttribute('aria-current', 'true')
+  })
+
+  it('derinlik: ana taktik yoksa başlangıç önerisinin slotları "Otomatik öneri" etiketiyle', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
+    vi.mocked(endpoints.starterTactic).mockResolvedValue({
+      formationId: '4-4-2', setup: { buildUp: 'Balanced', depth: 50 }, squadFit: 64, alternatives: [],
+      slots: SLOTS.map((s, i) => ({ slotId: s, position: POSITIONS[i], roleId: 'r', roleName: 'Rol' })), lineup: Object.fromEntries(SLOTS.map((s, i) => [s, i + 1])),
+    } as never)
     renderAt('/career/squad?sekme=derinlik')
-    const gk = await screen.findByRole('button', { name: /Kaleci/ })
-    await waitFor(() => expect(gk).toHaveTextContent('Yalnız genç yedek'))
-    expect(screen.getByRole('button', { name: /Orta saha/ })).toHaveTextContent('2 eksik')
-    expect(screen.getByRole('button', { name: /Kanat/ })).toHaveTextContent('Yedek yok')
-    expect(screen.getByRole('button', { name: /Forvet/ })).toHaveTextContent('Yeterli')
-    const body = document.getElementById('grup-GK')!
-    const starters = within(body).getByRole('list', { name: 'Kaleci · İlk 11' })
-    expect(starters).toHaveTextContent('Oyuncu 1')
-    expect(within(body).getByRole('list', { name: 'Kaleci · Genç (≤21)' })).toHaveTextContent('Oyuncu 12')
-    expect(within(body).getByRole('list', { name: 'Kaleci · Yedek' })).toHaveTextContent('Yok')
+    const panel = await screen.findByRole('region', { name: 'Derinlik' })
+    expect(await within(panel).findByText('Otomatik öneri')).toBeInTheDocument()
+    await waitFor(() => expect(within(panel).getAllByRole('listitem')).toHaveLength(11))
   })
 
   it('KARIYER-UX 6: yaş bantları Genç / Prime / Tecrübeli sayı ve oranla', async () => {
