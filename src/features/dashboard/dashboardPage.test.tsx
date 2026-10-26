@@ -214,7 +214,8 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     renderPage()
     const jobs = await screen.findByRole('region', { name: 'Bu dönemin 3 işi' })
     await waitFor(() => expect(within(jobs).getAllByText('Kiralık')).toHaveLength(1))
-    const more = within(jobs).getByRole('button', { name: '+2 benzer' })
+    // Derinlik işi de slot bazlı benzerler üretebilir: Kiralık işinin düğmesi.
+    const more = within(jobs).getAllByRole('button', { name: '+2 benzer' }).find((b) => b.getAttribute('aria-controls')?.endsWith('-LOAN'))!
     expect(more).toHaveAttribute('aria-expanded', 'false')
     fireEvent.click(more)
     expect(more).toHaveAttribute('aria-expanded', 'true')

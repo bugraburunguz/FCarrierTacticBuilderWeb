@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import type { AcademyPlayer, CareerPlayer } from '../../api/types'
-import { buildDepthSlots, SLOT_URGENCY_LABEL, slotDepth, slotForGroup, type DepthSlot } from './slotDepth'
+import type { AcademyPlayer, CareerPlayer } from '../api/types'
+import { slotForGroup } from '../features/careerSquad/careerSquadRules'
+import { buildDepthSlots, SLOT_URGENCY_LABEL, slotDepth, type DepthSlot } from './slotDepth'
 
 const member = (id: number, positions: string[], overall: number, age: number, extra: Partial<CareerPlayer> = {}): CareerPlayer =>
   ({ player: { id, name: `Oyuncu ${id}`, positions, overall, age }, onLoan: false, ...extra }) as CareerPlayer
@@ -24,6 +25,8 @@ describe('slot bazlı derinlik matrisi (GT-b)', () => {
       member(6, ['CB'], 80, 24, { loanedOut: true })]
     const rows = slotDepth([slot('LCB', 'CB', 1), slot('RCB', 'CB', 2), slot('RB', 'RB', 5)], squad, [])
     expect(rows.map((r) => r.backup?.id)).toEqual([3, 4, 3])
+    // Aynı yedek birden çok slotta sayılıyor: hücrede "2 slotta yedek" notu için sayı.
+    expect(rows.map((r) => r.backupSlots)).toEqual([2, 1, 2])
   })
 
   it('aciliyet tek metin ve öncelik sırası: Yedek yok > Yalnız genç yedek > İlk 11 ≥ 30 yaş > İlk 11 kalite açığı', () => {

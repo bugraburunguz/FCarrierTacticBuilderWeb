@@ -33,7 +33,9 @@ export function SeasonJobs({ careerId, squad, rows, tacticSource, gameDate, pend
   // ACADEMY-b: "Altyapıdan A takıma al" işi; altyapı alınamazsa iş yalnız çıkmaz (diğer işler etkilenmez).
   const academy = useQuery({ ...academyQuery(careerId), retry: false })
   const youth = academy.data?.players
-  const { jobs, similar } = useMemo(() => seasonJobs({ squad: [...squad], slots: toDeskSlots(rows), tags, gameDate, academy: youth }, { exclude }), [squad, rows, tags, gameDate, exclude, youth])
+  // GT-b: derinlik işi slot bazlı (Derinlik ile aynı kural); altyapı gelmeden "Yedek yok" üretilmez.
+  const { jobs, similar } = useMemo(() => seasonJobs({ squad: [...squad], slots: toDeskSlots(rows), tags, gameDate, academy: youth, depthBySlot: true }, { exclude }),
+    [squad, rows, tags, gameDate, exclude, youth])
   const [expanded, setExpanded] = useState<ActionKind>()
 
   const body: ReactNode = pending ? <Skeleton className="h-28" /> : jobs.length === 0 ? (
