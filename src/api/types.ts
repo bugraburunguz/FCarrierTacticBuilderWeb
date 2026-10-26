@@ -700,7 +700,11 @@ export interface AcademyPlayer {
   loanedOut?: boolean
   /** GROWTH-CAL: 16 yaş altı altyapı oyuncusu — "A takıma al" yok; "16 yaşında A takıma alınabilir · tarih" (kıyas o tarihteki tahminle). */
   promoteInfo?: { eligibleOn: string; text: string; position?: string | null; strength?: number | null; backupName?: string | null; backupStrength?: number | null } | null
+  /** GT-a: Gelişim yaş bölümü — Gençler (≤ 23), Zirve (24–29), Tecrübeliler (30+). */
+  ageGroup?: AgeGroup | null
 }
+
+export type AgeGroup = 'YOUTH' | 'PEAK' | 'VETERAN'
 
 export type AcademyStatus = 'READY' | 'GROWING' | 'WAITING'
 

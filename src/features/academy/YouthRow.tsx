@@ -29,10 +29,21 @@ export function OvrPotBar({ overall, potential, potentialRange }: { overall?: nu
 }
 
 /**
- * Altyapı ve Gelişim satırı: iki satırlık kart (masaüstünde de tablo değil). 1. satır: ad, yaş, mevki (dönüşüm varsa "CM → CDM önerilir"; kanatta taraf
- * gerekçesi title), OVR → POT çubuğu. 2. satır: önerilen plan ve durum (metinle). Tıklayınca panel (masaüstü) ya da oyuncu sayfası (mobil).
+ * Plan gerekçesi ad tekrar etmeden: "Vardy · Plansız tahmini …" → "Plansız tahmini …". Sunucu metni hep "{ad} · " ile başlar; ad arayüzde farklı
+ * yazılabildiği için ("Oyuncu #…" → "Adı bilinmiyor") ilk ayraca kadar kırpılır.
  */
-export function YouthRow({ player, onOpen, selected = false }: { player: AcademyPlayer; onOpen: (playerId: number) => void; selected?: boolean }) {
+const reasonText = (player: AcademyPlayer) => {
+  const text = player.plan?.text ?? ''
+  const cut = text.indexOf(' · ')
+  return cut > 0 ? text.slice(cut + 3) : text
+}
+
+/**
+ * Altyapı ve Gelişim satırı: iki satırlık kart (masaüstünde de tablo değil). 1. satır: ad, yaş, mevki (dönüşüm varsa "CM → CDM önerilir"; kanatta taraf
+ * gerekçesi title), OVR → POT çubuğu. 2. satır: önerilen plan ve durum (metinle). `reason` (Gelişim): 3. satır tek satır gerekçe. Tıklayınca panel
+ * (masaüstü) ya da oyuncu sayfası (mobil).
+ */
+export function YouthRow({ player, onOpen, selected = false, reason = false }: { player: AcademyPlayer; onOpen: (playerId: number) => void; selected?: boolean; reason?: boolean }) {
   const position = player.bestPosition ?? player.positions[0] ?? '—'
   return (
     <button type="button" onClick={() => onOpen(player.playerId)} aria-current={selected || undefined}
@@ -52,6 +63,8 @@ export function YouthRow({ player, onOpen, selected = false }: { player: Academy
         <span>Önerilen plan: <span className="font-semibold text-ink">{player.plan?.label ?? '—'}</span></span>
         {player.status && <span>Durum: <span className="font-semibold text-ink">{STATUS_LABEL[player.status]}</span></span>}
       </span>
+      {/* GT-a: Gelişim'de tek satır gerekçe (tahmin), ad tekrar etmeden. */}
+      {reason && player.plan?.text && <span className="text-xs text-ink-2">{reasonText(player)}</span>}
       {player.promoteInfo && <span className="text-xs text-ink-2">{player.promoteInfo.text}</span>}
     </button>
   )

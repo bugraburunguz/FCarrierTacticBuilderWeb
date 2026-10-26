@@ -11,15 +11,23 @@ const mobile = vi.hoisted(() => ({ value: false }))
 vi.mock('../../design/components/MobileSheet', async (orig) => ({ ...(await orig<object>()), useIsMobile: () => mobile.value }))
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE' } }) }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), youth: vi.fn(), youthDetail: vi.fn(), development: vi.fn() },
+  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), youth: vi.fn(), training: vi.fn(), youthDetail: vi.fn(), development: vi.fn() },
 }))
 
 const member = (id: number, extra: object = {}) => ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 60 + id, potential: 75, age: 25, valuationEstimated: false, ...extra }, onLoan: false })
 const snap = (id: number, season?: number) => ({ id, takenAt: `2026-10-0${id}T10:00:00Z`, season, source: 'IMPORT', playerCount: 3 })
 const youth = (id: number, extra: Partial<AcademyPlayer> = {}): AcademyPlayer => ({
   playerId: id, name: `Genç ${id}`, age: 19, positions: ['CM'], overall: 62, potential: 84, potentialRange: null, youthVerified: false, bestPosition: 'CM',
-  conversionPosition: 'CDM', plan: { name: 'Deep-Lying Playmaker', label: 'CDM · Deep-Lying Playmaker', text: 't', balanced: false }, promote: null, status: null,
-  loanedOut: false, ...extra,
+  conversionPosition: 'CDM', plan: { name: 'Deep-Lying Playmaker', label: 'CDM · Deep-Lying Playmaker', text: 'Genç · CDM planı → 2 sezonda CDM gücü 70 (Dengeli: 67)', balanced: false },
+  promote: null, status: null, loanedOut: false, ageGroup: 'YOUTH', ...extra,
+})
+const VETERAN = youth(21, {
+  name: 'Vardy', age: 34, overall: 80, potential: 80, conversionPosition: null, bestPosition: 'ST', ageGroup: 'VETERAN',
+  plan: { name: 'Poacher', label: 'ST · Poacher', text: 'Vardy · Plansız tahmini −3 OVR, ST · Poacher planıyla −1 (bitiricilik ve pozisyon alma korunur) · tahmin', balanced: false },
+})
+const PEAK = youth(31, {
+  name: 'Okafor', age: 26, overall: 74, potential: 76, conversionPosition: null, ageGroup: 'PEAK',
+  plan: { name: 'Dengeli', label: 'Dengeli', text: 'Okafor · Dengeli plan: CM Box-to-Box rolünde oturması iyi (%71)', balanced: true },
 })
 
 function Where() {
@@ -47,7 +55,7 @@ beforeEach(() => {
   vi.mocked(endpoints.careers).mockResolvedValue([{ id: 1, clubName: 'Crewe', gameVersionId: 27, clubId: 9, squadSize: 3 }] as never)
   vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2, { overall: 75, potential: 75, age: 21 }), member(3)] as never)
   vi.mocked(endpoints.snapshots).mockResolvedValue([snap(3, 2), snap(2, 2), snap(1, 1)] as never)
-  vi.mocked(endpoints.youth).mockResolvedValue([youth(11, { name: 'Figueiredo', age: 18 }), youth(12, { name: 'Kiralık Genç', loanedOut: true, conversionPosition: null })])
+  vi.mocked(endpoints.training).mockResolvedValue([youth(11, { name: 'Figueiredo', age: 18 }), youth(12, { name: 'Kiralık Genç', loanedOut: true, conversionPosition: null }), PEAK, VETERAN])
   vi.mocked(endpoints.youthDetail).mockResolvedValue({ playerId: 11, name: 'Figueiredo', positions: ['CM'], academy: false,
     advice: { sentence: 'CDM · Deep-Lying Playmaker planını seç: 2 sezonda CDM OVR 70 (Dengeli 67).', estimated: true, plans: [{ label: 'Dengeli', kind: 'GENERAL', position: 'CDM', overall1: 64, overall2: 67 }] },
     position: { bestPosition: 'CM', listedPositions: ['CM'] }, team: { position: 'CDM', source: 'MAIN', slots: 1, strengths: [60, 64, 68] } })
@@ -71,16 +79,18 @@ describe('Gelişim (sade)', () => {
     expect(endpoints.development).not.toHaveBeenCalled()
   })
 
-  it('gelişim planları: Altyapı satır biçimi (A takım ≤ 23 + kiralıktaki gençler); tek içe aktarmayla da görünür', async () => {
+  it('gençler: Altyapı satır biçimi (A takım ≤ 23 + kiralıktaki gençler); tek içe aktarmayla da görünür', async () => {
     vi.mocked(endpoints.snapshots).mockResolvedValue([snap(1, 1)] as never)
     renderPage()
-    const plans = await screen.findByRole('region', { name: 'Gelişim planları' })
-    const list = await within(plans).findByRole('list', { name: 'Gelişim planları' })
+    const plans = await screen.findByRole('region', { name: 'Gençler' })
+    const list = await within(plans).findByRole('list', { name: 'Gençler' })
     const row = within(list).getByRole('button', { name: /Figueiredo/ })
     expect(row).toHaveTextContent('CM → CDM önerilir')
     expect(row).toHaveTextContent('62 → 84')
     expect(row).toHaveTextContent('Önerilen plan: CDM · Deep-Lying Playmaker')
     expect(within(list).getByRole('button', { name: /Kiralık Genç/ })).toHaveTextContent('Kiralıkta')
+    expect(endpoints.training).toHaveBeenCalledWith(1)
+    expect(endpoints.youth).not.toHaveBeenCalled()
     // Tek içe aktarma: yalnız fark bölümü bekler.
     const since = screen.getByRole('region', { name: 'Son içe aktarmadan beri' })
     expect(within(since).getByText('İkinci içe aktarmadan sonra görünür.')).toBeInTheDocument()
@@ -123,9 +133,44 @@ describe('Gelişim (sade)', () => {
     expect(endpoints.snapshotDiff).toHaveBeenLastCalledWith(1, 2, 3)
   })
 
-  it('genç yoksa planlar bölümü boş durum', async () => {
-    vi.mocked(endpoints.youth).mockResolvedValue([])
+  /** GT-a madde 1: "Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?" — yaşa göre üç bölüm, her satırda tek plan ve tek satır gerekçe. */
+  it('tüm takım üç yaş bölümünde: Gençler, Zirve, Tecrübeliler; satırda tek satır gerekçe (ad tekrar edilmez)', async () => {
     renderPage()
-    expect(await screen.findByText('Gelişim planı önerilecek genç yok (≤ 23 yaş, potansiyeli OVR\'den en az 5 yüksek).')).toBeInTheDocument()
+    expect(await screen.findByText('Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?')).toBeInTheDocument()
+    await screen.findByRole('region', { name: 'Gençler' })
+    const sections = screen.getAllByRole('region').map((r) => r.querySelector('h2')?.textContent)
+    expect(sections).toEqual(['Gençler', 'Zirve', 'Tecrübeliler', 'Son içe aktarmadan beri'])
+    const peak = within(screen.getByRole('region', { name: 'Zirve' }))
+    expect(peak.getByText(/^24–29 yaş · rolde incelme ya da koruma/)).toBeInTheDocument()
+    expect(peak.getByRole('button', { name: /Okafor/ })).toHaveTextContent('Dengeli plan: CM Box-to-Box rolünde oturması iyi (%71)')
+    const veterans = within(screen.getByRole('region', { name: 'Tecrübeliler' }))
+    const row = veterans.getByRole('button', { name: /Vardy/ })
+    expect(row).toHaveTextContent('Önerilen plan: ST · Poacher')
+    expect(row).toHaveTextContent('Plansız tahmini −3 OVR, ST · Poacher planıyla −1 (bitiricilik ve pozisyon alma korunur) · tahmin')
+    expect(row.textContent).not.toContain('Vardy · ')
+    // Adı bilinmeyen oyuncu: sunucu metni ham adla başlar ("Oyuncu #…"); satırda o da tekrar edilmez.
+    expect(peak.getByRole('button', { name: /Okafor/ }).textContent).not.toContain('Okafor · ')
+    expect(within(screen.getByRole('region', { name: 'Gençler' })).queryByRole('button', { name: /Vardy|Okafor/ })).toBeNull()
+  })
+
+  it('gerekçe ham adla başlasa da (adı bilinmeyen oyuncu) satırda ad kırpılır', async () => {
+    vi.mocked(endpoints.training).mockResolvedValue([{ ...VETERAN, name: 'Adı bilinmiyor', plan: { ...VETERAN.plan!, text: 'Oyuncu #202017 · Plansız tahmini −2 OVR, LM mevki planıyla −2 · tahmin' } }])
+    renderPage()
+    const row = await within(await screen.findByRole('region', { name: 'Tecrübeliler' })).findByRole('button', { name: /Adı bilinmiyor/ })
+    expect(row).toHaveTextContent('Plansız tahmini −2 OVR, LM mevki planıyla −2 · tahmin')
+    expect(row.textContent).not.toContain('Oyuncu #202017')
+  })
+
+  it('bir yaş bölümünde oyuncu yoksa kısa boş satır; hiç oyuncu yoksa tek boş durum', async () => {
+    vi.mocked(endpoints.training).mockResolvedValue([VETERAN])
+    renderPage()
+    const youthSection = await screen.findByRole('region', { name: 'Gençler' })
+    expect(await within(youthSection).findByText('Bu yaş bölümünde oyuncu yok.')).toBeInTheDocument()
+  })
+
+  it('kadroda plan önerilecek oyuncu yoksa boş durum', async () => {
+    vi.mocked(endpoints.training).mockResolvedValue([])
+    renderPage()
+    expect(await screen.findByText('Antrenman planı önerilecek oyuncu yok. Kariyer içinden içe aktarınca dolar.')).toBeInTheDocument()
   })
 })

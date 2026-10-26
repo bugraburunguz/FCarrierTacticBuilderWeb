@@ -1,0 +1,24 @@
+{
+  "report": [
+    {
+      "shot": "gelisim-dark-375",
+      "overflow": false,
+      "axe": [],
+      "problems": [],
+      "stubbed": [
+        "GET /api/v1/ut/rules",
+        "GET /api/v1/config/app"
+      ]
+    },
+    {
+      "shot": "gelisim-dark-1280",
+      "overflow": false,
+      "axe": [],
+      "problems": [],
+      "stubbed": [
+        "GET /api/v1/ut/rules",
+        "GET /api/v1/config/app"
+      ]
+    }
+  ]
+}
