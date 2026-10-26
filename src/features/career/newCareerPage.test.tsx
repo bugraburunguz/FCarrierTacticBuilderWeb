@@ -57,7 +57,8 @@ beforeEach(() => {
   vi.mocked(endpoints.createCareer).mockReset().mockResolvedValue({ id: 42, clubId: 9, gameVersionId: 27, squadSize: 27 } as never)
   vi.mocked(endpoints.updateCareer).mockReset().mockResolvedValue({ id: 42 } as never)
   vi.mocked(endpoints.careers).mockResolvedValue([] as never)
-  vi.mocked(endpoints.managerProfile).mockReset().mockRejectedValue(new ApiError('Bulunamadı', 'not_found', 404))
+  // Profil yok: 200 + data null (hata değil).
+  vi.mocked(endpoints.managerProfile).mockReset().mockResolvedValue(null)
   vi.mocked(endpoints.clubRecommendations).mockReset().mockResolvedValue(recs() as never)
 })
 

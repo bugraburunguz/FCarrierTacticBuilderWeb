@@ -27,7 +27,7 @@ function renderPage(path = '/career/manager') {
 const summary = () => within(screen.getByRole('complementary', { name: 'Menajer özeti' }))
 
 beforeEach(() => {
-  vi.mocked(endpoints.managerProfile).mockReset().mockRejectedValue(new ApiError('Bulunamadı', 'not_found', 404))
+  vi.mocked(endpoints.managerProfile).mockReset().mockResolvedValue(null)
   vi.mocked(endpoints.saveManagerProfile).mockReset().mockImplementation(async (profile) => ({ profile, reputation: 46, band: 'Ulusal tanınırlık' }))
   vi.mocked(endpoints.formations).mockResolvedValue([{ id: '4-3-3', label: '4-3-3' }, { id: '4-4-2', label: '4-4-2' }] as never)
   vi.mocked(endpoints.replicas).mockResolvedValue([{ id: 'r1', club: 'Atletico', coach: 'Simeone', season: '2013/14', formationId: '4-4-2', buildUp: 'COUNTER', defensiveApproach: 'DEEP' }] as never)
@@ -115,7 +115,35 @@ describe('Menajer profili (MGR-b)', () => {
     }
   })
 
-  it('profil alınamazsa (404 dışı hata) tekrar dene', async () => {
+  it.each([
+    [false, 'smooth'],
+    [true, 'auto'],
+  ])('mobilde İleri yeni bölümün başına kaydırır ve odağı başlığına taşır (azaltılmış hareket %s → %s)', async (reduced, behavior) => {
+    const original = window.matchMedia
+    const scroll = vi.fn()
+    const originalScroll = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scroll
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes('max-width') || (reduced && query.includes('prefers-reduced-motion')), addEventListener: () => {}, removeEventListener: () => {},
+    })) as never
+    try {
+      renderPage()
+      await screen.findByRole('heading', { name: 'Geçmiş ve diploma' })
+      expect(scroll).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByRole('button', { name: 'İleri' }))
+      const heading = screen.getByRole('heading', { name: 'Oyun tarzı' })
+      await waitFor(() => expect(heading).toHaveFocus())
+      expect(scroll).toHaveBeenLastCalledWith({ block: 'start', behavior })
+      expect(scroll.mock.contexts.at(-1)).toBe(heading.closest('section'))
+      fireEvent.click(screen.getByRole('button', { name: 'Geri' }))
+      await waitFor(() => expect(screen.getByRole('heading', { name: 'Geçmiş ve diploma' })).toHaveFocus())
+    } finally {
+      window.matchMedia = original
+      Element.prototype.scrollIntoView = originalScroll
+    }
+  })
+
+  it('profil alınamazsa tekrar dene', async () => {
     vi.mocked(endpoints.managerProfile).mockRejectedValue(new ApiError('Sunucu hatası', 'server', 500))
     renderPage()
     expect(await screen.findByText('Menajer profili yüklenemedi.')).toBeInTheDocument()

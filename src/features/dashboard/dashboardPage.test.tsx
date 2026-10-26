@@ -76,7 +76,7 @@ beforeEach(() => {
   ] as never)
   vi.mocked(endpoints.events).mockResolvedValue([{ id: 3, type: 'SELL', playerId: 4, playerName: 'Satılan Oyuncu', feeEur: 2_000_000, createdAt: '2026-10-12T10:00:00Z' }] as never)
   vi.mocked(endpoints.updateCareer).mockReset().mockResolvedValue(CAREER as never)
-  vi.mocked(endpoints.managerProfile).mockReset().mockRejectedValue(Object.assign(new Error('Bulunamadı'), { status: 404 }))
+  vi.mocked(endpoints.managerProfile).mockReset().mockResolvedValue(null)
 })
 
 /** MGR-b §3: kariyer varken Masa'nın üstünde küçük menajer satırı; tıklayınca profil. Profil yoksa satır yok. */

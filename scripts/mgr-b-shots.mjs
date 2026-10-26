@@ -41,7 +41,7 @@ const variant = (patch) => JSON.stringify({ ...recs, data: { ...recs.data, ...pa
 const STATES = [
   { name: 'profil', path: '/career/manager', wait: 'Uluslararası Pro Lisans' },
   { name: 'oneri', path: '/career/new', recs: recsBody, wait: 'Bu kulüple başla' },
-  { name: 'bos-profil-yok', path: '/career/new', profile404: true, wait: 'Menajer profilini oluştur' },
+  { name: 'bos-profil-yok', path: '/career/new', noProfile: true, wait: 'Menajer profilini oluştur' },
   { name: 'bos-katalog', path: '/career/new', recs: variant({ catalogReady: false, cards: [], missing: [] }), wait: 'Kulüp verisi henüz yok' },
   { name: 'bos-aday-yok', path: '/career/new', recs: variant({ cards: [], missing: recs.data.missing.length ? recs.data.missing : [{ category: 'DREAM', reason: 'İtibar aralığında hayal adayı yok.' }] }), wait: 'uyan kulüp bulunamadı' },
   { name: 'yukleniyor', path: '/career/new', recs: 'hang', wait: 'hesaplanıyor', widths: [375, 1280] },
@@ -58,7 +58,7 @@ for (const theme of ['dark', 'light']) {
     const page = await context.newPage()
     const problems = []
     page.on('console', (m) => m.type() === 'error' && problems.push(`console: ${m.text().slice(0, 160)}`))
-    page.on('response', (r) => r.status() >= 400 && !r.url().includes('/manager/') && !r.url().includes('/me/manager-profile') && problems.push(`HTTP ${r.status()} ${new URL(r.url()).pathname}`))
+    page.on('response', (r) => r.status() >= 400 && !r.url().includes('/manager/') && problems.push(`HTTP ${r.status()} ${new URL(r.url()).pathname}`))
     await page.goto(`${base}/`)
     await page.evaluate(({ t, th }) => {
       localStorage.setItem('fc.theme', th)
@@ -76,8 +76,9 @@ for (const theme of ['dark', 'light']) {
           : s.recs === 'error' ? route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ success: false, errors: [{ code: 'server', message: 'Geçici hata' }] }) })
             : route.fulfill({ status: 200, contentType: 'application/json', body: s.recs })))
       }
-      if (s.profile404) {
-        await page.route('**/api/v1/me/manager-profile', (route) => route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ success: false, errors: [{ code: 'not_found', message: 'Bulunamadı' }] }) }))
+      if (s.noProfile) {
+        // Profil yok: sunucu 200 + data null döner (hata değil); konsolda hata beklenmez.
+        await page.route('**/api/v1/me/manager-profile', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: null }) }))
       }
       await page.goto(`${base}${s.path}`, { waitUntil: s.recs === 'hang' ? 'domcontentloaded' : 'networkidle' })
       await page.getByText(s.wait).first().waitFor({ timeout: 30000 })
@@ -87,8 +88,8 @@ for (const theme of ['dark', 'light']) {
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
       const axe = await new AxeBuilder({ page }).analyze()
       const serious = axe.violations.filter((a) => a.impact === 'serious' || a.impact === 'critical')
-      // Kasıtlı 404 (profil yok) ve 503 (hata durumu) tarayıcı konsoluna "Failed to load resource" yazar; o durumlarda beklenen.
-      const expected = s.profile404 || s.recs === 'error'
+      // Kasıtlı 503 (hata durumu) tarayıcı konsoluna "Failed to load resource" yazar; yalnız orada beklenen.
+      const expected = s.recs === 'error'
       report.push({ shot: name, overflow, axe: serious.map((v) => `${v.id}:${v.nodes.length}`), problems: problems.filter((p) => !(expected && p.includes('Failed to load resource'))) })
       problems.length = 0
     }

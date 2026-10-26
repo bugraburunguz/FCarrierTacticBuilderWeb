@@ -57,7 +57,7 @@ export function ClubRecommendations({ onStart, onPickOther }: { onStart: (club: 
   const recs = useQuery({
     queryKey: [CLUB_RECS_KEY, profile.data?.profile],
     queryFn: () => endpoints.clubRecommendations({}),
-    enabled: profile.data !== undefined,
+    enabled: profile.data != null,
     staleTime: RECS_STALE_MS,
     retry: false,
   })

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useId, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { ManagerProfileView } from '../../api/types'
@@ -17,6 +17,7 @@ const LABEL = 'text-xs font-medium text-ink-2'
 const STEP_BUTTON = 'glass-3 inline-flex min-h-11 items-center justify-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold hover:bg-[var(--glass-hover)]'
 /** Mobilde adım adım üç bölüm; daha genişte hepsi tek ekranda. */
 const NARROW_QUERY = '(max-width: 639px)'
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 const STEPS = ['Geçmiş ve diploma', 'Oyun tarzı', 'Öncelik ve zorluk'] as const
 const GENDERS = [{ id: 'any', label: 'Fark etmez' }, { id: '0', label: 'Erkek' }, { id: '1', label: 'Kadın' }]
 
@@ -61,8 +62,9 @@ function OptionCards<T extends string>({ label: groupLabel, options, value, onCh
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section aria-label={title} className="glass flex flex-col gap-4 p-4 sm:p-5">
-      <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>
+    <section aria-label={title} className="glass flex scroll-mt-[calc(var(--header-h)+12px)] flex-col gap-4 p-4 sm:p-5">
+      {/* tabIndex -1: mobilde adım değişince odak bölüm başlığına taşınır. */}
+      <h2 tabIndex={-1} className="font-display text-xl font-semibold leading-6 outline-none focus-visible:ring-2 focus-visible:ring-accent">{title}</h2>
       {children}
     </section>
   )
@@ -110,6 +112,9 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
   const [params] = useSearchParams()
   const returnTo = RETURN_TO[params.get('sonra') ?? '']
   const narrow = useMediaQuery(NARROW_QUERY)
+  const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY)
+  const stepBox = useRef<HTMLDivElement>(null)
+  const stepMoved = useRef(false)
   const ids = { name: useId(), formation: useId(), replica: useId(), league: useId() }
   const [draft, setDraft] = useState<ManagerDraft>(() => (initial ? draftOf(initial.profile) : emptyDraft()))
   const [replicaId, setReplicaId] = useState('')
@@ -143,6 +148,20 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
       save.mutate()
     }
   }
+  // Mobil adım değişimi: yeni bölümün başına kaydır (azaltılmış harekette animasyonsuz), odağı başlığına taşı. İlk açılışta kaydırma yok.
+  const goTo = (next: number) => {
+    stepMoved.current = true
+    setStep(next)
+  }
+  useEffect(() => {
+    if (!stepMoved.current) {
+      return
+    }
+    stepMoved.current = false
+    const section = stepBox.current?.querySelector('section')
+    section?.scrollIntoView?.({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' })
+    section?.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true })
+  }, [step, reducedMotion])
   const pickReplica = (id: string) => {
     setReplicaId(id)
     const replica = replicas.data?.find((r) => r.id === id)
@@ -230,7 +249,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
     <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="flex min-w-0 flex-col gap-3">
         {narrow && <p className="text-xs font-semibold text-ink-2">Adım {step + 1}/{STEPS.length}</p>}
-        {narrow ? sections[step] : sections}
+        <div ref={stepBox} className="flex flex-col gap-3">{narrow ? sections[step] : sections}</div>
         {errors.length > 0 && (
           <ul role="alert" className="rounded-[var(--radius-sm)] border border-[var(--bad)] px-3 py-2 text-sm text-bad">
             {errors.map((e) => <li key={e}>{e}</li>)}
@@ -239,8 +258,8 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
         <ErrorAlert error={save.error} />
         {notice && <p role="status" className="text-sm text-good">{notice}</p>}
         <div className="flex flex-wrap items-center gap-2">
-          {narrow && step > 0 && <button type="button" className={STEP_BUTTON} onClick={() => setStep(step - 1)}>Geri</button>}
-          {!last && <button type="button" className={`${PRIMARY_BUTTON} flex-1`} onClick={() => setStep(step + 1)}>İleri</button>}
+          {narrow && step > 0 && <button type="button" className={STEP_BUTTON} onClick={() => goTo(step - 1)}>Geri</button>}
+          {!last && <button type="button" className={`${PRIMARY_BUTTON} flex-1`} onClick={() => goTo(step + 1)}>İleri</button>}
           {last && (
             <button type="button" disabled={save.isPending} onClick={submit} className={`${PRIMARY_BUTTON} sm:w-auto`}>
               {save.isPending ? 'Kaydediliyor…' : 'Profili kaydet'}
@@ -268,7 +287,7 @@ export function ManagerProfilePage() {
       {profile.isLoading ? <Skeleton className="h-96" /> : profile.failed ? (
         <ErrorState message="Menajer profili yüklenemedi." onRetry={() => profile.refetch()} />
       ) : (
-        <ProfileForm initial={profile.data} />
+        <ProfileForm initial={profile.data ?? undefined} />
       )}
     </div>
   )
