@@ -7,6 +7,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const arg = (name, fallback) => (args.includes(name) ? args[args.indexOf(name) + 1] : fallback)
@@ -18,7 +19,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   process.exit(2)
 }
 const fixture = fileURLToPath(new URL('../../FCarrierTacticBuilderBackend/src/test/resources/le-export/academy-portvale.log', import.meta.url))
-const outDir = new URL('../docs/review/v2/screens/GROWTH-CAL/', import.meta.url)
+const outDir = screensDir('GROWTH-CAL')
 mkdirSync(outDir, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, outDir))
 

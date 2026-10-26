@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
 import { pageMinFont, stickyBand } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -18,7 +19,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-06c/transfer'}/`, import.meta.url)
+const out = screensDir(args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-06c/transfer')
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11

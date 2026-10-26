@@ -3,7 +3,7 @@
 // kaydırılmışta yapışkan üst başlık + filtre çubuğu bandında içerik görünmez (elementFromPoint) ve alfa 1.
 // Veri: tests/fixtures/sbcFixture.ts (yerel DB'ye yazılmaz); API yanıtları yalnız bu test tarayıcısında Playwright route ile değiştirilir.
 // Oy yüzdesi oturum ister: oturum yalnız tarayıcıda taklit edilir (sahte token + /me ve /ut/sbc/votes yanıtı); gerçek hesap açılmaz.
-// Kullanım: node scripts/sbc-shots.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/V3-05c/
+// Kullanım: node scripts/sbc-shots.mjs [--base http://localhost:8081]   Çıktı: Claude outputs/screens/V3-05c/ (repo dışı)
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { EA_REWARD, EA_REWARD_NAME, sbcAssetNamesFixture, sbcFixture, sbcRewardItemsFixture, sbcVotesFixture } from '../tests/fixtures/sbcFixture.ts'
 import { cardMinFont, pageMinFont, stickyBand } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -18,7 +19,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/V3-05c/', import.meta.url)
+const out = screensDir('V3-05c')
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11

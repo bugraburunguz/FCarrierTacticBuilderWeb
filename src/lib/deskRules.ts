@@ -77,7 +77,7 @@ export interface Capacity {
 
 /**
  * TEK derinlik tanımı (FAZ 6a-B): mevki kapasitesi oyuncunun listelenen mevkilerinin hepsini sayar; ana mevki birincil, diğerleri ikincil.
- * Kiralık gönderilen sayılmaz. Mevki yoğunluğu (squadDensity), mevki grupları (groupRoster) ve Masa'nın derinlik işi (depthRows) bundan okur.
+ * Kiralık gönderilen sayılmaz. v2 mevki yoğunluğu (squadDensity) ve Masa'nın derinlik işi (depthRows) bundan okur; Derinlik ekranı GT-b'de slot bazlı.
  */
 export function positionCapacity(squad: CareerPlayer[]): Map<string, Capacity> {
   const capacity = new Map<string, Capacity>()

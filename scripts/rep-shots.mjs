@@ -1,12 +1,13 @@
 // REP-04/07 ekran kapıları: replika listesi, filtreli liste, detay (4 sekme), kadromla uygula (kariyer + UT).
 // Kullanım: node scripts/rep-shots.mjs [--base http://localhost:8081]   (yerel test hesabı kurar, koşu sonunda siler)
-// Çıktı: docs/review/v2/screens/REP/*.png ve gates-report.json (axe serious/critical, yatay taşma, konsol/ağ hataları).
+// Çıktı: Claude outputs/screens/REP/ (repo dışı) *.png ve gates-report.json (axe serious/critical, yatay taşma, konsol/ağ hataları).
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -14,7 +15,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/REP/', import.meta.url)
+const out = screensDir('REP')
 mkdirSync(out, { recursive: true })
 const file = (name) => fileURLToPath(new URL(name, out))
 

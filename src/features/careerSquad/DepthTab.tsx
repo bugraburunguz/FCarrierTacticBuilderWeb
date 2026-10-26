@@ -1,91 +1,73 @@
-import { AlertTriangle, ChevronDown } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { AlertTriangle } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import type { CareerPlayer, Formation } from '../../api/types'
+import { endpoints } from '../../api/endpoints'
+import type { CareerPlayer } from '../../api/types'
 import { Chip, EmptyState, Panel, type DataSource } from '../../design/components/primitives'
-import type { PositionNeed } from '../../lib/depth'
-import { ageProfile, type PositionGroup } from '../../lib/deskRules'
-import { DepthMap } from '../squad/kadro/DepthMap'
+import { deskLink } from '../../lib/deskLinks'
+import { ageProfile, GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
 import type { SlotFitRow } from '../squad/useSlotFits'
 import { DevelopmentRecommendations } from '../growth/DevelopmentRecommendations'
-import { ageBands, contractTimeline, groupRoster, YOUTH_MAX_AGE, type DepthTier, type GroupRoster } from './careerSquadRules'
+import { ageBands, contractTimeline, YOUTH_MAX_AGE } from './careerSquadRules'
+import { SLOT_URGENCY_LABEL, slotDepth, slotForGroup, type DepthCell, type DepthSlot, type SlotDepthRow, type SlotUrgency } from './slotDepth'
 
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const decimal = (value: number) => value.toLocaleString('tr-TR', { maximumFractionDigits: 1 })
+const LINK = 'inline-flex min-h-8 items-center text-xs font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11'
+/** Renk yalnız destekler: yedek yok (kötü), diğerleri uyarı; metin her zaman yazılı. */
+const URGENCY_TONE: Record<SlotUrgency, 'bad' | 'warn'> = { NO_BACKUP: 'bad', YOUTH_ONLY: 'warn', OLD_STARTER: 'warn', QUALITY_GAP: 'warn' }
+const COLUMNS: { key: 'starter' | 'backup' | 'youth'; label: string }[] = [
+  { key: 'starter', label: 'İlk 11' },
+  { key: 'backup', label: 'Yedek' },
+  { key: 'youth', label: `Genç (≤${YOUTH_MAX_AGE})` },
+]
 
-function GroupSection({ roster, open, onToggle, focus }: { roster: GroupRoster; open: boolean; onToggle: () => void; focus: boolean }) {
-  const ref = useRef<HTMLButtonElement>(null)
+function Cell({ label, value, note }: { label: string; value?: DepthCell; note?: string }) {
+  return (
+    <div role="group" aria-label={label} className="flex min-w-0 flex-col gap-0.5">
+      <span className="text-xs text-ink-2">{label}</span>
+      {value ? (
+        <span className="flex min-w-0 items-center text-sm">
+          <Link to={value.academy ? deskLink.academy(value.id) : `/players/${value.id}`}
+            className="inline-flex min-h-8 min-w-0 items-center truncate underline-offset-2 hover:underline max-sm:min-h-11">{value.name}</Link>
+          <span className="shrink-0 font-[var(--font-num)] tabular-nums text-ink-2">&nbsp;· {value.overall ?? '–'}{value.age ? ` · ${value.age}` : ''}</span>
+        </span>
+      ) : <span className="text-sm text-muted">Yok</span>}
+      {note && <span className="text-xs text-warn">{note}</span>}
+    </div>
+  )
+}
+
+/** Altyapı verisinin durumu: hazır değilken "Yedek yok" gösterilmez (altyapı genç ekleyebilir). */
+type AcademyState = 'ready' | 'loading' | 'error'
+
+/** Slot satırı: mevki, tek aciliyet metni, üç kolon ve eylemler ("Transferde aday bul", altyapıda aday varsa "Altyapıda: {ad}"). */
+function SlotRow({ row: raw, focus, academy }: { row: SlotDepthRow; focus: boolean; academy: AcademyState }) {
+  const row = academy !== 'ready' && raw.urgency === 'NO_BACKUP' ? { ...raw, urgency: undefined } : raw
+  const ref = useRef<HTMLLIElement>(null)
   useEffect(() => {
     if (focus) {
       ref.current?.focus()
       ref.current?.scrollIntoView?.({ block: 'center' })
     }
   }, [focus])
-  const panelId = `grup-${roster.group}`
   return (
-    <li className="glass-3 rounded-[var(--radius-sm)]">
-      <button ref={ref} type="button" aria-expanded={open} aria-controls={panelId} onClick={onToggle}
-        className="flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-accent">
-        <span className="flex flex-wrap items-center gap-2">
-          {roster.label}
-          <span className="font-[var(--font-num)] tabular-nums text-ink-2"
-            title="Sayılan: birincil + ikincilin yarısı (ikincil oyuncu iki grubu birden tam doldurmaz)">
-            {roster.have}/{roster.need}
-          </span>
-          <span className="text-xs font-normal text-ink-2">{roster.primary} birincil · {roster.secondary} ikincil</span>
-          <UrgencyChip roster={roster} />
-        </span>
-        <ChevronDown size={16} aria-hidden="true" className={open ? 'rotate-180' : ''} />
-      </button>
-      {open && (
-        <div id={panelId} className="px-3 pb-3 text-sm">
-          {roster.players.length === 0 ? <p className="text-ink-2">Bu grupta oyuncu yok.</p> : (
-            <div className="grid grid-cols-1 gap-3 min-[560px]:grid-cols-3">
-              {TIERS.map(({ tier, label }) => {
-                const players = roster.players.filter((p) => p.tier === tier)
-                return (
-                  <div key={tier} className="flex min-w-0 flex-col gap-1">
-                    <h4 className="text-xs font-semibold text-ink-2">{label}</h4>
-                    <ul aria-label={`${roster.label} · ${label}`} className="flex flex-col gap-1">
-                      {players.length === 0 && <li className="text-xs text-muted">Yok</li>}
-                      {players.map((p) => (
-                        <li key={p.id} className="flex items-baseline justify-between gap-2">
-                          <Link to={`/players/${p.id}`} className="min-w-0 truncate underline-offset-2 hover:underline">{p.name}</Link>
-                          <span className="shrink-0 text-xs text-ink-2">
-                            {p.position}{!p.primary && ' (ikincil)'}{p.startsAt && ` · ilk 11: ${p.startsAt}`} · <b className="font-[var(--font-num)] tabular-nums text-ink">{p.overall}</b>{p.age ? ` · ${p.age}` : ''}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      )}
+    <li ref={ref} tabIndex={-1} aria-label={`${row.slotId} slotu`} aria-current={focus || undefined}
+      className={`glass-3 flex flex-col gap-2 rounded-[var(--radius-sm)] p-3 outline-none focus-visible:ring-2 focus-visible:ring-accent ${focus ? 'ring-1 ring-[var(--accent)]' : ''}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold">{row.position}{row.slotId !== row.position && <span className="font-normal text-ink-2"> · {row.slotId}</span>}</h3>
+        {row.urgency && <Chip tone={URGENCY_TONE[row.urgency]}>{SLOT_URGENCY_LABEL[row.urgency]}</Chip>}
+      </div>
+      <div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-3">
+        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} note={c.key === 'youth' && academy === 'error' ? 'Altyapı yüklenemedi' : undefined} />)}
+      </div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <Link to={deskLink.candidate(row.slotId, row.position, row.roleId)} className={LINK}>Transferde aday bul</Link>
+        {row.academyName && <Link to="/career/academy" className={LINK}>Altyapıda: {row.academyName}</Link>}
+      </div>
     </li>
   )
-}
-
-const TIERS: { tier: DepthTier; label: string }[] = [
-  { tier: 'starter', label: 'İlk 11' },
-  { tier: 'backup', label: 'Yedek' },
-  { tier: 'youth', label: `Genç (≤${YOUTH_MAX_AGE})` },
-]
-
-/** Aciliyet çipi (KARIYER-UX 6): eksik (kötü) > yedek yok / yalnız genç yedek (uyarı) > yeterli (iyi); metin her zaman yazılı. */
-function UrgencyChip({ roster }: { roster: GroupRoster }) {
-  switch (roster.urgency) {
-    case 'short':
-      return <Chip tone="bad">{roster.short} eksik</Chip>
-    case 'no-backup':
-      return <Chip tone="warn">Yedek yok</Chip>
-    case 'youth-only':
-      return <Chip tone="warn">Yalnız genç yedek</Chip>
-    case 'ok':
-      return <Chip tone="good">Yeterli</Chip>
-  }
 }
 
 /** Yaş profili (tek seri): erişilebilir özet + ekran okuyucu tablosu; her çubukta sayı yazılı, renk anlam taşımaz (dataviz). */
@@ -154,51 +136,48 @@ function ContractTimeline({ squad, gameDate }: { squad: CareerPlayer[]; gameDate
 }
 
 /**
- * Derinlik sekmesi (KARIYER-UX FAZ 3, 15 §4.2): mevki grubunda kim/kaç (Masa derinlik işiyle aynı eşik), mevki yoğunluk haritası
- * (ana taktiğe göre), yaş profili ve sözleşme bitiş zaman çizgisi. `?grup=` o grubu açık ve odaklı getirir (Masa'nın derinlik bağlantısı).
+ * Derinlik sekmesi (GT-b): "Hangi mevkide yedek sorunum var?" — ana taktiğin (yoksa başlangıç önerisinin, "Otomatik öneri") 11 slotu × İlk 11 · Yedek ·
+ * Genç (≤ 21, altyapı dahil), satır başına tek aciliyet metni; yaş profili ve sözleşme bitişleri. Eski `?grup=` o grubun ilk slot satırına odaklanır.
  */
-export function DepthTab({ squad, needs, formation, wanted, gameDate, record, starters, careerId, tacticRows = [], tacticPending = false }: {
+export function DepthTab({ squad, slots, auto = false, wanted, gameDate, record, careerId, tacticRows = [], tacticPending = false }: {
   squad: CareerPlayer[]
+  /** GT-b: ana taktiğin (yoksa başlangıç önerisinin) slotları ve dizilen oyuncular; auto → "Otomatik öneri". */
+  slots: DepthSlot[]
+  auto?: boolean
   /** FIT-3 madde 11: kompakt gelişim planı önerileri için (zayıf slotlar ana taktik satırlarından). */
   careerId?: number
   tacticRows?: SlotFitRow[]
   tacticPending?: boolean
-  needs: PositionNeed[]
-  formation?: Formation
+  /** Eski `?grup=` (Masa derinlik bağlantısı): o grubun ilk slot satırına odak. */
   wanted?: PositionGroup
   gameDate?: string
   record?: DataSource
-  /** İlk 11: oyuncu → oynadığı slotun mevkisi (ana taktik, yoksa başlangıç önerisi); bilinmiyorsa matris yalnız yedek/genç ayırır. */
-  starters?: ReadonlyMap<number, string>
 }) {
-  const roster = groupRoster(squad, starters)
-  const [open, setOpen] = useState<Set<PositionGroup>>(() => new Set(wanted ? [wanted] : roster.map((r) => r.group)))
-  const toggle = (group: PositionGroup) => setOpen((cur) => {
-    const next = new Set(cur)
-    if (next.has(group)) {
-      next.delete(group)
-    } else {
-      next.add(group)
-    }
-    return next
-  })
+  // Altyapı Genç kolonuna girer (≤ 21 kadro gençleriyle birlikte); Altyapı ekranıyla aynı anahtar.
+  const academy = useQuery({ queryKey: ['academy', careerId], queryFn: () => endpoints.academy(careerId!), enabled: careerId !== undefined, staleTime: 300_000 })
+  const rows = slotDepth(slots, squad, academy.data?.players ?? [])
+  const focusSlot = slotForGroup(slots, wanted)
+  const academyState: AcademyState = academy.isError ? 'error' : academy.data || careerId === undefined ? 'ready' : 'loading'
+  // Masa'nın derinlik işi grup sayısına göre; formasyonda o gruptan slot yoksa (ör. dar 4-1-2-1-2'de kanat) kısa not.
+  const missingGroup = wanted && slots.length > 0 && !focusSlot ? wanted : undefined
   if (squad.length === 0) {
     return <EmptyState>Kadro boş.</EmptyState>
   }
   return (
     <div className="grid grid-cols-1 gap-3 min-[1100px]:grid-cols-2">
-      {/* KARIYER-UX 6: matris üç kolonlu (ilk 11 / yedek / genç); isimler kesilmesin diye geniş ekranda tam genişlik. */}
-      <Panel title="Mevki grupları" label="Mevki grupları" source={record} className="min-[1100px]:col-span-2">
-        <ul className="flex flex-col gap-2">
-          {roster.map((r) => <GroupSection key={r.group} roster={r} open={open.has(r.group)} onToggle={() => toggle(r.group)} focus={r.group === wanted} />)}
-        </ul>
+      {/* GT-b: "Hangi mevkide yedek sorunum var?" — Mevki grupları ve Mevki yoğunluğu yerine tek slot bazlı matris. */}
+      <Panel title="Derinlik" label="Derinlik" source={record} className="min-[1100px]:col-span-2"
+        actions={auto ? <Chip tone="info">Otomatik öneri</Chip> : undefined}>
+        {missingGroup && <p role="status" className="mb-2 text-sm text-ink-2">Bu formasyonda {GROUP_LABEL[missingGroup].toLocaleLowerCase('tr-TR')} slotu yok.</p>}
+        {rows.length === 0 ? <EmptyState>Ana taktik ya da başlangıç önerisi hazır olunca slotlar görünür.</EmptyState> : (
+          <ul aria-label="Slot derinliği" className="flex flex-col gap-2">
+            {rows.map((r) => <SlotRow key={r.slotId} row={r} focus={r.slotId === focusSlot} academy={academyState} />)}
+          </ul>
+        )}
       </Panel>
       <div className="min-[1100px]:col-span-2">
         <DevelopmentRecommendations careerId={careerId} rows={tacticRows} pending={tacticPending} compact />
       </div>
-      <Panel title="Mevki yoğunluğu" label="Mevki yoğunluğu" source={record}>
-        <DepthMap squad={squad} needs={needs} formation={formation} />
-      </Panel>
       <Panel title="Yaş profili" label="Yaş profili grafiği" source={record}>
         <AgeHistogram squad={squad} />
       </Panel>

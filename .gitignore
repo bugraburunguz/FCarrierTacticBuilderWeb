@@ -27,4 +27,7 @@ dist-ssr
 MacOS_Dock_TD.rar
 *.rar
 *.zip
-docs/review/v2/screens/_playwright/
+
+# OPS-SCREENS: ekran görüntüleri repoda tutulmaz; proje kökündeki "Claude outputs/screens/<İŞ-ID>/" klasörüne yazılır (repo dışı).
+docs/review/**/screens/
+screens/

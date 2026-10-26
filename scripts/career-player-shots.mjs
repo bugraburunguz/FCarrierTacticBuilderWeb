@@ -3,7 +3,7 @@
 // 375/768/1280 × koyu/açık, ayrıca kaydırılmış Statlar. Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa minFont (≥ 11px), kart içi
 // minFont, yapışkan bant sızıntısı + alfa 1, sekme çubuğu üst kenarı (375×812 ≤ 640), "Kadronda" rozeti, Roller yardımında lig referansı.
 // Veri: geçici test hesabı (yalnız localhost) + Crewe Alexandra kariyeri; koşu sonunda yalnız bu hesap silinir.
-// Kullanım: node scripts/career-player-shots.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/V3-06b/career-player/
+// Kullanım: node scripts/career-player-shots.mjs [--base http://localhost:8081]   Çıktı: Claude outputs/screens/V3-06b/career-player/ (repo dışı)
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
 import { cardMinFont, labelClipping, pageMinFont, stickyBand } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -19,7 +20,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   process.exit(2)
 }
 // --out <screens altı klasör>: regresyon koşusu başka göreve yazılır (commit'li çekimler ezilmez).
-const out = new URL(`../docs/review/v2/screens/${args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-06b/career-player'}/`, import.meta.url)
+const out = screensDir(args.includes('--out') ? args[args.indexOf('--out') + 1] : 'V3-06b/career-player')
 mkdirSync(out, { recursive: true })
 const file = (n) => fileURLToPath(new URL(n, out))
 const MIN_FONT = 11

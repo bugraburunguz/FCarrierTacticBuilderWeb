@@ -1,8 +1,9 @@
 // q17 sonucunu güncel referansla karşılaştırır (V3-07c): kombinasyon başına saha genişliği, kart genişliği, kart içi en küçük yazı, OVR.
-// Referanslar: docs/review/v2/screens/q17-referans/ut.json (V3-05b-c, UT boş + dolu) ve kariyer.json (V3-07b, kariyer boş + dolu; her boyutta yeniden giriş,
+// Referanslar: Claude outputs/screens/q17-referans/ (repo dışı) ut.json (V3-05b-c, UT boş + dolu) ve kariyer.json (V3-07b, kariyer boş + dolu; her boyutta yeniden giriş,
 // 174/174 geçerli dolu ölçüm). V3-04 kariyer referansının dolu kısmı geçersizdi (oturum süresi; V3-07b raporu) ve artık kullanılmaz.
 // Kullanım: node scripts/q17-compare.mjs <q17 çıktısı.json> [<ikinci çıktı.json> ...] [--out karşılaştırma.json]
 import { readFileSync, writeFileSync } from 'node:fs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const outFile = args.includes('--out') ? args[args.indexOf('--out') + 1] : undefined
@@ -11,7 +12,7 @@ if (inputs.length === 0) {
   console.error('Kullanım: node scripts/q17-compare.mjs <q17 çıktısı.json> [...] [--out dosya.json]')
   process.exit(2)
 }
-const REF = new URL('../docs/review/v2/screens/q17-referans/', import.meta.url)
+const REF = screensDir('q17-referans')
 const load = (p) => JSON.parse(readFileSync(p, 'utf8')).results
 const ref = [...load(new URL('ut.json', REF)), ...load(new URL('kariyer.json', REF))]
 const key = (r) => [r.mode, r.state, r.size, r.formation].join('|')

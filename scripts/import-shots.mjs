@@ -2,13 +2,14 @@
 // 375/768/1280 × koyu/açık. Ölçüm: taşma, axe serious/critical, konsol/ağ 4xx-5xx, sayfa geneli minFont (≥ 11px).
 // Sayfa oturum ister: oturum yalnız bu test tarayıcısında taklit edilir (sahte token + /me, /careers yanıtı); gerçek hesap açılmaz.
 // Hiçbir şey gönderilmez (Gönder'e basılmaz); kurallar gerçek GET /ut/capture/rules ucundan.
-// Kullanım: node scripts/import-shots.mjs [--base http://localhost:8081]   Çıktı: docs/review/v2/screens/HAR-01/
+// Kullanım: node scripts/import-shots.mjs [--base http://localhost:8081]   Çıktı: Claude outputs/screens/HAR-01/ (repo dışı)
 // Hız sınırı backend belleğinde (OPS-02, Redis yok): koşu 429 alırsa backend'i yeniden başlat (docker compose restart backend).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { pageMinFont } from './lib/readability.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -21,10 +22,10 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
 // V3-05c-c: --source capture → uzantının "Dışa aktar" dosyası aynı akışta (varsayılan build'de; HAR bayrağı gerekmez), çekimler screens/V3-05c-c/import/.
 const SOURCE = args.includes('--source') ? args[args.indexOf('--source') + 1] : 'har'
 const SRC = SOURCE === 'capture'
-  ? { heading: 'Yakalama dosyasından içe aktar', input: 'Yakalama dosyası', fixture: '../tests/fixtures/captures/sample-captures.json', broken: 'bozuk.json', error: 'geçerli bir JSON değil', out: '../docs/review/v2/screens/V3-05c-c/import/' }
-  : { heading: 'HAR dosyasından içe aktar', input: 'HAR dosyası', fixture: '../tests/fixtures/har/sample.har', broken: 'bozuk.har', error: 'geçerli bir HAR', out: '../docs/review/v2/screens/HAR-01/' }
-const OUT_ON = new URL(SRC.out, import.meta.url)
-const OUT_OFF = new URL('../docs/review/v2/screens/V3-05c-b/import/', import.meta.url)
+  ? { heading: 'Yakalama dosyasından içe aktar', input: 'Yakalama dosyası', fixture: '../tests/fixtures/captures/sample-captures.json', broken: 'bozuk.json', error: 'geçerli bir JSON değil', out: ['V3-05c-c', 'import'] }
+  : { heading: 'HAR dosyasından içe aktar', input: 'HAR dosyası', fixture: '../tests/fixtures/har/sample.har', broken: 'bozuk.har', error: 'geçerli bir HAR', out: ['HAR-01'] }
+const OUT_ON = screensDir(...SRC.out)
+const OUT_OFF = screensDir('V3-05c-b', 'import')
 let out = OUT_ON
 const file = (n) => {
   mkdirSync(out, { recursive: true })

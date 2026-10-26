@@ -1,11 +1,12 @@
 // E3-10 ekran kapıları: kadro sahasında slota tıkla → "Öneriler" sekmesi → önerileri getir; Transfer Merkezi.
 // Kullanım: node scripts/e3-10-shots.mjs [--base http://localhost:8081] (yerel test hesabı kurar, koşu sonunda siler)
-// Çıktı: docs/review/v2/screens/E3-10/*.png ve gates-report.json (axe serious/critical, taşma, konsol/ağ hataları, kontrast).
+// Çıktı: Claude outputs/screens/E3-10/ (repo dışı) *.png ve gates-report.json (axe serious/critical, taşma, konsol/ağ hataları, kontrast).
 import { AxeBuilder } from '@axe-core/playwright'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright-core'
 import { createGateAccount } from './lib/gateAccount.mjs'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : 'http://localhost:8081'
@@ -13,7 +14,7 @@ if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(base)) {
   console.error('Yalnız localhost/127.0.0.1 kullanılabilir.')
   process.exit(2)
 }
-const out = new URL('../docs/review/v2/screens/E3-10/', import.meta.url)
+const out = screensDir('E3-10')
 mkdirSync(out, { recursive: true })
 const file = (name) => fileURLToPath(new URL(name, out))
 

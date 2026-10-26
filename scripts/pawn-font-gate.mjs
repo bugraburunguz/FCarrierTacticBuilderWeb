@@ -1,8 +1,9 @@
 // KARIYER-UX FAZ 1 düzeltme 2 (Q18): piyon soyad hapı, mevki hapı ve rol etiketi hesaplanan yazı boyutu her genişlikte ≥ 11px.
 // Kullanım: node scripts/pawn-font-gate.mjs [--base http://localhost:5173]  (geliştirme sunucusu; /onizleme/kariyer-ux yalnız geliştirmede)
-// Yalnız localhost/127.0.0.1. Çıktı: docs/review/v2/screens/KARIYER-UX-1/pawn-font-report.json
+// Yalnız localhost/127.0.0.1. Çıktı: Claude outputs/screens/KARIYER-UX-1/pawn-font-report.json (repo dışı)
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { chromium } from 'playwright-core'
+import { screensDir } from './lib/screensDir.mjs'
 
 const args = process.argv.slice(2)
 const flag = (name, fallback) => (args.includes(`--${name}`) ? args[args.indexOf(`--${name}`) + 1] : fallback)
@@ -56,7 +57,7 @@ const summary = Object.values(rows.reduce((acc, r) => {
   acc[key].count += 1
   return acc
 }, {}))
-const out = new URL('../docs/review/v2/screens/KARIYER-UX-1/', import.meta.url)
+const out = screensDir('KARIYER-UX-1')
 mkdirSync(out, { recursive: true })
 writeFileSync(new URL('pawn-font-report.json', out), JSON.stringify({ minPx: MIN_PX, summary, bad }, null, 2) + '\n')
 summary.forEach((s) => console.log(`${s.width}px ${s.kind}: en küçük ${s.min}px (${s.count} öğe)`))

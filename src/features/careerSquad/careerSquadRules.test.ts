@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../../api/types'
 import { depthRows, positionCapacity } from '../../lib/deskRules'
-import { ageBands, contractTimeline, groupRoster, legacySquadTarget, squadStats } from './careerSquadRules'
+import { ageBands, contractTimeline, legacySquadTarget, squadStats } from './careerSquadRules'
 
 const member = (id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer> = {}, player: object = {}): CareerPlayer =>
   ({ player: { id, name: `Oyuncu ${id}`, positions: [position], overall, age, ...player }, onLoan: false, ...extra }) as CareerPlayer
@@ -17,62 +17,15 @@ describe('Kadro özeti (diziliş sekmesi StatTile\'ları)', () => {
   })
 })
 
-describe('derinlik: mevki grubunda kim var, kaç kişi', () => {
-  it('grup başına eldeki/gereken ve oyuncular reytinge göre; kiralık gönderilen sayılmaz', () => {
-    const roster = groupRoster([member(1, 'GK', 70, 30), member(2, 'GK', 64, 22), member(3, 'CM', 75, 26), member(4, 'CM', 60, 19, { loanedOut: true, onLoan: true })])
-    const gk = roster.find((g) => g.group === 'GK')!
-    expect(gk).toMatchObject({ label: 'Kaleci', have: 2, need: 2, short: 0 })
-    expect(gk.players.map((p) => p.id)).toEqual([1, 2])
-    const mid = roster.find((g) => g.group === 'MID')!
-    expect(mid).toMatchObject({ have: 1, need: 4, short: 3 })
-    expect(mid.players.map((p) => p.id)).toEqual([3])
-  })
-})
-
-/** KARIYER-UX 6: derinlik matrisi — grup başına ilk 11 / yedek / genç (≤21, ilk 11 dışı) ve aciliyet. */
-describe('derinlik matrisi', () => {
-  it('oyuncular ilk 11 (ana taktik), yedek ve genç olarak ayrılır; aciliyet: eksik > yedek yok > yalnız genç yedek > yeterli', () => {
-    const squad = [
-      member(1, 'GK', 70, 30), member(2, 'GK', 60, 19),
-      member(3, 'CB', 75, 27), member(4, 'CB', 74, 25), member(5, 'CB', 65, 28),
-      member(6, 'ST', 72, 26), member(7, 'ST', 70, 24),
-    ]
-    const rows = groupRoster(squad, new Map([[1, 'GK'], [3, 'CB'], [4, 'CB'], [6, 'ST'], [7, 'ST']]))
-    const gk = rows.find((r) => r.group === 'GK')!
-    expect(gk.players.map((p) => [p.id, p.tier])).toEqual([[1, 'starter'], [2, 'youth']])
-    expect(gk.urgency).toBe('youth-only')
-    expect(rows.find((r) => r.group === 'CB')!.urgency).toBe('ok')
-    expect(rows.find((r) => r.group === 'ST')!.urgency).toBe('no-backup')
-    expect(rows.find((r) => r.group === 'MID')!.urgency).toBe('short')
-  })
-
-  it('ilk 11 bilinmiyorsa herkes yedek/genç sayılır, aciliyet yalnız eksik/yeterli', () => {
-    const rows = groupRoster([member(1, 'GK', 70, 30), member(2, 'GK', 60, 30)])
-    expect(rows.find((r) => r.group === 'GK')!.players.map((p) => p.tier)).toEqual(['backup', 'backup'])
-    expect(rows.find((r) => r.group === 'GK')!.urgency).toBe('ok')
-  })
-})
-
 /**
- * FAZ 6a-B: tek derinlik tanımı. İlk 11 = ana taktikte o slotu oynayan (slot mevkisinin grubunda); kapasite = listelenen mevkilerin hepsi,
- * ana mevki birincil, diğerleri ikincil. Canlıdaki iki çelişki: Forvet "İlk 11: Yok" (ST'de oynayan RW birincilli oyuncu) ve RW "0 · Oyuncu yok".
+ * FAZ 6a-B: Masa derinliği kapasitesi — listelenen mevkilerin hepsi, ana mevki birincil, diğerleri ikincil. (Derinlik ekranı GT-b'de slot bazlı:
+ * slotDepth.test.ts.)
  */
 describe('FAZ 6a-B tek derinlik tanımı', () => {
   const onel = member(10, 'RW', 70, 31, {}, { name: 'Onel Hernández', positions: ['RW', 'ST'] })
   const ouazane = member(11, 'RM', 66, 24, {}, { name: 'Ouazane', positions: ['RM', 'RB', 'RW'] })
   const gutierrez = member(12, 'RB', 64, 27, {}, { name: 'Gutiérrez', positions: ['RB'] })
   const striker = member(13, 'ST', 60, 29)
-
-  it('ST slotunda oynayan oyuncu Forvet grubunda İlk 11 (birincil mevkisi kanat olsa da)', () => {
-    const rows = groupRoster([onel, ouazane, gutierrez, striker], new Map([[10, 'ST'], [11, 'RW'], [12, 'RB']]))
-    const st = rows.find((r) => r.group === 'ST')!
-    expect(st.players.filter((p) => p.tier === 'starter').map((p) => p.name)).toEqual(['Onel Hernández'])
-    expect(st.players.find((p) => p.id === 13)).toMatchObject({ tier: 'backup', primary: true })
-    // Başka grupta ilk 11 olan oyuncu bu grupta yedek sayılmaz (aciliyet onu yedek diye saymaz), "ilk 11: <mevki>" notuyla görünür.
-    const wing = rows.find((r) => r.group === 'W')!
-    expect(wing.players.find((p) => p.id === 10)).toMatchObject({ startsAt: 'ST' })
-    expect(wing.players.filter((p) => p.tier === 'starter').map((p) => p.id)).toEqual([11])
-  })
 
   it('kapasite listelenen tüm mevkileri sayar; birincil/ikincil ayrılır; Masa derinliği aynı sayıyı kullanır', () => {
     const capacity = positionCapacity([onel, ouazane, gutierrez, striker])
@@ -82,9 +35,6 @@ describe('FAZ 6a-B tek derinlik tanımı', () => {
     // Grup eşiği ağırlıklı: birincil + ⌊ikincil/2⌋ (ikincil oyuncu iki grubu birden tam doldurmaz); ayrım ayrıca verilir.
     const fb = depthRows([onel, ouazane, gutierrez, striker]).find((d) => d.group === 'FB')!
     expect(fb).toMatchObject({ have: 1, primary: 1, secondary: 1 })
-    const fbRoster = groupRoster([onel, ouazane, gutierrez, striker]).find((r) => r.group === 'FB')!
-    expect(fbRoster.have).toBe(fb.have)
-    expect(fbRoster.players.find((p) => p.id === 11)).toMatchObject({ primary: false })
   })
 })
 
