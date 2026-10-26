@@ -39,13 +39,21 @@ describe('academyRules', () => {
 
   it('Plan seçilmeli: Dengeli dışı plan önerilen oyuncu sayısı; hepsi Dengeli ya da plansızsa kart yok', () => {
     const cards = highlights([p(1, { plan: special }), p(2, { plan: special }), p(3, { plan: balanced }), p(4)])
-    expect(cards.find((c) => c.kind === 'PLAN_NEEDED')).toMatchObject({ count: 2, text: '2 oyuncunun planı Dengeli değil' })
+    expect(cards.find((c) => c.kind === 'PLAN_NEEDED')).toMatchObject({ count: 2, text: '2 oyuncu için özel plan öneriliyor' })
     expect(highlights([p(1, { plan: balanced }), p(2)]).some((c) => c.kind === 'PLAN_NEEDED')).toBe(false)
   })
 
   it('en çok 3 kart, sabit sıra: A takıma hazır · En yüksek potansiyel · Plan seçilmeli', () => {
     const cards = highlights([p(1, { promote: promote('CM', 62), status: 'READY', plan: special }), p(2, { potential: 90 })])
     expect(cards.map((c) => c.kind)).toEqual(['READY', 'TOP_POTENTIAL', 'PLAN_NEEDED'])
+  })
+
+  it('GROWTH-CAL: aynı oyuncu iki kartta görünmez — En yüksek potansiyel, A takıma hazır oyuncuyu atlar ve sıradakini gösterir', () => {
+    const cards = highlights([p(1, { potential: 90, promote: promote('CM', 62), status: 'READY' }), p(2, { potential: 80 }), p(3, { potential: 75 })])
+    expect(cards.find((c) => c.kind === 'READY')).toMatchObject({ player: { playerId: 1 } })
+    expect(cards.find((c) => c.kind === 'TOP_POTENTIAL')).toMatchObject({ player: { playerId: 2 }, text: 'POT 80' })
+    // Tek oyuncu varsa ve o hazırsa potansiyel kartı çıkmaz.
+    expect(highlights([p(1, { potential: 90, promote: promote('CM', 62), status: 'READY' })]).some((c) => c.kind === 'TOP_POTENTIAL')).toBe(false)
   })
 
   it('sıralama: Potansiyel (varsayılan, azalan; bant alt sınırı), Yaş (artan), Hazırlık (Hazır → Gelişiyor → Bekliyor)', () => {

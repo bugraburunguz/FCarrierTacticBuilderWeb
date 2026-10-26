@@ -71,14 +71,15 @@ export function highlights(players: readonly AcademyPlayer[]): Highlight[] {
     cards.push({ kind: 'READY', player: ready, text, estimated: true })
   }
   // Eşitlikte OVR, sonra ad: aralık modunda gelen sıra (bant içi gerçek POT) kartı belirlemez.
-  const top = players.filter((p) => potentialKey(p) >= 0)
+  // GROWTH-CAL: aynı oyuncu iki kartta görünmez; A takıma hazır kartındaki oyuncu atlanır.
+  const top = players.filter((p) => potentialKey(p) >= 0 && p.playerId !== ready?.playerId)
     .sort((a, b) => potentialKey(b) - potentialKey(a) || (b.overall ?? 0) - (a.overall ?? 0) || a.name.localeCompare(b.name, 'tr'))[0]
   if (top) {
     cards.push({ kind: 'TOP_POTENTIAL', player: top, text: `POT ${potText(top)}` })
   }
   const count = players.filter((p) => p.plan && !p.plan.balanced).length
   if (count > 0) {
-    cards.push({ kind: 'PLAN_NEEDED', count, text: `${count} oyuncunun planı Dengeli değil` })
+    cards.push({ kind: 'PLAN_NEEDED', count, text: `${count} oyuncu için özel plan öneriliyor` })
   }
   return cards.slice(0, 3)
 }

@@ -1,0 +1,53 @@
+{
+  "label": "once",
+  "ready": [
+    "Declan Talbot (15, CM): Declan Talbot · 1 sezon sonra tahmini CM gücü 70, yedek Abdellah Ouazane 68. Bu bir tahmin; A takıma alma oyunda yapılır.",
+    "Sebastian Horne (15, CAM): Sebastian Horne · 1 sezon sonra tahmini CAM gücü 58, yedek Taylor Monk 47. Bu bir tahmin; A takıma alma oyunda yapılır.",
+    "Declan Bray (15, CAM): Declan Bray · 1 sezon sonra tahmini CAM gücü 56, yedek Taylor Monk 47. Bu bir tahmin; A takıma alma oyunda yapılır.",
+    "Carl Norberg (15, GK): Carl Norberg · 1 sezon sonra tahmini GK gücü 72, yedek Ellis Hubbard 52. Bu bir tahmin; A takıma alma oyunda yapılır."
+  ],
+  "academy": [
+    "Declan Talbot 15 READY CM · Deep-Lying Playmaker (Build-Up)",
+    "Sebastian Horne 15 READY CAM · Playmaker (Build-Up)",
+    "Declan Bray 15 READY CAM · Playmaker (Build-Up)",
+    "Kyle Preston 15 GROWING CB · Defender (Balanced)",
+    "Mason Hargreaves 15 GROWING Dengeli",
+    "Paul Bradley 15 GROWING CB · Ball-Playing Defender (Defend)",
+    "Carl Norberg 15 READY Dengeli"
+  ],
+  "balanced": 10,
+  "youth": 26,
+  "youthPlans": [
+    "Abdellah Ouazane RW: Dengeli",
+    "Mathys Niflore GK: GK · Goalkeeper (Defend)",
+    "Maximiliano Gutiérrez RB: RB · Fullback (Balanced)",
+    "Jesse Eugen Bisiwu LW: Dengeli",
+    "Iván Román CB: CB · Defender (Defend)",
+    "Justin Lerma CAM: Dengeli",
+    "Cavan Sullivan RM: Dengeli",
+    "Dastan Satpayev LW: Dengeli",
+    "Ilhan Fakili LM: Dengeli",
+    "Jeremy Monga LM: Dengeli",
+    "Noah Mbamba CDM: Dengeli",
+    "Kauã Prates RB: Dengeli",
+    "Christian Comotto CM: CM · Deep-Lying Playmaker (Build-Up)",
+    "Tiago Silva CDM: CM · Deep-Lying Playmaker (Build-Up)",
+    "Tyler Fletcher CDM: CM · Deep-Lying Playmaker (Build-Up)",
+    "Archie Nash CDM: Dengeli",
+    "Kieran Allison CB: CB · Defender (Defend)",
+    "Luke Hancock CM: CM · Deep-Lying Playmaker (Build-Up)",
+    "Jack Shorrock LM: LB · Fullback (Defend)",
+    "Peter Moore LB: RB · Falseback (Balanced)",
+    "Taylor Monk RW: CAM · Playmaker (Build-Up)",
+    "Alex Francis CDM: LB · Fullback (Defend)",
+    "Owen Rowley LM: CM · Box-to-Box (Ball-Winning)",
+    "Riley Rigby CB: CB · Defender (Balanced)",
+    "Wes Haigh ST: ST · False 9 (Build-Up)",
+    "Kyle Ryan RM: CAM · Playmaker (Build-Up)"
+  ],
+  "masa": [
+    "LB: Kalite açığı",
+    "Altyapıdan A takıma al: Carl Norberg",
+    "Süre ver ya da kirala: Wes Haigh"
+  ]
+}
