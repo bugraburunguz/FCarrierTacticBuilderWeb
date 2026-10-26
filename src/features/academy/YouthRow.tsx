@@ -1,4 +1,4 @@
-import type { AcademyPlayer } from '../../api/types'
+import type { AcademyPlayer, GrowthRecent } from '../../api/types'
 import { Chip } from '../../design/components/primitives'
 import { STATUS_LABEL } from './academyRules'
 
@@ -38,12 +38,18 @@ const reasonText = (player: AcademyPlayer) => {
   return cut > 0 ? text.slice(cut + 3) : text
 }
 
+/** GTR-b: "Son 3 ayda: +3 OVR · 18 maç"; düşüş eksi işaretiyle (−2), değişim yoksa 0; maç bilinmiyorsa yalnız OVR. */
+export const recentText = (r: GrowthRecent) => {
+  const delta = r.overallDelta > 0 ? `+${r.overallDelta}` : r.overallDelta < 0 ? `−${-r.overallDelta}` : '0'
+  return `Son ${r.months} ayda: ${delta} OVR${r.matches === null ? '' : ` · ${r.matches} maç`}`
+}
+
 /**
  * Altyapı ve Gelişim satırı: iki satırlık kart (masaüstünde de tablo değil). 1. satır: ad, yaş, mevki (dönüşüm varsa "CM → CDM önerilir"; kanatta taraf
- * gerekçesi title), OVR → POT çubuğu. 2. satır: önerilen plan ve durum (metinle). `reason` (Gelişim): 3. satır tek satır gerekçe. Tıklayınca panel
- * (masaüstü) ya da oyuncu sayfası (mobil).
+ * gerekçesi title), OVR → POT çubuğu. 2. satır: önerilen plan ve durum (metinle). `reason` (Gelişim): 3. satır tek satır gerekçe. `recent` (GTR-b,
+ * Gelişim): önceki anlık görüntü varsa son dönemdeki değişim. Tıklayınca panel (masaüstü) ya da oyuncu sayfası (mobil).
  */
-export function YouthRow({ player, onOpen, selected = false, reason = false }: { player: AcademyPlayer; onOpen: (playerId: number) => void; selected?: boolean; reason?: boolean }) {
+export function YouthRow({ player, onOpen, selected = false, reason = false, recent }: { player: AcademyPlayer; onOpen: (playerId: number) => void; selected?: boolean; reason?: boolean; recent?: GrowthRecent }) {
   const position = player.bestPosition ?? player.positions[0] ?? '—'
   return (
     <button type="button" onClick={() => onOpen(player.playerId)} aria-current={selected || undefined}
@@ -65,6 +71,7 @@ export function YouthRow({ player, onOpen, selected = false, reason = false }: {
       </span>
       {/* GT-a: Gelişim'de tek satır gerekçe (tahmin), ad tekrar etmeden. */}
       {reason && player.plan?.text && <span className="text-xs text-ink-2">{reasonText(player)}</span>}
+      {recent && <span className="text-xs tabular-nums text-ink-2">{recentText(recent)}</span>}
       {player.promoteInfo && <span className="text-xs text-ink-2">{player.promoteInfo.text}</span>}
     </button>
   )

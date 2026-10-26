@@ -706,6 +706,36 @@ export interface AcademyPlayer {
 
 export type AgeGroup = 'YOUTH' | 'PEAK' | 'VETERAN'
 
+/** GTR-b: Gelişim satırı "Son {months} ayda: +3 OVR · 18 maç". playerId Gelişim satırıyla aynı; matches bilinmiyorsa null. */
+export interface GrowthRecent {
+  playerId: number
+  months: number
+  overallDelta: number
+  matches: number | null
+}
+
+/** GTR-b: admin gelişim ölçümü (GET /admin/careers/{id}/growth-report). from/to oyun tarihi; partial = dönem 365 günden kısa. */
+export interface GrowthReportGroup {
+  key: string
+  n: number
+  meanOverallDelta: number
+  medianOverallDelta: number
+  physical: number
+  technical: number
+  mental: number
+  meanPredicted: number
+  meanDiff: number
+}
+
+export interface GrowthReport {
+  from: string
+  to: string
+  days: number
+  partial: boolean
+  matched: number
+  groups: Record<string, GrowthReportGroup[]>
+}
+
 export type AcademyStatus = 'READY' | 'GROWING' | 'WAITING'
 
 /** ACADEMY-b paneli: GET /careers/{id}/youth/{playerId}. Hepsi tahmin. */

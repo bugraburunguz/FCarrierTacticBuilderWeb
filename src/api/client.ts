@@ -166,6 +166,20 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   return cleanPlayerNames(envelope.data) as T
 }
 
+/** GTR-b: oturumlu düz metin yanıt (CSV indirme; zarfsız). Hata yanıtı zarflıdır; okunamazsa genel mesaj. */
+export async function requestText(path: string, options: RequestOptions = {}): Promise<string> {
+  const res = await send(path, { ...options, headers: { Accept: 'text/csv, application/json', ...options.headers } }, true)
+  if (res.ok) {
+    return res.text()
+  }
+  if (res.status === 401) {
+    tokens.clear()
+  }
+  const envelope = (await res.json().catch(() => undefined)) as Envelope<unknown> | undefined
+  const first = envelope?.error?.[0]
+  throw new ApiError(first?.message ?? envelope?.message ?? 'İstek başarısız oldu.', first?.code ?? 'client.unknown', res.status)
+}
+
 export const api = {
   get: <T>(path: string, query?: RequestOptions['query']) => request<T>(path, { query }),
   post: <T>(path: string, body?: unknown, auth = true) => request<T>(path, { method: 'POST', body: body ?? {}, auth }),

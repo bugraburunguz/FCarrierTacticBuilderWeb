@@ -11,7 +11,7 @@ const mobile = vi.hoisted(() => ({ value: false }))
 vi.mock('../../design/components/MobileSheet', async (orig) => ({ ...(await orig<object>()), useIsMobile: () => mobile.value }))
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE' } }) }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), youth: vi.fn(), training: vi.fn(), youthDetail: vi.fn(), development: vi.fn() },
+  endpoints: { careers: vi.fn(), squad: vi.fn(), snapshots: vi.fn(), snapshotDiff: vi.fn(), playerHistory: vi.fn(), youth: vi.fn(), training: vi.fn(), youthDetail: vi.fn(), development: vi.fn(), growthRecent: vi.fn() },
 }))
 
 const member = (id: number, extra: object = {}) => ({ player: { id, name: `Oyuncu ${id}`, positions: ['CM'], overall: 60 + id, potential: 75, age: 25, valuationEstimated: false, ...extra }, onLoan: false })
@@ -56,6 +56,7 @@ beforeEach(() => {
   vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2, { overall: 75, potential: 75, age: 21 }), member(3)] as never)
   vi.mocked(endpoints.snapshots).mockResolvedValue([snap(3, 2), snap(2, 2), snap(1, 1)] as never)
   vi.mocked(endpoints.training).mockResolvedValue([youth(11, { name: 'Figueiredo', age: 18 }), youth(12, { name: 'Kiralık Genç', loanedOut: true, conversionPosition: null }), PEAK, VETERAN])
+  vi.mocked(endpoints.growthRecent).mockReset().mockResolvedValue([])
   vi.mocked(endpoints.youthDetail).mockResolvedValue({ playerId: 11, name: 'Figueiredo', positions: ['CM'], academy: false,
     advice: { sentence: 'CDM · Deep-Lying Playmaker planını seç: 2 sezonda CDM OVR 70 (Dengeli 67).', estimated: true, plans: [{ label: 'Dengeli', kind: 'GENERAL', position: 'CDM', overall1: 64, overall2: 67 }] },
     position: { bestPosition: 'CM', listedPositions: ['CM'] }, team: { position: 'CDM', source: 'MAIN', slots: 1, strengths: [60, 64, 68] } })
@@ -70,6 +71,28 @@ beforeEach(() => {
 
 /** ACADEMY-b §3: "Kadromdaki gençler doğru gelişiyor mu?" — gelişim planları + son içe aktarmadan beri düz liste; seçici ve grafik yok. */
 describe('Gelişim (sade)', () => {
+  it('GTR-b: önceki anlık görüntü varsa satırda "Son N ayda" (maç bilinmiyorsa yalnız OVR); yoksa satır yok', async () => {
+    vi.mocked(endpoints.growthRecent).mockResolvedValue([
+      { playerId: 11, months: 3, overallDelta: 3, matches: 18 },
+      { playerId: 21, months: 3, overallDelta: -2, matches: null },
+      { playerId: 31, months: 1, overallDelta: 0, matches: 0 },
+    ])
+    renderPage()
+    const youthRow = await screen.findByRole('button', { name: /Figueiredo/ })
+    expect(await within(youthRow).findByText('Son 3 ayda: +3 OVR · 18 maç')).toBeInTheDocument()
+    expect(within(screen.getByRole('button', { name: /Vardy/ })).getByText('Son 3 ayda: −2 OVR')).toBeInTheDocument()
+    expect(within(screen.getByRole('button', { name: /Okafor/ })).getByText('Son 1 ayda: 0 OVR · 0 maç')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Kiralık Genç/ })).not.toHaveTextContent(/Son \d+ ayda/)
+    expect(endpoints.growthRecent).toHaveBeenCalledWith(1)
+  })
+
+  it('GTR-b: önceki görüntü yoksa (boş liste) ya da uç hata verirse satır görünmez, sayfa çalışır', async () => {
+    vi.mocked(endpoints.growthRecent).mockRejectedValue(new Error('500'))
+    renderPage()
+    expect(await screen.findByRole('button', { name: /Figueiredo/ })).toBeInTheDocument()
+    expect(screen.queryByText(/Son \d+ ayda/)).toBeNull()
+  })
+
   it('oyuncu seçici ve geçmiş grafiği yok; geçmiş ucu çağrılmaz', async () => {
     renderPage()
     expect(await screen.findByRole('heading', { level: 1, name: 'Gelişim' })).toBeInTheDocument()
