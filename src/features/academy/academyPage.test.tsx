@@ -82,7 +82,7 @@ describe('AcademyPage', () => {
     expect(within(cards[0]).getByText('1 sezon sonra CDM yedeğini geçer')).toBeInTheDocument()
     expect(within(cards[0]).getByText('tahmin')).toBeInTheDocument()
     expect(within(region).getByText('En yüksek potansiyel')).toBeInTheDocument()
-    expect(within(region).getByRole('link', { name: /1 oyuncunun planı Dengeli değil/ })).toHaveAttribute('href', '#oyuncular')
+    expect(within(region).getByRole('link', { name: /1 oyuncu için özel plan öneriliyor/ })).toHaveAttribute('href', '#oyuncular')
   })
 
   it('satır: iki satırlık kart (tablo yok); dönüşüm "CM → CDM önerilir", OVR → POT çubuğu metinle, plan etiketi, durum metinle', async () => {
@@ -156,6 +156,31 @@ describe('AcademyPage', () => {
     renderAt()
     expect(await screen.findByRole('heading', { level: 2, name: 'Öne çıkanlar' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Oyuncular' })).toBeInTheDocument()
+  })
+
+  it('GROWTH-CAL: 16 yaş altı satırda tarihli bilgi notu; panelde tahmin varsayımı tek satır', async () => {
+    vi.mocked(endpoints.academy).mockResolvedValue({ ...ACADEMY, players: [row(60, { name: 'Küçük Genç', age: 15,
+      promoteInfo: { eligibleOn: '2028-03-12', text: '16 yaşında A takıma alınabilir · 12.03.2028', position: 'CM', strength: 58, backupName: 'Smith', backupStrength: 61 } })] })
+    vi.mocked(endpoints.youthDetail).mockResolvedValue({ ...DETAIL, playerId: 60, name: 'Küçük Genç',
+      advice: { ...DETAIL.advice, assumption: 'Tahmin: 1. sezon altyapıda (en çok +5 OVR), 2. sezon A takımda (en çok +8 OVR).' } })
+    renderAt()
+    const item = await rowButton(/Küçük Genç/)
+    expect(item).toHaveTextContent('16 yaşında A takıma alınabilir · 12.03.2028')
+    expect(item).not.toHaveTextContent('A takıma al:')
+    fireEvent.click(item)
+    const panel = await screen.findByRole('complementary', { name: 'Küçük Genç' })
+    expect(await within(panel).findByText('Tahmin: 1. sezon altyapıda (en çok +5 OVR), 2. sezon A takımda (en çok +8 OVR).')).toBeInTheDocument()
+  })
+
+  it('karar: satırda notu olmayan 16 yaş altı gencin terfi tarihi panelde küçük satır', async () => {
+    vi.mocked(endpoints.academy).mockResolvedValue({ ...ACADEMY, players: [row(61, { name: 'Notsuz Genç', age: 15, promoteInfo: null })] })
+    vi.mocked(endpoints.youthDetail).mockResolvedValue({ ...DETAIL, playerId: 61, name: 'Notsuz Genç', eligibleText: '16 yaşında A takıma alınabilir · 19.08.2028' })
+    renderAt()
+    const item = await rowButton(/Notsuz Genç/)
+    expect(item).not.toHaveTextContent('A takıma alınabilir')
+    fireEvent.click(item)
+    const panel = await screen.findByRole('complementary', { name: 'Notsuz Genç' })
+    expect(await within(panel).findByText('16 yaşında A takıma alınabilir · 19.08.2028')).toBeInTheDocument()
   })
 
   it('aralık modu: POT bant olarak', async () => {
