@@ -21,7 +21,7 @@ Tasarım dili ve token'lar: `docs/review/v2/11_GLASSMORPHISM_TASARIM_V3.md` (tek
 - Her task sonunda: testler yeşil + push + progress güncellemesi.
 - Secret'lar commit'e, loga, rapora, dokümana girmez; `.env` okunmaz.
 - Veri silme protokolü: dry-run → git dışında yedek (`../backups`) → tek transaction → kullanıcı onayı.
-- Ortam: macOS (Apple Silicon, arm64). Proje kökü `/Users/user/Desktop/Projects/FCarrierTacticBuilder`
+- Ortam: macOS (Apple Silicon, arm64). Proje kökü `/Users/user/Desktop/FCarrierTacticBuilder`
   (backend `main`, web `v3`, yedekler `backups/` git dışı). Node 22 gerekir (CI ve Dockerfile ile aynı);
   Node 20'de vitest başlamaz (`markAsUncloneable is not a function`).
 
