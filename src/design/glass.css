@@ -124,11 +124,12 @@
 
 /* FCA-3 kariyer bileşenleri */
 /*
- * Stitch (Tactical Operations) ortak bileşen biçimi yalnız kariyer yüzeyinde (data-surface="career", boot.ts). Katmanda: satır durum şeritleri ve
- * bileşenin kendi utility'leri (bg-…, py-…) kazanır. Rozet: köşeli (--radius-pill), büyük harf. Panel başlığı: büyük harf Barlow.
- * Tablo: 32 px büyük harf başlık, 40 px satır, zebra, üzerine gelince yükseltilmiş yüzey. Yazı ≥ 12 px kapısı korunur.
+ * Stitch (Tactical Operations) ortak bileşen biçimi yalnız kariyer yüzeyinde (data-surface="career", boot.ts). Yazı ≥ 12 px kapısı korunur.
+ * Rozet (köşesi --radius-pill) ve panel başlığı: büyük harf ve kalın; katmansız, çünkü bileşenin kendi font-medium/semibold utility'si
+ * katmandaki kuralı ezer. Tablo kuralları katmanda: satır durum şeritleri ve hücre utility'leri (bg-…, py-…) kazanır.
+ * Tablo: 32 px büyük harf başlık, 40 px satır, zebra (tek tbody'li tablolarda; sanal parçalı tablolarda sıra parça başında kayar),
+ * üzerine gelince yükseltilmiş yüzey. Grup başlığı satırı (th scope=rowgroup) ve sanal yer tutucu zebraya sayılmaz.
  */
-@layer components {
 :root[data-surface="career"] .ui-chip {
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -139,6 +140,7 @@
   letter-spacing: 0.02em;
   font-weight: 700;
 }
+@layer components {
 :root[data-surface="career"] main table thead th {
   height: 32px;
   font-size: 0.75rem;
@@ -153,10 +155,14 @@
   height: 40px;
   font-variant-numeric: tabular-nums;
 }
-:root[data-surface="career"] main table tbody tr:nth-child(even) {
+:root[data-surface="career"] main table:not(:has(tbody + tbody)) tbody tr:nth-child(even of :not(:has(th[scope="rowgroup"])):not([data-virtual-placeholder])) {
   background-color: var(--glass-3);
 }
-:root[data-surface="career"] main table tbody tr:hover {
+/* Mobilde yapışkan ilk sütunlar opak zemin taşır: zebra satırında onlar da aynı tonu alır. */
+:root[data-surface="career"] main table:not(:has(tbody + tbody)) tbody tr:nth-child(even of :not(:has(th[scope="rowgroup"])):not([data-virtual-placeholder])) .table-sticky-col {
+  background: var(--glass-3);
+}
+:root[data-surface="career"] main table tbody tr:not(:has(th[scope="rowgroup"])):hover {
   background-color: var(--glass-2);
 }
 }

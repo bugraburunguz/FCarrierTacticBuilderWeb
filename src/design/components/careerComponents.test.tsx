@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { ratingTier } from '../../lib/rating'
+import { contrastRatio, parseColor } from '../contrast'
 import { Chip, OvrBox, Panel, StatTile } from './primitives'
 
 /*
@@ -50,8 +51,27 @@ describe('kariyer yüzeyi CSS kuralları (glass.css)', () => {
   it('tablo: başlık 32px büyük harf, satır 40px, zebra ve üzerine gelme', () => {
     expect(glass).toMatch(/:root\[data-surface="career"\] main table thead th \{[^}]*height: 32px[^}]*text-transform: uppercase/)
     expect(glass).toMatch(/:root\[data-surface="career"\] main table tbody td \{[^}]*height: 40px/)
-    expect(glass).toMatch(/:root\[data-surface="career"\] main table tbody tr:nth-child\(even\)/)
-    expect(glass).toMatch(/:root\[data-surface="career"\] main table tbody tr:hover/)
+    expect(glass).toMatch(/:root\[data-surface="career"\] main table:not\(:has\(tbody \+ tbody\)\) tbody tr:nth-child\(even of /)
+    expect(glass).toMatch(/:root\[data-surface="career"\] main table tbody tr:not\(:has\(th\[scope="rowgroup"\]\)\):hover/)
+  })
+
+  it('zebra: parçalı (çok tbody\'li sanal) tablolarda yok (sıra kayar); grup başlığı satırı (th scope=rowgroup) ve yer tutucu sayılmaz', () => {
+    const zebra = glass.match(/^(:root\[data-surface="career"\][^{]*nth-child\(even[^{]*)\{/m)?.[1] ?? ''
+    expect(zebra).toMatch(/:not\(:has\(tbody \+ tbody\)\)/)
+    expect(zebra).toMatch(/of :not\(:has\(th\[scope="rowgroup"\]\)\):not\(\[data-virtual-placeholder\]\)/)
+  })
+
+  it('mobilde yapışkan ilk sütunlar da zebra satırının rengini alır', () => {
+    expect(glass).toMatch(/nth-child\(even[^{]*\.table-sticky-col[^{]*\{[^}]*background: var\(--glass-3\)/)
+  })
+
+  it('rozet ve panel başlığı kalınlığı katmansız: Tailwind utility (font-medium/semibold) bunları ezmesin', () => {
+    const layerStart = glass.indexOf('@layer components {', glass.indexOf('/* FCA-3 kariyer bileşenleri */'))
+    for (const rule of [':root[data-surface="career"] .ui-chip {', ':root[data-surface="career"] .panel-title {']) {
+      const at = glass.indexOf(rule)
+      expect(at, rule).toBeGreaterThan(0)
+      expect(at, `${rule} @layer dışında`).toBeLessThan(layerStart)
+    }
   })
 
   it('kariyer kuralları UT\'ye sızmaz: yeni seçicilerin hepsi data-surface="career" ile başlar', () => {
@@ -74,6 +94,15 @@ describe('1–99 derece skalası ve OVR kutusu (Stitch)', () => {
     const box = screen.getByLabelText('OVR 76')
     expect(box).toHaveTextContent('76')
     expect(box).toHaveAttribute('data-tier', 'good')
+  })
+
+  it('kariyer yüzeyinde kademe renkleri OVR kutusu zemininde (--glass-3) ≥ 4,5:1; elit: koyu rakam vurgu zemininde ≥ 4,5:1', () => {
+    const career = Object.fromEntries([...block(tokens, CAREER).matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]))
+    const box = parseColor(career['--glass-3'])
+    for (const name of ['--rate-80', '--rate-60', '--bad']) {
+      expect(contrastRatio(parseColor(career[name]), box), name).toBeGreaterThanOrEqual(4.5)
+    }
+    expect(contrastRatio(parseColor(career['--accent-ink']), parseColor(career['--rate-90']))).toBeGreaterThanOrEqual(4.5)
   })
 
   it('OvrBox: değer yoksa tire ve "OVR bilinmiyor"', () => {

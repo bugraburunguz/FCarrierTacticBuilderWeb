@@ -35,12 +35,14 @@ await api('PATCH', `/careers/${career.id}`, { gameDate: '2027-09-19' })
 const browser = await chromium.launch({ channel: 'chrome' })
 const results = []
 // Yerel backend imajı MGR-a / GT-a / GTR'den eskiyse bu uçlar 404 döner (ortam, bu değişiklik değil); ayrı sayılır, kapıyı düşürmez.
-const STALE_LOCAL = /\/me\/manager-profile|\/careers\/\d+\/(training|growth-recent)|Failed to load resource: the server responded with a status of 404/
+const STALE_LOCAL = /\/me\/manager-profile|\/careers\/\d+\/(training|growth-recent)/
+// Konsolun genel "Failed to load resource" satırı adres taşımaz; ağ dinleyicisi her 4xx/5xx'i adresiyle zaten yazar, bu satır sayılmaz.
+const RESOURCE_LINE = /^Failed to load resource:/
 async function shot(name, path, w, mode, theme = 'dark') {
   const context = await browser.newContext({ viewport: { width: w, height: 900 } })
   const page = await context.newPage()
   const errors = []
-  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
+  page.on('console', (m) => m.type() === 'error' && !RESOURCE_LINE.test(m.text()) && errors.push(m.text()))
   page.on('response', (r) => r.url().includes('/api/') && r.status() >= 400 && errors.push(`${r.status()} ${r.url()}`))
   await page.goto(`${base}/`)
   await page.evaluate(({ c, s, m, t }) => {
@@ -66,6 +68,8 @@ for (const w of [1280, 900, 768, 375]) {
 }
 // Parça 2: tablo, rozet ve panel başlığı olan ekranlar
 for (const w of [1280, 375]) {
+  await shot('kadro-liste', '/career/squad?sekme=liste', w, 'career')
+  await shot('oyuncular', '/players', w, 'career')
   await shot('transfer', '/career/transfer', w, 'career')
   await shot('altyapi', '/career/academy', w, 'career')
   await shot('gelisim', '/career/growth', w, 'career')
