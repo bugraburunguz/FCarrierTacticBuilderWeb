@@ -1,4 +1,5 @@
 import { modeStore } from '../state/modeStore'
+import { applyTheme, themeStore } from '../state/themeStore'
 import { applyDesignAttributes, resolveUiVersion } from './uiVersion'
 import './tokens.css'
 import './glass.css'
@@ -20,8 +21,24 @@ export function bootDesign() {
       document.body.prepend(layer)
     }
   }
-  const sync = () => applyDesignAttributes(modeStore.get())
-  sync()
-  new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] })
-  modeStore.subscribe(sync)
+  syncDesign()
+  new MutationObserver(syncDesign).observe(root, { attributes: true, attributeFilter: ['class'] })
+  modeStore.subscribe(syncDesign)
+  themeStore.subscribe(syncDesign)
+}
+
+/**
+ * Mod ve temayı köke yazar. FCA-3: kariyer şimdilik yalnız koyu (Stitch tasarımı yalnız koyu); kullanıcının tema seçimi saklanır ve UT'de uygulanır.
+ * Sınıf yalnız değişince yazılır; MutationObserver döngüye girmez.
+ */
+export function syncDesign() {
+  const mode = modeStore.get()
+  if (mode === 'career') {
+    if (!document.documentElement.classList.contains('dark')) {
+      document.documentElement.classList.add('dark')
+    }
+  } else {
+    applyTheme(themeStore.get())
+  }
+  applyDesignAttributes(mode)
 }
