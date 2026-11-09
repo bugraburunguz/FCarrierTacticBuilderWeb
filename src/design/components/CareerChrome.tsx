@@ -106,7 +106,10 @@ export function CareerSidebar({ nav, active, iconFor, unsavedPath }: { nav: NavG
     <nav aria-label="Ana menü" className="sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-[72px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-[var(--glass-1)] py-4 min-[820px]:flex min-[1024px]:w-60">
       {sections.map((s) => s.items.length > 0 && (
         <div key={s.id} role="group" aria-labelledby={`menu-${s.id}`} className={`flex flex-col gap-0.5 ${s.id === 'admin' ? 'mt-auto' : ''}`}>
-          <p id={`menu-${s.id}`} className="sr-only px-5 pb-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted min-[1024px]:not-sr-only">{s.title}</p>
+          {/* not-sr-only dolguyu sıfırlar: dolgu dış öğede, gizleme iç öğede. */}
+          <p className="px-5 text-xs font-semibold uppercase tracking-[0.08em] text-muted min-[1024px]:pb-1">
+            <span id={`menu-${s.id}`} className="sr-only min-[1024px]:not-sr-only">{s.title}</span>
+          </p>
           {s.items.map((g) => <SidebarLink key={g.to} group={g} active={g === active} Icon={iconFor(g.to)} unsaved={g.to === unsavedPath} />)}
         </div>
       ))}

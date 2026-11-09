@@ -1,5 +1,6 @@
 import { BadgeCheck, Database, PencilLine, Sparkles } from 'lucide-react'
 import { useEffect, useId, useRef, type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react'
+import { ratingTier, type RatingTier } from '../../lib/rating'
 
 /*
  * v3 bileşenleri (docs/review/v2/11 §6). Radix henüz kurulu değil (paket onayı bekliyor): odak tuzağı/Esc gerektirmeyen
@@ -61,7 +62,7 @@ export function Panel({ title, actions, source, edge = 'default', children, clas
       {(title || actions || source) && (
         <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <span className="flex min-w-0 flex-wrap items-center gap-2">
-            {title && <h2 className="font-display text-xl font-semibold leading-6">{title}</h2>}
+            {title && <h2 className="panel-title font-display text-xl font-semibold leading-6">{title}</h2>}
             {source && <SourceTag source={source} />}
           </span>
           {actions}
@@ -114,7 +115,7 @@ export function Button({ variant = 'secondary', className, disabled, disabledRea
 /** Chip: yazı ≥12px; etkileşimliyse dokunma hedefi ≥32px (mobilde 44px, Q13). */
 export function Chip({ children, tone, onClick, pressed, className, title }: { children: ReactNode; tone?: 'good' | 'warn' | 'bad' | 'info'; onClick?: () => void; pressed?: boolean; className?: string; title?: string }) {
   const toneClass = tone === 'good' ? 'bg-[var(--good-soft)] text-good' : tone === 'warn' ? 'bg-[var(--warn-soft)] text-warn' : tone === 'bad' ? 'bg-[var(--bad-soft)] text-bad' : tone === 'info' ? 'bg-[var(--info-soft)] text-info' : 'glass-3 text-ink-2'
-  const base = cx('inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-[var(--glass-border)] px-3 text-xs font-medium', toneClass, className)
+  const base = cx('ui-chip inline-flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-pill)] border border-[var(--glass-border)] px-3 text-xs font-medium', toneClass, className)
   if (!onClick) {
     return <span className={cx(base, 'min-h-6')} title={title}>{children}</span>
   }
@@ -122,6 +123,37 @@ export function Chip({ children, tone, onClick, pressed, className, title }: { c
     <button type="button" onClick={onClick} aria-pressed={pressed} title={title} className={cx(base, 'min-h-8 max-sm:min-h-11', pressed && 'ring-2 ring-accent')}>
       {children}
     </button>
+  )
+}
+
+const TIER_CLASS: Record<RatingTier, string> = {
+  elite: 'border-[var(--rate-90)] bg-[var(--rate-90)] text-[var(--accent-ink)]',
+  good: 'border-[var(--rate-80)] text-[var(--rate-80)]',
+  avg: 'border-[var(--rate-60)] text-[var(--rate-60)]',
+  low: 'border-[var(--rate-low)] text-[var(--bad)]',
+}
+
+/**
+ * OVR kutusu (FCA-3, Stitch): 4 px köşeli kare, kademe rengiyle çerçeve; elitte dolu zemin, koyu rakam. Barlow kalın, tablo hizalı rakam.
+ * Kademe `data-tier` ile de okunur; erişilebilir ad "OVR 76". Boyut: md 36 px, sm 28 px (tablo).
+ */
+export function OvrBox({ value, size = 'md', className }: { value: number | null | undefined; size?: 'sm' | 'md'; className?: string }) {
+  const known = typeof value === 'number' && Number.isFinite(value)
+  const tier = known ? ratingTier(value) : undefined
+  return (
+    <span
+      role="img"
+      aria-label={known ? `OVR ${value}` : 'OVR bilinmiyor'}
+      data-tier={tier}
+      className={cx(
+        'inline-grid shrink-0 place-items-center rounded-[var(--radius-sm)] border bg-[var(--glass-3)] font-display font-bold tabular-nums leading-none',
+        size === 'sm' ? 'h-7 w-7 text-base' : 'h-9 w-9 text-xl',
+        tier ? TIER_CLASS[tier] : 'border-line text-muted',
+        className,
+      )}
+    >
+      {known ? value : '–'}
+    </span>
   )
 }
 
@@ -142,7 +174,7 @@ export function StatTile({ label, value, suffix, delta, children }: { label: str
         <span className="font-[var(--font-num)] text-2xl font-medium tabular-nums leading-tight text-ink">{value ?? '–'}</span>
         {suffix && <span className="text-xs text-muted">{suffix}</span>}
         {delta && (
-          <span data-delta={direction} title={delta.label} className="inline-flex min-h-6 items-center gap-1 rounded-full border border-[var(--glass-border)] px-2 font-[var(--font-num)] text-xs tabular-nums text-ink-2">
+          <span data-delta={direction} title={delta.label} className="inline-flex min-h-6 items-center gap-1 rounded-[var(--radius-pill)] border border-[var(--glass-border)] px-2 font-[var(--font-num)] text-xs tabular-nums text-ink-2">
             <span aria-hidden="true">{direction === 'up' ? '▲' : direction === 'down' ? '▼' : '='}</span>
             <span>{delta.text}</span>
             <span className="sr-only">{delta.label}</span>
