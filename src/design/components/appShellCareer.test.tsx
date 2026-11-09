@@ -59,6 +59,34 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     expect(within(bar).getByRole('button', { name: /Kariyer değiştir/ })).toBeInTheDocument()
   })
 
+  it('herkese açık sayfa (/login, /about) kariyer modunda da bugünkü kabukta: kariyer barı ve bölümlü menü yok, tema düğmesi var', () => {
+    for (const path of ['/login', '/about']) {
+      const { unmount } = renderAt(path)
+      expect(screen.queryByRole('region', { name: 'Aktif kariyer' })).toBeNull()
+      expect(screen.queryByRole('group', { name: 'Operasyon' })).toBeNull()
+      expect(screen.getAllByRole('button', { name: /temaya geç/ }).length).toBeGreaterThan(0)
+      unmount()
+    }
+  })
+
+  it('820–1023 px: menü etiketleri yalnız ekran okuyucuya (ikon rayı); ≥1024 px görünür', () => {
+    renderAt('/career/dashboard')
+    const menu = screen.getByRole('navigation', { name: 'Ana menü' })
+    expect(menu.className).toMatch(/w-\[72px\]/)
+    expect(menu.className).toMatch(/min-\[1024px\]:w-60/)
+    const label = within(menu).getByText('Kadro')
+    expect(label.className).toMatch(/sr-only/)
+    expect(label.className).toMatch(/min-\[1024px\]:not-sr-only/)
+  })
+
+  it('kariyerler yüklenemezse "Aktif kariyer yok" değil, hata metni', async () => {
+    const { endpoints } = await import('../../api/endpoints')
+    vi.mocked(endpoints.careers).mockRejectedValueOnce(new Error('ağ'))
+    renderAt('/career/dashboard')
+    const bar = screen.getByRole('region', { name: 'Aktif kariyer' })
+    expect(await within(bar).findByText('Kariyerler yüklenemedi')).toBeInTheDocument()
+  })
+
   it('kariyerde tema düğmesi yok (yalnız koyu); UT\'de var', () => {
     const { unmount } = renderAt('/career/dashboard')
     expect(screen.queryByRole('button', { name: /temaya geç/ })).toBeNull()

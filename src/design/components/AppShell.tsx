@@ -1,5 +1,5 @@
 import { ArrowLeftRight, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Shirt, Sparkles, Sprout, Swords, Target, TrendingUp, Upload, UserCog, Users, type LucideIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../../api/client'
 import { useAuth } from '../../auth/AuthContext'
@@ -14,7 +14,8 @@ import { BETA_TEXT, useAppConfig } from '../../state/appConfig'
 import { useStorageError } from '../../state/bigStore'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useLab } from '../../state/labStore'
-import { modeStore, useMode } from '../../state/modeStore'
+import { isCareerSurface, modeStore, useMode } from '../../state/modeStore'
+import { syncDesign } from '../boot'
 import { LogoLockup } from '../brand/LogoLockup'
 import { LEGAL_NOTE } from '../brand/legal'
 import { CareerBar, CareerSidebar } from './CareerChrome'
@@ -112,6 +113,9 @@ export function AppShell() {
   const { authenticated, me, logout } = useAuth()
   const { freeBeta } = useAppConfig()
   useShellEffects(pathname)
+  // FCA-3: Stitch kariyer görünümü yalnız kariyer ekranlarında; herkese açık/hesap sayfalarında bugünkü kabuk ve tema.
+  const careerSurface = isCareerSurface(mode, pathname)
+  useEffect(() => syncDesign(pathname), [pathname, mode])
   // Uzantı yakalaması kapalıyken (VITE_EXTENSION_CAPTURE=off) yakalamaya bağlı UT öğeleri yan menüden ve mobil alt menüden çıkar (V3-06a).
   // V3-06d: kariyerde tek menü (CAREER_NAV); aktif öğe rotadan.
   const nav = navFor(mode, extensionCaptureEnabled(), true)
@@ -135,11 +139,11 @@ export function AppShell() {
             navigate(MODES.find((m) => m.id === id)?.home ?? '/')
           }}
         />
-        {mode === 'career' && <CareerBar />}
+        {careerSurface && <CareerBar />}
         <div className="ml-auto flex items-center gap-2 max-[359px]:gap-1.5">
           {/* FCA-3: kariyer şimdilik yalnız koyu; tema düğmesi yalnız UT'de. */}
-          {mode !== 'career' && <ThemeToggle className="max-sm:hidden" />}
-          <MobileMenu showTheme={mode !== 'career'} loginLink={!authenticated} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
+          {!careerSurface && <ThemeToggle className="max-sm:hidden" />}
+          <MobileMenu showTheme={!careerSurface} loginLink={!authenticated} email={authenticated && me ? me.email : undefined} onLogout={authenticated && me ? async () => { await logout(); navigate('/login') } : undefined} />
           {authenticated && me ? (
             <>
               <span className="hidden sm:block">{freeBeta ? <Chip tone="good">{BETA_TEXT}</Chip> : me.subscriptionType === 'PREMIUM' ? <Chip tone="good">PREMIUM</Chip> : <Chip tone="info">{me.creditBalance ?? 0} kredi</Chip>}</span>
@@ -166,7 +170,7 @@ export function AppShell() {
       {authenticated && <PrivacyNoticeBanner />}
 
       <div className="flex">
-        {mode === 'career' ? (
+        {careerSurface ? (
           <CareerSidebar nav={nav} active={active} iconFor={(to) => ICONS[to] ?? Database} unsavedPath={labUnsaved ? LAB_PATH : undefined} />
         ) : (
           <nav aria-label="Ana menü" className="glass sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-[88px] shrink-0 flex-col gap-1 overflow-y-auto rounded-none border-y-0 border-l-0 p-2 min-[820px]:flex">

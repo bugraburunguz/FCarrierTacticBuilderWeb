@@ -19,7 +19,15 @@ function block(selector: string): Record<string, string> {
 }
 
 describe('kariyer token seti (Stitch)', () => {
-  const career = block(':root[data-ui="v3"][data-mode="career"]')
+  const career = block(':root[data-ui="v3"][data-surface="career"]')
+
+  it('kariyer yüzeyi bloğu dosyanın sonunda: şeffaflık azaltma ve açık tema blokları Stitch yüzeylerini ezmez', () => {
+    expect(css.lastIndexOf(':root[data-ui="v3"][data-surface="career"] {')).toBeGreaterThan(css.lastIndexOf('[data-transparency="reduced"]'))
+  })
+
+  it('--faint metin olarak da okunur: panel üstünde ≥ 4,5:1 için #7b88a0', () => {
+    expect(career['--faint']).toBe('#7b88a0')
+  })
 
   it('zemin, panel ve vurgu Stitch değerleri; yüzeyler opak, aurora kapalı', () => {
     expect(career['--bg-base']).toBe('#0b0f15')
@@ -54,12 +62,46 @@ describe('kariyer yalnız koyu tema', () => {
     document.documentElement.dataset.ui = 'v3'
     themeStore.set('light')
     modeStore.set('career')
-    syncDesign()
+    syncDesign('/career/dashboard')
     expect(document.documentElement.classList.contains('dark')).toBe(true)
     expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(document.documentElement.dataset.surface).toBe('career')
     modeStore.set('ut')
-    syncDesign()
+    syncDesign('/ut/squad')
     expect(document.documentElement.classList.contains('dark')).toBe(false)
     expect(document.documentElement.dataset.theme).toBe('light')
+    expect(document.documentElement.dataset.surface).toBeUndefined()
+  })
+
+  it.each(['/', '/login', '/register', '/verify-email', '/about', '/privacy', '/profile'])('herkese açık / hesap sayfası %s kariyer modunda da bugünkü görünümde kalır', (path) => {
+    document.documentElement.dataset.ui = 'v3'
+    themeStore.set('light')
+    modeStore.set('career')
+    syncDesign(path)
+    expect(document.documentElement.dataset.surface).toBeUndefined()
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+  })
+})
+
+describe('ilk boyama (public/theme-init.js)', () => {
+  const script = readFileSync('public/theme-init.js', 'utf8')
+  const run = (path: string, mode: string | null, theme: string) => {
+    localStorage.setItem('fc.theme', theme)
+    if (mode) localStorage.setItem('fc.mode', mode)
+    else localStorage.removeItem('fc.mode')
+    document.documentElement.classList.remove('dark')
+    window.history.replaceState(null, '', path)
+    new Function(script)()
+    return document.documentElement.classList.contains('dark')
+  }
+
+  it('açık tema + kariyer yolu: JS yüklenmeden koyu (yanıp sönme yok); herkese açık yol ve UT açık kalır', () => {
+    expect(run('/career/dashboard', 'career', 'light')).toBe(true)
+    expect(run('/players', null, 'light')).toBe(true)
+    expect(run('/login', 'career', 'light')).toBe(false)
+    expect(run('/ut/squad', 'career', 'light')).toBe(false)
+    expect(run('/players', 'ut', 'light')).toBe(false)
+    // kariyer yolu modu kariyere çeker
+    expect(run('/career/squad', 'ut', 'light')).toBe(true)
   })
 })

@@ -50,6 +50,8 @@ export function CareerBar() {
             {season ? <span>{season}</span> : null}
           </p>
         </div>
+      ) : careers.isError ? (
+        <p className="text-sm text-bad">Kariyerler yüklenemedi</p>
       ) : careers.isLoading ? (
         <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)]" />
       ) : (
@@ -100,10 +102,11 @@ export function CareerSidebar({ nav, active, iconFor, unsavedPath }: { nav: NavG
     { id: 'admin', title: 'Yönetim', items: nav.filter((g) => g.section === 'admin') },
   ]
   return (
-    <nav aria-label="Ana menü" className="sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-60 shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-[var(--glass-1)] py-4 min-[820px]:flex">
+    // 820–1023 px: 72 px ikon rayı (etiketler ekran okuyucuya); ≥1024 px: 240 px tam menü (Stitch tablet kuralı).
+    <nav aria-label="Ana menü" className="sticky top-[var(--header-h)] hidden h-[calc(100vh-var(--header-h))] w-[72px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-[var(--glass-1)] py-4 min-[820px]:flex min-[1024px]:w-60">
       {sections.map((s) => s.items.length > 0 && (
         <div key={s.id} role="group" aria-labelledby={`menu-${s.id}`} className={`flex flex-col gap-0.5 ${s.id === 'admin' ? 'mt-auto' : ''}`}>
-          <p id={`menu-${s.id}`} className="px-5 pb-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted">{s.title}</p>
+          <p id={`menu-${s.id}`} className="sr-only px-5 pb-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted min-[1024px]:not-sr-only">{s.title}</p>
           {s.items.map((g) => <SidebarLink key={g.to} group={g} active={g === active} Icon={iconFor(g.to)} unsaved={g.to === unsavedPath} />)}
         </div>
       ))}
@@ -111,19 +114,19 @@ export function CareerSidebar({ nav, active, iconFor, unsavedPath }: { nav: NavG
   )
 }
 
-const SIDEBAR_ITEM = 'relative flex min-h-10 items-center gap-3 px-5 text-sm font-medium'
+const SIDEBAR_ITEM = 'relative flex min-h-11 items-center justify-center gap-3 px-2 text-sm font-medium min-[1024px]:min-h-10 min-[1024px]:justify-start min-[1024px]:px-5'
 const sidebarTone = (active: boolean) =>
   active ? 'bg-[var(--glass-2)] font-bold text-accent before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-[var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)] hover:text-ink'
 
 /** İkon + etiket yatay; kaydedilmemiş Lab taslağında nokta ve erişilebilir ad (FAZ 4a kuralı). */
 function SidebarLink({ group, active, Icon, unsaved }: { group: NavGroup; active: boolean; Icon: LucideIcon; unsaved: boolean }) {
   return (
-    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${group.label} · kaydedilmemiş taslak var` : undefined} className={`${SIDEBAR_ITEM} ${sidebarTone(active)}`}>
+    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${group.label} · kaydedilmemiş taslak var` : undefined} title={group.label} className={`${SIDEBAR_ITEM} ${sidebarTone(active)}`}>
       <span className="relative block">
         <Icon size={18} aria-hidden="true" />
         {unsaved && <span data-unsaved-dot aria-hidden="true" className="absolute -right-1 -top-0.5 h-2 w-2 rounded-full bg-[var(--accent)] ring-2 ring-[var(--glass-1)]" />}
       </span>
-      <span>{group.label}</span>
+      <span className="sr-only min-[1024px]:not-sr-only">{group.label}</span>
     </Link>
   )
 }

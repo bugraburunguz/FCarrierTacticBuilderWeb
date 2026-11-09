@@ -34,39 +34,46 @@ await api('PATCH', `/careers/${career.id}`, { gameDate: '2027-09-19' })
 
 const browser = await chromium.launch({ channel: 'chrome' })
 const results = []
-async function shot(name, path, w, mode) {
+// Yerel backend imajı MGR-a'dan eskiyse /me/manager-profile 404 döner (ortam, bu değişiklik değil); ayrı sayılır, kapıyı düşürmez.
+const STALE_LOCAL = /\/me\/manager-profile|Failed to load resource: the server responded with a status of 404/
+async function shot(name, path, w, mode, theme = 'dark') {
   const context = await browser.newContext({ viewport: { width: w, height: 900 } })
   const page = await context.newPage()
   const errors = []
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
   page.on('response', (r) => r.url().includes('/api/') && r.status() >= 400 && errors.push(`${r.status()} ${r.url()}`))
   await page.goto(`${base}/`)
-  await page.evaluate(({ c, s, m }) => {
-    localStorage.setItem('fc.theme', 'dark')
+  await page.evaluate(({ c, s, m, t }) => {
+    localStorage.setItem('fc.theme', t)
     localStorage.setItem('fc.mode', m)
     localStorage.setItem('fc.career', String(c))
     localStorage.setItem('fc.access', s.accessToken)
     localStorage.setItem('fc.refresh', s.refreshToken)
-  }, { c: career.id, s: session, m: mode })
+  }, { c: career.id, s: session, m: mode, t: theme })
   await page.goto(`${base}${path}`, { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+  const look = await page.evaluate(() => ({ surface: document.documentElement.dataset.surface ?? '-', dark: document.documentElement.classList.contains('dark') }))
   const axe = (await new AxeBuilder({ page }).analyze()).violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => v.id)
-  await page.screenshot({ path: file(`${name}-${w}.png`), fullPage: false })
-  results.push({ name, w, overflow, axe, errors })
+  await page.screenshot({ path: file(`${name}-${theme}-${w}.png`), fullPage: false })
+  results.push({ name, w, theme, look, overflow, axe, errors: errors.filter((e) => !STALE_LOCAL.test(e)), staleLocal: errors.filter((e) => STALE_LOCAL.test(e)).length })
   await context.close()
 }
 
-for (const w of [1280, 768, 375]) {
+for (const w of [1280, 900, 768, 375]) {
   await shot('masa', '/career/dashboard', w, 'career')
   await shot('kadro', '/career/squad', w, 'career')
 }
-await shot('ut-kadro-kurucu', '/ut/squad', 1280, 'ut')
+// Açık tema seçiliyken kariyer ekranı yine koyu; herkese açık sayfa ve UT kullanıcının temasında, eski kabukta.
+await shot('masa', '/career/dashboard', 1280, 'career', 'light')
+await shot('giris', '/about', 1280, 'career', 'light')
+await shot('ut-kadro-kurucu', '/ut/squad', 1280, 'ut', 'light')
 await browser.close()
 
+const expectLook = (r) => (r.name === 'giris' || r.name.startsWith('ut-') ? r.look.surface === '-' && r.look.dark === (r.theme === 'dark') : r.look.surface === 'career' && r.look.dark)
 writeFileSync(file('gates.json'), JSON.stringify(results, null, 2))
 for (const r of results) {
-  console.log(`${r.name} ${r.w}: taşma ${r.overflow}px · axe ${r.axe.join(',') || 'temiz'} · hata ${r.errors.length}`)
+  console.log(`${r.name} ${r.theme} ${r.w}: görünüm ${r.look.surface}/${r.look.dark ? 'koyu' : 'açık'} ${expectLook(r) ? 'doğru' : 'YANLIŞ'} · taşma ${r.overflow}px · axe ${r.axe.join(',') || 'temiz'} · hata ${r.errors.length} · eski yerel imaj 404 ${r.staleLocal}`)
 }
-const failed = results.some((r) => r.overflow > 0 || r.axe.length > 0 || r.errors.length > 0)
+const failed = results.some((r) => r.overflow > 0 || r.axe.length > 0 || r.errors.length > 0 || !expectLook(r))
 process.exit(failed ? 1 : 0)
