@@ -121,3 +121,42 @@
   border-color: var(--glass-border);
   border-radius: var(--radius-md);
 }
+
+/* FCA-3 kariyer bileşenleri */
+/*
+ * Stitch (Tactical Operations) ortak bileşen biçimi yalnız kariyer yüzeyinde (data-surface="career", boot.ts). Katmanda: satır durum şeritleri ve
+ * bileşenin kendi utility'leri (bg-…, py-…) kazanır. Rozet: köşeli (--radius-pill), büyük harf. Panel başlığı: büyük harf Barlow.
+ * Tablo: 32 px büyük harf başlık, 40 px satır, zebra, üzerine gelince yükseltilmiş yüzey. Yazı ≥ 12 px kapısı korunur.
+ */
+@layer components {
+:root[data-surface="career"] .ui-chip {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+:root[data-surface="career"] .panel-title {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+:root[data-surface="career"] main table thead th {
+  height: 32px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: var(--glass-3);
+  border-bottom: 1px solid var(--glass-border);
+}
+:root[data-surface="career"] main table tbody td {
+  height: 40px;
+  font-variant-numeric: tabular-nums;
+}
+:root[data-surface="career"] main table tbody tr:nth-child(even) {
+  background-color: var(--glass-3);
+}
+:root[data-surface="career"] main table tbody tr:hover {
+  background-color: var(--glass-2);
+}
+}

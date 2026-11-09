@@ -38,8 +38,9 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     const menu = screen.getByRole('navigation', { name: 'Ana menü' })
     const ops = within(menu).getByRole('group', { name: 'Operasyon' })
     const admin = within(menu).getByRole('group', { name: 'Yönetim' })
-    expect(within(ops).getAllByRole('link').map((a) => a.textContent)).toEqual(['Masa', 'Kadro', 'Taktik Lab', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar'])
-    expect(within(admin).getAllByRole('link').map((a) => a.textContent)).toEqual(['Menajer', 'İçe aktar'])
+    // FCA-3 Parça 2: Stitch adları (Taktik, Kayıt yükle)
+    expect(within(ops).getAllByRole('link').map((a) => a.textContent)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar'])
+    expect(within(admin).getAllByRole('link').map((a) => a.textContent)).toEqual(['Menajer', 'Kayıt yükle'])
     expect(within(admin).getByRole('link', { name: 'Menajer' })).toHaveAttribute('href', '/career/manager')
   })
 
@@ -74,6 +75,11 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     const menu = screen.getByRole('navigation', { name: 'Ana menü' })
     expect(menu.className).toMatch(/w-\[72px\]/)
     expect(menu.className).toMatch(/min-\[1024px\]:w-60/)
+    // bölüm başlığının dolgusu dış öğede: not-sr-only dolguyu sıfırlar
+    const heading = within(menu).getByText('Operasyon')
+    expect(heading.className).toMatch(/not-sr-only/)
+    expect(heading.className).not.toMatch(/px-/)
+    expect(heading.parentElement?.className).toMatch(/px-5/)
     const label = within(menu).getByText('Kadro')
     expect(label.className).toMatch(/sr-only/)
     expect(label.className).toMatch(/min-\[1024px\]:not-sr-only/)

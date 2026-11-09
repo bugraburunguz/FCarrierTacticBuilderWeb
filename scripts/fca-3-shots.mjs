@@ -34,8 +34,8 @@ await api('PATCH', `/careers/${career.id}`, { gameDate: '2027-09-19' })
 
 const browser = await chromium.launch({ channel: 'chrome' })
 const results = []
-// Yerel backend imajı MGR-a'dan eskiyse /me/manager-profile 404 döner (ortam, bu değişiklik değil); ayrı sayılır, kapıyı düşürmez.
-const STALE_LOCAL = /\/me\/manager-profile|Failed to load resource: the server responded with a status of 404/
+// Yerel backend imajı MGR-a / GT-a / GTR'den eskiyse bu uçlar 404 döner (ortam, bu değişiklik değil); ayrı sayılır, kapıyı düşürmez.
+const STALE_LOCAL = /\/me\/manager-profile|\/careers\/\d+\/(training|growth-recent)|Failed to load resource: the server responded with a status of 404/
 async function shot(name, path, w, mode, theme = 'dark') {
   const context = await browser.newContext({ viewport: { width: w, height: 900 } })
   const page = await context.newPage()
@@ -63,6 +63,12 @@ async function shot(name, path, w, mode, theme = 'dark') {
 for (const w of [1280, 900, 768, 375]) {
   await shot('masa', '/career/dashboard', w, 'career')
   await shot('kadro', '/career/squad', w, 'career')
+}
+// Parça 2: tablo, rozet ve panel başlığı olan ekranlar
+for (const w of [1280, 375]) {
+  await shot('transfer', '/career/transfer', w, 'career')
+  await shot('altyapi', '/career/academy', w, 'career')
+  await shot('gelisim', '/career/growth', w, 'career')
 }
 // Açık tema seçiliyken kariyer ekranı yine koyu; herkese açık sayfa ve UT kullanıcının temasında, eski kabukta.
 await shot('masa', '/career/dashboard', 1280, 'career', 'light')
