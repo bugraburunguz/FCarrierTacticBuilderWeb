@@ -13,12 +13,15 @@ const INPUT = 'min-h-10 w-full rounded-[var(--radius-sm)] border border-line bg-
  * FCA-4 Ayrıntılı filtre (Stitch sol panel): en düşük OVR / POT, en yüksek değer. Adrese yazar; öneri sonucunu tarayıcıda süzer
  * (yeni istek ve kredi yok). Mevki, rol, yaş ve bütçe aday panelindeki istek filtreleridir.
  */
-export function FilterPanel({ filters, onChange, gender }: { filters: TransferFilters; onChange: (next: Record<string, string | undefined>) => void; gender?: number }) {
+export function FilterPanel({ filters, onChange, gender, careerId }: { filters: TransferFilters; onChange: (next: Record<string, string | undefined>) => void; gender?: number; careerId?: number }) {
   const ids = { ovr: useId(), pot: useId(), league: useId(), nation: useId() }
   const num = (v: string) => (v === '' ? undefined : v)
   // FCA-5: lig ve uyruk listeleri (herkese açık arama listeleri; kariyerin cinsiyetine göre lig).
   const leagues = useQuery({ queryKey: ['leagues', gender], queryFn: () => endpoints.leagues(gender), staleTime: Infinity })
   const nationalities = useQuery({ queryKey: ['nationalities'], queryFn: endpoints.nationalities, staleTime: Infinity })
+  // FCA-6: kulübün erişemeyeceği ligler seçilemez (öneri isteği 422 döner); alınamazsa kısıt gösterilmez, sunucu yine korur.
+  const reach = useQuery({ queryKey: ['reachable-leagues', careerId], queryFn: () => endpoints.reachableLeagues(careerId!), enabled: careerId !== undefined, retry: false, staleTime: 300_000 })
+  const reachable = reach.data?.restricted ? new Set(reach.data.leagueIds) : undefined
   return (
     <section aria-label="Ayrıntılı filtre" className="glass-2 flex flex-col gap-3 p-3 sm:p-4">
       <h2 className="panel-title font-display text-xl font-semibold leading-6">Ayrıntılı filtre</h2>
@@ -31,7 +34,10 @@ export function FilterPanel({ filters, onChange, gender }: { filters: TransferFi
             {filters.leagueId !== undefined && !(leagues.data ?? []).some((l) => l.id === filters.leagueId) && (
               <option value={filters.leagueId}>Bilinmeyen lig ({filters.leagueId})</option>
             )}
-            {(leagues.data ?? []).map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+            {(leagues.data ?? []).map((l) => {
+              const out = reachable !== undefined && !reachable.has(l.id)
+              return <option key={l.id} value={l.id} disabled={out}>{out ? `${l.name} · erişim dışı` : l.name}</option>
+            })}
           </select>
         </label>
         <label htmlFor={ids.nation} className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.06em] text-muted">

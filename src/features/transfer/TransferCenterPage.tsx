@@ -166,7 +166,7 @@ export function TransferCenterPage() {
         )}
       </Section>
   )
-  const filterPanel = <FilterPanel filters={filters} onChange={(next) => set(next)} gender={career.gender} />
+  const filterPanel = <FilterPanel filters={filters} onChange={(next) => set(next)} gender={career.gender} careerId={id} />
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
