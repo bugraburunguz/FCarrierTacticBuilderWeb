@@ -100,6 +100,22 @@ describe('Kariyer içe aktarma (v3)', () => {
     expect(within(guide).getAllByRole('listitem').length).toBeGreaterThanOrEqual(3)
   })
 
+  it('FCA-18: ay başı export\'larıyla büyüyen logdan yalnız son kariyer export\'u gönderilir', async () => {
+    vi.mocked(endpoints.importCareer).mockResolvedValue(summary({}))
+    const block = (seq: number) => [
+      `t\tINFO\t[LUA API] FCX2\tMETA\t{"schemaVersion":2,"context":{"inCareer":true,"exportSeq":${seq}}}`,
+      ...['players', 'teams', 'teamplayerlinks'].map((t) => `t\tINFO\t[LUA API] FCX2\tEND\t${t}\t1\tfnv1a32:0\t1`),
+      't\tINFO\t[LUA API] FCX2\tDONE\t[]',
+    ].join('\n') + '\n'
+    renderPage()
+    fireEvent.drop(screen.getByRole('button', { name: /Live Editor log dosyasını sürükle/ }), { dataTransfer: { files: [new File([block(1) + block(2)], 'aylik.log')] } })
+    fireEvent.click(await screen.findByRole('button', { name: 'Yükle' }))
+    await waitFor(() => expect(endpoints.importCareer).toHaveBeenCalled())
+    const sent = (vi.mocked(endpoints.importCareer).mock.calls[0][1] as FormData).get('log') as File
+    expect(sent.name).toBe('aylik.log')
+    expect(await sent.text()).toBe(block(2))
+  })
+
   it('FAZ 6a-A: kariyer export\'unda maaş/sözleşme yoksa (CONTRACTS_MISSING) neyi etkilediği ve rehber', async () => {
     vi.mocked(endpoints.importCareer).mockResolvedValue(summary({ warnings: ['CONTRACTS_MISSING'], gameDate: '2026-09-12', contracts: 0 }))
     renderPage()
