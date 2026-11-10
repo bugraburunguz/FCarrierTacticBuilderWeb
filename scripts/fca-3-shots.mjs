@@ -38,7 +38,7 @@ const results = []
 const STALE_LOCAL = /\/me\/manager-profile|\/careers\/\d+\/(training|growth-recent)/
 // Konsolun genel "Failed to load resource" satırı adres taşımaz; ağ dinleyicisi her 4xx/5xx'i adresiyle zaten yazar, bu satır sayılmaz.
 const RESOURCE_LINE = /^Failed to load resource:/
-async function shot(name, path, w, mode, theme = 'dark') {
+async function shot(name, path, w, mode, theme = 'dark', act = undefined) {
   const context = await browser.newContext({ viewport: { width: w, height: 900 } })
   const page = await context.newPage()
   const errors = []
@@ -54,6 +54,10 @@ async function shot(name, path, w, mode, theme = 'dark') {
   }, { c: career.id, s: session, m: mode, t: theme })
   await page.goto(`${base}${path}`, { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
+  if (act) {
+    await act(page)
+    await page.waitForTimeout(800)
+  }
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
   const look = await page.evaluate(() => ({ surface: document.documentElement.dataset.surface ?? '-', dark: document.documentElement.classList.contains('dark') }))
   const axe = (await new AxeBuilder({ page }).analyze()).violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => v.id)
@@ -65,6 +69,14 @@ async function shot(name, path, w, mode, theme = 'dark') {
 for (const w of [1280, 900, 768, 375]) {
   await shot('masa', '/career/dashboard', w, 'career')
   await shot('kadro', '/career/squad', w, 'career')
+}
+// Parça 4: Taktik — mod kartları; "Sıfırdan kur" boş taslak (boş slotlar)
+for (const w of [1280, 375]) {
+  await shot('taktik', '/career/tactics-lab', w, 'career')
+  await shot('taktik-sifirdan', '/career/tactics-lab', w, 'career', 'dark', async (page) => {
+    await page.getByRole('button', { name: /Sıfırdan kur/ }).click()
+    await page.locator('[data-empty-slot]').first().waitFor({ timeout: 15000 })
+  })
 }
 // Parça 3: en dar telefon (üst barda mod + kariyer değiştirici + menü)
 await shot('masa', '/career/dashboard', 320, 'career')
