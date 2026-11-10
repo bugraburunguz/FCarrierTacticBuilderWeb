@@ -93,6 +93,14 @@ describe('Gelişim (sade)', () => {
     expect(screen.queryByText(/Son \d+ ayda/)).toBeNull()
   })
 
+  it('FCA-3: Stitch başlığı "Kariyer › Gelişim"; bölüm başlıkları panel-title (kariyerde büyük harf)', async () => {
+    renderPage()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Gelişim')).toHaveAttribute('aria-current', 'page')
+    const sections = await screen.findAllByRole('heading', { level: 2 })
+    sections.forEach((h) => expect(h).toHaveClass('panel-title'))
+  })
+
   it('oyuncu seçici ve geçmiş grafiği yok; geçmiş ucu çağrılmaz', async () => {
     renderPage()
     expect(await screen.findByRole('heading', { level: 1, name: 'Gelişim' })).toBeInTheDocument()

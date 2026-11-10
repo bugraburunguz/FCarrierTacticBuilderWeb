@@ -91,6 +91,15 @@ describe('Transfer hata durumları', () => {
 })
 
 describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
+  it('FCA-3: Stitch başlığı "Kariyer › Transfer", alt başlıkta kulüp; bölüm başlıkları panel-title', async () => {
+    renderPage()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Transfer')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('heading', { level: 1, name: 'Transfer Merkezi' })).toHaveClass('page-title')
+    const sections = await screen.findAllByRole('heading', { level: 2 })
+    sections.forEach((h) => expect(h).toHaveClass('panel-title'))
+  })
+
   it('sekmeler Adaylar · Kısa liste · Satış (?sekme=); varsayılan Adaylar adrese yazılmaz', async () => {
     renderPage()
     expect(await screen.findByRole('tab', { name: 'Adaylar', selected: true })).toBeInTheDocument()

@@ -5,6 +5,7 @@ import { endpoints } from '../../api/endpoints'
 import type { Academy } from '../../api/types'
 import { Chip, EmptyState, ErrorState, Panel, Segmented, SidePanel, Skeleton, SourceTag, type DataSource } from '../../design/components/primitives'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { useActiveCareerId } from '../../state/careerStore'
 import { usePageParams } from '../player/playerPage'
 import { academyQuery } from './academyQuery'
@@ -113,13 +114,9 @@ export function AcademyPage() {
   }
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header className="flex flex-wrap items-end justify-between gap-2">
-        <div className="flex flex-col gap-1">
-          {heading}
-          {academy.data?.found && <p className="text-sm text-ink-2">{academy.data.name ?? 'Altyapı'} · {academy.data.players.length} oyuncu</p>}
-        </div>
-        {record && <SourceTag source={record} />}
-      </header>
+      {/* FCA-3: Stitch başlığı. */}
+      <CareerPageHeader crumb="Altyapı" title="Altyapı" actions={record && <SourceTag source={record} />}
+        subtitle={academy.data?.found ? `${academy.data.name ?? 'Altyapı'} · ${academy.data.players.length} oyuncu` : undefined} />
       {academy.isLoading ? <Skeleton className="h-64" /> : academy.isError && !academy.data ? (
         <ErrorState message="Altyapı yüklenemedi." onRetry={() => academy.refetch()} />
       ) : academy.data ? <Body academy={academy.data} careerId={career.id} /> : null}
