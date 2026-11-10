@@ -70,7 +70,7 @@ async function shot(name, path, w, act = undefined) {
       if (r.width === 0 || r.height === 0 || style.visibility === 'hidden' || el.closest('[aria-hidden="true"]')) return false
       if (el.tagName === 'A' && style.display === 'inline' && el.closest('p, li')) return false
       return Math.min(r.width, r.height) < 44 - 0.5 && !(el.tagName === 'INPUT' && ['checkbox', 'radio'].includes(el.type) && el.closest('label'))
-    }).map((el) => `${el.closest('header:not(main header), nav[aria-label="Mobil menü"], main > footer, [role="dialog"]') ? 'kabuk ' : ''}${el.tagName.toLowerCase()}:${(el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 24)}`)
+    }).map((el) => `${el.closest('header:not(main header), nav[aria-label="Mobil menü"], main > footer, [role="dialog"]') ? 'kabuk ' : ''}${el.tagName.toLowerCase()}${el.tagName === 'INPUT' ? `[${el.type} ${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)}${el.closest('main') ? '' : ' main dışı'}]` : ''}:${(el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 24)}`)
   }) : []
   const axe = (await new AxeBuilder({ page }).analyze()).violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => v.id)
   await page.screenshot({ path: file(`${tag}-${name}-${w}-ekran.png`) })
