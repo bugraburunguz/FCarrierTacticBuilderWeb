@@ -166,7 +166,7 @@ export function TransferCenterPage() {
         )}
       </Section>
   )
-  const filterPanel = <FilterPanel filters={filters} onChange={(next) => set(next)} />
+  const filterPanel = <FilterPanel filters={filters} onChange={(next) => set(next)} gender={career.gender} />
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
@@ -208,6 +208,7 @@ export function TransferCenterPage() {
               rowExtra={(item) => <CandidateExtra item={item} budget={budget} leagueOvr={facets.data?.leagueOvr} />}
               rowAction={(item: CareerRecommendationItem) => <ShortlistButton careerId={id!} playerId={item.player.id} note={need.label} />}
               resultFilter={resultFilter}
+              requestFilters={{ leagueId: filters.leagueId, nationalityId: filters.nationalityId }}
             />
           ) : (
             <EmptyState action={!allSquad ? <Button onClick={() => set({ kadro: 'tum', ihtiyac: undefined })}>Tüm kadroyu göster</Button> : undefined}>

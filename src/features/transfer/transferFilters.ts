@@ -5,9 +5,12 @@ export interface TransferFilters {
   minOvr?: number
   minPot?: number
   maxValue?: number
+  /** FCA-5: sunucu süzgeci (öneri isteğine gider; değişince yeni öneri gerekir). Adres: `lig`, `uyruk`. */
+  leagueId?: number
+  nationalityId?: number
 }
 
-export const FILTER_PARAMS = { minOvr: 'minovr', minPot: 'minpot', maxValue: 'maxdeger' } as const
+export const FILTER_PARAMS = { minOvr: 'minovr', minPot: 'minpot', maxValue: 'maxdeger', leagueId: 'lig', nationalityId: 'uyruk' } as const
 
 const MAX_RATING = 99
 
@@ -25,6 +28,10 @@ export function parseFilters(params: URLSearchParams): TransferFilters {
   if (ovr !== undefined) out.minOvr = Math.min(MAX_RATING, ovr)
   if (pot !== undefined) out.minPot = Math.min(MAX_RATING, pot)
   if (value !== undefined) out.maxValue = value
+  const league = positive(params.get(FILTER_PARAMS.leagueId))
+  const nation = positive(params.get(FILTER_PARAMS.nationalityId))
+  if (league !== undefined) out.leagueId = league
+  if (nation !== undefined) out.nationalityId = nation
   return out
 }
 

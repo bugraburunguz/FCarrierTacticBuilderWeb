@@ -1455,6 +1455,9 @@ export interface CareerRecommendationRequest {
   budgetEur?: number
   budgetUnknown?: boolean
   includeLongShots?: boolean
+  /** FCA-5: yalnız bu ligdeki / bu uyruktaki adaylar (sunucu süzgeci). */
+  leagueId?: number
+  nationalityId?: number
 }
 
 export interface CreditCosts {
