@@ -1,4 +1,4 @@
-import type { ReplicaDetail, ReplicaSummary } from '../../api/types'
+import type { ReplicaDetail, ReplicaSummary, ReplicaVariant } from '../../api/types'
 import { Chip } from '../../design/components/primitives'
 import { CopyCodeButton } from './CopyCodeButton'
 import { approachText, APPROACH_LABEL, BUILD_UP_LABEL, buildUpText } from './labels'
@@ -48,7 +48,50 @@ export function TacticTab({ summary, detail }: { summary: ReplicaSummary; detail
           </ul>
         </div>
       )}
+      {detail.fc27.variants?.map((v) => (
+        <VariantSection key={v.id} variant={v} />
+      ))}
     </div>
+  )
+}
+
+function VariantSection({ variant }: { variant: ReplicaVariant }) {
+  const headingId = `variant-${variant.id}`
+  return (
+    <section aria-labelledby={headingId} className="glass-3 flex flex-col gap-2 p-3">
+      <div className="flex flex-col gap-0.5">
+        <p className="text-xs font-medium text-muted">Ek taktik{variant.author ? ` · ${variant.author}` : ''}</p>
+        <h3 id={headingId} className="font-display text-xl font-semibold leading-6">
+          {variant.label}
+        </h3>
+      </div>
+      {variant.note && <p className="text-sm text-ink-2">{variant.note}</p>}
+      <CopyCodeButton code={variant.tacticCode} className="self-start" />
+      <div className="flex flex-wrap gap-1.5">
+        <Chip>{variant.formation}</Chip>
+        <Chip>{buildUpText(variant.buildUp)}</Chip>
+        <Chip>
+          {approachText(variant.defensiveApproach)} · {variant.lineHeight}
+        </Chip>
+      </div>
+      <ul className="space-y-1 text-sm">
+        {variant.slots.map((s) => (
+          <li key={s.slot}>
+            <span className="font-medium text-ink">
+              {s.slot}: {s.role}/{s.focus}
+            </span>
+            {s.profile && <span className="text-ink-2"> · {s.profile}</span>}
+          </li>
+        ))}
+      </ul>
+      {variant.smartTactics && variant.smartTactics.length > 0 && (
+        <ul className="list-disc space-y-0.5 pl-5 text-xs text-ink-2">
+          {variant.smartTactics.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }
 
