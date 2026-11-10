@@ -188,6 +188,14 @@ describe('RecommendationPanel (E3-10)', () => {
     expect(screen.getByText(/lig ya da uyruk süzgecini gevşet/)).toBeInTheDocument()
   })
 
+  it('FCA-7: aday çıkmadıysa ve kredi düşmediyse (iade) "kredi iade edildi" yazar', async () => {
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([]), charged: 0, balance: 17 })
+    renderPanel()
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · 3 kredi/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Onayla/ }))
+    expect(await screen.findByText('Aday çıkmadı; kredi iade edildi · kalan 17.')).toBeInTheDocument()
+  })
+
   it('PREMIUM: onay istemez, kredi yerine "PREMIUM\'da ücretsiz" yazar', async () => {
     premium = true
     vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })

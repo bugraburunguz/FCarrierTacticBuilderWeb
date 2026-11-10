@@ -258,6 +258,8 @@ export const endpoints = {
   exportTacticCode: (tactic: TacticRequest) => api.post<TacticCodeExport>('/tactics/export-code', tactic, false),
   importTacticCode: (code: string) => api.post<TacticCodeImport>('/tactics/import-code', { code }, false),
   careerRecommendations: (careerId: number, body: CareerRecommendationRequest) => api.post<Credited<CareerRecommendation>>(`/careers/${careerId}/recommendations`, body),
+  /** FCA-6: Transfer lig seçicisi için erişilebilir ligler (ücretsiz); restricted=false → her lig seçilebilir. */
+  reachableLeagues: (careerId: number) => api.get<{ restricted: boolean; leagueIds: number[] }>(`/careers/${careerId}/recommendations/reachable-leagues`),
   creditCosts: () => api.get<CreditCosts>('/billing/costs'),
 
   careers: () => api.get<Career[]>('/careers'),

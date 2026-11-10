@@ -20,6 +20,8 @@ vi.mock('../../api/endpoints', () => {
       // FCA-5: lig ve uyruk seçicileri
       leagues: vi.fn(() => Promise.resolve([{ id: 13, name: 'Premier League' }, { id: 60, name: 'EFL League Two' }])),
       nationalities: vi.fn(() => Promise.resolve([{ id: 14, name: 'England' }, { id: 18, name: 'France' }])),
+      // FCA-6: erişilebilir ligler (varsayılan: kısıt yok)
+      reachableLeagues: vi.fn(() => Promise.resolve({ restricted: false, leagueIds: [] })),
     },
   }
 })
@@ -185,6 +187,21 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     expect(within(panel).getByText(/Lig ve uyruk yeni öneri ister/)).toBeInTheDocument()
     fireEvent.click(within(panel).getByRole('button', { name: 'Sıfırla' }))
     await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/minovr|minpot|maxdeger|lig=|uyruk=/))
+  })
+
+  it('FCA-6: kulübün erişemeyeceği ligler seçicide "erişim dışı" ve seçilemez; kısıt yoksa hepsi seçilebilir', async () => {
+    vi.mocked(endpoints.reachableLeagues).mockResolvedValue({ restricted: true, leagueIds: [60] } as never)
+    const { unmount } = renderPage()
+    const panel = await screen.findByRole('region', { name: 'Ayrıntılı filtre' })
+    const premier = await within(panel).findByRole('option', { name: 'Premier League · erişim dışı' })
+    expect(premier).toBeDisabled()
+    expect(within(panel).getByRole('option', { name: 'EFL League Two' })).toBeEnabled()
+    expect(endpoints.reachableLeagues).toHaveBeenCalledWith(1)
+    unmount()
+    vi.mocked(endpoints.reachableLeagues).mockResolvedValue({ restricted: false, leagueIds: [] } as never)
+    renderPage()
+    const again = await screen.findByRole('region', { name: 'Ayrıntılı filtre' })
+    expect(await within(again).findByRole('option', { name: 'Premier League' })).toBeEnabled()
   })
 
   it('FCA-5 inceleme: adresteki lig listede yoksa seçici "Bilinmeyen lig" gösterir (istek süzgeci gizli kalmaz)', async () => {
