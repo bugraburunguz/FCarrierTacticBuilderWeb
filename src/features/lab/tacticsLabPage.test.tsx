@@ -124,7 +124,8 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
     const modes = screen.getByRole('group', { name: 'Taktik modu' })
     expect(within(modes).getAllByRole('button').map((b) => b.querySelector('[data-mode-title]')?.textContent)).toEqual(['Sıfırdan kur', 'Replika kullan', 'Kadroma göre bul'])
-    expect(within(modes).getByRole('button', { name: /Sıfırdan kur/ })).toHaveAttribute('aria-pressed', 'true')
+    // taslak yokken etkin mod yok (etkin mod açık taslağın kökeninden gelir)
+    within(modes).getAllByRole('button').forEach((b) => expect(b).toHaveAttribute('aria-pressed', 'false'))
   })
 
   it('FCA-3: "Sıfırdan kur" boş taslak açar (ana taktiğin formasyonu, boş slotlar, kimse dizili değil) ve kurucuda boş slotlar "+ mevki"', async () => {
@@ -137,9 +138,48 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     expect(created.origin.kind).toBe('blank')
     expect(created.lineup).toEqual({})
     expect(Object.keys(created.tactic.slots)).toHaveLength(0)
+    expect(created.origin).toEqual({ kind: 'blank', ref: 'scratch' })
     expect(screen.getByRole('tab', { name: 'Kurucu', selected: true })).toBeInTheDocument()
     await screen.findByRole('button', { name: "En iyi 11'i diz" })
-    await waitFor(() => expect(document.querySelectorAll('[data-empty-slot]').length).toBeGreaterThan(0))
+    await waitFor(() => expect(document.querySelectorAll('[data-empty-slot]').length).toBe(11))
+    // kurucu yerleştikten sonra da kendiliğinden dizilmez (otomatik diziliş isteği hiç gitmez)
+    await new Promise((r) => setTimeout(r, 50))
+    expect(endpoints.lineup).not.toHaveBeenCalled()
+    expect(labStore.get(7).drafts[0].lineup).toEqual({})
+    // etkin mod taslağın kökeninden; temiz sıfırdan taslakta tekrar tıklamak yeni taslak açmaz
+    expect(screen.getByRole('button', { name: /Sıfırdan kur/ })).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(screen.getByRole('button', { name: /Sıfırdan kur/ }))
+    expect(labStore.get(7).drafts).toHaveLength(1)
+  })
+
+  it('FCA-3 inceleme: eski fc.tactic göçünden gelen boş taslak (blank, ref fc.tactic) eskisi gibi kendiliğinden dizilir', async () => {
+    labStore.create(7, { name: 'Ana taktik · göç', origin: { kind: 'blank', ref: 'fc.tactic' }, tactic: { formation: '4-4-2', slots: {} }, lineup: {} })
+    renderAt()
+    await screen.findByRole('button', { name: "En iyi 11'i diz" })
+    await waitFor(() => expect(endpoints.lineup).toHaveBeenCalled())
+  })
+
+  it('FCA-3 inceleme: Kurucu\'da etkin mod taslağın kökeni (replika klonu → Replika kullan); Kod sekmesinde hiçbir mod basılı değil', async () => {
+    labStore.create(7, { name: 'Barça', origin: { kind: 'replica', ref: 'barca-2011' }, tactic: { formation: '4-4-2', slots: {} }, lineup: LINEUP })
+    const { unmount } = renderAt()
+    const modes = await screen.findByRole('group', { name: 'Taktik modu' })
+    expect(within(modes).getByRole('button', { name: /Replika kullan/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(within(modes).getByRole('button', { name: /Sıfırdan kur/ })).toHaveAttribute('aria-pressed', 'false')
+    unmount()
+    renderAt('/career/tactics-lab?sekme=kod')
+    const again = await screen.findByRole('group', { name: 'Taktik modu' })
+    within(again).getAllByRole('button').forEach((b) => expect(b).toHaveAttribute('aria-pressed', 'false'))
+  })
+
+  it('FCA-3 inceleme: taslak sınırı doluyken "Sıfırdan kur" mesajı mod kartlarının hemen altında', async () => {
+    for (let i = 0; i < LAB_DRAFT_LIMIT; i++) draft(`T${i}`)
+    renderAt()
+    const blank = await screen.findByRole('button', { name: /Sıfırdan kur/ })
+    await waitFor(() => expect(blank).toBeEnabled())
+    fireEvent.click(blank)
+    const alert = await screen.findByRole('alert')
+    expect(screen.getByRole('group', { name: 'Taktik modu' }).nextElementSibling).toBe(alert)
+    expect(labStore.get(7).drafts).toHaveLength(LAB_DRAFT_LIMIT)
   })
 
   it('FCA-3: "Replika kullan" Replikalar, "Kadroma göre bul" Sihirbaz sekmesini açar; etkin mod sekmeyi izler', async () => {

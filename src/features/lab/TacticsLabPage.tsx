@@ -6,6 +6,7 @@ import { endpoints } from '../../api/endpoints'
 import type { ReplicaSummary } from '../../api/types'
 import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { ModeCards, type LabMode } from './ModeCards'
+import { DEFAULT_TACTIC } from '../../lib/tactic'
 import { Button, EmptyState, Skeleton, TabPanel, Tabs } from '../../design/components/primitives'
 import { useActiveCareerId } from '../../state/careerStore'
 import { labStore, useLab } from '../../state/labStore'
@@ -44,14 +45,25 @@ function createFrom(careerId: number, active: ActiveTactic | undefined, role?: {
 
 /** FCA-3 "Sıfırdan kur": ana taktiğin (yoksa önerinin) formasyonunda boş taslak; kimse dizili değil, roller formasyon varsayılanı. */
 function createBlank(careerId: number, active: ActiveTactic | undefined): { message?: string } {
-  const formation = active?.tactic.formation ?? DEFAULT_FORMATION
-  const created = labStore.create(careerId, { name: `Sıfırdan · ${formation}`, origin: { kind: 'blank' }, tactic: { formation, slots: {} }, lineup: {} })
+  const formation = active?.tactic.formation ?? DEFAULT_TACTIC.formation
+  const created = labStore.create(careerId, { name: `Sıfırdan · ${formation}`, origin: SCRATCH, tactic: { formation, slots: {} }, lineup: {} })
   return created.ok ? {} : { message: created.message }
 }
 
-const DEFAULT_FORMATION = '4-3-3'
-/** Açık sekme → etkin mod kartı (Kod ve Karşılaştır'da mod yok). */
-const TAB_MODE: Record<string, LabMode | undefined> = { kurucu: 'blank', replikalar: 'replica', sihirbaz: 'squad' }
+/** "Sıfırdan kur" kökeni: `blank` + ref `scratch`. Eski `fc.tactic` göçü de `blank` yazar (ref `fc.tactic`) ve eskisi gibi kendiliğinden dizilir. */
+const SCRATCH = { kind: 'blank' as const, ref: 'scratch' }
+const isScratch = (origin: { kind: string; ref?: string } | undefined) => origin?.kind === 'blank' && origin.ref === SCRATCH.ref
+
+/**
+ * Etkin mod kartı: Replikalar ve Sihirbaz sekmesinde sekmeden; Kurucu'da açık taslağın kökeninden (sıfırdan / replika / sihirbaz);
+ * Kod ve Karşılaştır'da yok.
+ */
+function activeMode(tab: string, origin: { kind: string; ref?: string } | undefined): LabMode | undefined {
+  if (tab === 'replikalar') return 'replica'
+  if (tab === 'sihirbaz') return 'squad'
+  if (tab !== 'kurucu') return undefined
+  return isScratch(origin) ? 'blank' : origin?.kind === 'replica' ? 'replica' : origin?.kind === 'wizard' ? 'squad' : undefined
+}
 
 const TABS = [
   { id: 'kurucu', label: 'Kurucu' },
@@ -158,8 +170,14 @@ export function TacticsLabPage() {
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
       {/* FCA-3: Stitch başlığı ve mod kartları; kariyer seçimi üst barda. */}
       <CareerPageHeader crumb="Taktik" title="Taktik Laboratuvarı" subtitle="Sıfırdan kur, replika uygula ya da kadrona göre bul" />
-      <ModeCards active={TAB_MODE[tab]} disabled={isLoading} onPick={(mode) => {
+      <ModeCards active={activeMode(tab, draft?.origin)} disabled={isLoading} onPick={(mode) => {
         if (mode === 'blank') {
+          // Açık taslak hâlâ boş bir sıfırdan taslaksa yenisi açılmaz (art arda tıklama sınırı doldurmasın).
+          if (draft && isScratch(draft.origin) && Object.keys(draft.lineup).length === 0) {
+            setMessage(undefined)
+            setTab('kurucu')
+            return
+          }
           const result = createBlank(id, active)
           setMessage(result.message)
           if (!result.message) {
@@ -170,6 +188,8 @@ export function TacticsLabPage() {
         setMessage(undefined)
         setTab(mode === 'replica' ? 'replikalar' : 'sihirbaz')
       }} />
+      {/* Mesaj mod kartlarının hemen altında (375'te sayfa sonunda görünmüyordu). */}
+      {message && <p role="alert" className="text-sm text-bad">{message}</p>}
       {draft && <DraftBar careerId={id} lab={lab} draft={draft} onNew={onNew} newDisabled={isLoading} />}
       <Tabs label="Lab sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="kurucu" active={tab === 'kurucu'}>
@@ -178,7 +198,7 @@ export function TacticsLabPage() {
             Henüz taslak yok
           </EmptyState>
         ) : (
-          <LabBuilder key={draft.id} initialSlot={openSlot} onSlotOpened={slotOpened} blank={draft.origin.kind === 'blank'} />
+          <LabBuilder key={draft.id} initialSlot={openSlot} onSlotOpened={slotOpened} blank={isScratch(draft.origin)} />
         )}
       </TabPanel>
       <TabPanel idPrefix={PREFIX} id="sihirbaz" active={tab === 'sihirbaz'}>
@@ -197,7 +217,6 @@ export function TacticsLabPage() {
       <TabPanel idPrefix={PREFIX} id="karsilastir" active={tab === 'karsilastir'}>
         <CompareTab careerId={id} lab={lab} main={main} />
       </TabPanel>
-      {message && <p role="alert" className="text-sm text-bad">{message}</p>}
     </div>
   )
 }
