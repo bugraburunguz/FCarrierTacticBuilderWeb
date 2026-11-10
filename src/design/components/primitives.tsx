@@ -245,7 +245,7 @@ export function Segmented<T extends string>({ label, value, options, onChange }:
           aria-checked={value === o.id}
           tabIndex={value === o.id ? 0 : -1}
           onClick={() => onChange(o.id)}
-          className={cx('min-h-8 rounded-[var(--radius-sm)] px-3 text-xs font-semibold max-sm:min-h-11', value === o.id ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]')}
+          className={cx('min-h-8 rounded-[var(--radius-sm)] px-3 text-xs font-semibold max-sm:min-h-11 max-sm:min-w-11', value === o.id ? 'bg-[var(--glass-press)] text-ink shadow-[inset_0_-2px_0_var(--accent)]' : 'text-ink-2 hover:bg-[var(--glass-hover)]')}
         >
           {o.label}
         </button>

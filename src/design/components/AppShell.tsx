@@ -1,5 +1,5 @@
 import { ArrowLeftRight, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Shirt, Sparkles, Sprout, Swords, Target, TrendingUp, Upload, UserCog, Users, type LucideIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../../api/client'
 import { useAuth } from '../../auth/AuthContext'
@@ -59,7 +59,7 @@ function RailLink({ group, active, short = false, onNavigate, unsaved = false }:
   const label = short ? group.mobileLabel ?? group.label : group.label
   return (
     // Etkinlik grubun `match` listesinden (activeNav); NavLink yalnız kendi `to`'su eşleşince aria-current yazar, grup başka alt rotadayken (/squad/builder) yanlış olur.
-    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)}`}>
+    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)} ${short ? 'max-[359px]:px-0' : ''}`}>
       {/* Nokta yokken işaretleme öncekiyle birebir (UT rayı ve alt çubuğu piksel düzeyinde değişmez). */}
       {unsaved ? (
         <span className="relative block">
@@ -67,13 +67,13 @@ function RailLink({ group, active, short = false, onNavigate, unsaved = false }:
           <span data-unsaved-dot aria-hidden="true" className="absolute -right-1 -top-0.5 h-2 w-2 rounded-full bg-[var(--accent)] ring-2 ring-[var(--glass-1,var(--surface))]" />
         </span>
       ) : <Icon size={20} aria-hidden="true" />}
-      <span className="max-w-full break-words">{label}</span>
+      <span className={short ? 'max-w-full' : 'max-w-full break-words'}>{label}</span>
     </Link>
   )
 }
 
 /** Mobil alt çubuk (V3-06d): kariyerde 4 öğe + "Daha fazla" sheet'i (aktif öğe sheet'teyse düğme aktif görünür); UT'de ilk 5 öğe. */
-function MobileBar({ mode, nav, active, pathname, labUnsaved }: { mode: 'career' | 'ut'; nav: NavGroup[]; active?: NavGroup; pathname: string; labUnsaved: boolean }) {
+function MobileBar({ mode, nav, active, pathname, labUnsaved, sheetFooter }: { mode: 'career' | 'ut'; nav: NavGroup[]; active?: NavGroup; pathname: string; labUnsaved: boolean; sheetFooter?: (close: () => void) => ReactNode }) {
   const [open, setOpen] = useState(false)
   const { items, more } = mobileBar(mode, nav)
   const moreActive = more.find((g) => g === active || pathname === g.to)
@@ -95,6 +95,7 @@ function MobileBar({ mode, nav, active, pathname, labUnsaved }: { mode: 'career'
               <RailLink key={g.to} group={g} active={g === moreActive} onNavigate={() => setOpen(false)} />
             ))}
           </div>
+          {sheetFooter?.(() => setOpen(false))}
         </MobileSheet>
       )}
     </nav>
@@ -125,20 +126,30 @@ export function AppShell() {
   const lab = useLab(mode === 'career' ? careerId : undefined)
   const labUnsaved = lab.drafts.some((d) => d.dirty)
   const showTabs = !/^\/players\/\d+/.test(pathname)
+  const modeSwitch = (onSwitched?: () => void) => (
+    <Segmented
+      label="Mod"
+      value={mode}
+      options={MODES.map((m) => ({ id: m.id, label: m.id === 'ut' ? 'UT' : 'Kariyer' }))}
+      onChange={(id) => {
+        modeStore.set(id)
+        navigate(MODES.find((m) => m.id === id)?.home ?? '/')
+        onSwitched?.()
+      }}
+    />
+  )
+  const careerSheetFooter = (close: () => void) => (
+    <div className="mt-4 flex items-center justify-between gap-3 border-t border-line pt-4">
+      <span className="text-sm text-ink-2">Mod</span>
+      {modeSwitch(close)}
+    </div>
+  )
 
   return (
     <div className="min-h-screen text-ink">
       <header className="glass glass-sticky sticky top-0 z-30 flex h-[var(--header-h)] min-w-0 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4 max-[359px]:gap-1.5 max-[359px]:px-3">
-        <LogoLockup size={32} collapse />
-        <Segmented
-          label="Mod"
-          value={mode}
-          options={MODES.map((m) => ({ id: m.id, label: m.id === 'ut' ? 'UT' : 'Kariyer' }))}
-          onChange={(id) => {
-            modeStore.set(id)
-            navigate(MODES.find((m) => m.id === id)?.home ?? '/')
-          }}
-        />
+        <LogoLockup size={32} collapse className={careerSurface ? 'justify-center max-sm:min-h-11 max-sm:min-w-11' : ''} />
+        <div className={careerSurface ? 'max-sm:hidden' : undefined}>{modeSwitch()}</div>
         {careerSurface && <CareerBar />}
         <div className="ml-auto flex items-center gap-2 max-[359px]:gap-1.5">
           {/* FCA-3: kariyer şimdilik yalnız koyu; tema düğmesi yalnız UT'de. */}
@@ -206,14 +217,14 @@ export function AppShell() {
           <footer className="mt-10 flex flex-col gap-1 border-t border-line pt-4 text-xs text-muted">
             <p>{LEGAL_NOTE}</p>
             <div className="flex flex-wrap gap-x-4">
-              <NavLink to="/about" className="inline-flex min-h-8 items-center font-semibold text-accent max-sm:min-h-11">Hakkında</NavLink>
-              <NavLink to="/privacy" className="inline-flex min-h-8 items-center font-semibold text-accent max-sm:min-h-11">Gizlilik</NavLink>
+              <NavLink to="/about" className="inline-flex min-h-8 items-center font-semibold text-accent max-sm:min-h-11 max-sm:min-w-11">Hakkında</NavLink>
+              <NavLink to="/privacy" className="inline-flex min-h-8 items-center font-semibold text-accent max-sm:min-h-11 max-sm:min-w-11">Gizlilik</NavLink>
             </div>
           </footer>
         </main>
       </div>
 
-      <MobileBar mode={mode} nav={nav} active={active} pathname={pathname} labUnsaved={labUnsaved} />
+      <MobileBar mode={mode} nav={nav} active={active} pathname={pathname} labUnsaved={labUnsaved} sheetFooter={careerSurface ? careerSheetFooter : undefined} />
       <CompareTray />
     </div>
   )

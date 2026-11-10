@@ -37,14 +37,14 @@ export function CareerBar() {
   const season = seasonLabel(active?.season)
 
   return (
-    // <1024 px: kulüp bilgisi gizli, değiştirici kalır (Masa/Kadro'da sayfa içi seçici yok).
-    <section aria-label="Aktif kariyer" className="flex min-w-0 items-center gap-3">
+    // FCA-12: <640 px'te mod anahtarı Daha fazla sheet'inde, yer kulüp adı ve tarihe kalır; 640–1023 px'te kulüp bilgisi gizli, değiştirici kalır.
+    <section aria-label="Aktif kariyer" className="flex min-w-0 items-center gap-3 max-sm:flex-1 max-sm:gap-1.5">
       <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] text-ink-2 max-[1023px]:hidden">
         <Shield size={18} />
       </span>
       {active ? (
-        <div className="min-w-0 leading-tight max-[1023px]:hidden">
-          <p className="truncate font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-wide text-ink">{active.clubName ?? `Kulüp ${active.clubId}`}</p>
+        <div className="min-w-0 leading-tight max-sm:flex-1 min-[640px]:max-[1023px]:hidden">
+          <p className="truncate font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-wide text-ink max-sm:text-base">{active.clubName ?? `Kulüp ${active.clubId}`}</p>
           <p className="truncate text-xs text-muted">
             {date ? <span>{date}</span> : null}
             {date && season ? ' · ' : null}
@@ -52,11 +52,11 @@ export function CareerBar() {
           </p>
         </div>
       ) : careers.isError ? (
-        <p className="text-sm text-bad max-[1023px]:hidden">Kariyerler yüklenemedi</p>
+        <p className="min-w-0 truncate text-sm text-bad max-sm:flex-1 min-[640px]:max-[1023px]:hidden">Kariyerler yüklenemedi</p>
       ) : careers.isLoading ? (
-        <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)] max-[1023px]:hidden" />
+        <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)] max-sm:w-auto max-sm:flex-1 min-[640px]:max-[1023px]:hidden" />
       ) : (
-        <p className="text-sm text-muted max-[1023px]:hidden">Aktif kariyer yok</p>
+        <p className="min-w-0 truncate text-sm text-muted max-sm:flex-1 min-[640px]:max-[1023px]:hidden">Aktif kariyer yok</p>
       )}
       <CareerSwitcher list={list} activeId={active?.id} activeName={active ? active.clubName ?? `Kulüp ${active.clubId}` : undefined} />
     </section>

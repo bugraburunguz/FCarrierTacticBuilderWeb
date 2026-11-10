@@ -61,6 +61,24 @@ describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
     expect(within(sheet).getByRole('link', { name: 'Gelişim' })).toHaveAttribute('aria-current', 'page')
   })
 
+  it('FCA-12: kariyerde mod anahtarı dar ekranda üst çubuktan "Daha fazla" sheet\'ine taşınır; sheet\'ten UT\'ye geçilir', () => {
+    renderAt('/career/dashboard')
+    const header = screen.getByRole('banner')
+    // Üst çubuktaki anahtar <640 px'te gizli (yer kulüp adına kalır); masaüstünde görünür.
+    expect(within(header).getByRole('radiogroup', { name: 'Mod' }).parentElement).toHaveClass('max-sm:hidden')
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Mobil menü' })).getByRole('button', { name: 'Daha fazla' }))
+    const sheet = screen.getByRole('dialog', { name: 'Daha fazla' })
+    fireEvent.click(within(within(sheet).getByRole('radiogroup', { name: 'Mod' })).getByRole('radio', { name: 'UT' }))
+    expect(modeStore.get()).toBe('ut')
+    expect(screen.queryByRole('dialog', { name: 'Daha fazla' })).toBeNull()
+  })
+
+  it('FCA-12: UT üst çubuğunda mod anahtarı her genişlikte görünür', () => {
+    modeStore.set('ut')
+    renderAt('/ut/squad')
+    expect(within(screen.getByRole('banner')).getByRole('radiogroup', { name: 'Mod' }).parentElement).not.toHaveClass('max-sm:hidden')
+  })
+
   it('Oyuncular alt sekmeleri sayfa içi kalır (Oyuncu ara / Wonderkids / Karşılaştır)', () => {
     renderAt('/wonderkids')
     const tabs = screen.getByRole('navigation', { name: 'Oyuncular sekmeleri' })
