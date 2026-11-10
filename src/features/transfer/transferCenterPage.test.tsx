@@ -162,6 +162,41 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     expect(await screen.findByRole('button', { name: /Oyuncu 2 · Rol oturması %12/, pressed: true })).toBeInTheDocument()
   })
 
+  it('FCA-4: ayrıntılı filtre adrese yazar (minovr, minpot, maxdeger); Sıfırla temizler', async () => {
+    renderPage()
+    const panel = await screen.findByRole('region', { name: 'Ayrıntılı filtre' })
+    fireEvent.change(within(panel).getByLabelText('En düşük OVR'), { target: { value: '70' } })
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('minovr=70'))
+    fireEvent.change(within(panel).getByLabelText('En düşük POT'), { target: { value: '78' } })
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('minpot=78'))
+    // en yüksek değer: yazınca ve birim değişince adrese (alandan çıkmayı beklemez)
+    fireEvent.change(within(panel).getByLabelText('En yüksek değer'), { target: { value: '5' } })
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('maxdeger=5000000'))
+    fireEvent.change(within(panel).getByLabelText('Birim'), { target: { value: 'K' } })
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('maxdeger=5000'))
+    fireEvent.click(within(panel).getByRole('button', { name: 'Sıfırla' }))
+    await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/minovr|minpot|maxdeger/))
+  })
+
+  it('FCA-4: ≥1440 px üç sütun — solda ihtiyaçlar + filtre, ortada sekmeler, sağda kısa liste özeti + bütçe planı', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('1440'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined })) as never
+    try {
+      vi.mocked(endpoints.shortlist).mockResolvedValue([{ playerId: 50, player: candidate.player, maxFeeEur: 1_200_000 }] as never)
+      renderPage()
+      const left = await screen.findByRole('complementary', { name: 'Arama' })
+      expect(within(left).getByRole('heading', { name: 'İhtiyaçlar' })).toBeInTheDocument()
+      expect(within(left).getByRole('region', { name: 'Ayrıntılı filtre' })).toBeInTheDocument()
+      const right = screen.getByRole('complementary', { name: 'Kısa liste ve bütçe' })
+      const cards = await within(right).findByRole('list', { name: 'Kısa liste özeti' })
+      expect(within(cards).getByText('Aday Forvet')).toBeInTheDocument()
+      expect(within(cards).getByText('€1,20 Mn')).toBeInTheDocument()
+      expect(within(right).getByText('Transfer bütçesi')).toBeInTheDocument()
+    } finally {
+      window.matchMedia = original
+    }
+  })
+
   it('bütçe planı: bütçe − kısa liste + satış planı = kalan', async () => {
     vi.mocked(endpoints.shortlist).mockResolvedValue([{ playerId: 50, player: candidate.player, maxFeeEur: 1_200_000 }, { playerId: 51, player: { ...candidate.player, id: 51, name: 'İkinci', valueEur: 800_000 } }] as never)
     vi.mocked(endpoints.playerTags).mockResolvedValue([{ playerId: 4, tag: 'FOR_SALE', askingPriceEur: 2_500_000 }, { playerId: 5, tag: 'FOR_SALE' }] as never)
