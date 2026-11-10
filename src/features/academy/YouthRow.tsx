@@ -1,5 +1,6 @@
+import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import type { AcademyPlayer, GrowthRecent } from '../../api/types'
-import { Chip } from '../../design/components/primitives'
+import { Chip, OvrBox } from '../../design/components/primitives'
 import { STATUS_LABEL } from './academyRules'
 
 const SCALE_MIN = 40
@@ -55,7 +56,9 @@ export function YouthRow({ player, onOpen, selected = false, reason = false, rec
     <button type="button" onClick={() => onOpen(player.playerId)} aria-current={selected || undefined}
       className={`glass-3 flex w-full flex-col gap-1 rounded-[var(--radius-sm)] p-3 text-left hover:ring-1 hover:ring-[var(--accent)] focus-visible:outline-2 focus-visible:outline-[var(--accent)] ${selected ? 'ring-1 ring-[var(--accent)]' : ''}`}>
       <span className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+        <span className="flex min-w-0 flex-wrap items-center gap-x-2">
+          {/* FCA-3 (Stitch): OVR kutusu satır başında. */}
+          <OvrBox value={player.overall} size="sm" />
           <b className="truncate">{player.name}</b>
           <span className="text-sm tabular-nums text-ink-2">{player.age ?? '—'}</span>
           <span className="text-sm text-ink-2" title={player.sideReason ?? undefined}>
@@ -71,7 +74,14 @@ export function YouthRow({ player, onOpen, selected = false, reason = false, rec
       </span>
       {/* GT-a: Gelişim'de tek satır gerekçe (tahmin), ad tekrar etmeden. */}
       {reason && player.plan?.text && <span className="text-xs text-ink-2">{reasonText(player)}</span>}
-      {recent && <span className="text-xs tabular-nums text-ink-2">{recentText(recent)}</span>}
+      {/* FCA-4b (Stitch): yön oku ve ton; metin aynı (renk tek başına anlam taşımaz). */}
+      {recent && (
+        <span data-trend={recent.overallDelta > 0 ? 'up' : recent.overallDelta < 0 ? 'down' : 'flat'}
+          className={`inline-flex items-center gap-1 text-xs tabular-nums ${recent.overallDelta > 0 ? 'text-good' : recent.overallDelta < 0 ? 'text-bad' : 'text-ink-2'}`}>
+          {recent.overallDelta > 0 ? <ArrowUp size={12} aria-hidden="true" /> : recent.overallDelta < 0 ? <ArrowDown size={12} aria-hidden="true" /> : <Minus size={12} aria-hidden="true" />}
+          <span>{recentText(recent)}</span>
+        </span>
+      )}
       {player.promoteInfo && <span className="text-xs text-ink-2">{player.promoteInfo.text}</span>}
     </button>
   )

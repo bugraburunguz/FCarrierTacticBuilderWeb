@@ -21,8 +21,9 @@ const MARKERS: { id: MarkerMode; label: string }[] = [{ id: 'card', label: 'Kart
  * Lab › Kurucu (KARIYER-UX FAZ 4a, 15 §4.3): ortak kadro çekirdeği (SquadWorkspaceView + useCareerSquadBuilder) aktif taslağa yazar (useLabBinding).
  * Saha Cyber-Pitch, varsayılan kart, tek tıkla piyon (Q5). `initialSlot` (?slot=) slot paneli açık gelir.
  */
-export function LabBuilder({ initialSlot, onSlotOpened }: { initialSlot?: string; onSlotOpened?: () => void }) {
-  const b = useCareerSquadBuilder(useLabBinding)
+export function LabBuilder({ initialSlot, onSlotOpened, blank = false }: { initialSlot?: string; onSlotOpened?: () => void; blank?: boolean }) {
+  // FCA-3 "Sıfırdan kur" taslağı boş kalır (kendiliğinden dizilmez).
+  const b = useCareerSquadBuilder(useLabBinding, { autoFillEmpty: !blank })
   const { ws, views, slotTabs, setup, preset, weakReasons, autoFill, hasCareer } = b
   const { selection, selectedSlot: dialogSlot, formation } = ws
   const [marker, setMarker] = useState<MarkerMode>('card')

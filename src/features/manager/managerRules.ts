@@ -75,6 +75,10 @@ const LICENCE_BONUS: Record<ManagerLicence, number> = {
 }
 const MAX_REPUTATION = 100
 
+/** FCA-4c (Stitch): kartlarda gösterilen itibar katkısı — geçmiş taban puanı, diploma eki (aynı önizleme tablosu). */
+export const backgroundPoints = (id: ManagerBackground) => BACKGROUND_BASE[id]
+export const licencePoints = (id: ManagerLicence) => LICENCE_BONUS[id]
+
 export function reputation(background: ManagerBackground | undefined, licence: ManagerLicence | undefined): number | undefined {
   return background && licence ? Math.min(MAX_REPUTATION, BACKGROUND_BASE[background] + LICENCE_BONUS[licence]) : undefined
 }

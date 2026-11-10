@@ -36,6 +36,20 @@ describe('TeamsV3Page', () => {
     vi.mocked(endpoints.careerTeam).mockResolvedValue(PROFILE as never)
   })
 
+  it('FCA-3 Parça 6: h1 page-title; sayfa içi kariyer seçici yok (üst bar)', async () => {
+    renderAt()
+    await screen.findByRole('table', { name: 'Takımlar' })
+    expect(screen.getByRole('heading', { level: 1, name: 'Takımlar' })).toHaveClass('page-title')
+    expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
+  })
+
+  it('FCA-3 Parça 6: kariyer yokken boş durum üst barı gösterir (sayfada seçici yok)', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValue([] as never)
+    careerStore.set(undefined)
+    renderAt()
+    expect(await screen.findByText('Üst bardan bir kariyer seç ya da yeni kariyer başlat.')).toBeInTheDocument()
+  })
+
   it('dolu: güce göre sıralı tablo; kariyerin kulübü işaretli', async () => {
     renderAt()
     const table = await screen.findByRole('table', { name: 'Takımlar' })

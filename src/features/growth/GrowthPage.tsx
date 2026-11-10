@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useId, useMemo, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { GrowthKpis } from './GrowthKpis'
 import { endpoints } from '../../api/endpoints'
 import type { AgeGroup } from '../../api/types'
 import { EmptyState, ErrorState, Segmented, SidePanel, Skeleton } from '../../design/components/primitives'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { isPlateau } from '../../lib/deskRules'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useYouthOpener } from '../academy/useYouthOpener'
@@ -20,7 +22,7 @@ function Section({ title, children, actions, subtitle }: { title: string; childr
     <section aria-labelledby={id} className="glass-2 flex min-w-0 flex-col gap-3 p-3 sm:p-4">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 id={id} className="font-display text-xl font-semibold leading-6">{title}</h2>
+          <h2 id={id} className="panel-title font-display text-xl font-semibold leading-6">{title}</h2>
           {subtitle && <p className="text-xs text-ink-2">{subtitle}</p>}
         </div>
         {actions}
@@ -39,6 +41,9 @@ const AGE_SECTIONS: { group: AgeGroup; title: string; subtitle: string }[] = [
   { group: 'PEAK', title: 'Zirve', subtitle: '24–29 yaş · rolde incelme ya da koruma' },
   { group: 'VETERAN', title: 'Tecrübeliler', subtitle: '30 yaş ve üstü · düşüşü yavaşlatma' },
 ]
+
+type GroupId = 'all' | 'genc' | 'zirve' | 'tecrubeli'
+const GROUP_PARAM: Record<AgeGroup, Exclude<GroupId, 'all'>> = { YOUTH: 'genc', PEAK: 'zirve', VETERAN: 'tecrubeli' }
 
 /**
  * Gelişim (GT-a): "Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?". A takımın her oyuncusu yaşa göre üç bölümde (Gençler, Zirve, Tecrübeliler);
@@ -62,6 +67,16 @@ export function GrowthPage() {
   const span = range === 'season' && season ? season : undefined
   const diff = useQuery({ queryKey: ['snapshot-diff', id, span?.from, span?.to, snapshots.data?.length], queryFn: () => endpoints.snapshotDiff(id!, span?.from, span?.to), enabled: id !== undefined && enough, retry: false })
   const { open, close, selectedId } = useYouthOpener('gelisim')
+  // FCA-4b: yaş grubu süzgeci adreste (?grup=genc|zirve|tecrubeli); diğer parametreler korunur.
+  const [params, setParams] = useSearchParams()
+  const wanted = params.get('grup')
+  const group: GroupId = wanted === 'genc' || wanted === 'zirve' || wanted === 'tecrubeli' ? wanted : 'all'
+  const setGroup = (next: GroupId) => {
+    const p = new URLSearchParams(params)
+    if (next === 'all') p.delete('grup')
+    else p.set('grup', next)
+    setParams(p, { replace: true })
+  }
 
   const members = useMemo(() => new Map((squad.data ?? []).map((c) => [c.player.id, c.player])), [squad.data])
   // Yalnız kadro: fark tüm kayıt dünyasını kapsar (altyapı ve başka takımlar dahil).
@@ -88,17 +103,29 @@ export function GrowthPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header>
-        {heading}
-        <p className="text-sm text-ink-2">Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?</p>
-      </header>
+      {/* FCA-3: Stitch başlığı. */}
+      <CareerPageHeader crumb="Gelişim" title="Gelişim" subtitle="Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?" />
+      {/* FCA-4b (Stitch): üst özet kartları ve yaş grubu süzgeci; satırlar Altyapı biçiminde, paneli açar. */}
+      {training.data && training.data.length > 0 && (
+        <>
+          <GrowthKpis players={training.data} recent={recent.data ?? []}
+            recentState={recent.isLoading ? 'loading' : recent.isError && !recent.data ? 'error' : 'ready'} />
+          {/* Dar ekranda dört seçenek taşmasın: yatay kayar. */}
+          <div className="max-w-full overflow-x-auto">
+            <Segmented label="Yaş grubu" value={group} onChange={setGroup} options={[
+              { id: 'all', label: `Tümü (${training.data.length})` },
+              ...AGE_SECTIONS.map((s) => ({ id: GROUP_PARAM[s.group], label: `${s.title} (${training.data!.filter((p) => p.ageGroup === s.group).length})` })),
+            ]} />
+          </div>
+        </>
+      )}
       <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           {training.isLoading ? <Skeleton className="h-40" /> : training.isError && !training.data ? (
             <ErrorState message="Antrenman planları yüklenemedi." onRetry={() => training.refetch()} />
           ) : (training.data ?? []).length === 0 ? (
             <EmptyState>Antrenman planı önerilecek oyuncu yok. Kariyer içinden içe aktarınca dolar.</EmptyState>
-          ) : AGE_SECTIONS.map((s) => {
+          ) : AGE_SECTIONS.filter((s) => group === 'all' || GROUP_PARAM[s.group] === group).map((s) => {
             const players = training.data!.filter((p) => p.ageGroup === s.group)
             return (
               <Section key={s.group} title={s.title} subtitle={`${s.subtitle} · tahmin`}>
@@ -108,7 +135,7 @@ export function GrowthPage() {
             )
           })}
 
-          <Section title="Son içe aktarmadan beri" actions={enough ? (
+          <Section title="Son içe aktarmadan beri" subtitle="Tüm kadro (yaş grubu süzgecinden bağımsız)" actions={enough ? (
             <Segmented label="Aralık" value={range} onChange={setRange}
               options={[{ id: 'last', label: 'Son iki içe aktarma' }, ...(season ? [{ id: 'season' as const, label: 'Sezon başı → şimdi' }] : [])]} />
           ) : undefined}>

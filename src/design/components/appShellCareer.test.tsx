@@ -1,0 +1,124 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { careerStore } from '../../state/careerStore'
+import { modeStore } from '../../state/modeStore'
+import { AppShell } from './AppShell'
+
+vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { email: 'kapi@example.test', subscriptionType: 'FREE', creditBalance: 20 }, logout: vi.fn() }) }))
+vi.mock('../../api/endpoints', () => ({
+  endpoints: {
+    appConfig: vi.fn(() => Promise.resolve({ freeBeta: true, dailyCredits: 30 })),
+    careers: vi.fn(() => Promise.resolve([
+      { id: 7, name: 'Liman', clubId: 1, clubName: 'Kuzey Liman SK', season: 1, gameDate: '2027-09-19', squadSize: 26, gameVersionId: 1 },
+      { id: 8, clubId: 2, clubName: 'Doğu Kartallar', season: 2026, squadSize: 24, gameVersionId: 1 },
+    ])),
+  },
+}))
+
+function renderAt(path: string) {
+  return render(
+    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      <MemoryRouter initialEntries={[path]}>
+        <Routes><Route element={<AppShell />}><Route path="*" element={<p>içerik</p>} /></Route></Routes>
+      </MemoryRouter>
+    </QueryClientProvider>,
+  )
+}
+
+beforeEach(() => {
+  modeStore.set('career')
+  careerStore.set(7)
+})
+
+describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
+  it('sol menü iki bölüm: Operasyon ve Yönetim; Menajer ve İçe aktar Yönetim\'de', () => {
+    renderAt('/career/dashboard')
+    const menu = screen.getByRole('navigation', { name: 'Ana menü' })
+    const ops = within(menu).getByRole('group', { name: 'Operasyon' })
+    const admin = within(menu).getByRole('group', { name: 'Yönetim' })
+    // FCA-3 Parça 2: Stitch adları (Taktik, Kayıt yükle)
+    expect(within(ops).getAllByRole('link').map((a) => a.textContent)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar'])
+    expect(within(admin).getAllByRole('link').map((a) => a.textContent)).toEqual(['Menajer', 'Kayıt yükle'])
+    expect(within(admin).getByRole('link', { name: 'Menajer' })).toHaveAttribute('href', '/career/manager')
+  })
+
+  it('/career/manager: Menajer aktif', () => {
+    renderAt('/career/manager')
+    const menu = screen.getByRole('navigation', { name: 'Ana menü' })
+    expect(within(menu).getAllByRole('link').filter((a) => a.getAttribute('aria-current') === 'page').map((a) => a.textContent)).toEqual(['Menajer'])
+  })
+
+  it('üst bar: aktif kariyerin kulübü ve oyun tarihi; kariyer değiştirici', async () => {
+    renderAt('/career/dashboard')
+    const bar = screen.getByRole('region', { name: 'Aktif kariyer' })
+    expect(await within(bar).findByText('Kuzey Liman SK')).toBeInTheDocument()
+    expect(within(bar).getByText('19 Eylül 2027')).toBeInTheDocument()
+    // season kariyerin kaçıncı sezonu (1, 2 …); yıl değil
+    expect(within(bar).getByText('1. sezon')).toBeInTheDocument()
+    expect(within(bar).getByRole('button', { name: /Kariyer değiştir/ })).toBeInTheDocument()
+  })
+
+  it('herkese açık sayfa (/login, /about) kariyer modunda da bugünkü kabukta: kariyer barı ve bölümlü menü yok, tema düğmesi var', () => {
+    for (const path of ['/login', '/about']) {
+      const { unmount } = renderAt(path)
+      expect(screen.queryByRole('region', { name: 'Aktif kariyer' })).toBeNull()
+      expect(screen.queryByRole('group', { name: 'Operasyon' })).toBeNull()
+      expect(screen.getAllByRole('button', { name: /temaya geç/ }).length).toBeGreaterThan(0)
+      unmount()
+    }
+  })
+
+  it('820–1023 px: menü etiketleri yalnız ekran okuyucuya (ikon rayı); ≥1024 px görünür', () => {
+    renderAt('/career/dashboard')
+    const menu = screen.getByRole('navigation', { name: 'Ana menü' })
+    expect(menu.className).toMatch(/w-\[72px\]/)
+    expect(menu.className).toMatch(/min-\[1024px\]:w-60/)
+    // bölüm başlığının dolgusu dış öğede: not-sr-only dolguyu sıfırlar
+    const heading = within(menu).getByText('Operasyon')
+    expect(heading.className).toMatch(/not-sr-only/)
+    expect(heading.className).not.toMatch(/px-/)
+    expect(heading.parentElement?.className).toMatch(/px-5/)
+    const label = within(menu).getByText('Kadro')
+    expect(label.className).toMatch(/sr-only/)
+    expect(label.className).toMatch(/min-\[1024px\]:not-sr-only/)
+  })
+
+  it('seçili kariyer yokken (yeni cihaz, temizlenmiş depo) listenin ilki seçilir: üst bar ve sayfalar aynı kariyeri kullanır', async () => {
+    careerStore.set(undefined)
+    renderAt('/career/dashboard')
+    await waitFor(() => expect(careerStore.get()).toBe(7))
+  })
+
+  it('değiştiricinin erişilebilir adı aktif kulübü söyler (dar ekranda kulüp adı gizli)', async () => {
+    renderAt('/career/dashboard')
+    expect(await screen.findByRole('button', { name: 'Kariyer değiştir · aktif: Kuzey Liman SK' })).toBeInTheDocument()
+  })
+
+  it('<1024 px: kulüp bilgisi gizlenir ama kariyer değiştirici her genişlikte (sayfa içi seçici kalktı); dar ekranda yalnız ikon', async () => {
+    renderAt('/career/dashboard')
+    const bar = screen.getByRole('region', { name: 'Aktif kariyer' })
+    expect(bar.className).not.toMatch(/max-\[1023px\]:hidden/)
+    expect((await within(bar).findByText('Kuzey Liman SK')).closest('div')!.className).toMatch(/max-\[1023px\]:hidden/)
+    expect(within(bar).getByText('Kariyer değiştir').className).toMatch(/max-sm:sr-only/)
+  })
+
+  it('kariyerler yüklenemezse "Aktif kariyer yok" değil, hata metni', async () => {
+    const { endpoints } = await import('../../api/endpoints')
+    vi.mocked(endpoints.careers).mockRejectedValueOnce(new Error('ağ'))
+    renderAt('/career/dashboard')
+    const bar = screen.getByRole('region', { name: 'Aktif kariyer' })
+    expect(await within(bar).findByText('Kariyerler yüklenemedi')).toBeInTheDocument()
+  })
+
+  it('kariyerde tema düğmesi yok (yalnız koyu); UT\'de var', () => {
+    const { unmount } = renderAt('/career/dashboard')
+    expect(screen.queryByRole('button', { name: /temaya geç/ })).toBeNull()
+    unmount()
+    modeStore.set('ut')
+    renderAt('/ut/squad')
+    expect(screen.getAllByRole('button', { name: /temaya geç/ }).length).toBeGreaterThan(0)
+    expect(screen.queryByRole('region', { name: 'Aktif kariyer' })).toBeNull()
+  })
+})

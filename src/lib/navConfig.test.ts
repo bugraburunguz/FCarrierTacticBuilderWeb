@@ -5,7 +5,7 @@ describe('v3 kariyer menüsü tek (V3-06d)', () => {
   const career = navFor('career', true, true)
 
   it('KARIYER-UX FAZ 4a sıra + ACADEMY-b: Masa · Kadro · Taktik Lab · Transfer · Altyapı · Oyuncular, sonra Gelişim · Takımlar · İçe aktar', () => {
-    expect(career.map((g) => g.label)).toEqual(['Masa', 'Kadro', 'Taktik Lab', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar', 'İçe aktar'])
+    expect(career.map((g) => g.label)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle'])
     expect(career.find((g) => g.to === '/career/dashboard')?.tabs).toBeUndefined()
     expect(career.find((g) => g.label === 'Kadro')?.tabs).toBeUndefined()
   })
@@ -14,20 +14,20 @@ describe('v3 kariyer menüsü tek (V3-06d)', () => {
     ['/career/dashboard', 'Masa'], ['/career/desk', 'Masa'], ['/career/new', 'Masa'], ['/career/transfer', 'Transfer'], ['/career/growth', 'Gelişim'], ['/career/academy', 'Altyapı'], ['/career/academy/41', 'Altyapı'],
     ['/players', 'Oyuncular'], ['/players/12', 'Oyuncular'], ['/wonderkids', 'Oyuncular'], ['/compare', 'Oyuncular'],
     ['/career/squad', 'Kadro'],
-    ['/career/tactics-lab', 'Taktik Lab'], ['/squad/builder', 'Taktik Lab'], ['/tactics/wizard', 'Taktik Lab'], ['/replicas/3', 'Taktik Lab'],
-    ['/teams', 'Takımlar'], ['/career/import', 'İçe aktar'],
+    ['/career/tactics-lab', 'Taktik'], ['/squad/builder', 'Taktik'], ['/tactics/wizard', 'Taktik'], ['/replicas/3', 'Taktik'],
+    ['/teams', 'Takımlar'], ['/career/import', 'Kayıt yükle'], ['/career/manager', 'Menajer'],
   ])('%s → %s aktif', (path, label) => {
     expect(activeNav(career, path)?.label).toBe(label)
   })
 
   it('mobil alt çubuk 5 öğe: Masa, Kadro, Lab, Transfer, Oyuncular + Daha fazla (Altyapı ilk; Gelişim, Takımlar, İçe aktar, Yeni kariyer)', () => {
     const bar = mobileBar('career', career)
-    expect(bar.items.map((g) => g.mobileLabel ?? g.label)).toEqual(['Masa', 'Kadro', 'Lab', 'Transfer', 'Oyuncu'])
+    expect(bar.items.map((g) => g.mobileLabel ?? g.label)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Oyuncu'])
     expect(career.find((g) => g.label === 'Kadro')?.to).toBe('/career/squad')
-    expect(career.find((g) => g.label === 'Taktik Lab')?.to).toBe('/career/tactics-lab')
+    expect(career.find((g) => g.label === 'Taktik')?.to).toBe('/career/tactics-lab')
     // FAZ 4b: Lab sekmeleri sayfa içinde (Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır); kabukta ikinci sekme satırı yok.
-    expect(career.find((g) => g.label === 'Taktik Lab')?.tabs).toBeUndefined()
-    expect(bar.more.map((g) => g.label)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'İçe aktar', 'Yeni kariyer'])
+    expect(career.find((g) => g.label === 'Taktik')?.tabs).toBeUndefined()
+    expect(bar.more.map((g) => g.label)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer'])
     expect(CAREER_MORE.map((g) => g.to)).toEqual(['/career/new'])
   })
 

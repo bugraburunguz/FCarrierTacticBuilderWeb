@@ -27,6 +27,47 @@ describe('SquadList (v3 gruplama)', () => {
     tables[0].querySelectorAll('th[scope="rowgroup"]').forEach((th) => expect(th).toHaveAttribute('colspan'))
   })
 
+  it('FCA-3: OVR hücresinde Stitch OVR kutusu (küçük); POT düz sayı', () => {
+    const { container } = renderList()
+    const row = screen.getByRole('link', { name: 'Oyuncu 1' }).closest('tr')!
+    expect(within(row).getByRole('img', { name: 'OVR 70' })).toHaveAttribute('data-tier', 'good')
+    expect(container.querySelectorAll('td[data-col="ovr"] [role="img"]')).toHaveLength(SQUAD.length)
+  })
+
+  it('FCA-3: kiralık satırları solda 3 px durum şeridi taşır (renk + çip metni birlikte); diğer satırlarda şerit yok', () => {
+    renderList()
+    const row = screen.getByRole('link', { name: 'Oyuncu 5' }).closest('tr')!
+    expect(row).toHaveAttribute('data-status', 'loaned-out')
+    expect(row.querySelector('td[data-col="name"]')!.className).toMatch(/shadow-\[inset_3px_0_0_var\(--info\)\]/)
+    const plain = screen.getByRole('link', { name: 'Oyuncu 1' }).closest('tr')!
+    expect(plain).not.toHaveAttribute('data-status')
+  })
+
+  it('FCA-3 3b: öneri şeritleri — Sat kırmızı, Süre ver amber (çip metniyle, gerekçe title); kayıttaki kiralık önce gelir ve mavi', () => {
+    const advice = new Map([
+      [1, { kind: 'SELL' as const, reason: '31 yaşında, ilk 11\'de değil' }],
+      [2, { kind: 'LOAN' as const, reason: '19 yaşında, potansiyeli 12 puan üstünde' }],
+      [5, { kind: 'SELL' as const, reason: 'kiralıkta olan öneri almaz' }],
+    ])
+    renderList({ advice })
+    const row = (name: string) => screen.getByRole('link', { name }).closest('tr')!
+    expect(row('Oyuncu 1')).toHaveAttribute('data-status', 'sell')
+    expect(row('Oyuncu 1').querySelector('td[data-col="name"]')!.className).toMatch(/inset_3px_0_0_var\(--bad\)/)
+    // çip iki yerde: mobilde isim altında, sm+ Durum sütununda (biri CSS ile gizli)
+    within(row('Oyuncu 1')).getAllByText('Sat').forEach((chip) => expect(chip).toHaveAttribute('title', '31 yaşında, ilk 11\'de değil'))
+    expect(row('Oyuncu 2')).toHaveAttribute('data-status', 'minutes')
+    expect(row('Oyuncu 2').querySelector('td[data-col="name"]')!.className).toMatch(/inset_3px_0_0_var\(--warn\)/)
+    expect(within(row('Oyuncu 2')).getAllByText('Süre ver').length).toBeGreaterThan(0)
+    expect(row('Oyuncu 5')).toHaveAttribute('data-status', 'loaned-out')
+  })
+
+  it('FCA-3 3b: kiralık (bizde) satırı da mavi şerit (Stitch: kiralık mavi)', () => {
+    render(<MemoryRouter><SquadList squad={[p(9, ['CM'], 64, { onLoan: true })]} positionAdvice={[]} recordColumns grouping="mevki" /></MemoryRouter>)
+    const row = screen.getByRole('link', { name: 'Oyuncu 9' }).closest('tr')!
+    expect(row).toHaveAttribute('data-status', 'on-loan')
+    expect(row.querySelector('td[data-col="name"]')!.className).toMatch(/inset_3px_0_0_var\(--info\)/)
+  })
+
   it('sayılar sağa hizalı ve tabular-nums', () => {
     const { container } = renderList()
     const ovr = [...container.querySelectorAll('table td[data-col="ovr"]')]

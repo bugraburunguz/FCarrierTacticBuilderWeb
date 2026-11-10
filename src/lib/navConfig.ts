@@ -11,6 +11,8 @@ export interface NavGroup {
   /** v3 kariyer mobil alt çubuğu (V3-06d): 'more' = "Daha fazla" sheet'inde; kısa etiket alt çubuk içindir. */
   mobile?: 'more'
   mobileLabel?: string
+  /** FCA-3 kariyer sol menüsü: 'admin' = "Yönetim" bölümü; yoksa "Operasyon". */
+  section?: 'admin'
 }
 
 /**
@@ -23,8 +25,8 @@ export const CAREER_NAV: NavGroup[] = [
   { to: '/career/squad', label: 'Kadro', match: ['/career/squad'] },
   {
     to: '/career/tactics-lab',
-    label: 'Taktik Lab',
-    mobileLabel: 'Lab',
+    // FCA-3 Parça 2: Stitch adı "Taktik" (sayfa başlığı Taktik Lab kalır); mobilde de aynı.
+    label: 'Taktik',
     // FAZ 4b: sekmeler (Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır) sayfa içinde; /replicas sayfası da Lab'da sayılır.
     match: ['/career/tactics-lab', '/tactics', '/squad', '/fit', '/recommend', '/scouting', '/replicas'],
   },
@@ -45,7 +47,9 @@ export const CAREER_NAV: NavGroup[] = [
   },
   { to: '/career/growth', label: 'Gelişim', match: ['/career/growth'], mobile: 'more' },
   { to: '/teams', label: 'Takımlar', match: ['/teams'], mobile: 'more' },
-  { to: '/career/import', label: 'İçe aktar', match: ['/career/import'], mobile: 'more' },
+  // FCA-3: masaüstü sol menüde "Yönetim" bölümü (FM alışkanlığı: operasyon üstte, yönetim altta).
+  { to: '/career/manager', label: 'Menajer', match: ['/career/manager'], mobile: 'more', section: 'admin' },
+  { to: '/career/import', label: 'Kayıt yükle', match: ['/career/import'], mobile: 'more', section: 'admin' },
 ]
 
 /** Yalnız mobil "Daha fazla" sheet'inde (masaüstünde Masa'daki düğme). */

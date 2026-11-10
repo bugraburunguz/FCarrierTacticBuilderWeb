@@ -34,6 +34,15 @@ beforeEach(() => {
   vi.mocked(endpoints.leagues).mockResolvedValue([{ id: 13, name: 'Premier League' }] as never)
 })
 
+describe('FCA-3 Parça 6: Menajer başlığı', () => {
+  it('konum çizgisi "Kariyer › Menajer", h1 page-title', async () => {
+    renderPage()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Menajer')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('heading', { level: 1, name: 'Menajer profili' })).toHaveClass('page-title')
+  })
+})
+
 describe('Menajer profili (MGR-b)', () => {
   it('profil yokken boş form; geçmiş ve diploma seçilmeden kaydedilemez, eksikler yazar', async () => {
     renderPage()
@@ -94,22 +103,77 @@ describe('Menajer profili (MGR-b)', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('Kaydedildi.')
   })
 
-  it('mobilde adım adım üç bölüm: İleri ile sıradaki bölüm, son adımda kaydet', async () => {
+  it('FCA-4c: dört aşama çubuğu; tamamlanan aşama işaretli; geçmiş ve diploma kartlarında itibar puanı', async () => {
+    const scroll = vi.fn()
+    const originalScroll = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scroll
+    try {
+      renderPage()
+      const steps = await screen.findByRole('navigation', { name: 'Aşamalar' })
+      const items = within(steps).getAllByRole('button')
+      expect(items.map((b) => b.querySelector('[data-step-title]')?.textContent)).toEqual(['Futbolculuk geçmişi', 'Antrenörlük diploması', 'Oyun tarzı', 'Hedef ve zorluk'])
+      // yeni profil: geçmiş ve diploma eksik; tarz ve zorluk varsayılan (dokunulmadan "tamam" denmez)
+      expect(items.map((b) => b.getAttribute('data-state'))).toEqual(['open', 'open', 'default', 'default'])
+      expect(items[2]).toHaveTextContent('varsayılan')
+      // masaüstünde aria-current yok (ilerleme metinle); yalnız mobilde geçerli adım
+      items.forEach((b) => expect(b).not.toHaveAttribute('aria-current'))
+      fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Futbolculuk geçmişi' })).getByRole('radio', { name: /^Profesyonel \(ulusal\)/ }))
+      expect(within(steps).getAllByRole('button')[0]).toHaveAttribute('data-state', 'done')
+      fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Tarz' })).getByRole('radio', { name: /^Kontra/ }))
+      expect(within(steps).getAllByRole('button')[2]).toHaveAttribute('data-state', 'done')
+      expect(screen.getByText(/İtibar puanları tahmindir/)).toBeInTheDocument()
+      // itibar puanı kartta (önizleme tablosu: ulusal 55, Pro lisans +15)
+      expect(within(screen.getByRole('radiogroup', { name: 'Futbolculuk geçmişi' })).getByRole('radio', { name: /Profesyonel \(ulusal\).*55 itibar/ })).toBeInTheDocument()
+      expect(within(screen.getByRole('radiogroup', { name: 'Antrenörlük diploması' })).getByRole('radio', { name: /Uluslararası Pro Lisans.*\+15 itibar/ })).toBeInTheDocument()
+      // masaüstünde aşamaya tıklamak o bölüme kaydırır
+      fireEvent.click(within(steps).getAllByRole('button')[3])
+      expect(scroll.mock.contexts.at(-1)).toBe(screen.getByRole('heading', { name: 'Hedef ve zorluk' }).closest('section'))
+    } finally {
+      Element.prototype.scrollIntoView = originalScroll
+    }
+  })
+
+  it('FCA-4c inceleme: mobilde çubuktan son adıma atlayıp kaydedince eksik olan ilk aşamaya döner; geçerli adım aria-current; kayıtlı profilde hepsi tamam', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('max-width'), addEventListener: () => {}, removeEventListener: () => {} })) as never
+    try {
+      const { unmount } = renderPage()
+      const steps = await screen.findByRole('navigation', { name: 'Aşamalar' })
+      expect(within(steps).getAllByRole('button')[0]).toHaveAttribute('aria-current', 'step')
+      fireEvent.click(within(steps).getAllByRole('button')[3])
+      expect(screen.getByRole('heading', { name: 'Hedef ve zorluk' })).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Profili kaydet' }))
+      expect(await screen.findByRole('heading', { name: 'Futbolculuk geçmişi' })).toBeInTheDocument()
+      expect(screen.getByRole('alert')).toHaveTextContent('Futbolculuk geçmişini seç.')
+      expect(endpoints.saveManagerProfile).not.toHaveBeenCalled()
+      unmount()
+      vi.mocked(endpoints.managerProfile).mockResolvedValue({ profile: { background: 'PRO_LOCAL', licence: 'NATIONAL_A', style: 'COUNTER', priorities: [], difficulty: 'EASY' }, reputation: 36, band: 'Yerel tanınırlık' } as never)
+      renderPage()
+      const saved = await screen.findByRole('navigation', { name: 'Aşamalar' })
+      expect(within(saved).getAllByRole('button').map((b) => b.getAttribute('data-state'))).toEqual(['done', 'done', 'done', 'done'])
+    } finally {
+      window.matchMedia = original
+    }
+  })
+
+  it('mobilde adım adım dört aşama: İleri ile sıradaki bölüm, son adımda kaydet', async () => {
     const original = window.matchMedia
     window.matchMedia = ((query: string) => ({ matches: query.includes('max-width'), addEventListener: () => {}, removeEventListener: () => {} })) as never
     try {
       renderPage()
-      expect(await screen.findByRole('heading', { name: 'Geçmiş ve diploma' })).toBeInTheDocument()
-      expect(screen.getByText('Adım 1/3')).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { name: 'Futbolculuk geçmişi' })).toBeInTheDocument()
+      expect(screen.getByText('Adım 1/4')).toBeInTheDocument()
       expect(screen.queryByRole('heading', { name: 'Oyun tarzı' })).not.toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Profili kaydet' })).not.toBeInTheDocument()
       fireEvent.click(screen.getByRole('button', { name: 'İleri' }))
+      expect(screen.getByRole('heading', { name: 'Antrenörlük diploması' })).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'İleri' }))
       expect(screen.getByRole('heading', { name: 'Oyun tarzı' })).toBeInTheDocument()
       fireEvent.click(screen.getByRole('button', { name: 'İleri' }))
-      expect(screen.getByRole('heading', { name: 'Öncelik ve zorluk' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Hedef ve zorluk' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Profili kaydet' })).toBeInTheDocument()
       fireEvent.click(screen.getByRole('button', { name: 'Geri' }))
-      expect(screen.getByText('Adım 2/3')).toBeInTheDocument()
+      expect(screen.getByText('Adım 3/4')).toBeInTheDocument()
     } finally {
       window.matchMedia = original
     }
@@ -128,15 +192,15 @@ describe('Menajer profili (MGR-b)', () => {
     })) as never
     try {
       renderPage()
-      await screen.findByRole('heading', { name: 'Geçmiş ve diploma' })
+      await screen.findByRole('heading', { name: 'Futbolculuk geçmişi' })
       expect(scroll).not.toHaveBeenCalled()
       fireEvent.click(screen.getByRole('button', { name: 'İleri' }))
-      const heading = screen.getByRole('heading', { name: 'Oyun tarzı' })
+      const heading = screen.getByRole('heading', { name: 'Antrenörlük diploması' })
       await waitFor(() => expect(heading).toHaveFocus())
       expect(scroll).toHaveBeenLastCalledWith({ block: 'start', behavior })
       expect(scroll.mock.contexts.at(-1)).toBe(heading.closest('section'))
       fireEvent.click(screen.getByRole('button', { name: 'Geri' }))
-      await waitFor(() => expect(screen.getByRole('heading', { name: 'Geçmiş ve diploma' })).toHaveFocus())
+      await waitFor(() => expect(screen.getByRole('heading', { name: 'Futbolculuk geçmişi' })).toHaveFocus())
     } finally {
       window.matchMedia = original
       Element.prototype.scrollIntoView = originalScroll

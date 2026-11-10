@@ -1,10 +1,62 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../../api/types'
 import { depthRows, positionCapacity } from '../../lib/deskRules'
-import { ageBands, contractTimeline, legacySquadTarget, squadStats } from './careerSquadRules'
+import { ageBands, contractTimeline, legacySquadTarget, lineupGroups, rowAdvice, squadStats } from './careerSquadRules'
 
 const member = (id: number, position: string, overall: number, age: number, extra: Partial<CareerPlayer> = {}, player: object = {}): CareerPlayer =>
   ({ player: { id, name: `Oyuncu ${id}`, positions: [position], overall, age, ...player }, onLoan: false, ...extra }) as CareerPlayer
+
+describe('FCA-3 Diziliş listesi: İlk 11 · Yedekler · Kadro dışı (Derinlik ile aynı kural)', () => {
+  const slots = [
+    { slotId: 'GK', position: 'GK', roleId: 'r', playerId: 1 },
+    { slotId: 'LCB', position: 'CB', roleId: 'r', playerId: 2 },
+    { slotId: 'RCB', position: 'CB', roleId: 'r', playerId: 3 },
+    { slotId: 'ST', position: 'ST', roleId: 'r' },
+  ]
+  const squad = [
+    member(1, 'GK', 70, 28), member(2, 'CB', 72, 27), member(3, 'CB', 71, 25),
+    member(4, 'CB', 68, 29), member(5, 'CB', 66, 30), member(6, 'ST', 65, 26),
+    member(7, 'GK', 55, 18), member(8, 'ST', 64, 31, { loanedOut: true, onLoan: true }),
+  ]
+
+  it('ilk 11 slot sırasıyla (slot mevkisiyle); yedekler slot yedeklerinden tekil; geri kalan kadro dışı (genç, kiralıkta, fazla)', () => {
+    const g = lineupGroups(slots, squad)
+    expect(g.starters.map((s) => [s.position, s.player.player.id])).toEqual([['GK', 1], ['CB', 2], ['CB', 3]])
+    expect(g.empty).toEqual(['ST'])
+    // CB slotları sırayla 1. ve 2. yedeği alır; ST slotu boş ama yedeği var (6); yedek kapattığı slotun mevkisiyle
+    expect(g.bench.map((b) => [b.position, b.player.player.id])).toEqual([['CB', 4], ['CB', 5], ['ST', 6]])
+    // kadro dışı OVR'ye göre
+    expect(g.others.map((c) => c.player.id)).toEqual([8, 7])
+  })
+
+  it('aynı oyuncu iki slota yazılmışsa ilk 11\'de bir kez (ikinci slot boş sayılır)', () => {
+    const g = lineupGroups([{ slotId: 'LCB', position: 'CB', roleId: 'r', playerId: 2 }, { slotId: 'RCB', position: 'CB', roleId: 'r', playerId: 2 }], squad)
+    expect(g.starters.map((s) => s.slotId)).toEqual(['LCB'])
+    expect(g.empty).toEqual(['CB'])
+  })
+
+  it('kadroda olmayan ilk 11 oyuncusu atlanır; boş kadro boş gruplar', () => {
+    expect(lineupGroups([{ slotId: 'GK', position: 'GK', roleId: 'r', playerId: 99 }], squad).starters).toEqual([])
+    // kadro boşsa dizili oyuncu da yok: dört slot da boş
+    expect(lineupGroups(slots, [])).toEqual({ starters: [], empty: ['GK', 'CB', 'CB', 'ST'], bench: [], others: [] })
+  })
+})
+
+describe('FCA-3 satır önerisi (Masa "3 iş" ile aynı sellAdvice kuralı)', () => {
+  it('ilk 11 dışı 29+ yaş ve değeri olan → Sat; ≤21 yaş ve potansiyeli 6+ üstünde → Süre ver; ilk 11 ve kiralıktaki öneri almaz', () => {
+    const squad = [
+      member(1, 'CB', 70, 31, {}, { valueEur: 400_000 }),
+      member(2, 'ST', 60, 19, {}, { potential: 72 }),
+      member(3, 'GK', 70, 33, {}, { valueEur: 1_000_000 }),
+      member(4, 'CM', 60, 32, { loanedOut: true, onLoan: true }, { valueEur: 300_000 }),
+    ]
+    const advice = rowAdvice(squad, new Set([3]), {})
+    expect([...advice.keys()]).toEqual([1, 2])
+    expect(advice.get(1)?.kind).toBe('SELL')
+    expect(advice.get(2)?.kind).toBe('LOAN')
+    expect(advice.get(1)?.reason).toMatch(/31 yaşında/)
+  })
+})
 
 describe('Kadro özeti (diziliş sekmesi StatTile\'ları)', () => {
   it('ortalama reyting ve yaş kadrodan (kiralık gönderilen hariç), oyuncu sayısı ve kiralıktaki sayısı', () => {

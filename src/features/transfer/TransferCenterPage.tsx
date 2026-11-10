@@ -20,6 +20,13 @@ import { BudgetPlanPanel } from './BudgetPlanPanel'
 import { SellPlanTab } from './SellPlanTab'
 import { budgetAfterPurchase, budgetPlan, needsForTransfer } from './transferPlan'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
+import { useMediaQuery } from '../../design/useMediaQuery'
+import { candidateFilter, parseFilters } from './transferFilters'
+import { FilterPanel, ShortlistSummary } from './TransferSearchPanels'
+
+// Üç sütun (Stitch 1440 tasarımı): 1280'de orta sütun aday kartlarına ~350 px kalıyordu; altında iki sütunlu eski düzen.
+const WIDE_QUERY = '(min-width: 1440px)'
 
 const STALE_MS = 120_000
 const PREFIX = 'transfer'
@@ -34,7 +41,7 @@ function Section({ title, actions, children, className = '' }: { title: string; 
   return (
     <section aria-labelledby={id} className={`glass-2 flex min-w-0 flex-col gap-3 p-3 sm:p-4 ${className}`}>
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id={id} className="font-display text-xl font-semibold leading-6">{title}</h2>
+        <h2 id={id} className="panel-title font-display text-xl font-semibold leading-6">{title}</h2>
         {actions}
       </header>
       {children}
@@ -97,6 +104,10 @@ export function TransferCenterPage() {
   const need = needs.find((n) => n.key === params.get('ihtiyac'))
     ?? needs.find((n) => n.position === wantedPos && (!wantedRole || n.roleId === wantedRole)) ?? needs[0]
   const focusId = Number(params.get('oyuncu')) || undefined
+  // FCA-4: ayrıntılı filtre adresten; sonucu tarayıcıda süzer.
+  const filters = parseFilters(params)
+  const resultFilter = candidateFilter(filters)
+  const wide = useMediaQuery(WIDE_QUERY)
 
   const invalidate = () => client.invalidateQueries({ queryKey: ['shortlist', id] })
   const remove = useMutation({ mutationFn: (playerId: number) => endpoints.shortlistRemove(id!, playerId), onSuccess: invalidate })
@@ -129,24 +140,7 @@ export function TransferCenterPage() {
   const after = budget === undefined ? undefined : budget - plan.shortlist.total
   const gameDate = facets.data?.gameDate
   const budgetPanel = <BudgetPlanPanel plan={plan} budget={budget} mobile={mobile} />
-
-  return (
-    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Transfer Merkezi</h1>
-        <p className="text-sm text-ink-2">{career.clubName ?? career.name}</p>
-      </header>
-      {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
-      {shortlist.isError && <ErrorState message="Kısa liste yüklenemedi." onRetry={() => shortlist.refetch()} />}
-      {tagList.isError && <ErrorState message="Satış planı yüklenemedi." onRetry={() => tagList.refetch()} />}
-      {mobile && budgetPanel}
-      <div className="flex flex-col gap-3 min-[1024px]:flex-row min-[1024px]:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <Tabs label="Transfer sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
-
-          {/* REVIEW Y6: öneri sonucu (kredi düşer) Kısa liste/Satış sekmesine geçince kaybolmasın. */}
-          <TabPanel idPrefix={PREFIX} id="adaylar" active={tab === 'adaylar'} keepMounted>
-            <div className="flex flex-col gap-3">
+  const needsSection = (
       <Section title="İhtiyaçlar" actions={(
         <span className="flex flex-wrap items-center gap-2">
           {main.source?.kind === 'auto' && <SourceTag source={main.source} />}
@@ -157,12 +151,12 @@ export function TransferCenterPage() {
         {needs.length === 0 ? (
           <EmptyState>{fitsPending ? 'Hesaplanıyor…' : allSquad ? 'Dizilimde oyuncu yok.' : 'Zayıf halka yok: dizilimdeki herkes seviyesinde ya da üstünde.'}</EmptyState>
         ) : (
-          // FAZ 6a-J: çipler satıra sarar; yatay kaydırmada son çip ("GK · Sweeper Keeper…") kesiliyordu.
-          <ul className="flex flex-wrap gap-2">
+          // FAZ 6a-J: çipler satıra sarar; yatay kaydırmada son çip ("GK · Sweeper Keeper…") kesiliyordu. FCA-4: sol sütunda alt alta.
+          <ul className={wide ? 'flex flex-col gap-2' : 'flex flex-wrap gap-2'}>
             {needs.map((n) => (
               <li key={n.key} className="min-w-0 max-w-full">
                 <button type="button" aria-pressed={need?.key === n.key} onClick={() => set({ ihtiyac: n.key, pos: undefined, rol: undefined, role: undefined })}
-                  className={`flex min-h-11 flex-col items-start gap-0.5 rounded-[var(--radius-sm)] border px-3 py-1.5 text-left text-sm ${need?.key === n.key ? 'border-accent bg-[var(--glass-press)] shadow-[inset_0_-2px_0_var(--accent)]' : 'border-[var(--glass-border)] glass-3 hover:bg-[var(--glass-hover)]'}`}>
+                  className={`flex min-h-11 w-full flex-col items-start gap-0.5 rounded-[var(--radius-sm)] border px-3 py-1.5 text-left text-sm ${need?.key === n.key ? 'border-accent bg-[var(--glass-press)] shadow-[inset_0_-2px_0_var(--accent)]' : 'border-[var(--glass-border)] glass-3 hover:bg-[var(--glass-hover)]'}`}>
                   <span className="flex flex-wrap items-center gap-2 font-semibold">{n.label}{n.state && <FitBadge state={n.state} compact />}</span>
                   <span className="text-xs text-ink-2">{n.detail}</span>
                 </button>
@@ -171,6 +165,32 @@ export function TransferCenterPage() {
           </ul>
         )}
       </Section>
+  )
+  const filterPanel = <FilterPanel filters={filters} onChange={(next) => set(next)} gender={career.gender} />
+
+  return (
+    <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
+      {/* FCA-3: Stitch başlığı. */}
+      <CareerPageHeader crumb="Transfer" title="Transfer Merkezi" subtitle={career.clubName ?? career.name} />
+      {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
+      {shortlist.isError && <ErrorState message="Kısa liste yüklenemedi." onRetry={() => shortlist.refetch()} />}
+      {tagList.isError && <ErrorState message="Satış planı yüklenemedi." onRetry={() => tagList.refetch()} />}
+      {mobile && budgetPanel}
+      {/* FCA-4 (Stitch): ≥1440 px üç sütun — solda arama (ihtiyaçlar + filtre), ortada sekmeler, sağda kısa liste özeti + bütçe planı. */}
+      <div className={wide ? 'grid grid-cols-[300px_minmax(0,1fr)_320px] items-start gap-3' : 'flex flex-col gap-3 min-[1024px]:flex-row min-[1024px]:items-start'}>
+        {wide && (
+          // Görünür alandan uzunsa içi kayar (yoksa alttaki "Sıfırla" orta sütun bitene kadar ulaşılamaz).
+          <aside aria-label="Arama" className="sticky top-[calc(var(--header-h)+0.75rem)] flex max-h-[calc(100dvh-var(--header-h)-1.5rem)] flex-col gap-3 overflow-y-auto">{needsSection}{filterPanel}</aside>
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <Tabs label="Transfer sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
+
+          {/* REVIEW Y6: öneri sonucu (kredi düşer) Kısa liste/Satış sekmesine geçince kaybolmasın. */}
+          <TabPanel idPrefix={PREFIX} id="adaylar" active={tab === 'adaylar'} keepMounted>
+            <div className="flex flex-col gap-3">
+      {/* FCA-4: ≥1440 px'te ihtiyaçlar ve filtre sol sütunda; daha darda burada. */}
+      {!wide && needsSection}
+      {!wide && filterPanel}
 
         <Section title={need ? `Adaylar · ${need.label}` : 'Adaylar'}>
           {need ? (
@@ -187,6 +207,8 @@ export function TransferCenterPage() {
               longShotsLabel="Uzak ihtimalleri göster"
               rowExtra={(item) => <CandidateExtra item={item} budget={budget} leagueOvr={facets.data?.leagueOvr} />}
               rowAction={(item: CareerRecommendationItem) => <ShortlistButton careerId={id!} playerId={item.player.id} note={need.label} />}
+              resultFilter={resultFilter}
+              requestFilters={{ leagueId: filters.leagueId, nationalityId: filters.nationalityId }}
             />
           ) : (
             <EmptyState action={!allSquad ? <Button onClick={() => set({ kadro: 'tum', ihtiyac: undefined })}>Tüm kadroyu göster</Button> : undefined}>
@@ -232,7 +254,12 @@ export function TransferCenterPage() {
             </Section>
           </TabPanel>
         </div>
-        {!mobile && <aside className="min-[1024px]:sticky min-[1024px]:top-24 min-[1024px]:w-[320px] min-[1024px]:shrink-0">{budgetPanel}</aside>}
+        {wide ? (
+          <aside aria-label="Kısa liste ve bütçe" className="sticky top-[calc(var(--header-h)+0.75rem)] flex max-h-[calc(100dvh-var(--header-h)-1.5rem)] flex-col gap-3 overflow-y-auto">
+            <ShortlistSummary items={items} onOpen={() => setTab('kisa-liste')} />
+            {budgetPanel}
+          </aside>
+        ) : !mobile && <aside className="min-[1024px]:sticky min-[1024px]:top-24 min-[1024px]:w-[320px] min-[1024px]:shrink-0">{budgetPanel}</aside>}
       </div>
     </div>
   )

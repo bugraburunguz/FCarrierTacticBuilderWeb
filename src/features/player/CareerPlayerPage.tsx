@@ -16,6 +16,7 @@ import { BackLink, FactGrid, PlayerDetailLayout, PlayerPageError, PlayerPageLoad
 import { CARD_WIDTH, footText, MOBILE_CARD_WIDTH, potentialText, useTabParam } from './playerPage'
 import { RolesTab } from './RolesTab'
 import { StatsTab } from './StatsTab'
+import { PositionPitch } from './PositionPitch'
 
 const TABS = [
   { id: 'statlar', label: 'Statlar' },
@@ -93,8 +94,16 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
   return (
     <PlayerDetailLayout back={back} topAside={mobile && compare} title={summary.name} positions={mobile ? summary.positions : undefined} meta={meta} badges={badges} card={card}>
       <Tabs label="Oyuncu sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
-      <TabPanel idPrefix={PREFIX} id="statlar" active={tab === 'statlar'}><StatsTab detail={detail.data} profile /></TabPanel>
-      <TabPanel idPrefix={PREFIX} id="roller" active={tab === 'roller'}><RolesTab playerId={summary.id} positions={summary.positions} careerId={careerId} /></TabPanel>
+      <TabPanel idPrefix={PREFIX} id="statlar" active={tab === 'statlar'}><StatsTab detail={detail.data} profile blend /></TabPanel>
+      <TabPanel idPrefix={PREFIX} id="roller" active={tab === 'roller'}>
+        <div className="flex flex-col gap-4">
+          {/* FCA-4d (Stitch): mevkiye göre OVR sahası rollerin üstünde; tek mevki verisinde gösterilmez. */}
+          {detail.data.positionOveralls && Object.keys(detail.data.positionOveralls).length > 1 && (
+            <PositionPitch overalls={detail.data.positionOveralls} listed={summary.positions} />
+          )}
+          <RolesTab playerId={summary.id} positions={summary.positions} careerId={careerId} />
+        </div>
+      </TabPanel>
       <TabPanel idPrefix={PREFIX} id="gelisim" active={tab === 'gelisim'}><DevelopmentTab summary={summary} inSquad={inSquad} careerId={careerId} /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="sozlesme" active={tab === 'sozlesme'}><ContractTab query={contract} /></TabPanel>
     </PlayerDetailLayout>

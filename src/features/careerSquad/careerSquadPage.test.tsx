@@ -100,6 +100,53 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.queryByRole('tab', { name: /Kariyer|Altyapı/ })).toBeNull()
   })
 
+  it('FCA-3: Stitch başlığı — konum çizgisi "Kariyer › Kadro", alt başlıkta oyuncu sayısı; sayfa içi kariyer seçici yok (üst bar)', async () => {
+    renderAt()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Kadro')).toHaveAttribute('aria-current', 'page')
+    expect(await screen.findByText(/oyuncu kayıtlı$/)).toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
+  })
+
+  it('FCA-3 3b: Diziliş sekmesinde saha + yanında liste: İlk 11 (11) · Yedekler · Kadro dışı; satır oyuncu sayfasına gider', async () => {
+    renderAt()
+    const list = await screen.findByRole('region', { name: 'Diziliş listesi' })
+    await waitFor(() => expect(within(list).getAllByRole('rowheader').map((th) => th.textContent)).toEqual(['İlk 11 · 11', 'Yedekler · 1', 'Kadro dışı · 1']))
+    expect(within(list).getByRole('link', { name: 'Oyuncu 13' })).toHaveAttribute('href', '/players/13')
+    expect(within(list).getAllByRole('img', { name: /^OVR \d+$/ }).length).toBe(13)
+    expect(document.querySelector('[data-field]')).not.toBeNull()
+  })
+
+  it('FCA-3 3b inceleme: ana taktik/öneri yüklenirken satır önerisi yok; Liste sekmesine öneri geçer; ana taktik ve öneri yoksa liste boş durum metni', async () => {
+    // 29+ yaş, değeri olan ilk 11 dışı → Sat
+    vi.mocked(endpoints.squad).mockResolvedValue([...SQUAD, player(14, 'CB', 60, { age: 31, valueEur: 500_000 })] as never)
+    let release: (v: unknown) => void = () => undefined
+    vi.mocked(endpoints.mainTactic).mockImplementation(() => new Promise((r) => { release = r }) as never)
+    renderAt('/career/squad?sekme=liste')
+    await screen.findByRole('link', { name: 'Oyuncu 14' })
+    // ana taktik gelmeden ilk 11 belli değil: kimseye "Sat" denmez
+    expect(screen.queryByText('Sat')).toBeNull()
+    release(MAIN)
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Oyuncu 14' }).closest('tr')).toHaveAttribute('data-status', 'sell'))
+    // gerekçe dokunmatik/ekran okuyucu için metin olarak da var
+    expect(screen.getAllByText(/31 yaşında/).length).toBeGreaterThan(0)
+  })
+
+  it('FCA-3 3b inceleme: ana taktik ve öneri yoksa Diziliş listesi boş durum metni', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
+    vi.mocked(endpoints.starterTactic).mockRejectedValue(new Error('yok'))
+    renderAt()
+    const list = await screen.findByRole('region', { name: 'Diziliş listesi' })
+    expect(await within(list).findByText('Ana taktik ya da öneri yok: İlk 11 belirlenemedi.')).toBeInTheDocument()
+  })
+
+  it('FCA-3: kadro alınamazsa alt başlık "0 oyuncu kayıtlı" yazmaz', async () => {
+    vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
+    renderAt('/career/squad?sekme=liste')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Kadro yüklenemedi.')
+    expect(screen.queryByText(/oyuncu kayıtlı$/)).toBeNull()
+  })
+
   it('ACADEMY-b: eski ?sekme=altyapi bağlantısı /career/academy sayfasına yönlenir', async () => {
     renderAt('/career/squad?sekme=altyapi')
     await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/career/academy'))

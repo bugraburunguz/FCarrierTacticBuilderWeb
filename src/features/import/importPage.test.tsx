@@ -28,6 +28,15 @@ beforeEach(() => {
   vi.mocked(endpoints.importCareer).mockReset()
 })
 
+describe('FCA-3 Parça 6: Kayıt yükle başlığı', () => {
+  it('konum çizgisi "Kariyer › Kayıt yükle", h1 page-title; hedef kariyer seçici kalır (içe aktarmanın hedefi)', async () => {
+    renderPage()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Kayıt yükle')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('heading', { level: 1, name: 'Kariyer verisini içe aktar' })).toHaveClass('page-title')
+  })
+})
+
 describe('içe aktarma hesapları (V3-07a)', () => {
   it('dosya boyutu doğru birimle (KB/MB, Türkçe ondalık)', () => {
     expect(formatBytes(820 * 1024)).toBe('820 KB')

@@ -134,6 +134,60 @@ describe('RecommendationPanel (E3-10)', () => {
     expect(screen.getByText(/3 kredi harcandı/)).toBeInTheDocument()
   })
 
+  it('FCA-4: resultFilter sonucu tarayıcıda süzer (yeni istek yok, kredi düşmez); kaç adayın elendiği yazılır', async () => {
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue(response([item(), item({ player: { ...player(2, 'Bey Oyuncu'), overall: 70 } })]))
+    renderPanel({ resultFilter: (i) => i.player.overall >= 75 })
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · 3 kredi/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Onayla/ }))
+    expect(await screen.findByText('Ada Oyuncu')).toBeInTheDocument()
+    expect(screen.queryByText('Bey Oyuncu')).toBeNull()
+    expect(screen.getByText('1 aday filtreye takıldı')).toBeInTheDocument()
+    expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
+  })
+
+  it('FCA-4 inceleme: filtre uzak ihtimallere de uygulanır; hepsi elenirse "filtreyi gevşet"; durum bölgesi hep var', async () => {
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue(response([item({ player: { ...player(1, 'Ada Oyuncu'), overall: 70 } })],
+      { longShots: [item({ player: { ...player(3, 'Uzak Düşük'), overall: 70 } }), item({ player: { ...player(4, 'Uzak Yüksek'), overall: 85 } })] }))
+    renderPanel({ resultFilter: (i) => i.player.overall >= 80 })
+    expect(screen.getByRole('status', { name: 'Filtre sonucu' })).toBeEmptyDOMElement()
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · 3 kredi/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Onayla/ }))
+    expect(await screen.findByText('Uzak Yüksek')).toBeInTheDocument()
+    expect(screen.queryByText('Uzak Düşük')).toBeNull()
+    expect(screen.queryByText('Ada Oyuncu')).toBeNull()
+    expect(screen.getByRole('status', { name: 'Filtre sonucu' })).toHaveTextContent('2 aday filtreye takıldı')
+    expect(screen.getByText('Filtreye uyan aday yok; filtreyi gevşet.')).toBeInTheDocument()
+  })
+
+  it('FCA-5: lig ve uyruk isteğe gider; sonuç alındıktan sonra değişirse "sonuçlar eski" uyarısı (yeni istek kendiliğinden atılmaz)', async () => {
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue(response([item()]))
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const view = (filters: { leagueId?: number; nationalityId?: number }) => (
+      <QueryClientProvider client={client}>
+        <MemoryRouter>
+          <RecommendationPanel careerId={4} position="ST" slotId="ST1" roleId="advanced_forward_attack" requestFilters={filters} />
+        </MemoryRouter>
+      </QueryClientProvider>
+    )
+    const { rerender } = render(view({ leagueId: 13, nationalityId: 14 }))
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · 3 kredi/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Onayla/ }))
+    await waitFor(() => expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1))
+    expect(vi.mocked(endpoints.careerRecommendations).mock.calls[0][1]).toEqual(expect.objectContaining({ leagueId: 13, nationalityId: 14 }))
+    expect(await screen.findByText('Ada Oyuncu')).toBeInTheDocument()
+    expect(screen.queryByText(/sonuçlar eski/)).toBeNull()
+    rerender(view({ leagueId: 31 }))
+    expect(await screen.findByText(/sonuçlar eski/)).toBeInTheDocument()
+    expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
+  })
+
+  it('FCA-5 inceleme: kayıtlı sonuç başka lig/uyrukla alındıysa açılışta da "sonuçlar eski"; boş sonuçta lig/uyruk ipucu', async () => {
+    bigStore.set(lastRecommendationsKey(4, 'ST', 'ST1'), { at: '2027-01-01T00:00:00Z', response: response([]), request: { position: 'ST', leagueId: 13 } })
+    renderPanel({ requestFilters: {} })
+    expect(await screen.findByText(/sonuçlar eski/)).toBeInTheDocument()
+    expect(screen.getByText(/lig ya da uyruk süzgecini gevşet/)).toBeInTheDocument()
+  })
+
   it('PREMIUM: onay istemez, kredi yerine "PREMIUM\'da ücretsiz" yazar', async () => {
     premium = true
     vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })

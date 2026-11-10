@@ -50,6 +50,7 @@
   --pitch-a: var(--pitch-1); --pitch-b: var(--pitch-2);
 
   --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
+  --radius-pill: 9999px; /* rozet/çip köşesi: v3'te hap, kariyer yüzeyinde köşeli (FCA-3) */
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
   --font-display: "Barlow Condensed", system-ui, sans-serif;
   /* Inter dosyası henüz yok (paket onayı bekliyor): o gelene kadar IBM Plex Sans. */
@@ -81,9 +82,13 @@
   --pawn-bg: #f2f5fb; --pawn-ink: #090d1a;
   --pawn-label-bg: #090d1a; --pawn-label-ink: #f2f5fb;
   --edge-glow: transparent; --edge-draft: var(--glass-border);
+  /* FCA-3: Cyber-Pitch boş slot kartı (yarı saydam koyu, ince açık kenar) */
+  /* Kenar sahaya karşı ≥ 3:1 (dolgu tek başına 3:1 veremez; sınırı kenar taşır). */
+  --slot-empty-bg: rgba(9, 13, 26, 0.55); --slot-empty-line: rgba(255, 255, 255, 0.8);
 }
 
-/* Kariyer modu: Cyber-Pitch (D-27; eski amber vurgunun yerine). Antrasit-lacivert zemin; mor, siber mavi, neon yeşil aurora; neon yeşil vurgu. */
+/* Kariyer modu: Cyber-Pitch (D-27; eski amber vurgunun yerine). Antrasit-lacivert zemin; mor, siber mavi, neon yeşil aurora; neon yeşil vurgu.
+   FCA-3'ten beri yalnız kariyer modundaki herkese açık/hesap sayfalarında; kariyer ekranları dosya sonundaki Tactical Operations bloğunu kullanır. */
 :root[data-ui="v3"][data-mode="career"] {
   --bg-base: #090d1a;
   --aurora-1: #7c3aed; --aurora-2: #0ea5e9; --aurora-3: #10b981;
@@ -140,3 +145,45 @@
 :root[data-ui="v3"][data-transparency="reduced"] { --glass-1: #121826; --glass-2: #161e30; --glass-3: #1c2538; }
 :root[data-ui="v3"][data-theme="light"][data-transparency="reduced"] { --glass-1: #ffffff; --glass-2: #ffffff; --glass-3: #e8ecf4; }
 :root[data-ui="v3"][data-mode="career"][data-transparency="reduced"] { --edge-glow: transparent; --edge-draft: var(--ink-2); }
+
+/*
+ * Kariyer ekranları: Tactical Operations (FCA-3, Google Stitch tasarımı; Buğra onaylı, 11 §3 Cyber-Pitch'in yerine). `data-surface="career"`
+ * yalnız kariyer modunda ve herkese açık/hesap sayfaları dışında (boot.ts syncDesign). Düz ve opak yüzeyler: cam bulanıklığı, aurora ve gölge yok;
+ * derinlik yüzey parlaklığı ve ince kenarla. Zümrüt vurgu, 4–8 px köşe. Şimdilik yalnız koyu. Dosyanın sonunda: şeffaflık azaltma ve
+ * açık tema blokları bu yüzeyleri ezmez (yüzeyler zaten opak).
+ */
+:root[data-ui="v3"][data-surface="career"] {
+  --bg-base: #0b0f15;
+  --aurora-1: #0b0f15; --aurora-2: #0b0f15; --aurora-3: #0b0f15;
+  --aurora-opacity: 0;
+  --grain-opacity: 0;
+  --glass-1: #111823;
+  --glass-2: #182232;
+  --glass-3: #0e141e;
+  --glass-hover: #182232;
+  --glass-press: #1e2a3e;
+  --glass-blur-1: 0px; --glass-blur-2: 0px; --glass-saturate: 100%;
+  --glass-border: #223249;
+  --glass-highlight: transparent;
+  --glass-shadow: none;
+  --sheet-bg: #111823;
+  --option-bg: #111823;
+  --ink: #e5e7eb; --ink-2: #c3cad6; --muted: #949fb1; --faint: #7b88a0;
+  --accent: #10b981; --accent-ink: #0b0f15; --accent-soft: rgba(16, 185, 129, 0.15);
+  --good: #34d399; --good-soft: rgba(16, 185, 129, 0.15);
+  --warn: #fbbf24; --warn-soft: rgba(245, 158, 11, 0.15);
+  --bad: #f87171; --bad-soft: rgba(239, 68, 68, 0.15);
+  --info: #60a5fa; --info-soft: rgba(59, 130, 246, 0.15);
+  --rate-90: #10b981; --rate-80: #6ee7b7; --rate-70: #a3e635; --rate-60: #f59e0b; --rate-low: #ef4444;
+  --pitch-1: #186338; --pitch-2: #1a6b3d; --pitch-line: rgba(255, 255, 255, 0.35);
+  --cyber-pitch-1: #186338; --cyber-pitch-2: #1a6b3d;
+  --cyber-line: rgba(255, 255, 255, 0.60); --cyber-line-2: rgba(255, 255, 255, 0.85);
+  --pawn-bg: #e5e7eb; --pawn-ink: #0b0f15;
+  --pawn-label-bg: #0b0f15; --pawn-label-ink: #e5e7eb;
+  --edge-glow: transparent; --edge-draft: #60a5fa;
+  --pawn-ring: var(--accent);
+  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px; --radius-xl: 8px;
+  --radius-pill: 3px;
+  --danger-line: rgba(239, 68, 68, 0.45);
+  color-scheme: dark;
+}

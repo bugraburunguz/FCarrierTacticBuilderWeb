@@ -51,6 +51,10 @@ interface Props {
   longShotsLabel?: string
   /** FAZ 6a-J: kariyer bütçesi; verilirse (ya da elle bütçe girilirse) bütçeyi aşan adaylar ayrı ve kapalı listelenir. */
   budgetEur?: number
+  /** FCA-4: gelen sonucu tarayıcıda süzer (sayfanın ayrıntılı filtresi); yeni istek atılmaz, kredi düşmez. */
+  resultFilter?: (item: CareerRecommendationItem) => boolean
+  /** FCA-5: isteğe giden sunucu süzgeci (lig, uyruk); değişince sonuç bayat sayılır, yeniden getirmek gerekir (ücretli). */
+  requestFilters?: { leagueId?: number; nationalityId?: number }
 }
 
 // Oturum içi "tekrar sorma" tercihi (kalıcı değil; kredi harcamasını açık tutar).
@@ -60,7 +64,7 @@ let skipConfirm = false
  * Kariyer öneri paneli (E3-10): `POST /careers/{id}/recommendations`. Ücretli olduğu için açılışta istek atmaz; düğme kaç kredi düşeceğini yazar,
  * ücretsiz üyelerde bir onay adımı vardır, PREMIUM'da yoktur. Filtre değişince sonuç bayatlar ve yeniden getirmek gerekir.
  */
-export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur }: Props) {
+export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur, resultFilter, requestFilters }: Props) {
   const { me } = useAuth()
   const queryClient = useQueryClient()
   const ids = { age: useId(), budget: useId() }
@@ -97,6 +101,10 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
   })
 
+  // FCA-5: sayfanın sunucu süzgeci (lig, uyruk) son istekten farklıysa sonuç bayattır; ücretli olduğu için kendiliğinden yeniden istenmez.
+  const filterKey = `${requestFilters?.leagueId ?? ''}|${requestFilters?.nationalityId ?? ''}`
+  const [fetchedKey, setFetchedKey] = useState(filterKey)
+
   if (careerId === undefined) {
     return <EmptyState>Öneri almak için bir kariyer seç.</EmptyState>
   }
@@ -113,10 +121,13 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
     budgetUnknown: budgetMode === 'unknown',
     budgetEur: budgetMode === 'custom' ? customBudget : undefined,
     includeLongShots: longShots,
+    leagueId: requestFilters?.leagueId,
+    nationalityId: requestFilters?.nationalityId,
   })
   const fetchNow = () => {
     setConfirming(false)
     setStale(false)
+    setFetchedKey(filterKey)
     skipConfirm = skipConfirm || dontAsk
     run.mutate(body())
   }
@@ -128,16 +139,28 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
 
   const fromSaved = !run.data && saved.data ? saved.data : undefined
   const result = run.data?.result ?? fromSaved?.response.result
+  // FCA-5: gösterilen sonucun hangi lig/uyrukla alındığı (yeni istek ya da kayıtlı sonuç); şimdiki süzgeçten farklıysa bayat.
+  const shownKey = run.data ? fetchedKey : fromSaved ? `${fromSaved.request?.leagueId ?? ''}|${fromSaved.request?.nationalityId ?? ''}` : filterKey
   // FAZ 6a-J: bütçeye uyanlar önce; aşanlar ayrı başlıkta, anahtarla açılır (değeri bilinmeyen aday uyanlarda kalır).
   const budget = budgetMode === 'custom' ? customBudget : budgetMode === 'career' ? budgetEur : undefined
   const overBudget = (i: CareerRecommendationItem) => budget !== undefined && i.player.valueEur !== undefined && i.player.valueEur > budget
-  const fitting = (result?.items ?? []).filter((i) => !overBudget(i))
-  const over = (result?.items ?? []).filter(overBudget)
+  // FCA-4: sayfanın ayrıntılı filtresi (en düşük OVR/POT, en yüksek değer) sonucu tarayıcıda süzer; yeni istek ve kredi yok.
+  const all = result?.items ?? []
+  const shown = resultFilter ? all.filter(resultFilter) : all
+  // Uzak ihtimaller de aynı süzgeçten geçer (en düşük OVR 80'ken 70'lik "hayal" görünmesin).
+  const allLong = result?.longShots ?? []
+  const longShown = resultFilter ? allLong.filter(resultFilter) : allLong
+  const filteredOut = all.length - shown.length + allLong.length - longShown.length
+  const allFiltered = all.length > 0 && shown.length === 0
+  const fitting = shown.filter((i) => !overBudget(i))
+  const over = shown.filter(overBudget)
   const outOfCredit = run.error instanceof ApiError && run.error.code === ErrorCodes.insufficientCredit
   const priceLabel = freeBeta ? "Beta'da ücretsiz" : premium ? "PREMIUM'da ücretsiz" : cost !== undefined ? `${cost} kredi` : 'kredi'
 
   return (
     <div className="space-y-3">
+      {/* Canlı bölge hep var (sonradan eklenen bölgeyi ekran okuyucu duyurmayabilir); yalnız metin değişir. */}
+      {resultFilter && <p role="status" aria-label="Filtre sonucu" className="text-xs text-ink-2 empty:hidden">{filteredOut > 0 ? `${filteredOut} aday filtreye takıldı` : ''}</p>}
       <div className="space-y-2">
         <Segmented label="Profil" value={profile} options={PROFILES} onChange={changed(setProfile)} />
         <div className="grid grid-cols-2 gap-2">
@@ -193,7 +216,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
           {run.isPending ? 'Aranıyor…' : `Önerileri getir · ${priceLabel}`}
         </Button>
       )}
-      {stale && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
+      {(stale || (result !== undefined && shownKey !== filterKey)) && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
       <ErrorBox error={outOfCredit ? undefined : run.error} />
       {outOfCredit && (
         <p className="text-sm">
@@ -220,7 +243,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             {result.userFirstElevenAverage !== undefined ? ` · ilk 11 ort. ${result.userFirstElevenAverage}` : ''}
           </p>
           {result.items.length === 0 ? (
-            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi gevşetmeyi dene.</EmptyState>
+            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi{shownKey !== '|' ? ', lig ya da uyruk süzgecini' : ''} gevşetmeyi dene.</EmptyState>
           ) : (
             <ul className="space-y-1.5">
               {fitting.map((item) => (
@@ -229,6 +252,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             </ul>
           )}
           {fitting.length === 0 && over.length > 0 && <p className="text-sm text-ink-2">Bütçeye uyan aday yok.</p>}
+          {allFiltered && <p className="text-sm text-ink-2">Filtreye uyan aday yok; filtreyi gevşet.</p>}
           {over.length > 0 && (
             <>
               <button type="button" aria-expanded={showOver} onClick={() => setShowOver((v) => !v)}
@@ -247,11 +271,11 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
               )}
             </>
           )}
-          {result.longShots && result.longShots.length > 0 && (
+          {longShown.length > 0 && (
             <section aria-label="Hayal transferler" className="space-y-1.5 pt-2">
               <h3 className="text-xs font-semibold text-ink-2">Hayal transferler (ana listede değil)</h3>
               <ul className="space-y-1.5">
-                {result.longShots.slice(0, MAX_LONG_SHOTS).map((item) => (
+                {longShown.slice(0, MAX_LONG_SHOTS).map((item) => (
                   <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} extra={rowExtra?.(item)} cardWidth={cardWidth} />
                 ))}
               </ul>

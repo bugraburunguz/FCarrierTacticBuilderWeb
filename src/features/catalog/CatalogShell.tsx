@@ -27,7 +27,7 @@ export function CatalogShell({ title, subtitle, bar, children }: { title: string
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 py-2" style={{ '--filters-h': `${moreOpen ? 0 : filtersHeight}px` } as CSSProperties}>
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{title}</h1>
+        <h1 className="page-title font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{title}</h1>
         {subtitle}
       </div>
       <div ref={filterBox} className={`z-20 ${moreOpen ? '' : 'min-[820px]:sticky min-[820px]:top-[var(--header-h)]'}`}>
