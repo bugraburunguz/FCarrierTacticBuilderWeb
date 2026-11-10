@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import type { AcademyPlayer, GrowthRecent } from '../../api/types'
 import { Chip, OvrBox } from '../../design/components/primitives'
 import { STATUS_LABEL } from './academyRules'
@@ -73,7 +74,14 @@ export function YouthRow({ player, onOpen, selected = false, reason = false, rec
       </span>
       {/* GT-a: Gelişim'de tek satır gerekçe (tahmin), ad tekrar etmeden. */}
       {reason && player.plan?.text && <span className="text-xs text-ink-2">{reasonText(player)}</span>}
-      {recent && <span className="text-xs tabular-nums text-ink-2">{recentText(recent)}</span>}
+      {/* FCA-4b (Stitch): yön oku ve ton; metin aynı (renk tek başına anlam taşımaz). */}
+      {recent && (
+        <span data-trend={recent.overallDelta > 0 ? 'up' : recent.overallDelta < 0 ? 'down' : 'flat'}
+          className={`inline-flex items-center gap-1 text-xs tabular-nums ${recent.overallDelta > 0 ? 'text-good' : recent.overallDelta < 0 ? 'text-bad' : 'text-ink-2'}`}>
+          {recent.overallDelta > 0 ? <ArrowUp size={12} aria-hidden="true" /> : recent.overallDelta < 0 ? <ArrowDown size={12} aria-hidden="true" /> : <Minus size={12} aria-hidden="true" />}
+          <span>{recentText(recent)}</span>
+        </span>
+      )}
       {player.promoteInfo && <span className="text-xs text-ink-2">{player.promoteInfo.text}</span>}
     </button>
   )

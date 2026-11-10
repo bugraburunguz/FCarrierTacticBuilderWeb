@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AcademyPlayer } from '../../api/types'
@@ -86,6 +86,62 @@ describe('Gelişim (sade)', () => {
     expect(endpoints.growthRecent).toHaveBeenCalledWith(1)
   })
 
+  it('FCA-4b: üstte gelişim özeti — yükselen, düşen (son N ayda), özel plan, tecrübeli (30+)', async () => {
+    vi.mocked(endpoints.growthRecent).mockResolvedValue([
+      { playerId: 11, months: 3, overallDelta: 3, matches: 18 },
+      { playerId: 21, months: 3, overallDelta: -2, matches: null },
+      { playerId: 31, months: 1, overallDelta: 0, matches: 0 },
+    ])
+    renderPage()
+    const kpis = await screen.findByRole('region', { name: 'Gelişim özeti' })
+    await waitFor(() => expect(within(kpis).getByRole('group', { name: 'Yükselen: 1 oyuncu' })).toBeInTheDocument())
+    expect(within(kpis).getByRole('group', { name: 'Düşen: 1 oyuncu' })).toBeInTheDocument()
+    expect(within(kpis).getByRole('group', { name: 'Özel plan: 3 oyuncu' })).toBeInTheDocument()
+    expect(within(kpis).getByRole('group', { name: 'Tecrübeli (30+): 1 oyuncu' })).toBeInTheDocument()
+    expect(within(kpis).getAllByText('son 3 ayda').length).toBe(2)
+  })
+
+  it('FCA-4b inceleme: listede olmayan (ör. kiralıktaki yetişkin) oyuncunun değişimi sayılmaz; uç hata verirse "veri alınamadı", 0 denmez', async () => {
+    vi.mocked(endpoints.growthRecent).mockResolvedValue([{ playerId: 11, months: 3, overallDelta: 3, matches: 18 }, { playerId: 777, months: 3, overallDelta: 2, matches: 5 }])
+    const { unmount } = renderPage()
+    const kpis = await screen.findByRole('region', { name: 'Gelişim özeti' })
+    await waitFor(() => expect(within(kpis).getByRole('group', { name: 'Yükselen: 1 oyuncu' })).toBeInTheDocument())
+    unmount()
+    vi.mocked(endpoints.growthRecent).mockRejectedValue(new Error('500'))
+    renderPage()
+    const again = await screen.findByRole('region', { name: 'Gelişim özeti' })
+    await waitFor(() => expect(within(again).getByRole('group', { name: 'Yükselen: veri alınamadı' })).toBeInTheDocument())
+    expect(within(again).queryByText('önceki görüntü yok')).toBeNull()
+  })
+
+  it('FCA-4b inceleme: grup değişince ?oyuncu= korunur; bilinmeyen ?grup= Tümü\'ye düşer', async () => {
+    renderPage('/career/growth?grup=xyz&oyuncu=11')
+    const filter = await screen.findByRole('radiogroup', { name: 'Yaş grubu' })
+    expect(within(filter).getByRole('radio', { name: 'Tümü (4)' })).toHaveAttribute('aria-checked', 'true')
+    fireEvent.click(within(filter).getByRole('radio', { name: 'Tecrübeliler (1)' }))
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toMatch(/grup=tecrubeli/))
+    expect(screen.getByTestId('where').textContent).toMatch(/oyuncu=11/)
+  })
+
+  it('FCA-4b: satırda son N ay değişimi yön oku ve tonla (metin aynı)', async () => {
+    vi.mocked(endpoints.growthRecent).mockResolvedValue([{ playerId: 11, months: 3, overallDelta: 3, matches: 18 }, { playerId: 21, months: 3, overallDelta: -2, matches: null }])
+    renderPage()
+    const up = await screen.findByText('Son 3 ayda: +3 OVR · 18 maç')
+    expect(up.closest('[data-trend]')).toHaveAttribute('data-trend', 'up')
+    expect(up.closest('[data-trend]')!.className).toMatch(/text-good/)
+    expect(screen.getByText('Son 3 ayda: −2 OVR').closest('[data-trend]')).toHaveAttribute('data-trend', 'down')
+  })
+
+  it('FCA-4b: yaş grubu süzgeci (Tümü · Gençler · Zirve · Tecrübeliler) adreste ?grup=; yalnız seçilen bölüm görünür', async () => {
+    renderPage()
+    const filter = await screen.findByRole('radiogroup', { name: 'Yaş grubu' })
+    expect(within(filter).getAllByRole('radio').map((r) => r.textContent)).toEqual(['Tümü (4)', 'Gençler (2)', 'Zirve (1)', 'Tecrübeliler (1)'])
+    fireEvent.click(within(filter).getByRole('radio', { name: 'Zirve (1)' }))
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('grup=zirve'))
+    expect(screen.queryByRole('region', { name: 'Gençler' })).toBeNull()
+    expect(screen.getByRole('region', { name: 'Zirve' })).toBeInTheDocument()
+  })
+
   it('GTR-b: önceki görüntü yoksa (boş liste) ya da uç hata verirse satır görünmez, sayfa çalışır', async () => {
     vi.mocked(endpoints.growthRecent).mockRejectedValue(new Error('500'))
     renderPage()
@@ -169,8 +225,9 @@ describe('Gelişim (sade)', () => {
     renderPage()
     expect(await screen.findByText('Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?')).toBeInTheDocument()
     await screen.findByRole('region', { name: 'Gençler' })
-    const sections = screen.getAllByRole('region').map((r) => r.querySelector('h2')?.textContent)
-    expect(sections).toEqual(['Gençler', 'Zirve', 'Tecrübeliler', 'Son içe aktarmadan beri'])
+    // FCA-4b: üstte başlıksız "Gelişim özeti" kart şeridi, sonra bölümler
+    const sections = screen.getAllByRole('region').map((r) => r.querySelector('h2')?.textContent ?? r.getAttribute('aria-label'))
+    expect(sections).toEqual(['Gelişim özeti', 'Gençler', 'Zirve', 'Tecrübeliler', 'Son içe aktarmadan beri'])
     const peak = within(screen.getByRole('region', { name: 'Zirve' }))
     expect(peak.getByText(/^24–29 yaş · rolde incelme ya da koruma/)).toBeInTheDocument()
     expect(peak.getByRole('button', { name: /Okafor/ })).toHaveTextContent('Dengeli plan: CM Box-to-Box rolünde oturması iyi (%71)')
