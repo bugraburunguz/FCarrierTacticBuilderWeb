@@ -17,10 +17,15 @@ describe('LE export script kopyası (WEB-BUG-25)', () => {
     expect(script).toContain(EXPORT_DONE_WINDOW)
   })
 
-  it('GTR-a: betik 2.0.4 oynama süresi tablolarını kariyerde dışa aktarır', () => {
-    expect(script).toContain('"FCX2", "2.0.4"')
+  it('GTR-a: betik oynama süresi tablolarını kariyerde dışa aktarır', () => {
     expect(script).toContain('{"career_playermatchratinghistory",0,1}')
     expect(script).toContain('{"career_playergrowthuserseason",0,1}')
+  })
+
+  it('FCA-17: betik 2.0.5 her dışa aktarımı etiketler ve ay başında kendisi alır', () => {
+    expect(script).toContain('"FCX2", "2.0.5"')
+    expect(script).toContain('FC Assist export #')
+    expect(script).toContain('AddEventHandler("post__CareerModeEvent"')
   })
 
   it('son kullanıcıya geliştirici dili göstermez', () => {
