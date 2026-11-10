@@ -15,7 +15,8 @@ import { useTabParam } from '../player/playerPage'
 import { MoveHistory, TransferMarket } from '../squad/kadro/MovesTab'
 import { SaveMoves } from '../squad/kadro/SaveMoves'
 import { careerMovesQuery } from '../squad/kadro/saveMovesQuery'
-import { squadStats } from './careerSquadRules'
+import { lineupGroups, rowAdvice, squadStats } from './careerSquadRules'
+import { LineupList } from './LineupList'
 import { DepthTab } from './DepthTab'
 import { buildDepthSlots } from '../../lib/slotDepth'
 import { useCareerSquadData } from './useCareerSquadData'
@@ -61,6 +62,19 @@ export function CareerSquadPage() {
   const lineup = k.fits.main.active?.lineup
   const tacticSlots = k.fits.main.active?.tactic.slots
   const depthSlots = useMemo(() => buildDepthSlots(k.formation, lineup, tacticSlots, k.fits.rows), [k.formation, lineup, tacticSlots, k.fits.rows])
+  // FCA-3 3b: Diziliş listesi (Derinlik ile aynı yedek kuralı) ve satır önerileri (Masa "3 iş" ile aynı sellAdvice; ilk 11 = ana taktik ya da öneri).
+  const lineupView = useMemo(() => lineupGroups(depthSlots, players), [depthSlots, players])
+  const tagList = useQuery({ queryKey: ['tags', k.career?.id], queryFn: () => endpoints.playerTags(k.career!.id), enabled: k.career !== undefined, retry: false })
+  // İlk 11 belli değilken (ana taktik/öneri yükleniyor ya da yok) öneri yok: herkes "ilk 11 dışı" sayılıp "Sat" almasın.
+  const starterIds = useMemo(() => new Set(depthSlots.flatMap((s) => (s.playerId !== undefined ? [s.playerId] : []))), [depthSlots])
+  const lineupKnown = !k.fits.main.isLoading && starterIds.size > 0
+  const advice = useMemo(() => {
+    if (!lineupKnown) {
+      return new Map()
+    }
+    const tags = Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag]))
+    return rowAdvice(players, starterIds, tags)
+  }, [lineupKnown, players, starterIds, tagList.data])
 
   if (params.get('sekme') === 'altyapi') {
     return <Navigate to="/career/academy" replace />
@@ -106,13 +120,17 @@ export function CareerSquadPage() {
                 title={k.fits.main.active?.main?.name ? `${k.fits.main.active.main.name}` : undefined} />
             )}
           </div>
-          <Panel title="Kadro özeti" label="Kadro özeti" source={record} className="min-[1100px]:sticky min-[1100px]:top-24 min-[1100px]:w-[320px] min-[1100px]:shrink-0">
-            <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-3 min-[1100px]:grid-cols-1">
-              <StatTile label="Ortalama reyting" value={decimal(stats.avgOverall)} />
-              <StatTile label="Oyuncu" value={stats.count} suffix={stats.loanedOut ? `${stats.loanedOut} kiralıkta` : undefined} />
-              <StatTile label="Ortalama yaş" value={decimal(stats.avgAge)} />
-            </div>
-          </Panel>
+          {/* FCA-3 3b (Stitch): saha solda, sağda İlk 11 · Yedekler · Kadro dışı listesi ve kadro özeti. */}
+          <div className="flex flex-col gap-3 min-[1100px]:w-[460px] min-[1100px]:shrink-0">
+            {k.squad.data && <LineupList groups={lineupView} advice={advice} source={record} />}
+            <Panel title="Kadro özeti" label="Kadro özeti" source={record}>
+              <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-3">
+                <StatTile label="Ortalama reyting" value={decimal(stats.avgOverall)} />
+                <StatTile label="Oyuncu" value={stats.count} suffix={stats.loanedOut ? `${stats.loanedOut} kiralıkta` : undefined} />
+                <StatTile label="Ortalama yaş" value={decimal(stats.avgAge)} />
+              </div>
+            </Panel>
+          </div>
         </div>
       </TabPanel>
 
@@ -134,7 +152,7 @@ export function CareerSquadPage() {
           ) : view === 'tags' ? (
             <SquadTagsView careerId={career.id} squad={players} />
           ) : view === 'list' ? (
-            <SquadList squad={players} positionAdvice={k.positionAdvice.data ?? []} recordColumns grouping={grouping} />
+            <SquadList squad={players} positionAdvice={k.positionAdvice.data ?? []} recordColumns grouping={grouping} advice={advice} />
           ) : (
             <SquadCards squad={players} grouping={grouping} busy={k.move.isPending} needs={k.needs} positionAdvice={k.positionAdvice.data ?? []} onSell={(entry) => k.openMove('SELL', entry)} onLoanOut={(entry) => k.openMove('LOAN_OUT', entry)} />
           )}

@@ -1,9 +1,63 @@
 import type { CareerPlayer } from '../../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft } from '../../lib/contract'
-import { groupOf, type PositionGroup } from '../../lib/deskRules'
-import { YOUTH_MAX_AGE, type DepthSlot } from '../../lib/slotDepth'
+import { groupOf, sellAdvice, type PositionGroup, type SellAdvice } from '../../lib/deskRules'
+import { slotDepth, YOUTH_MAX_AGE, type DepthSlot } from '../../lib/slotDepth'
 
 /** Kadro Analizi kuralları (KARIYER-UX FAZ 3, 15 §4.2): saf fonksiyonlar, katman 1 (kayıt) girdisi. */
+
+export interface LineupGroups {
+  /** Slot sırasıyla dizili oyuncular; `position` slotun mevkisi. */
+  starters: { slotId: string; position: string; player: CareerPlayer }[]
+  /** Oyuncusu olmayan (ya da oyuncusu kadrodan çıkmış) slotların mevkisi. */
+  empty: string[]
+  /** Yedek, kapattığı slotun mevkisiyle. */
+  bench: { position: string; player: CareerPlayer }[]
+  others: CareerPlayer[]
+}
+
+/**
+ * FCA-3 Diziliş listesi (Stitch: saha solda, liste sağda): İlk 11 · Yedekler · Kadro dışı. Yedek kuralı Derinlik ile aynı (`slotDepth`:
+ * ilk 11 dışı, kiralığa gönderilmemiş, 21 yaş üstü, slot mevkisini oynayan en iyi; aynı mevkili slotlar sırayla farklı oyuncu). Gençler ve
+ * kiralıktakiler Kadro dışı. Kadro dışı OVR'ye göre.
+ */
+export function lineupGroups(slots: DepthSlot[], squad: CareerPlayer[]): LineupGroups {
+  const byId = new Map(squad.map((c) => [c.player.id, c]))
+  const used = new Set<number>()
+  const starters: LineupGroups['starters'] = []
+  const empty: string[] = []
+  // Aynı oyuncu iki slota yazılmışsa ilk slotta sayılır, ikinci slot boştur.
+  slots.forEach((s) => {
+    const player = s.playerId !== undefined && !used.has(s.playerId) ? byId.get(s.playerId) : undefined
+    if (player) {
+      used.add(player.player.id)
+      starters.push({ slotId: s.slotId, position: s.position, player })
+    } else {
+      empty.push(s.position)
+    }
+  })
+  const bench: LineupGroups['bench'] = []
+  slotDepth(slots, squad, []).forEach((row) => {
+    const entry = row.backup ? byId.get(row.backup.id) : undefined
+    if (entry && !used.has(entry.player.id)) {
+      used.add(entry.player.id)
+      bench.push({ position: row.position, player: entry })
+    }
+  })
+  const others = squad.filter((c) => !used.has(c.player.id)).sort((a, b) => b.player.overall - a.player.overall)
+  return { starters, empty, bench, others }
+}
+
+/** FCA-3 satır önerisi: Masa "3 iş" ile aynı `sellAdvice`; yalnız Sat ve Süre ver/kirala döner (tut ve kiralıktaki yok). */
+export function rowAdvice(squad: CareerPlayer[], starters: Set<number>, tags: Record<number, string>): Map<number, SellAdvice> {
+  const out = new Map<number, SellAdvice>()
+  squad.forEach((c) => {
+    const advice = sellAdvice(c, starters, tags)
+    if (advice.kind !== 'KEEP') {
+      out.set(c.player.id, advice)
+    }
+  })
+  return out
+}
 
 const round1 = (value: number) => Math.round(value * 10) / 10
 

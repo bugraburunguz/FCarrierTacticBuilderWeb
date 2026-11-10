@@ -78,6 +78,10 @@ for (const w of [1280, 375]) {
     await page.locator('[data-empty-slot]').first().waitFor({ timeout: 15000 })
   })
 }
+// Parça 3b: Diziliş listesi 375'te (saha altında; listeye kaydırılır)
+await shot('kadro-dizilis-listesi', '/career/squad', 375, 'career', 'dark', async (page) => {
+  await page.getByRole('region', { name: 'Diziliş listesi' }).scrollIntoViewIfNeeded()
+})
 // Parça 3: en dar telefon (üst barda mod + kariyer değiştirici + menü)
 await shot('masa', '/career/dashboard', 320, 'career')
 // Parça 2: tablo, rozet ve panel başlığı olan ekranlar
