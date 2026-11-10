@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { CareerPlayerContract, PlayerDetail, PlayerRoleFit } from '../../api/types'
 import { CAREER_ROLES_HELP } from '../../lib/fitLabels'
+import { ratingBlend } from '../../lib/ratingTone'
 import { CareerPlayerPage } from './CareerPlayerPage'
 
 vi.mock('../../api/endpoints', () => ({
@@ -55,6 +56,28 @@ beforeEach(() => {
   vi.mocked(endpoints.playerContract).mockReset().mockResolvedValue(contract())
   vi.mocked(endpoints.playerFacets).mockReset().mockResolvedValue({ contractData: false, loanData: false, leagueName: 'EFL League Two', leagueOvr: 64 })
   vi.mocked(endpoints.development).mockReset()
+})
+
+describe('FCA-3 Parça 6: oyuncu profili', () => {
+  it('oyuncu adı başlığı olduğu gibi; statlar sekmesinde çubuk rengi kesintisiz kırmızı → amber → yeşil (color-mix)', async () => {
+    renderPage('/players/7?sekme=statlar')
+    const h1 = await screen.findByRole('heading', { level: 1, name: 'Ollie Watkins' })
+    // Oyuncu adı büyük harfe çevrilmez: tek dil kuralı her adı bozar (tr: Mickey → MİCKEY; en: Merih → MERIH).
+    expect(h1).not.toHaveClass('page-title')
+    expect(h1).not.toHaveAttribute('lang')
+    const bars = [...document.querySelectorAll<HTMLElement>('[data-attr-bar]')]
+    expect(bars.length).toBeGreaterThan(0)
+    bars.forEach((b) => expect(b.style.background).toMatch(/var\(--rate-(low|60|90)\)/))
+  })
+})
+
+describe('1–99 kesintisiz renk (ratingBlend)', () => {
+  it.each([
+    [1, 'var(--rate-low)'], [30, 'color-mix(in oklab, var(--rate-60) 59%, var(--rate-low))'], [50, 'var(--rate-60)'],
+    [65, 'color-mix(in oklab, var(--rate-90) 50%, var(--rate-60))'], [80, 'var(--rate-90)'], [99, 'var(--rate-90)'],
+  ])('%i → %s', (value, expected) => {
+    expect(ratingBlend(value)).toBe(expected)
+  })
 })
 
 describe('kariyer oyuncu sayfası (v3 Detay)', () => {

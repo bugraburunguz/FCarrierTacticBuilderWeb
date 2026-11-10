@@ -34,6 +34,15 @@ beforeEach(() => {
   vi.mocked(endpoints.leagues).mockResolvedValue([{ id: 13, name: 'Premier League' }] as never)
 })
 
+describe('FCA-3 Parça 6: Menajer başlığı', () => {
+  it('konum çizgisi "Kariyer › Menajer", h1 page-title', async () => {
+    renderPage()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Menajer')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('heading', { level: 1, name: 'Menajer profili' })).toHaveClass('page-title')
+  })
+})
+
 describe('Menajer profili (MGR-b)', () => {
   it('profil yokken boş form; geçmiş ve diploma seçilmeden kaydedilemez, eksikler yazar', async () => {
     renderPage()

@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { ManagerProfileView } from '../../api/types'
 import { ErrorState, Segmented, Skeleton } from '../../design/components/primitives'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { useMediaQuery } from '../../design/useMediaQuery'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
 import { CLUB_RECS_KEY, MANAGER_PROFILE_KEY, useManagerProfile } from './managerQuery'
@@ -280,10 +281,8 @@ export function ManagerProfilePage() {
   const profile = useManagerProfile()
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-3 py-2">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Menajer profili</h1>
-        <p className="text-sm text-ink-2">Hesabına bağlı; her yeni kariyerde kulüp önerilerini yönlendirir. İtibar gösterir, hiçbir kulübü kapatmaz.</p>
-      </header>
+      <CareerPageHeader crumb="Menajer" title="Menajer profili"
+        subtitle="Hesabına bağlı; her yeni kariyerde kulüp önerilerini yönlendirir. İtibar gösterir, hiçbir kulübü kapatmaz." />
       {profile.isLoading ? <Skeleton className="h-96" /> : profile.failed ? (
         <ErrorState message="Menajer profili yüklenemedi." onRetry={() => profile.refetch()} />
       ) : (

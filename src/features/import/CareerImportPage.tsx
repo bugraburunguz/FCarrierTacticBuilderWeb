@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Download, Play, Upload } from 'lucide-react'
 import { useId, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { endpoints } from '../../api/endpoints'
 import type { ImportSummary } from '../../api/types'
 import { useAuth } from '../../auth/AuthContext'
@@ -96,11 +97,12 @@ export function CareerImportPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-3 py-2">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kariyer verisini içe aktar</h1>
-        <p className="text-sm text-ink-2">Oyundaki gerçek veri: güncel OVR, gerçek potansiyel, serbest oyuncular ve tüm takımlar. Sezon sonunda tekrarla; veriler yalnız sana özel kalır.</p>
+      <div className="flex flex-col gap-1">
+        {/* FCA-3: Stitch başlığı; hedef kariyer seçici aşağıda kalır (içe aktarmanın hedefi). */}
+        <CareerPageHeader crumb="Kayıt yükle" title="Kariyer verisini içe aktar"
+          subtitle="Oyundaki gerçek veri: güncel OVR, gerçek potansiyel, serbest oyuncular ve tüm takımlar. Sezon sonunda tekrarla; veriler yalnız sana özel kalır." />
         {!premium && <p className="text-sm">Bu özellik PREMIUM'dur. <Link to="/profile" className="font-semibold text-accent underline-offset-2 hover:underline">PREMIUM'a geç</Link></p>}
-      </header>
+      </div>
 
       <ol aria-label="Adımlar" className="flex flex-col gap-3 min-[900px]:flex-row">
         <Step n={1} icon={<Download size={18} />} title="Script indir">

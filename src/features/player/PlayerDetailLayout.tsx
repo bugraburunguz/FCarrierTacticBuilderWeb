@@ -54,6 +54,7 @@ export function PlayerDetailLayout({ back, topAside, title, positions, meta, bad
         {topAside}
       </div>
       <header className="flex flex-col gap-1">
+        {/* FCA-3: oyuncu adı büyük harfe çevrilmez (page-title yok): tek dil kuralı her adı bozar (tr: MİCKEY, en: MERIH). */}
         <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">{title}</h1>
         {/* <div>, <p> değil: rozetlerde HelpPopover (<details> + paragraflı panel) var; <p> içinde geçersiz iç içelik (FIT-3). */}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-2 sm:text-sm">
