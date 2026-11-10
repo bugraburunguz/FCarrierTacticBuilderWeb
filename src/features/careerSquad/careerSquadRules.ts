@@ -16,9 +16,8 @@ export interface LineupGroups {
 }
 
 /**
- * FCA-3 Diziliş listesi (Stitch: saha solda, liste sağda): İlk 11 · Yedekler · Kadro dışı. Yedek kuralı Derinlik ile aynı (`slotDepth`:
- * ilk 11 dışı, kiralığa gönderilmemiş, 21 yaş üstü, slot mevkisini oynayan en iyi; aynı mevkili slotlar sırayla farklı oyuncu). Gençler ve
- * kiralıktakiler Kadro dışı. Kadro dışı OVR'ye göre.
+ * FCA-3 Diziliş listesi (Stitch: saha solda, liste sağda): İlk 11 · Yedekler · Kadro dışı. Yedekler Derinlik ile aynı veriden (`slotDepth`:
+ * /fit/lineup slot.depth[0], sunucu tekil atar; depth yoksa Yedekler boş). Gençler ve kiralıktakiler Kadro dışı. Kadro dışı OVR'ye göre.
  */
 export function lineupGroups(slots: DepthSlot[], squad: CareerPlayer[]): LineupGroups {
   const byId = new Map(squad.map((c) => [c.player.id, c]))

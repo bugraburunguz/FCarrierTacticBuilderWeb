@@ -7,11 +7,13 @@ const member = (id: number, position: string, overall: number, age: number, extr
   ({ player: { id, name: `Oyuncu ${id}`, positions: [position], overall, age, ...player }, onLoan: false, ...extra }) as CareerPlayer
 
 describe('FCA-3 Diziliş listesi: İlk 11 · Yedekler · Kadro dışı (Derinlik ile aynı kural)', () => {
+  const entry = (playerId: number) => ({ playerId, playerName: `Oyuncu ${playerId}`, combined: 60, roleFitScore: 60, badge: 'GREEN' as const, currentFit: 60, weak: false })
+  // FCA-15: yedekler /fit/lineup depth[0]'ından (sunucu tekil atar; LCB'nin 5'i RB'ye de uygun olsa da tek slotta).
   const slots = [
-    { slotId: 'GK', position: 'GK', roleId: 'r', playerId: 1 },
-    { slotId: 'LCB', position: 'CB', roleId: 'r', playerId: 2 },
-    { slotId: 'RCB', position: 'CB', roleId: 'r', playerId: 3 },
-    { slotId: 'ST', position: 'ST', roleId: 'r' },
+    { slotId: 'GK', position: 'GK', roleId: 'r', playerId: 1, depth: [] },
+    { slotId: 'LCB', position: 'CB', roleId: 'r', playerId: 2, depth: [entry(4)] },
+    { slotId: 'RCB', position: 'CB', roleId: 'r', playerId: 3, depth: [entry(5)] },
+    { slotId: 'ST', position: 'ST', roleId: 'r', depth: [entry(6)] },
   ]
   const squad = [
     member(1, 'GK', 70, 28), member(2, 'CB', 72, 27), member(3, 'CB', 71, 25),

@@ -287,6 +287,10 @@ export interface DepthEntry {
   /** v3 (V3-07c): rozetin türediği seviye yüzdesi ve etiketi. */
   levelFit?: number
   fitLabel?: 'GOOD' | 'AT_LEVEL' | 'WEAK' | 'WRONG_ROLE'
+  /** FCA-15 (backend #48): yedeğin bu slottaki Güç'ü. */
+  currentFit?: number
+  /** FCA-15: v3'te fitLabel WEAK ya da WRONG_ROLE, v1'de RED rozet. */
+  weak?: boolean
 }
 
 export interface SlotAssignment {

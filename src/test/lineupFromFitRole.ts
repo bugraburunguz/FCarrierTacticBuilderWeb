@@ -4,11 +4,12 @@
  */
 type FitRole = (body: { playerId: number; roleId?: string; position?: string; engineVersion?: string; tags?: string[] }) => Promise<{ roleFit: { roleId?: string; roleName?: string } & Record<string, unknown> }>
 
-export function lineupFromFitRole(fitRole: FitRole, positionOf: (slotId: string) => string = () => 'CM') {
+export function lineupFromFitRole(fitRole: FitRole, positionOf: (slotId: string) => string = () => 'CM', depthOf?: (slotId: string) => unknown[] | undefined) {
   return async (_careerId: number, _tactic: unknown, locked?: Record<string, number>) => ({
     slots: await Promise.all(Object.entries(locked ?? {}).map(async ([slotId, playerId]) => {
       const { roleFit } = await fitRole({ playerId, position: positionOf(slotId), engineVersion: 'v3' })
-      return { slotId, position: positionOf(slotId), roleId: roleFit.roleId ?? 'r', roleName: roleFit.roleName ?? 'Rol', tags: [], playerId, roleFit }
+      const depth = depthOf?.(slotId)
+      return { slotId, position: positionOf(slotId), roleId: roleFit.roleId ?? 'r', roleName: roleFit.roleName ?? 'Rol', tags: [], playerId, roleFit, ...(depth ? { depth } : {}) }
     })),
   })
 }

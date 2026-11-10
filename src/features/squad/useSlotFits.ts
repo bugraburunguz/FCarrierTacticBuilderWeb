@@ -1,7 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { endpoints } from '../../api/endpoints'
-import type { PlayerSummary, RoleAlternative, RoleFit } from '../../api/types'
+import type { DepthEntry, PlayerSummary, RoleAlternative, RoleFit } from '../../api/types'
 import { fitDisplay, isWeakFit, type FitDisplay, type WeakClass } from '../../lib/fitLabels'
 import type { DeskSlot } from '../../lib/deskRules'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
@@ -21,6 +21,8 @@ export interface SlotFitRow {
   roleAlternatives?: RoleAlternative[]
   /** FIT-2 madde 6: sunucunun eşiğini geçen daha uygun rol. */
   betterRole?: RoleAlternative
+  /** FCA-15: /fit/lineup slot.depth (tekil yedekler); /fit/role kaynağında ve eski backend'de yok. */
+  depth?: DepthEntry[]
 }
 
 /**
@@ -65,4 +67,4 @@ export function teamFitPct(displays: { pct: number }[]): number | undefined {
 
 /** Masa kuralları için aynı satırlar (aynı yüzde, aynı etiket). */
 export const toDeskSlots = (rows: SlotFitRow[]): DeskSlot[] =>
-  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel, weakClass: r.weakClass, strength: r.display.strength, betterRoleId: r.betterRole?.roleId }))
+  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel, weakClass: r.weakClass, strength: r.display.strength, betterRoleId: r.betterRole?.roleId, depth: r.depth }))

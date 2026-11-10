@@ -11,6 +11,6 @@ export function useMainTacticFits(careerId: number | undefined, squad: readonly 
   const main = useMainTacticBinding(careerId, squad)
   const ws = useSquadWorkspace('career', main.binding)
   // FAZ 4b: tek /fit/lineup (dizilenler kilitli) — slot başına /fit/role yok.
-  const { rows, pending } = useLineupFits(ws, main.playerById, careerId)
-  return { main, rows, pending }
+  const { rows, depthBySlot, pending } = useLineupFits(ws, main.playerById, careerId)
+  return { main, rows, depthBySlot, pending }
 }

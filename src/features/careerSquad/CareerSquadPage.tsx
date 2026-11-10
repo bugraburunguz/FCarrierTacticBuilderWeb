@@ -61,7 +61,8 @@ export function CareerSquadPage() {
   // GT-b: derinlik matrisinin satırları her zaman ana taktiğin (yoksa başlangıç önerisinin) 11 slotu; rol ve kalite sınıfı uyum satırlarından.
   const lineup = k.fits.main.active?.lineup
   const tacticSlots = k.fits.main.active?.tactic.slots
-  const depthSlots = useMemo(() => buildDepthSlots(k.formation, lineup, tacticSlots, k.fits.rows), [k.formation, lineup, tacticSlots, k.fits.rows])
+  const depthSlots = useMemo(() => buildDepthSlots(k.formation, lineup, tacticSlots, k.fits.rows, k.fits.depthBySlot),
+    [k.formation, lineup, tacticSlots, k.fits.rows, k.fits.depthBySlot])
   // FCA-3 3b: Diziliş listesi (Derinlik ile aynı yedek kuralı) ve satır önerileri (Masa "3 iş" ile aynı sellAdvice; ilk 11 = ana taktik ya da öneri).
   const lineupView = useMemo(() => lineupGroups(depthSlots, players), [depthSlots, players])
   const tagList = useQuery({ queryKey: ['tags', k.career?.id], queryFn: () => endpoints.playerTags(k.career!.id), enabled: k.career !== undefined, retry: false })
