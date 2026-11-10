@@ -108,11 +108,15 @@ export function GrowthPage() {
       {/* FCA-4b (Stitch): üst özet kartları ve yaş grubu süzgeci; satırlar Altyapı biçiminde, paneli açar. */}
       {training.data && training.data.length > 0 && (
         <>
-          <GrowthKpis players={training.data} recent={recent.data ?? []} />
-          <Segmented label="Yaş grubu" value={group} onChange={setGroup} options={[
-            { id: 'all', label: `Tümü (${training.data.length})` },
-            ...AGE_SECTIONS.map((s) => ({ id: GROUP_PARAM[s.group], label: `${s.title} (${training.data!.filter((p) => p.ageGroup === s.group).length})` })),
-          ]} />
+          <GrowthKpis players={training.data} recent={recent.data ?? []}
+            recentState={recent.isLoading ? 'loading' : recent.isError && !recent.data ? 'error' : 'ready'} />
+          {/* Dar ekranda dört seçenek taşmasın: yatay kayar. */}
+          <div className="max-w-full overflow-x-auto">
+            <Segmented label="Yaş grubu" value={group} onChange={setGroup} options={[
+              { id: 'all', label: `Tümü (${training.data.length})` },
+              ...AGE_SECTIONS.map((s) => ({ id: GROUP_PARAM[s.group], label: `${s.title} (${training.data!.filter((p) => p.ageGroup === s.group).length})` })),
+            ]} />
+          </div>
         </>
       )}
       <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start">
@@ -131,7 +135,7 @@ export function GrowthPage() {
             )
           })}
 
-          <Section title="Son içe aktarmadan beri" actions={enough ? (
+          <Section title="Son içe aktarmadan beri" subtitle="Tüm kadro (yaş grubu süzgecinden bağımsız)" actions={enough ? (
             <Segmented label="Aralık" value={range} onChange={setRange}
               options={[{ id: 'last', label: 'Son iki içe aktarma' }, ...(season ? [{ id: 'season' as const, label: 'Sezon başı → şimdi' }] : [])]} />
           ) : undefined}>

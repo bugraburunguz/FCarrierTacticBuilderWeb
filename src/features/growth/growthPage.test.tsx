@@ -94,11 +94,33 @@ describe('Gelişim (sade)', () => {
     ])
     renderPage()
     const kpis = await screen.findByRole('region', { name: 'Gelişim özeti' })
-    await waitFor(() => expect(within(kpis).getByLabelText('Yükselen: 1 oyuncu')).toBeInTheDocument())
-    expect(within(kpis).getByLabelText('Düşen: 1 oyuncu')).toBeInTheDocument()
-    expect(within(kpis).getByLabelText('Özel plan: 3 oyuncu')).toBeInTheDocument()
-    expect(within(kpis).getByLabelText('Tecrübeli (30+): 1 oyuncu')).toBeInTheDocument()
+    await waitFor(() => expect(within(kpis).getByRole('group', { name: 'Yükselen: 1 oyuncu' })).toBeInTheDocument())
+    expect(within(kpis).getByRole('group', { name: 'Düşen: 1 oyuncu' })).toBeInTheDocument()
+    expect(within(kpis).getByRole('group', { name: 'Özel plan: 3 oyuncu' })).toBeInTheDocument()
+    expect(within(kpis).getByRole('group', { name: 'Tecrübeli (30+): 1 oyuncu' })).toBeInTheDocument()
     expect(within(kpis).getAllByText('son 3 ayda').length).toBe(2)
+  })
+
+  it('FCA-4b inceleme: listede olmayan (ör. kiralıktaki yetişkin) oyuncunun değişimi sayılmaz; uç hata verirse "veri alınamadı", 0 denmez', async () => {
+    vi.mocked(endpoints.growthRecent).mockResolvedValue([{ playerId: 11, months: 3, overallDelta: 3, matches: 18 }, { playerId: 777, months: 3, overallDelta: 2, matches: 5 }])
+    const { unmount } = renderPage()
+    const kpis = await screen.findByRole('region', { name: 'Gelişim özeti' })
+    await waitFor(() => expect(within(kpis).getByRole('group', { name: 'Yükselen: 1 oyuncu' })).toBeInTheDocument())
+    unmount()
+    vi.mocked(endpoints.growthRecent).mockRejectedValue(new Error('500'))
+    renderPage()
+    const again = await screen.findByRole('region', { name: 'Gelişim özeti' })
+    await waitFor(() => expect(within(again).getByRole('group', { name: 'Yükselen: veri alınamadı' })).toBeInTheDocument())
+    expect(within(again).queryByText('önceki görüntü yok')).toBeNull()
+  })
+
+  it('FCA-4b inceleme: grup değişince ?oyuncu= korunur; bilinmeyen ?grup= Tümü\'ye düşer', async () => {
+    renderPage('/career/growth?grup=xyz&oyuncu=11')
+    const filter = await screen.findByRole('radiogroup', { name: 'Yaş grubu' })
+    expect(within(filter).getByRole('radio', { name: 'Tümü (4)' })).toHaveAttribute('aria-checked', 'true')
+    fireEvent.click(within(filter).getByRole('radio', { name: 'Tecrübeliler (1)' }))
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toMatch(/grup=tecrubeli/))
+    expect(screen.getByTestId('where').textContent).toMatch(/oyuncu=11/)
   })
 
   it('FCA-4b: satırda son N ay değişimi yön oku ve tonla (metin aynı)', async () => {
