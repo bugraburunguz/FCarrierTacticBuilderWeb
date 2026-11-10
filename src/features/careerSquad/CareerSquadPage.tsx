@@ -65,10 +65,16 @@ export function CareerSquadPage() {
   // FCA-3 3b: Diziliş listesi (Derinlik ile aynı yedek kuralı) ve satır önerileri (Masa "3 iş" ile aynı sellAdvice; ilk 11 = ana taktik ya da öneri).
   const lineupView = useMemo(() => lineupGroups(depthSlots, players), [depthSlots, players])
   const tagList = useQuery({ queryKey: ['tags', k.career?.id], queryFn: () => endpoints.playerTags(k.career!.id), enabled: k.career !== undefined, retry: false })
+  // İlk 11 belli değilken (ana taktik/öneri yükleniyor ya da yok) öneri yok: herkes "ilk 11 dışı" sayılıp "Sat" almasın.
+  const starterIds = useMemo(() => new Set(depthSlots.flatMap((s) => (s.playerId !== undefined ? [s.playerId] : []))), [depthSlots])
+  const lineupKnown = !k.fits.main.isLoading && starterIds.size > 0
   const advice = useMemo(() => {
+    if (!lineupKnown) {
+      return new Map()
+    }
     const tags = Object.fromEntries((tagList.data ?? []).map((t) => [t.playerId, t.tag]))
-    return rowAdvice(players, new Set(depthSlots.flatMap((s) => (s.playerId !== undefined ? [s.playerId] : []))), tags)
-  }, [players, depthSlots, tagList.data])
+    return rowAdvice(players, starterIds, tags)
+  }, [lineupKnown, players, starterIds, tagList.data])
 
   if (params.get('sekme') === 'altyapi') {
     return <Navigate to="/career/academy" replace />

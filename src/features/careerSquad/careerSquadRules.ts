@@ -10,7 +10,8 @@ export interface LineupGroups {
   starters: { slotId: string; position: string; player: CareerPlayer }[]
   /** Oyuncusu olmayan (ya da oyuncusu kadrodan çıkmış) slotların mevkisi. */
   empty: string[]
-  bench: CareerPlayer[]
+  /** Yedek, kapattığı slotun mevkisiyle. */
+  bench: { position: string; player: CareerPlayer }[]
   others: CareerPlayer[]
 }
 
@@ -21,18 +22,25 @@ export interface LineupGroups {
  */
 export function lineupGroups(slots: DepthSlot[], squad: CareerPlayer[]): LineupGroups {
   const byId = new Map(squad.map((c) => [c.player.id, c]))
-  const starters = slots.flatMap((s) => {
-    const player = s.playerId !== undefined ? byId.get(s.playerId) : undefined
-    return player ? [{ slotId: s.slotId, position: s.position, player }] : []
+  const used = new Set<number>()
+  const starters: LineupGroups['starters'] = []
+  const empty: string[] = []
+  // Aynı oyuncu iki slota yazılmışsa ilk slotta sayılır, ikinci slot boştur.
+  slots.forEach((s) => {
+    const player = s.playerId !== undefined && !used.has(s.playerId) ? byId.get(s.playerId) : undefined
+    if (player) {
+      used.add(player.player.id)
+      starters.push({ slotId: s.slotId, position: s.position, player })
+    } else {
+      empty.push(s.position)
+    }
   })
-  const empty = slots.filter((s) => s.playerId === undefined || !byId.has(s.playerId)).map((s) => s.position)
-  const used = new Set(starters.map((s) => s.player.player.id))
-  const bench: CareerPlayer[] = []
+  const bench: LineupGroups['bench'] = []
   slotDepth(slots, squad, []).forEach((row) => {
     const entry = row.backup ? byId.get(row.backup.id) : undefined
     if (entry && !used.has(entry.player.id)) {
       used.add(entry.player.id)
-      bench.push(entry)
+      bench.push({ position: row.position, player: entry })
     }
   })
   const others = squad.filter((c) => !used.has(c.player.id)).sort((a, b) => b.player.overall - a.player.overall)

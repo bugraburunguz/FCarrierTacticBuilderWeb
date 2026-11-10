@@ -22,7 +22,7 @@ export function squadRowStatus(entry: CareerPlayer, advice?: SellAdvice): SquadR
     return { status: 'loaned-out', stripe: 'pl-2 shadow-[inset_3px_0_0_var(--info)]', tone: 'info', label: 'Kiralıkta (başka takımda)', shortLabel: 'Kiralıkta' }
   }
   if (entry.onLoan) {
-    return { status: 'on-loan', stripe: 'pl-2 shadow-[inset_3px_0_0_var(--info)]', tone: 'info', label: 'Kiralık (bizde)', shortLabel: 'Kiralık (bizde)' }
+    return { status: 'on-loan', stripe: 'pl-2 shadow-[inset_3px_0_0_var(--info)]', tone: 'info', label: 'Kiralık (bizde)', shortLabel: 'Kiralık' }
   }
   if (advice?.kind === 'SELL') {
     return { status: 'sell', stripe: 'pl-2 shadow-[inset_3px_0_0_var(--bad)]', tone: 'bad', label: 'Sat', shortLabel: 'Sat', title: advice.reason }

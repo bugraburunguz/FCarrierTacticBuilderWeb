@@ -23,10 +23,16 @@ describe('FCA-3 Diziliş listesi: İlk 11 · Yedekler · Kadro dışı (Derinlik
     const g = lineupGroups(slots, squad)
     expect(g.starters.map((s) => [s.position, s.player.player.id])).toEqual([['GK', 1], ['CB', 2], ['CB', 3]])
     expect(g.empty).toEqual(['ST'])
-    // CB slotları sırayla 1. ve 2. yedeği alır; ST slotu boş ama yedeği var (6)
-    expect(g.bench.map((c) => c.player.id)).toEqual([4, 5, 6])
+    // CB slotları sırayla 1. ve 2. yedeği alır; ST slotu boş ama yedeği var (6); yedek kapattığı slotun mevkisiyle
+    expect(g.bench.map((b) => [b.position, b.player.player.id])).toEqual([['CB', 4], ['CB', 5], ['ST', 6]])
     // kadro dışı OVR'ye göre
     expect(g.others.map((c) => c.player.id)).toEqual([8, 7])
+  })
+
+  it('aynı oyuncu iki slota yazılmışsa ilk 11\'de bir kez (ikinci slot boş sayılır)', () => {
+    const g = lineupGroups([{ slotId: 'LCB', position: 'CB', roleId: 'r', playerId: 2 }, { slotId: 'RCB', position: 'CB', roleId: 'r', playerId: 2 }], squad)
+    expect(g.starters.map((s) => s.slotId)).toEqual(['LCB'])
+    expect(g.empty).toEqual(['CB'])
   })
 
   it('kadroda olmayan ilk 11 oyuncusu atlanır; boş kadro boş gruplar', () => {

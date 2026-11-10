@@ -166,6 +166,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
               const status = (short: boolean) => view && (
                 <span className="flex flex-col items-start gap-0.5">
                   <Chip tone={view.tone} title={view.title}>{short ? view.shortLabel : view.label}</Chip>
+                  {view.title && <span className="sr-only">: {view.title}</span>}
                   {(entry.onLoan || entry.loanedOut) && entry.loanUntil && <span className="text-xs text-muted">bitiş {day(entry.loanUntil)}</span>}
                 </span>
               )
