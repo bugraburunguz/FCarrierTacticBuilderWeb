@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Check } from 'lucide-react'
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
@@ -9,35 +10,62 @@ import { useMediaQuery } from '../../design/useMediaQuery'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
 import { CLUB_RECS_KEY, MANAGER_PROFILE_KEY, useManagerProfile } from './managerQuery'
 import {
-  BACKGROUNDS, DIFFICULTIES, LICENCES, MAX_PRIORITIES, PRIORITIES, RETURN_TO, STYLES, band, draftOf, emptyDraft, label, outlook, reputation, styleFromReplica,
+  BACKGROUNDS, DIFFICULTIES, LICENCES, MAX_PRIORITIES, PRIORITIES, RETURN_TO, STYLES, backgroundPoints, band, draftOf, emptyDraft, label, licencePoints, outlook, reputation, styleFromReplica,
   togglePriority, toProfile, validate, type ManagerDraft, type ManagerOption,
 } from './managerRules'
 
 const INPUT = 'glass-3 min-h-10 w-full rounded-[var(--radius-sm)] px-3 text-sm text-ink max-sm:min-h-11'
 const LABEL = 'text-xs font-medium text-ink-2'
 const STEP_BUTTON = 'glass-3 inline-flex min-h-11 items-center justify-center rounded-[var(--radius-sm)] px-4 text-sm font-semibold hover:bg-[var(--glass-hover)]'
-/** Mobilde adım adım üç bölüm; daha genişte hepsi tek ekranda. */
+/** Mobilde adım adım dört aşama (FCA-4c, Stitch); daha genişte hepsi tek ekranda, üstte aşama çubuğu. */
 const NARROW_QUERY = '(max-width: 639px)'
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-const STEPS = ['Geçmiş ve diploma', 'Oyun tarzı', 'Öncelik ve zorluk'] as const
+const STEPS = ['Futbolculuk geçmişi', 'Antrenörlük diploması', 'Oyun tarzı', 'Hedef ve zorluk'] as const
+
+/** Aşama çubuğu (Stitch): "Aşama 01 · Başlık", tamamlanan ✓; geçerli aşama aria-current="step". Tıklayınca o aşamaya gider. */
+function Stepper({ done, current, onPick }: { done: boolean[]; current: number; onPick: (index: number) => void }) {
+  return (
+    <nav aria-label="Aşamalar">
+      {/* Dört sütun yalnız ≥1440 (form sütunu ~690 px'te başlıklar kesiliyordu). */}
+      <ol className="grid grid-cols-2 gap-2 min-[1440px]:grid-cols-4">
+        {STEPS.map((title, i) => (
+          <li key={title}>
+            <button type="button" data-done={done[i]} aria-current={i === current ? 'step' : undefined} onClick={() => onPick(i)}
+              className={`glass flex min-h-11 w-full items-center gap-3 px-3 py-2 text-left ${i === current ? 'shadow-[inset_0_0_0_2px_var(--accent)]' : 'hover:bg-[var(--glass-hover)]'}`}>
+              <span aria-hidden="true" className={`grid h-7 w-7 shrink-0 place-items-center rounded-[var(--radius-sm)] text-sm font-bold ${done[i] ? 'bg-[var(--accent)] text-[var(--accent-ink)]' : 'border border-line text-ink-2'}`}>
+                {done[i] ? <Check size={16} /> : i + 1}
+              </span>
+              <span className="flex min-w-0 flex-col">
+                <span className="text-xs font-semibold uppercase tracking-[0.06em] text-muted">Aşama {String(i + 1).padStart(2, '0')}{done[i] ? ' · tamam' : ''}</span>
+                <span data-step-title className="truncate text-sm font-semibold text-ink">{title}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
 const GENDERS = [{ id: 'any', label: 'Fark etmez' }, { id: '0', label: 'Erkek' }, { id: '1', label: 'Kadın' }]
 
 const optionClass = (selected: boolean, disabled = false) =>
   `flex min-h-11 w-full flex-col items-start gap-0.5 rounded-[var(--radius-sm)] px-3 py-2 text-left transition-colors ${
     selected ? 'bg-[var(--glass-press)] shadow-[inset_0_0_0_2px_var(--accent)]' : 'glass-3 hover:bg-[var(--glass-hover)]'} ${disabled ? 'cursor-not-allowed opacity-70' : ''}`
 
-function OptionText({ option }: { option: ManagerOption<string> }) {
+function OptionText({ option, points }: { option: ManagerOption<string>; points?: string }) {
   return (
     <>
       <span className="text-sm font-semibold text-ink">{option.label}</span>
       <span className="text-xs text-ink-2">{option.hint}</span>
+      {/* FCA-4c (Stitch): itibar katkısı kartta. */}
+      {points && <span className="mt-1 text-xs font-semibold tabular-nums text-accent">{points}</span>}
     </>
   )
 }
 
 /** Tek seçim kartları: radiogroup, ok tuşlarıyla gezinme (Segmented ile aynı davranış), her kartta tek satır açıklama. */
-function OptionCards<T extends string>({ label: groupLabel, options, value, onChange, columns = 'sm:grid-cols-2' }: {
-  label: string; options: ManagerOption<T>[]; value: T | undefined; onChange: (id: T) => void; columns?: string
+function OptionCards<T extends string>({ label: groupLabel, options, value, onChange, columns = 'sm:grid-cols-2', points }: {
+  label: string; options: ManagerOption<T>[]; value: T | undefined; onChange: (id: T) => void; columns?: string; points?: (id: T) => string
 }) {
   function onKey(e: KeyboardEvent<HTMLDivElement>) {
     const index = options.findIndex((o) => o.id === value)
@@ -54,7 +82,7 @@ function OptionCards<T extends string>({ label: groupLabel, options, value, onCh
       {options.map((o, i) => (
         <button key={o.id} type="button" role="radio" data-id={o.id} aria-checked={value === o.id} tabIndex={value === o.id || (value === undefined && i === 0) ? 0 : -1}
           onClick={() => onChange(o.id)} className={optionClass(value === o.id)}>
-          <OptionText option={o} />
+          <OptionText option={o} points={points?.(o.id)} />
         </button>
       ))}
     </div>
@@ -65,7 +93,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section aria-label={title} className="glass flex scroll-mt-[calc(var(--header-h)+12px)] flex-col gap-4 p-4 sm:p-5">
       {/* tabIndex -1: mobilde adım değişince odak bölüm başlığına taşınır. */}
-      <h2 tabIndex={-1} className="font-display text-xl font-semibold leading-6 outline-none focus-visible:ring-2 focus-visible:ring-accent">{title}</h2>
+      <h2 tabIndex={-1} className="panel-title font-display text-xl font-semibold leading-6 outline-none focus-visible:ring-2 focus-visible:ring-accent">{title}</h2>
       {children}
     </section>
   )
@@ -179,14 +207,14 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
         <label htmlFor={ids.name} className={LABEL}>Menajer adı (isteğe bağlı)</label>
         <input id={ids.name} className={INPUT} maxLength={40} value={draft.name} placeholder="Örn. Buğra" onChange={(e) => set({ name: e.target.value })} />
       </div>
-      <Field title="Futbolculuk geçmişi">
-        <OptionCards label="Futbolculuk geçmişi" options={BACKGROUNDS} value={draft.background} onChange={(background) => set({ background })} />
-      </Field>
-      <Field title="Antrenörlük diploması">
-        <OptionCards label="Antrenörlük diploması" options={LICENCES} value={draft.licence} onChange={(licence) => set({ licence })} />
-      </Field>
+      <OptionCards label="Futbolculuk geçmişi" options={BACKGROUNDS} value={draft.background} onChange={(background) => set({ background })}
+        points={(id) => `${backgroundPoints(id)} itibar`} />
     </Section>,
-    <Section key="style" title={STEPS[1]}>
+    <Section key="licence" title={STEPS[1]}>
+      <OptionCards label="Antrenörlük diploması" options={LICENCES} value={draft.licence} onChange={(licence) => set({ licence })}
+        points={(id) => `+${licencePoints(id)} itibar`} />
+    </Section>,
+    <Section key="style" title={STEPS[2]}>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <label htmlFor={ids.formation} className={LABEL}>Formasyon</label>
@@ -210,7 +238,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
         <OptionCards label="Tarz" options={STYLES} value={draft.style} onChange={(style) => { setReplicaId(''); set({ style }) }} />
       </Field>
     </Section>,
-    <Section key="priority" title={STEPS[2]}>
+    <Section key="priority" title={STEPS[3]}>
       <Field title={`Öncelik (en çok ${MAX_PRIORITIES})`}>
         <div role="group" aria-label={`Öncelik (en çok ${MAX_PRIORITIES})`} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {PRIORITIES.map((o) => {
@@ -245,10 +273,24 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
     </Section>,
   ]
   const last = !narrow || step === STEPS.length - 1
+  // FCA-4c: aşama tamam mı (tarz ve zorluk varsayılanla dolu gelir); masaüstünde geçerli aşama ilk eksik olan.
+  const done = [draft.background !== undefined, draft.licence !== undefined, draft.style !== undefined, draft.difficulty !== undefined]
+  const firstOpen = done.indexOf(false)
+  const current = narrow ? step : firstOpen === -1 ? STEPS.length - 1 : firstOpen
+  const pickStep = (index: number) => {
+    if (narrow) {
+      goTo(index)
+      return
+    }
+    const section = stepBox.current?.querySelectorAll('section')[index]
+    section?.scrollIntoView?.({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' })
+    section?.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true })
+  }
 
   return (
     <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="flex min-w-0 flex-col gap-3">
+        <Stepper done={done} current={current} onPick={pickStep} />
         {narrow && <p className="text-xs font-semibold text-ink-2">Adım {step + 1}/{STEPS.length}</p>}
         <div ref={stepBox} className="flex flex-col gap-3">{narrow ? sections[step] : sections}</div>
         {errors.length > 0 && (
