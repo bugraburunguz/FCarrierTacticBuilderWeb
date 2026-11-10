@@ -19,7 +19,7 @@ function Row({ position, entry, advice }: { position: string; entry: CareerPlaye
         {view?.title && <span className="sr-only">{view.label}: {view.title}</span>}
       </td>
       <td className="min-w-0 py-1 pr-2 font-medium">
-        <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline">{entry.player.name}</Link>
+        <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline max-sm:flex max-sm:min-h-11 max-sm:items-center">{entry.player.name}</Link>
         {/* <640: POT ve Durum sütunu yok; çip ismin altında (isim kesilmesin). */}
         {view && <span className="mt-0.5 block sm:hidden"><Chip tone={view.tone} title={view.title}>{view.shortLabel}</Chip></span>}
       </td>

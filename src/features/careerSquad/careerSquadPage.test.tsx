@@ -24,6 +24,10 @@ const MAIN: UserTactic = {
   slots: SLOTS.map((s, i) => ({ slot: s, position: POSITIONS[i], roleId: 'r', tags: [] })), main: true,
   lineup: Object.fromEntries(SLOTS.map((s, i) => [s, i + 1])), depth: 50, presetId: null, updatedAt: '2026-10-20T10:00:00Z', lineupDropped: 0,
 } as UserTactic
+/** FCA-15: /fit/lineup slot.depth (backend #48, tekil). Varsayılan: kiralıkla gelen 13 LST'nin yedeği, diğer slotlarda yedek yok. */
+const entry = (playerId: number, extra: object = {}) => ({ playerId, playerName: `Oyuncu ${playerId}`, combined: 60, roleFitScore: 60, badge: 'GREEN', currentFit: 60, weak: false, ...extra })
+const DEPTH: Record<string, unknown[]> = { LST: [entry(13)] }
+const depthOf = (slotId: string) => DEPTH[slotId] ?? []
 const CAREER = { id: 7, name: 'Test kariyeri', clubId: 1, clubName: 'Kulüp', budgetEur: 1_000_000, season: 2, squadSize: SQUAD.length, gender: 0, gameDate: '2027-01-15' }
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true }) }))
@@ -77,7 +81,7 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     vi.mocked(endpoints.squad).mockResolvedValue(SQUAD as never)
     vi.mocked(endpoints.mainTactic).mockResolvedValue(MAIN as never)
     // FAZ 4b: rol uyumu tek /fit/lineup (11 slot kilitli), yanıt fitRole fikstüründen.
-    vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)]) as never)
+    vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)], depthOf) as never)
     vi.mocked(endpoints.events).mockResolvedValue([
       { id: 2, type: 'BUY', playerId: 13, playerName: 'Oyuncu 13', feeEur: 500_000 },
       { id: 1, type: 'SELL', playerId: 50, playerName: 'Eski Oyuncu' },
@@ -274,13 +278,36 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     await waitFor(() => expect(document.activeElement).toBe(row))
   })
 
-  it('derinlik: aynı yedek birden çok slotta sayılıyorsa hücrede "2 slotta yedek" notu', async () => {
+  it('FCA-15 derinlik: yedek /fit/lineup depth\'inden, tek slotta (LB/RB oynayan 14 yalnız sunucunun verdiği LB satırında); "N slotta yedek" notu yok', async () => {
     vi.mocked(endpoints.squad).mockResolvedValue([...SQUAD, player(14, 'LB', 70, { positions: ['LB', 'RB'], age: 26 })] as never)
+    vi.mocked(endpoints.academy).mockResolvedValue({ found: true, players: [] } as never)
+    vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)],
+      (slotId) => ({ ...DEPTH, LB: [entry(14)] })[slotId] ?? []) as never)
     renderAt('/career/squad?sekme=derinlik')
     const lb = await screen.findByRole('listitem', { name: 'LB slotu' })
     await waitFor(() => expect(within(lb).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Oyuncu 14'))
-    expect(within(lb).getByRole('group', { name: 'Yedek' })).toHaveTextContent('2 slotta yedek')
-    expect(within(screen.getByRole('listitem', { name: 'RB slotu' })).getByRole('group', { name: 'Yedek' })).toHaveTextContent('2 slotta yedek')
+    expect(screen.queryByText(/slotta yedek/)).toBeNull()
+    const rb = screen.getByRole('listitem', { name: 'RB slotu' })
+    expect(within(rb).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Yok')
+    expect(await within(rb).findByText('Yedek yok')).toBeInTheDocument()
+  })
+
+  it('FCA-15 derinlik: sunucu yedeği zayıf işaretlediyse "Yedek zayıf (Güç 41)"', async () => {
+    vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)],
+      (slotId) => (slotId === 'LST' ? [entry(13, { weak: true, currentFit: 40.6, fitLabel: 'WEAK' })] : [])) as never)
+    renderAt('/career/squad?sekme=derinlik')
+    const st = await screen.findByRole('listitem', { name: 'LST slotu' })
+    expect(await within(st).findByText('Yedek zayıf (Güç 41)')).toBeInTheDocument()
+  })
+
+  it('FCA-15 derinlik: eski backend (depth alanı yok) çökmez; Yedek "Derinlik bilgisi yok", yanlış "Yedek yok" yok', async () => {
+    vi.mocked(endpoints.academy).mockResolvedValue({ found: true, players: [] } as never)
+    vi.mocked(endpoints.lineup).mockImplementation(lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)]) as never)
+    renderAt('/career/squad?sekme=derinlik')
+    const rm = await screen.findByRole('listitem', { name: 'RM slotu' })
+    await waitFor(() => expect(endpoints.academy).toHaveBeenCalled())
+    await waitFor(() => expect(within(rm).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Derinlik bilgisi yok'))
+    expect(screen.queryByText('Yedek yok')).toBeNull()
   })
 
   it('derinlik: eski ?grup= bağlantısı (Masa) ilgili ilk slot satırına odaklanır', async () => {
@@ -300,6 +327,9 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     const panel = await screen.findByRole('region', { name: 'Derinlik' })
     expect(await within(panel).findByText('Otomatik öneri')).toBeInTheDocument()
     await waitFor(() => expect(within(panel).getAllByRole('listitem')).toHaveLength(11))
+    // FCA-15: öneride de yedek aynı /fit/lineup yanıtından (öneri dizilişi kilitli), eski kadro hesabına düşmez.
+    await waitFor(() => expect(within(within(panel).getByRole('listitem', { name: 'LST slotu' })).getByRole('group', { name: 'Yedek' })).toHaveTextContent('Oyuncu 13'))
+    expect(endpoints.lineup).toHaveBeenCalledWith(7, expect.anything(), expect.objectContaining({ LST: 10, GK: 1 }), true)
   })
 
   it('KARIYER-UX 6: yaş bantları Genç / Prime / Tecrübeli sayı ve oranla', async () => {

@@ -37,14 +37,14 @@ export function CareerBar() {
   const season = seasonLabel(active?.season)
 
   return (
-    // <1024 px: kulüp bilgisi gizli, değiştirici kalır (Masa/Kadro'da sayfa içi seçici yok).
-    <section aria-label="Aktif kariyer" className="flex min-w-0 items-center gap-3">
+    // FCA-12: <640 px'te mod anahtarı Daha fazla sheet'inde, yer kulüp adı ve tarihe kalır; 640–1023 px'te kulüp bilgisi gizli, değiştirici kalır.
+    <section aria-label="Aktif kariyer" className="flex min-w-0 items-center gap-3 max-sm:flex-1 max-sm:gap-1.5">
       <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] text-ink-2 max-[1023px]:hidden">
         <Shield size={18} />
       </span>
       {active ? (
-        <div className="min-w-0 leading-tight max-[1023px]:hidden">
-          <p className="truncate font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-wide text-ink">{active.clubName ?? `Kulüp ${active.clubId}`}</p>
+        <div className="min-w-0 leading-tight max-sm:flex-1 min-[640px]:max-[1023px]:hidden">
+          <p className="truncate font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-wide text-ink max-sm:text-base">{active.clubName ?? `Kulüp ${active.clubId}`}</p>
           <p className="truncate text-xs text-muted">
             {date ? <span>{date}</span> : null}
             {date && season ? ' · ' : null}
@@ -52,11 +52,11 @@ export function CareerBar() {
           </p>
         </div>
       ) : careers.isError ? (
-        <p className="text-sm text-bad max-[1023px]:hidden">Kariyerler yüklenemedi</p>
+        <p className="min-w-0 truncate text-sm text-bad max-sm:flex-1 min-[640px]:max-[1023px]:hidden">Kariyerler yüklenemedi</p>
       ) : careers.isLoading ? (
-        <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)] max-[1023px]:hidden" />
+        <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)] max-sm:w-auto max-sm:flex-1 min-[640px]:max-[1023px]:hidden" />
       ) : (
-        <p className="text-sm text-muted max-[1023px]:hidden">Aktif kariyer yok</p>
+        <p className="min-w-0 truncate text-sm text-muted max-sm:flex-1 min-[640px]:max-[1023px]:hidden">Aktif kariyer yok</p>
       )}
       <CareerSwitcher list={list} activeId={active?.id} activeName={active ? active.clubName ?? `Kulüp ${active.clubId}` : undefined} />
     </section>
@@ -76,7 +76,7 @@ function CareerSwitcher({ list, activeId, activeName }: { list: Career[]; active
         <Popover.Content aria-label="Kariyerler" align="start" sideOffset={6} className="z-50 w-72 rounded-[var(--radius-lg)] border border-line bg-[var(--glass-2)] p-1 text-ink shadow-[0_4px_16px_rgba(0,0,0,0.65)] outline-none">
           {list.map((c) => (
             <Popover.Close asChild key={c.id}>
-              <button type="button" onClick={() => careerStore.set(c.id)} aria-current={c.id === activeId ? 'true' : undefined} className="flex min-h-10 w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 text-left text-sm hover:bg-[var(--glass-press)]">
+              <button type="button" onClick={() => careerStore.set(c.id)} aria-current={c.id === activeId ? 'true' : undefined} className="flex min-h-10 w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 text-left text-sm hover:bg-[var(--glass-press)] max-sm:min-h-11">
                 <span className="w-4 shrink-0 text-accent">{c.id === activeId ? <Check size={16} aria-hidden="true" /> : null}</span>
                 <span className="min-w-0 flex-1 truncate">{c.clubName ?? `Kulüp ${c.clubId}`}</span>
                 {c.season ? <span className="text-xs text-muted">{seasonLabel(c.season)}</span> : null}
@@ -84,7 +84,7 @@ function CareerSwitcher({ list, activeId, activeName }: { list: Career[]; active
             </Popover.Close>
           ))}
           <Popover.Close asChild>
-            <Link to="/career/new" className="mt-1 flex min-h-10 items-center gap-2 rounded-[var(--radius-sm)] border-t border-line px-2 text-sm font-semibold text-accent hover:bg-[var(--glass-press)]">
+            <Link to="/career/new" className="mt-1 flex min-h-10 max-sm:min-h-11 items-center gap-2 rounded-[var(--radius-sm)] border-t border-line px-2 text-sm font-semibold text-accent hover:bg-[var(--glass-press)]">
               <Plus size={16} aria-hidden="true" /> Yeni kariyer
             </Link>
           </Popover.Close>

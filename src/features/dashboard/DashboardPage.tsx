@@ -195,7 +195,7 @@ export function DashboardPage() {
   const gaps = recordGaps(gameDate, facets.data)
   const noGameDate = gaps.some((g) => g.key === 'gameDate')
   const noContracts = gaps.some((g) => g.key === 'contracts')
-  const settingsLink = 'text-xs font-semibold text-accent underline-offset-2 hover:underline'
+  const settingsLink = 'text-xs font-semibold text-accent underline-offset-2 hover:underline max-sm:inline-flex max-sm:min-h-11 max-sm:items-center'
 
   const jobsPanel = (
     <SeasonJobs careerId={career.id} squad={players} rows={rows} tacticSource={main.source} gameDate={gameDate}

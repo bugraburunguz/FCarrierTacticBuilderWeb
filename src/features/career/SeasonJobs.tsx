@@ -63,14 +63,14 @@ export function SeasonJobs({ careerId, squad, rows, tacticSource, gameDate, pend
                   </button>
                 )}
               </div>
-              <Link to={job.to} className="inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11">Gör</Link>
+              <Link to={job.to} className="inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11 max-sm:min-w-11 max-sm:justify-center">Gör</Link>
             </div>
             {open && (
               <ul id={listId} aria-label={`Benzer işler · ${KIND_LABEL[job.kind]}`} className="flex flex-col gap-1 border-l border-[var(--glass-border)] pl-3 text-sm">
                 {more.map((m) => (
                   <li key={`${m.kind}-${m.slotId ?? m.title}`} className="flex items-baseline justify-between gap-2">
                     <span className="min-w-0">{m.title}</span>
-                    <Link to={m.to} className="shrink-0 text-xs font-semibold text-accent underline-offset-2 hover:underline">Gör</Link>
+                    <Link to={m.to} className="inline-flex shrink-0 items-center text-xs font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11 max-sm:min-w-11 max-sm:justify-center">Gör</Link>
                   </li>
                 ))}
               </ul>

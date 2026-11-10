@@ -10,7 +10,7 @@ import { modeStore } from '../../state/modeStore'
 import { ApplyTab } from './ApplyTab'
 import { AttentionPoints } from './AttentionPoints'
 import { ReplicasPage } from './ReplicasPage'
-import { StoryTab } from './ReplicaTabs'
+import { StoryTab, TacticTab } from './ReplicaTabs'
 import type { useReplicaApply } from './useReplicaApply'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true }) }))
@@ -303,6 +303,35 @@ describe('kadromla uygula', () => {
     renderApply(applyOf('CAREER', [slot({})]))
     expect(await screen.findByText('Önce bir slot seç.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Kaydet' })).toBeDisabled()
+  })
+})
+
+describe('taktik sekmesi › varyantlar', () => {
+  const variant = {
+    id: 'arka-direk-serci', label: 'Arka direk Serci', author: 'Buğra', note: 'Sağ kanat komple hücum kanadı.', formation: '4-3-3 (4)', buildUp: 'BALANCED', defensiveApproach: 'BALANCED', lineHeight: 45, tacticCode: 'VARYANTKOD12',
+    slots: [
+      { slot: 'RB', position: 'RB', role: 'Attacking Wingback', focus: 'Attack', profile: 'Rosier tipi' },
+      { slot: 'LW', position: 'LW', role: 'Inside Forward', focus: 'Attack', profile: 'Larin tipi: arka direk' },
+    ],
+    smartTactics: ['Quick Tactic: Get In Box'],
+  }
+  const detail = { id: 'sergen_besiktas_2021', fc27: { formation: '4-2-3-1 (2)', buildUp: 'BALANCED', defensiveApproach: 'BALANCED', lineHeight: 52, slots: [], variants: [variant] }, tacticCode: 'ANAKOD123456', analysis } as unknown as ReplicaDetail
+
+  it('ek taktik kendi kodu, formasyonu, notu ve rolleriyle ana taktiğin altında görünür', () => {
+    render(<TacticTab summary={replica({ id: 'sergen_besiktas_2021', tacticCode: 'ANAKOD123456' })} detail={detail} />)
+    const section = screen.getByRole('region', { name: 'Arka direk Serci' })
+    expect(within(section).getByRole('button', { name: 'Taktik kodunu kopyala: VARYANTKOD12' })).toBeInTheDocument()
+    expect(within(section).getByText('4-3-3 (4)')).toBeInTheDocument()
+    expect(within(section).getByText('Sağ kanat komple hücum kanadı.')).toBeInTheDocument()
+    expect(within(section).getByText(/RB: Attacking Wingback\/Attack/)).toBeInTheDocument()
+    expect(within(section).getByText(/Larin tipi: arka direk/)).toBeInTheDocument()
+    expect(within(section).getByText('Quick Tactic: Get In Box')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Taktik kodunu kopyala: ANAKOD123456' })).toBeInTheDocument()
+  })
+
+  it('varyantı olmayan replikada ek taktik bölümü yok', () => {
+    render(<TacticTab summary={replica({})} detail={{ ...detail, fc27: { ...detail.fc27, variants: undefined } } as ReplicaDetail} />)
+    expect(screen.queryByRole('region', { name: 'Arka direk Serci' })).toBeNull()
   })
 })
 
