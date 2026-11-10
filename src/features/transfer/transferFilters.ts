@@ -35,6 +35,11 @@ export function parseFilters(params: URLSearchParams): TransferFilters {
   return out
 }
 
+/** FCA-12: telefondaki "Filtre (N)" düğmesi için etkin süzgeç sayısı. */
+export function countActiveFilters(f: TransferFilters): number {
+  return Object.values(f).filter((v) => v !== undefined).length
+}
+
 /** Filtre yoksa `undefined` (panel süzmez). Bilinmeyen POT ya da değer elemez: veri eksikliği adayı saklamamalı. */
 export function candidateFilter(f: TransferFilters): ((item: CareerRecommendationItem) => boolean) | undefined {
   if (f.minOvr === undefined && f.minPot === undefined && f.maxValue === undefined) {

@@ -174,16 +174,29 @@
 /* FCA-12 kariyer mobil dokunma hedefleri */
 /* Telefonda sayfa içi denetimler ≥ 44 px; katmansız, bileşenin min-h-8 / h-9 utility'sini ezer. Bağlantılar bileşende.
  * Saha hariç: kart/piyon kutusu ve etiket yerleşimi Pitch'te hesaplanır. Kaydırıcı (range) dahil: dokunma alanı yükselir, iz ortada kalır.
- * Portal'la body'ye basılan diyalog, sheet ve menüler main dışında; kendi ölçülerini taşırlar. */
+ * Portal'la body'ye basılan alttan panel ve diyaloglar (role="dialog") da kapsamda. Radix Popover menüleri de role="dialog" taşır;
+ * onlar ([data-radix-popper-content-wrapper]) hariç, kendi ölçülerini taşır.
+ * Sahada görünüm ve yerleşim değişmez: rol çipi ve "×" düğmesi ::before ile görünmez dokunma alanı alır. "×" yalnız yukarı büyür;
+ * yana büyüse komşu kartın kenarını örter. */
 @media (max-width: 639.98px) {
-  :root[data-surface="career"] main :is(button, select, summary, input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="file"])):not(.pitch-field *) {
+  :root[data-surface="career"] :is(main, [role="dialog"]) :is(button, select, summary, input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="file"])):not(.pitch-field *):not([data-radix-popper-content-wrapper] *) {
     min-height: 44px;
   }
-  :root[data-surface="career"] main button:not(.pitch-field *) {
+  :root[data-surface="career"] :is(main, [role="dialog"]) button:not(.pitch-field *):not([data-radix-popper-content-wrapper] *) {
     min-width: 44px;
   }
-  :root[data-surface="career"] main summary[data-help] {
+  :root[data-surface="career"] :is(main, [role="dialog"]) summary[data-help]:not([data-radix-popper-content-wrapper] *) {
     min-width: 44px;
+  }
+  :root[data-surface="career"] .pitch-field [data-hit-area]::before {
+    content: "";
+    position: absolute;
+  }
+  :root[data-surface="career"] .pitch-field [data-hit-area="role"]::before {
+    inset: -14px 0;
+  }
+  :root[data-surface="career"] .pitch-field [data-hit-area="remove"]::before {
+    inset: -16px 0 0 0;
   }
 }
 /* FCA-12 son */

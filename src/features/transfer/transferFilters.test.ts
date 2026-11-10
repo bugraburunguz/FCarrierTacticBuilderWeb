@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import type { CareerRecommendationItem } from '../../api/types'
-import { candidateFilter, parseFilters } from './transferFilters'
+import { candidateFilter, countActiveFilters, parseFilters } from './transferFilters'
+
+describe('FCA-12: etkin filtre sayısı (telefonda "Filtre (N)" düğmesi)', () => {
+  it('tanımlı her alan bir sayılır; boş filtre 0', () => {
+    expect(countActiveFilters({})).toBe(0)
+    expect(countActiveFilters({ minOvr: 70, leagueId: 13 })).toBe(2)
+    expect(countActiveFilters({ minOvr: 70, minPot: 80, maxValue: 5_000_000, leagueId: 13, nationalityId: 21 })).toBe(5)
+  })
+})
 
 const item = (overall: number, potential: number | undefined, valueEur: number | undefined) =>
   ({ player: { id: 1, name: 'A', overall, potential, valueEur, positions: ['CM'] } }) as unknown as CareerRecommendationItem

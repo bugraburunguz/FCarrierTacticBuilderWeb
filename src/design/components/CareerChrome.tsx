@@ -76,7 +76,7 @@ function CareerSwitcher({ list, activeId, activeName }: { list: Career[]; active
         <Popover.Content aria-label="Kariyerler" align="start" sideOffset={6} className="z-50 w-72 rounded-[var(--radius-lg)] border border-line bg-[var(--glass-2)] p-1 text-ink shadow-[0_4px_16px_rgba(0,0,0,0.65)] outline-none">
           {list.map((c) => (
             <Popover.Close asChild key={c.id}>
-              <button type="button" onClick={() => careerStore.set(c.id)} aria-current={c.id === activeId ? 'true' : undefined} className="flex min-h-10 w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 text-left text-sm hover:bg-[var(--glass-press)]">
+              <button type="button" onClick={() => careerStore.set(c.id)} aria-current={c.id === activeId ? 'true' : undefined} className="flex min-h-10 w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 text-left text-sm hover:bg-[var(--glass-press)] max-sm:min-h-11">
                 <span className="w-4 shrink-0 text-accent">{c.id === activeId ? <Check size={16} aria-hidden="true" /> : null}</span>
                 <span className="min-w-0 flex-1 truncate">{c.clubName ?? `Kulüp ${c.clubId}`}</span>
                 {c.season ? <span className="text-xs text-muted">{seasonLabel(c.season)}</span> : null}
@@ -84,7 +84,7 @@ function CareerSwitcher({ list, activeId, activeName }: { list: Career[]; active
             </Popover.Close>
           ))}
           <Popover.Close asChild>
-            <Link to="/career/new" className="mt-1 flex min-h-10 items-center gap-2 rounded-[var(--radius-sm)] border-t border-line px-2 text-sm font-semibold text-accent hover:bg-[var(--glass-press)]">
+            <Link to="/career/new" className="mt-1 flex min-h-10 max-sm:min-h-11 items-center gap-2 rounded-[var(--radius-sm)] border-t border-line px-2 text-sm font-semibold text-accent hover:bg-[var(--glass-press)]">
               <Plus size={16} aria-hidden="true" /> Yeni kariyer
             </Link>
           </Popover.Close>

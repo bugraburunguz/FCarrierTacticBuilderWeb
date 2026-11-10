@@ -345,6 +345,7 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
                   onRemove(slot.slotId)
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
+                data-hit-area="remove"
                 className="absolute -left-2 -top-2 z-10 flex h-7 w-7 items-center justify-center rounded-sm bg-ink-950 text-xs font-bold text-paper-50 opacity-0 transition focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100"
               >
                 ×
@@ -374,7 +375,8 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
                   e.stopPropagation()
                   onPickRole?.(slot.slotId)
                 }}
-                style={{ width: labelWidth, marginTop: pawn ? 4 : 12 }} className={`mx-auto block rounded-sm px-1.5 py-0.5 text-center text-xs font-semibold leading-tight ${pillClass} ${cyber ? '' : 'hover:bg-ink-950'}`}
+                data-hit-area="role"
+                style={{ width: labelWidth, marginTop: pawn ? 4 : 12 }} className={`relative mx-auto block rounded-sm px-1.5 py-0.5 text-center text-xs font-semibold leading-tight ${pillClass} ${cyber ? '' : 'hover:bg-ink-950'}`}
               >
                 {labelMode === 'one' ? (
                   <span className="block whitespace-nowrap">{shortRoleLabel(slot.roleLabel)}</span>
