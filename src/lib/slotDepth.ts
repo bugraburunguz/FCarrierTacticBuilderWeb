@@ -69,22 +69,47 @@ const academyCell = (p: AcademyPlayer): DepthCell => ({ id: p.playerId, name: p.
 const ovr = (c: DepthCell) => c.overall ?? 0
 const young = (age?: number | null) => age !== undefined && age !== null && age <= YOUTH_MAX_AGE
 
-/** Genç kolonu slotlar arasında tekil: her genç ilk mevkisine en yakın slotta (mevki sırası, sonra OVR, sonra slot sırası). */
+/**
+ * Genç kolonu slotlar arasında tekil: önce her genç ilk mevkisine en yakın slotta (mevki sırası, sonra OVR, sonra slot sırası); sonra boş kalan
+ * slotlar için artırıcı yol (bir genç başka uygun slota kayınca boş slot dolabiliyorsa) — dolu slot sayısı en çok olur.
+ */
 function assignYouth(slots: DepthSlot[], youth: { cell: DepthCell; positions: readonly string[] }[]): (DepthCell | undefined)[] {
   const pairs = slots.flatMap((s, slotIndex) => youth.flatMap((y, youthIndex) => {
     const rank = y.positions.indexOf(s.position)
     return rank < 0 ? [] : [{ slotIndex, youthIndex, rank, ovr: ovr(y.cell) }]
   }))
   pairs.sort((a, b) => a.rank - b.rank || b.ovr - a.ovr || a.slotIndex - b.slotIndex)
-  const out: (DepthCell | undefined)[] = slots.map(() => undefined)
-  const taken = new Set<number>()
+  const slotOf = new Map<number, number>()
+  const youthOf = new Map<number, number>()
   pairs.forEach((p) => {
-    if (!out[p.slotIndex] && !taken.has(p.youthIndex)) {
-      out[p.slotIndex] = youth[p.youthIndex].cell
-      taken.add(p.youthIndex)
+    if (!youthOf.has(p.slotIndex) && !slotOf.has(p.youthIndex)) {
+      youthOf.set(p.slotIndex, p.youthIndex)
+      slotOf.set(p.youthIndex, p.slotIndex)
     }
   })
-  return out
+  const candidates = slots.map((_, slotIndex) => pairs.filter((p) => p.slotIndex === slotIndex).map((p) => p.youthIndex))
+  const augment = (slotIndex: number, seen: Set<number>): boolean => candidates[slotIndex].some((y) => {
+    if (seen.has(y)) {
+      return false
+    }
+    seen.add(y)
+    const current = slotOf.get(y)
+    if (current === undefined || augment(current, seen)) {
+      slotOf.set(y, slotIndex)
+      youthOf.set(slotIndex, y)
+      return true
+    }
+    return false
+  })
+  slots.forEach((_, slotIndex) => {
+    if (!youthOf.has(slotIndex)) {
+      augment(slotIndex, new Set())
+    }
+  })
+  return slots.map((_, slotIndex) => {
+    const y = youthOf.get(slotIndex)
+    return y === undefined ? undefined : youth[y].cell
+  })
 }
 
 /**
@@ -132,12 +157,14 @@ export function slotDepth(slots: DepthSlot[], squad: CareerPlayer[], academy: Ac
 /**
  * Matris satırları her zaman formasyonun slotlarından (11): dizilmemiş ya da oyuncusu kadrodan çıkmış slot da satırdır (sorunun en büyük olduğu yer).
  * Rol taktiğin slotundan (yoksa formasyonun varsayılanı); rol, kalite sınıfı ve depth uyum satırından (varsa; /fit/lineup, aynı sorgu).
+ * Uyum satırı olmayan (dizilmemiş) slotun depth'i aynı yanıtın slot haritasından (`depthBySlot`).
  */
 export function buildDepthSlots(
   formation: { slots: { slotId: string; position: string; defaultRole: string }[] } | undefined,
   lineup: Readonly<Record<string, number | null | undefined>> | undefined,
   tacticSlots: Readonly<Record<string, { roleId?: string }>> | undefined,
   fitRows: { slotId: string; roleId?: string; weakClass?: WeakClass; depth?: readonly DepthEntry[] }[],
+  depthBySlot?: Readonly<Record<string, readonly DepthEntry[] | undefined>>,
 ): DepthSlot[] {
   if (!formation) {
     return []
@@ -148,7 +175,7 @@ export function buildDepthSlots(
     const id = lineup?.[s.slotId]
     return {
       slotId: s.slotId, position: s.position, roleId: fit?.roleId ?? tacticSlots?.[s.slotId]?.roleId ?? s.defaultRole,
-      playerId: typeof id === 'number' ? id : undefined, weakClass: fit?.weakClass, depth: fit?.depth,
+      playerId: typeof id === 'number' ? id : undefined, weakClass: fit?.weakClass, depth: fit?.depth ?? depthBySlot?.[s.slotId],
     }
   })
 }

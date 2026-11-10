@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { endpoints } from '../../api/endpoints'
-import type { PlayerSummary, RoleFit } from '../../api/types'
+import type { DepthEntry, PlayerSummary, RoleFit } from '../../api/types'
 import { fitDisplay } from '../../lib/fitLabels'
 import { useDebouncedValue } from '../../lib/useDebouncedValue'
 import type { SlotFitRow } from './useSlotFits'
@@ -42,10 +42,13 @@ export function useLineupFits(ws: SquadWorkspaceApi<number>, playerById: Map<num
     staleTime: 300_000,
     retry: false,
   })
-  const { fitBySlot, rows } = useMemo(() => {
+  const { fitBySlot, rows, depthBySlot } = useMemo(() => {
     const bySlot = new Map<string, RoleFit | undefined>()
     const out: SlotFitRow[] = []
+    // FCA-15: derinlik her slot için (dizilmemiş slot dahil; uyum satırı yoksa da Derinlik o slotun yedeğini gösterir).
+    const depth: Record<string, DepthEntry[] | undefined> = {}
     ;(query.data?.slots ?? []).forEach((s) => {
+      depth[s.slotId] = s.depth
       const playerId = locked[s.slotId]
       const player = playerId === undefined ? undefined : playerById.get(playerId)
       // Kilitli oyuncu yerinde kalmadıysa (kadrodan düşmüş vb.) o slot için uyum gösterilmez; çözücünün doldurduğu boş slotlar da gösterilmez.
@@ -59,7 +62,7 @@ export function useLineupFits(ws: SquadWorkspaceApi<number>, playerById: Map<num
     })
     const order = new Map(slots.map((s, i) => [s.slotId, i]))
     out.sort((a, b) => (order.get(a.slotId) ?? 0) - (order.get(b.slotId) ?? 0))
-    return { fitBySlot: bySlot, rows: out }
+    return { fitBySlot: bySlot, rows: out, depthBySlot: depth }
   }, [query.data, locked, playerById, slots])
-  return { fitBySlot, rows, pending: query.isLoading }
+  return { fitBySlot, rows, depthBySlot, pending: query.isLoading }
 }

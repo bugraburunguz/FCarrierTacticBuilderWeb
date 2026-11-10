@@ -114,6 +114,13 @@ describe('slot bazlı derinlik matrisi (GT-b, FCA-15)', () => {
     expect(rows.map((r) => r.urgency)).toEqual(['NO_BACKUP', 'NO_BACKUP', 'YOUTH_ONLY'])
   })
 
+  it('genç ataması kapsamayı en çoğa çıkarır: A [CB, LB] 70, B [CB] 65 → A LB, B CB (iki slot da genç alır)', () => {
+    const squad = [member(1, ['CB'], 75, 27), member(2, ['LB'], 74, 27), member(7, ['CB', 'LB'], 70, 19), member(8, ['CB'], 65, 20)]
+    const rows = slotDepth([slot('CB', 'CB', 1), slot('LB', 'LB', 2)], squad, [])
+    expect(rows.map((r) => r.youth?.id)).toEqual([8, 7])
+    expect(rows.map((r) => r.urgency)).toEqual(['YOUTH_ONLY', 'YOUTH_ONLY'])
+  })
+
   it('OVR bilinmeyen altyapı oyuncusu 0 değil, bilinmiyor', () => {
     const [row] = slotDepth([slot('GK', 'GK', 1)], [member(1, ['GK'], 70, 26)], [{ ...academy(90, 'GK', 0), overall: null }])
     expect(row.youth?.overall).toBeUndefined()
@@ -128,6 +135,12 @@ describe('slot bazlı derinlik matrisi (GT-b, FCA-15)', () => {
       { slotId: 'ST', position: 'ST', roleId: 'poacher_attack', playerId: undefined, weakClass: undefined, depth: undefined },
     ])
     expect(buildDepthSlots(undefined, { GK: 1 }, {}, [])).toEqual([])
+  })
+
+  it('dizilmemiş (uyum satırı olmayan) slotun derinliği yanıtın slot haritasından; uyum satırı yoksa da "bilgi yok" kalmaz', () => {
+    const formation = { slots: [{ slotId: 'GK', position: 'GK', defaultRole: 'gk' }, { slotId: 'ST', position: 'ST', defaultRole: 'st' }] }
+    const slots = buildDepthSlots(formation, { GK: 1 }, {}, [{ slotId: 'GK', depth: [d(2)] }], { GK: [d(2)], ST: [d(9)] })
+    expect(slots.map((s) => s.depth)).toEqual([[d(2)], [d(9)]])
   })
 
   it('eski ?grup= değerleri ilgili ilk slot satırına: MID → CM, W → kanat, FB → bek', () => {
