@@ -108,6 +108,15 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
   })
 
+  it('FCA-3 3b: Diziliş sekmesinde saha + yanında liste: İlk 11 (11) · Yedekler · Kadro dışı; satır oyuncu sayfasına gider', async () => {
+    renderAt()
+    const list = await screen.findByRole('region', { name: 'Diziliş listesi' })
+    await waitFor(() => expect(within(list).getAllByRole('rowheader').map((th) => th.textContent)).toEqual(['İlk 11 · 11', 'Yedekler · 1', 'Kadro dışı · 1']))
+    expect(within(list).getByRole('link', { name: 'Oyuncu 13' })).toHaveAttribute('href', '/players/13')
+    expect(within(list).getAllByRole('img', { name: /^OVR \d+$/ }).length).toBe(13)
+    expect(document.querySelector('[data-field]')).not.toBeNull()
+  })
+
   it('FCA-3: kadro alınamazsa alt başlık "0 oyuncu kayıtlı" yazmaz', async () => {
     vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
     renderAt('/career/squad?sekme=liste')
