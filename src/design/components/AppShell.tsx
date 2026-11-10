@@ -54,12 +54,12 @@ const railTone = (active: boolean) => (active ? 'bg-[var(--accent-soft)] text-ac
 const LAB_PATH = '/career/tactics-lab'
 
 /** Küçük, kabuk-içi gezinme öğesi: ikon + etiket (rayda 72px, mobilde alt çubukta kısa etiketle). aria-current rotadan gelir. */
-function RailLink({ group, active, short = false, onNavigate, unsaved = false }: { group: NavGroup; active: boolean; short?: boolean; onNavigate?: () => void; unsaved?: boolean }) {
+function RailLink({ group, active, short = false, tight = false, onNavigate, unsaved = false }: { group: NavGroup; active: boolean; short?: boolean; tight?: boolean; onNavigate?: () => void; unsaved?: boolean }) {
   const Icon = ICONS[group.to] ?? Database
   const label = short ? group.mobileLabel ?? group.label : group.label
   return (
     // Etkinlik grubun `match` listesinden (activeNav); NavLink yalnız kendi `to`'su eşleşince aria-current yazar, grup başka alt rotadayken (/squad/builder) yanlış olur.
-    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)} ${short ? 'max-[359px]:px-0' : ''}`}>
+    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)} ${tight ? 'max-[359px]:px-0' : ''}`}>
       {/* Nokta yokken işaretleme öncekiyle birebir (UT rayı ve alt çubuğu piksel düzeyinde değişmez). */}
       {unsaved ? (
         <span className="relative block">
@@ -67,7 +67,7 @@ function RailLink({ group, active, short = false, onNavigate, unsaved = false }:
           <span data-unsaved-dot aria-hidden="true" className="absolute -right-1 -top-0.5 h-2 w-2 rounded-full bg-[var(--accent)] ring-2 ring-[var(--glass-1,var(--surface))]" />
         </span>
       ) : <Icon size={20} aria-hidden="true" />}
-      <span className={short ? 'max-w-full' : 'max-w-full break-words'}>{label}</span>
+      <span className={tight ? 'max-w-full' : 'max-w-full break-words'}>{label}</span>
     </Link>
   )
 }
@@ -80,7 +80,7 @@ function MobileBar({ mode, nav, active, pathname, labUnsaved, sheetFooter }: { m
   return (
     <nav aria-label="Mobil menü" className="glass glass-sticky fixed inset-x-0 bottom-0 z-20 grid h-16 grid-flow-col auto-cols-fr items-stretch gap-0.5 rounded-none border-x-0 border-b-0 px-1 min-[820px]:hidden">
       {items.map((g) => (
-        <RailLink key={g.to} group={g} active={g === active} short unsaved={labUnsaved && g.to === LAB_PATH} />
+        <RailLink key={g.to} group={g} active={g === active} short tight={mode === 'career'} unsaved={labUnsaved && g.to === LAB_PATH} />
       ))}
       {more.length > 0 && (
         <button type="button" aria-current={moreActive ? 'page' : undefined} aria-haspopup="dialog" onClick={() => setOpen(true)} className={`${RAIL_ITEM} ${railTone(Boolean(moreActive))}`}>
@@ -126,22 +126,21 @@ export function AppShell() {
   const lab = useLab(mode === 'career' ? careerId : undefined)
   const labUnsaved = lab.drafts.some((d) => d.dirty)
   const showTabs = !/^\/players\/\d+/.test(pathname)
-  const modeSwitch = (onSwitched?: () => void) => (
-    <Segmented
-      label="Mod"
-      value={mode}
-      options={MODES.map((m) => ({ id: m.id, label: m.id === 'ut' ? 'UT' : 'Kariyer' }))}
-      onChange={(id) => {
-        modeStore.set(id)
-        navigate(MODES.find((m) => m.id === id)?.home ?? '/')
-        onSwitched?.()
-      }}
-    />
-  )
+  const utHome = MODES.find((m) => m.id === 'ut')?.home ?? '/ut/squad'
   const careerSheetFooter = (close: () => void) => (
-    <div className="mt-4 flex items-center justify-between gap-3 border-t border-line pt-4">
-      <span className="text-sm text-ink-2">Mod</span>
-      {modeSwitch(close)}
+    <div className="mt-4 border-t border-line pt-4 sm:hidden">
+      <Link
+        to={utHome}
+        onClick={() => {
+          modeStore.set('ut')
+          close()
+          setTimeout(() => document.querySelector<HTMLElement>('header [role="radio"][aria-checked="true"]')?.focus(), 0)
+        }}
+        className="glass-3 flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold text-ink hover:bg-[var(--glass-hover)]"
+      >
+        <Layers size={16} aria-hidden="true" />
+        UT moduna geç
+      </Link>
     </div>
   )
 
@@ -149,7 +148,17 @@ export function AppShell() {
     <div className="min-h-screen text-ink">
       <header className="glass glass-sticky sticky top-0 z-30 flex h-[var(--header-h)] min-w-0 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4 max-[359px]:gap-1.5 max-[359px]:px-3">
         <LogoLockup size={32} collapse className={careerSurface ? 'justify-center max-sm:min-h-11 max-sm:min-w-11' : ''} />
-        <div className={careerSurface ? 'max-sm:hidden' : undefined}>{modeSwitch()}</div>
+        <div className={careerSurface ? 'max-sm:hidden' : undefined}>
+          <Segmented
+            label="Mod"
+            value={mode}
+            options={MODES.map((m) => ({ id: m.id, label: m.id === 'ut' ? 'UT' : 'Kariyer' }))}
+            onChange={(id) => {
+              modeStore.set(id)
+              navigate(MODES.find((m) => m.id === id)?.home ?? '/')
+            }}
+          />
+        </div>
         {careerSurface && <CareerBar />}
         <div className="ml-auto flex items-center gap-2 max-[359px]:gap-1.5">
           {/* FCA-3: kariyer şimdilik yalnız koyu; tema düğmesi yalnız UT'de. */}

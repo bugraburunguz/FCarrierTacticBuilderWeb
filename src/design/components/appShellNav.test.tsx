@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { careerStore } from '../../state/careerStore'
@@ -57,20 +57,42 @@ describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
     expect(more).toHaveAttribute('aria-current', 'page')
     fireEvent.click(more)
     const sheet = screen.getByRole('dialog', { name: 'Daha fazla' })
-    expect(within(sheet).getAllByRole('link').map((a) => a.textContent)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer'])
+    expect(within(sheet).getAllByRole('link').map((a) => a.textContent)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer', 'UT moduna geç'])
     expect(within(sheet).getByRole('link', { name: 'Gelişim' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('FCA-12: kariyerde mod anahtarı dar ekranda üst çubuktan "Daha fazla" sheet\'ine taşınır; sheet\'ten UT\'ye geçilir', () => {
+  it('FCA-12: kariyerde mod anahtarı dar ekranda üst çubuktan "Daha fazla" sheet\'ine taşınır; sheet\'ten UT\'ye geçilir', async () => {
     renderAt('/career/dashboard')
     const header = screen.getByRole('banner')
     // Üst çubuktaki anahtar <640 px'te gizli (yer kulüp adına kalır); masaüstünde görünür.
     expect(within(header).getByRole('radiogroup', { name: 'Mod' }).parentElement).toHaveClass('max-sm:hidden')
     fireEvent.click(within(screen.getByRole('navigation', { name: 'Mobil menü' })).getByRole('button', { name: 'Daha fazla' }))
     const sheet = screen.getByRole('dialog', { name: 'Daha fazla' })
-    fireEvent.click(within(within(sheet).getByRole('radiogroup', { name: 'Mod' })).getByRole('radio', { name: 'UT' }))
+    // Ok tuşuyla kazara mod değişmesin diye sheet'te radiogroup değil tek bağlantı.
+    expect(within(sheet).queryByRole('radiogroup')).toBeNull()
+    const toUt = within(sheet).getByRole('link', { name: 'UT moduna geç' })
+    expect(toUt).toHaveAttribute('href', '/ut/squad')
+    fireEvent.click(toUt)
     expect(modeStore.get()).toBe('ut')
     expect(screen.queryByRole('dialog', { name: 'Daha fazla' })).toBeNull()
+    // Sheet'i açan "Daha fazla" UT'de yok: odak kaybolmasın, üst çubuktaki etkin mod düğmesine gelsin.
+    await waitFor(() => expect(document.activeElement).toBe(within(screen.getByRole('banner')).getByRole('radio', { name: 'UT' })))
+  })
+
+  it('FCA-12: alt çubuk 320 px düzeltmesi (kelime bölünmesin) yalnız kariyerde; UT alt çubuğu değişmez', () => {
+    renderAt('/career/dashboard')
+    const careerLink = within(screen.getByRole('navigation', { name: 'Mobil menü' })).getByRole('link', { name: 'Transfer' })
+    expect(careerLink).toHaveClass('max-[359px]:px-0')
+    expect(careerLink.querySelector('span:last-child')).not.toHaveClass('break-words')
+  })
+
+  it('FCA-12: UT alt çubuğunda etiketler eskisi gibi (break-words, ek dolgu yok)', () => {
+    modeStore.set('ut')
+    renderAt('/ut/squad')
+    for (const a of within(screen.getByRole('navigation', { name: 'Mobil menü' })).getAllByRole('link')) {
+      expect(a).not.toHaveClass('max-[359px]:px-0')
+      expect(a.querySelector('span:last-child')).toHaveClass('break-words')
+    }
   })
 
   it('FCA-12: UT üst çubuğunda mod anahtarı her genişlikte görünür', () => {
