@@ -92,7 +92,7 @@ export function CareerSquadPage() {
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
       {/* FCA-3: Stitch başlığı; kariyer seçimi üst barda. */}
-      <CareerPageHeader crumb="Kadro" title="Kadro" subtitle={`${players.length} oyuncu kayıtlı`} />
+      <CareerPageHeader crumb="Kadro" title="Kadro" subtitle={k.squad.data ? `${players.length} oyuncu kayıtlı` : undefined} />
 
       {k.squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => k.squad.refetch()} />}
       <Tabs label="Kadro sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />

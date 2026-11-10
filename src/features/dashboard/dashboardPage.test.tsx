@@ -152,15 +152,34 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     const strip = await screen.findByRole('region', { name: 'Kadro özeti' })
     expect(await within(strip).findByText('Takım ortalaması')).toBeInTheDocument()
     // kiralık bizdekiler dahil 5 oyuncu: (61+62+63+64+65)/5
-    expect(within(strip).getByLabelText('Takım ortalaması 63')).toBeInTheDocument()
-    // ana taktiğin ilk 11'i: oyuncu 1, 2, 3
-    expect(await within(strip).findByLabelText('İlk 11 ortalaması 62')).toBeInTheDocument()
+    expect(within(strip).getByRole('img', { name: 'Takım ortalaması 63' })).toBeInTheDocument()
+    // ana taktiğin ilk 11'i: oyuncu 1, 2, 3 — 11'den az dizilmişse alt başlık sayıyı söyler
+    expect(await within(strip).findByRole('img', { name: 'İlk 11 ortalaması 62' })).toBeInTheDocument()
+    expect(within(strip).getByText('3/11 · ana taktiğe göre')).toBeInTheDocument()
     expect(within(strip).getByText('26,4')).toBeInTheDocument()
     expect(within(screen.getByRole('navigation', { name: 'Konum' })).getByText('Masa')).toHaveAttribute('aria-current', 'page')
     expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
   })
 
-  it('FCA-3: ana taktik yokken ilk 11 ortalaması "—" ve neden', async () => {
+  it('FCA-3: kiralığa gönderilen oyuncu ana taktikte kalsa da ilk 11 ortalamasına girmez (takım ortalamasıyla aynı kural)', async () => {
+    vi.mocked(endpoints.squad).mockResolvedValue([member(1), member(2, { loanedOut: true }), member(3), member(4), member(5)] as never)
+    renderPage()
+    const strip = await screen.findByRole('region', { name: 'Kadro özeti' })
+    // oyuncu 1 ve 3: (61+63)/2
+    expect(await within(strip).findByRole('img', { name: 'İlk 11 ortalaması 62' })).toBeInTheDocument()
+    expect(within(strip).getByText('2/11 · ana taktiğe göre')).toBeInTheDocument()
+  })
+
+  it('FCA-3: kadro yüklenirken ya da alınamazsa şerit "0 oyuncu" yazmaz', async () => {
+    vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
+    renderPage()
+    const strip = await screen.findByRole('region', { name: 'Kadro özeti' })
+    await screen.findByText('Kadro yüklenemedi.')
+    expect(within(strip).queryByText(/0 oyuncu kayıtlı/)).toBeNull()
+    expect(within(strip).getAllByText('–').length).toBeGreaterThan(0)
+  })
+
+  it('FCA-3: ana taktik yokken ilk 11 ortalaması yerine "Ana taktik yok"', async () => {
     vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
     vi.mocked(endpoints.starterTactic).mockResolvedValue(undefined as never)
     renderPage()

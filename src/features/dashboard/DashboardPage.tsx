@@ -349,7 +349,8 @@ export function DashboardPage() {
         <ManagerLine />
       </div>
       {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
-      <KpiStrip squad={players} starters={isMain ? rows.map((r) => r.playerId) : []} isMain={isMain} pending={tacticPending} />
+      <KpiStrip squad={players} starters={isMain ? rows.map((r) => r.playerId) : []} isMain={isMain} pending={tacticPending}
+        squadState={squad.isLoading ? 'loading' : squad.isError && !squad.data ? 'error' : 'ready'} />
 
       <Tabs label="Masa sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="masa" active={tab === 'masa'}>

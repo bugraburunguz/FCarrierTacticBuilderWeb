@@ -66,6 +66,8 @@ for (const w of [1280, 900, 768, 375]) {
   await shot('masa', '/career/dashboard', w, 'career')
   await shot('kadro', '/career/squad', w, 'career')
 }
+// Parça 3: en dar telefon (üst barda mod + kariyer değiştirici + menü)
+await shot('masa', '/career/dashboard', 320, 'career')
 // Parça 2: tablo, rozet ve panel başlığı olan ekranlar
 for (const w of [1280, 375]) {
   await shot('kadro-liste', '/career/squad?sekme=liste', w, 'career')

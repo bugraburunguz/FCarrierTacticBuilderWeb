@@ -108,6 +108,13 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
   })
 
+  it('FCA-3: kadro alınamazsa alt başlık "0 oyuncu kayıtlı" yazmaz', async () => {
+    vi.mocked(endpoints.squad).mockRejectedValue(new Error('ağ'))
+    renderAt('/career/squad?sekme=liste')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Kadro yüklenemedi.')
+    expect(screen.queryByText(/oyuncu kayıtlı$/)).toBeNull()
+  })
+
   it('ACADEMY-b: eski ?sekme=altyapi bağlantısı /career/academy sayfasına yönlenir', async () => {
     renderAt('/career/squad?sekme=altyapi')
     await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/career/academy'))

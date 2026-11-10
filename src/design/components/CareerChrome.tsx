@@ -58,15 +58,16 @@ export function CareerBar() {
       ) : (
         <p className="text-sm text-muted max-[1023px]:hidden">Aktif kariyer yok</p>
       )}
-      <CareerSwitcher list={list} activeId={active?.id} />
+      <CareerSwitcher list={list} activeId={active?.id} activeName={active ? active.clubName ?? `Kulüp ${active.clubId}` : undefined} />
     </section>
   )
 }
 
-function CareerSwitcher({ list, activeId }: { list: Career[]; activeId?: number }) {
+function CareerSwitcher({ list, activeId, activeName }: { list: Career[]; activeId?: number; activeName?: string }) {
   return (
     <Popover.Root>
-      <Popover.Trigger className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] px-3 text-sm text-ink-2 hover:border-[var(--accent)] max-sm:min-h-11 max-sm:min-w-11 max-sm:px-0">
+      {/* Dar ekranda kulüp adı gizli: aktif kariyer erişilebilir adda duyurulur. */}
+      <Popover.Trigger aria-label={activeName ? `Kariyer değiştir · aktif: ${activeName}` : 'Kariyer değiştir'} className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] px-3 text-sm text-ink-2 hover:border-[var(--accent)] max-sm:min-h-11 max-sm:min-w-11 max-sm:px-0">
         <FolderOpen size={16} aria-hidden="true" />
         <span className="max-sm:sr-only">Kariyer değiştir</span>
         <ChevronDown size={14} aria-hidden="true" />

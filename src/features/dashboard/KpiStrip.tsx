@@ -4,6 +4,7 @@ import { OvrBox, Skeleton } from '../../design/components/primitives'
 import { squadStats } from '../careerSquad/careerSquadRules'
 
 const decimal = (value?: number) => (value === undefined ? undefined : value.toLocaleString('tr-TR', { maximumFractionDigits: 1 }))
+const XI = 11
 
 function Tile({ label, sub, children }: { label: string; sub?: ReactNode; children: ReactNode }) {
   return (
@@ -18,30 +19,34 @@ function Tile({ label, sub, children }: { label: string; sub?: ReactNode; childr
 }
 
 /**
- * Masa özet şeridi (FCA-3, Stitch telemetri satırı): takım ortalaması, ana taktiğin ilk 11 ortalaması, ortalama yaş. Yalnız eldeki veri:
- * ortalamalar kiralık gönderilenler hariç (Kadro özetiyle aynı kural); ilk 11 ana taktik yoksa "Ana taktik yok".
+ * Masa özet şeridi (FCA-3, Stitch telemetri satırı): takım ortalaması, ana taktiğin ilk 11 ortalaması, ortalama yaş. Yalnız eldeki veri.
+ * İki ortalama da kiralığa gönderilenleri saymaz (Kadro özetiyle aynı kural). Kadro yüklenirken iskelet; alınamazsa "–" (0 oyuncu yazılmaz).
  */
-export function KpiStrip({ squad, starters, isMain, pending }: { squad: CareerPlayer[]; starters: number[]; isMain: boolean; pending: boolean }) {
+export function KpiStrip({ squad, starters, isMain, pending, squadState }: {
+  squad: CareerPlayer[]; starters: number[]; isMain: boolean; pending: boolean; squadState: 'loading' | 'error' | 'ready'
+}) {
   const stats = squadStats(squad)
-  const byId = new Map(squad.map((c) => [c.player.id, c.player.overall]))
-  const starterOvr = starters.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []))
+  const active = new Map(squad.filter((c) => !c.loanedOut).map((c) => [c.player.id, c.player.overall]))
+  const starterOvr = starters.flatMap((id) => (active.has(id) ? [active.get(id)!] : []))
   const starterAvg = starterOvr.length ? Math.round(starterOvr.reduce((s, v) => s + v, 0) / starterOvr.length) : undefined
-  const teamAvg = stats.avgOverall === undefined ? undefined : Math.round(stats.avgOverall)
+  const ready = squadState === 'ready'
+  const teamAvg = ready && stats.avgOverall !== undefined ? Math.round(stats.avgOverall) : undefined
+  const loading = squadState === 'loading'
 
   return (
     <section aria-label="Kadro özeti" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-3">
-      <Tile label="Takım ortalaması" sub={`${stats.count} oyuncu kayıtlı`}>
-        <span aria-label={teamAvg === undefined ? 'Takım ortalaması bilinmiyor' : `Takım ortalaması ${teamAvg}`}>
-          <OvrBox value={teamAvg} />
-        </span>
+      <Tile label="Takım ortalaması" sub={ready ? `${stats.count} oyuncu kayıtlı` : undefined}>
+        {loading ? <Skeleton className="h-9 w-9" /> : <OvrBox value={teamAvg} label="Takım ortalaması" />}
       </Tile>
-      <Tile label="İlk 11 ortalaması" sub={isMain ? 'Ana taktiğe göre' : undefined}>
-        {pending ? <Skeleton className="h-9 w-9" /> : isMain && starterAvg !== undefined ? (
-          <span aria-label={`İlk 11 ortalaması ${starterAvg}`}><OvrBox value={starterAvg} /></span>
-        ) : <span className="text-sm text-muted">Ana taktik yok</span>}
+      <Tile label="İlk 11 ortalaması" sub={isMain && ready ? `${starterOvr.length}/${XI} · ana taktiğe göre` : undefined}>
+        {pending || loading ? <Skeleton className="h-9 w-9" /> : !isMain ? <span className="text-sm text-muted">Ana taktik yok</span> : (
+          <OvrBox value={ready ? starterAvg : undefined} label="İlk 11 ortalaması" />
+        )}
       </Tile>
-      <Tile label="Ortalama yaş" sub={stats.loanedOut ? `${stats.loanedOut} oyuncu kiralıkta` : undefined}>
-        <span className="font-display text-[28px] font-bold leading-7 tabular-nums text-ink">{decimal(stats.avgAge) ?? '–'}</span>
+      <Tile label="Ortalama yaş" sub={ready && stats.loanedOut ? `${stats.loanedOut} oyuncu kiralıkta` : undefined}>
+        {loading ? <Skeleton className="h-7 w-12" /> : (
+          <span className="font-display text-[28px] font-bold leading-7 tabular-nums text-ink">{(ready ? decimal(stats.avgAge) : undefined) ?? '–'}</span>
+        )}
       </Tile>
     </section>
   )
