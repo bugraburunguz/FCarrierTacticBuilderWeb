@@ -178,8 +178,8 @@ export function EmptyState({ children, action }: { children: ReactNode; action?:
 export function HelpPopover({ children, label = 'Yardım' }: { children: ReactNode; label?: string }) {
   return (
     <details className="group relative inline-block align-middle">
-      {/* FCA-12: telefonda dokunma alanı 44 px, görünen daire 20 px. */}
-      <summary aria-label={label} className="flex h-5 w-5 cursor-pointer list-none items-center justify-center text-xs font-bold text-muted hover:text-ink max-sm:h-11 max-sm:w-11 [&::-webkit-details-marker]:hidden">
+      {/* FCA-12: kariyerde telefonda dokunma alanı 44 px (glass.css, data-help), görünen daire 20 px; UT değişmez. */}
+      <summary aria-label={label} data-help className="flex h-5 w-5 cursor-pointer list-none items-center justify-center text-xs font-bold text-muted hover:text-ink [&::-webkit-details-marker]:hidden">
         <span aria-hidden="true" className="flex h-5 w-5 items-center justify-center rounded-full border border-line">?</span>
       </summary>
       {/* Dar ekranda sağ kenara yakın "?" paneli sayfayı yatay taşırıyordu: <640px sabit, kenarlardan 16px, tetikleyicinin hemen altında (top-auto = akıştaki yeri). */}

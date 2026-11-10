@@ -80,7 +80,7 @@ function DismissibleNote({ id, children }: { id: string; children: ReactNode }) 
     return null
   }
   return (
-    <div role="note" className="glass-3 mb-3 flex max-h-12 items-center justify-between gap-2 overflow-hidden px-3 py-1 text-xs text-ink-2">
+    <div role="note" className="glass-3 mb-3 flex max-h-12 max-sm:max-h-none items-center justify-between gap-2 overflow-hidden px-3 py-1 text-xs text-ink-2">
       <span className="min-w-0 flex-1 leading-4">{children}</span>
       <button
         type="button"
