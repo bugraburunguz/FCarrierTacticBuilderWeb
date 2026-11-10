@@ -9,6 +9,7 @@ import { useAuth } from '../../auth/AuthContext'
 import { CareerSelect } from '../../components/CareerSelect'
 import { CAREER_EXPORT_GUIDE_CODES, importWarningText } from '../../lib/importWarnings'
 import { EXPORT_DONE_WINDOW } from '../../lib/leExport'
+import { trimCareerLog } from '../../lib/leLogTrim'
 import { invalidateCareerScope } from '../../lib/careerQueries'
 import { useActiveCareerId } from '../../state/careerStore'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
@@ -75,10 +76,10 @@ export function CareerImportPage() {
   const [teamId, setTeamId] = useState<number>()
 
   const upload = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const form = new FormData()
       if (logFile) {
-        form.append('log', logFile)
+        form.append('log', await trimCareerLog(logFile))
       } else {
         FILES.forEach((f) => files[f.key] && form.append(f.key, files[f.key]!))
       }
