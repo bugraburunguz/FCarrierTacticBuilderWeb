@@ -51,6 +51,8 @@ interface Props {
   longShotsLabel?: string
   /** FAZ 6a-J: kariyer bütçesi; verilirse (ya da elle bütçe girilirse) bütçeyi aşan adaylar ayrı ve kapalı listelenir. */
   budgetEur?: number
+  /** FCA-4: gelen sonucu tarayıcıda süzer (sayfanın ayrıntılı filtresi); yeni istek atılmaz, kredi düşmez. */
+  resultFilter?: (item: CareerRecommendationItem) => boolean
 }
 
 // Oturum içi "tekrar sorma" tercihi (kalıcı değil; kredi harcamasını açık tutar).
@@ -60,7 +62,7 @@ let skipConfirm = false
  * Kariyer öneri paneli (E3-10): `POST /careers/{id}/recommendations`. Ücretli olduğu için açılışta istek atmaz; düğme kaç kredi düşeceğini yazar,
  * ücretsiz üyelerde bir onay adımı vardır, PREMIUM'da yoktur. Filtre değişince sonuç bayatlar ve yeniden getirmek gerekir.
  */
-export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur }: Props) {
+export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur, resultFilter }: Props) {
   const { me } = useAuth()
   const queryClient = useQueryClient()
   const ids = { age: useId(), budget: useId() }
@@ -131,8 +133,12 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
   // FAZ 6a-J: bütçeye uyanlar önce; aşanlar ayrı başlıkta, anahtarla açılır (değeri bilinmeyen aday uyanlarda kalır).
   const budget = budgetMode === 'custom' ? customBudget : budgetMode === 'career' ? budgetEur : undefined
   const overBudget = (i: CareerRecommendationItem) => budget !== undefined && i.player.valueEur !== undefined && i.player.valueEur > budget
-  const fitting = (result?.items ?? []).filter((i) => !overBudget(i))
-  const over = (result?.items ?? []).filter(overBudget)
+  // FCA-4: sayfanın ayrıntılı filtresi (en düşük OVR/POT, en yüksek değer) sonucu tarayıcıda süzer; yeni istek ve kredi yok.
+  const all = result?.items ?? []
+  const shown = resultFilter ? all.filter(resultFilter) : all
+  const filteredOut = all.length - shown.length
+  const fitting = shown.filter((i) => !overBudget(i))
+  const over = shown.filter(overBudget)
   const outOfCredit = run.error instanceof ApiError && run.error.code === ErrorCodes.insufficientCredit
   const priceLabel = freeBeta ? "Beta'da ücretsiz" : premium ? "PREMIUM'da ücretsiz" : cost !== undefined ? `${cost} kredi` : 'kredi'
 
@@ -229,6 +235,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             </ul>
           )}
           {fitting.length === 0 && over.length > 0 && <p className="text-sm text-ink-2">Bütçeye uyan aday yok.</p>}
+          {filteredOut > 0 && <p role="status" className="text-xs text-ink-2">{filteredOut} aday filtreye takıldı</p>}
           {over.length > 0 && (
             <>
               <button type="button" aria-expanded={showOver} onClick={() => setShowOver((v) => !v)}

@@ -83,6 +83,8 @@ for (const w of [1280, 375]) {
 await shot('kadro-dizilis-listesi', '/career/squad', 375, 'career', 'dark', async (page) => {
   await page.getByRole('region', { name: 'Diziliş listesi' }).scrollIntoViewIfNeeded()
 })
+// FCA-4: Transfer üç sütun (≥1440) ve filtre adresten
+await shot('transfer-uc-sutun', '/career/transfer?minovr=60', 1440, 'career')
 // Parça 3: en dar telefon (üst barda mod + kariyer değiştirici + menü)
 await shot('masa', '/career/dashboard', 320, 'career')
 // Parça 2: tablo, rozet ve panel başlığı olan ekranlar
