@@ -71,6 +71,27 @@ describe('FCA-3 Parça 6: oyuncu profili', () => {
   })
 })
 
+describe('FCA-4d: Roller sekmesinde mevkiye göre OVR sahası', () => {
+  it('her mevki sahada OVR kutusuyla; en yüksek ve listelenen mevki metinle; tek mevkili veride saha yok', async () => {
+    vi.mocked(endpoints.player).mockResolvedValue({ ...detail(), positionOveralls: { ST: 72, CAM: 70, LW: 66, CM: 61 } } as never)
+    const { unmount } = renderPage('/players/7?sekme=roller')
+    const pitch = await screen.findByRole('list', { name: 'Mevkiye göre OVR' })
+    const items = within(pitch).getAllByRole('listitem')
+    expect(items.map((i) => i.getAttribute('aria-label'))).toEqual([
+      'ST: OVR 72, en yüksek, listelenen mevki', 'CAM: OVR 70', 'LW: OVR 66', 'CM: OVR 61',
+    ])
+    expect(within(items[0]).getByText('72')).toBeInTheDocument()
+    expect(items[0]).toHaveAttribute('data-gap', 'best')
+    expect(items[2]).toHaveAttribute('data-gap', 'ok')
+    expect(items[3]).toHaveAttribute('data-gap', 'far')
+    unmount()
+    vi.mocked(endpoints.player).mockResolvedValue({ ...detail(), positionOveralls: { ST: 72 } } as never)
+    renderPage('/players/7?sekme=roller')
+    await screen.findByRole('heading', { level: 1, name: 'Ollie Watkins' })
+    expect(screen.queryByRole('list', { name: 'Mevkiye göre OVR' })).toBeNull()
+  })
+})
+
 describe('1–99 kesintisiz renk (ratingBlend)', () => {
   it.each([
     [1, 'var(--rate-low)'], [30, 'color-mix(in oklab, var(--rate-60) 59%, var(--rate-low))'], [50, 'var(--rate-60)'],
