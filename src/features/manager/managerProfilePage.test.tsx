@@ -112,12 +112,16 @@ describe('Menajer profili (MGR-b)', () => {
       const steps = await screen.findByRole('navigation', { name: 'Aşamalar' })
       const items = within(steps).getAllByRole('button')
       expect(items.map((b) => b.querySelector('[data-step-title]')?.textContent)).toEqual(['Futbolculuk geçmişi', 'Antrenörlük diploması', 'Oyun tarzı', 'Hedef ve zorluk'])
-      // geçmiş ve diploma seçilmedi: ilk iki aşama açık; tarz ve zorluk varsayılanla dolu
-      expect(items.map((b) => b.getAttribute('data-done'))).toEqual(['false', 'false', 'true', 'true'])
-      expect(items[0]).toHaveAttribute('aria-current', 'step')
+      // yeni profil: geçmiş ve diploma eksik; tarz ve zorluk varsayılan (dokunulmadan "tamam" denmez)
+      expect(items.map((b) => b.getAttribute('data-state'))).toEqual(['open', 'open', 'default', 'default'])
+      expect(items[2]).toHaveTextContent('varsayılan')
+      // masaüstünde aria-current yok (ilerleme metinle); yalnız mobilde geçerli adım
+      items.forEach((b) => expect(b).not.toHaveAttribute('aria-current'))
       fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Futbolculuk geçmişi' })).getByRole('radio', { name: /^Profesyonel \(ulusal\)/ }))
-      expect(within(steps).getAllByRole('button')[0]).toHaveAttribute('data-done', 'true')
-      expect(within(steps).getAllByRole('button')[1]).toHaveAttribute('aria-current', 'step')
+      expect(within(steps).getAllByRole('button')[0]).toHaveAttribute('data-state', 'done')
+      fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Tarz' })).getByRole('radio', { name: /^Kontra/ }))
+      expect(within(steps).getAllByRole('button')[2]).toHaveAttribute('data-state', 'done')
+      expect(screen.getByText(/İtibar puanları tahmindir/)).toBeInTheDocument()
       // itibar puanı kartta (önizleme tablosu: ulusal 55, Pro lisans +15)
       expect(within(screen.getByRole('radiogroup', { name: 'Futbolculuk geçmişi' })).getByRole('radio', { name: /Profesyonel \(ulusal\).*55 itibar/ })).toBeInTheDocument()
       expect(within(screen.getByRole('radiogroup', { name: 'Antrenörlük diploması' })).getByRole('radio', { name: /Uluslararası Pro Lisans.*\+15 itibar/ })).toBeInTheDocument()
@@ -126,6 +130,29 @@ describe('Menajer profili (MGR-b)', () => {
       expect(scroll.mock.contexts.at(-1)).toBe(screen.getByRole('heading', { name: 'Hedef ve zorluk' }).closest('section'))
     } finally {
       Element.prototype.scrollIntoView = originalScroll
+    }
+  })
+
+  it('FCA-4c inceleme: mobilde çubuktan son adıma atlayıp kaydedince eksik olan ilk aşamaya döner; geçerli adım aria-current; kayıtlı profilde hepsi tamam', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('max-width'), addEventListener: () => {}, removeEventListener: () => {} })) as never
+    try {
+      const { unmount } = renderPage()
+      const steps = await screen.findByRole('navigation', { name: 'Aşamalar' })
+      expect(within(steps).getAllByRole('button')[0]).toHaveAttribute('aria-current', 'step')
+      fireEvent.click(within(steps).getAllByRole('button')[3])
+      expect(screen.getByRole('heading', { name: 'Hedef ve zorluk' })).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Profili kaydet' }))
+      expect(await screen.findByRole('heading', { name: 'Futbolculuk geçmişi' })).toBeInTheDocument()
+      expect(screen.getByRole('alert')).toHaveTextContent('Futbolculuk geçmişini seç.')
+      expect(endpoints.saveManagerProfile).not.toHaveBeenCalled()
+      unmount()
+      vi.mocked(endpoints.managerProfile).mockResolvedValue({ profile: { background: 'PRO_LOCAL', licence: 'NATIONAL_A', style: 'COUNTER', priorities: [], difficulty: 'EASY' }, reputation: 36, band: 'Yerel tanınırlık' } as never)
+      renderPage()
+      const saved = await screen.findByRole('navigation', { name: 'Aşamalar' })
+      expect(within(saved).getAllByRole('button').map((b) => b.getAttribute('data-state'))).toEqual(['done', 'done', 'done', 'done'])
+    } finally {
+      window.matchMedia = original
     }
   })
 

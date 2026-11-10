@@ -22,21 +22,28 @@ const NARROW_QUERY = '(max-width: 639px)'
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 const STEPS = ['Futbolculuk geçmişi', 'Antrenörlük diploması', 'Oyun tarzı', 'Hedef ve zorluk'] as const
 
-/** Aşama çubuğu (Stitch): "Aşama 01 · Başlık", tamamlanan ✓; geçerli aşama aria-current="step". Tıklayınca o aşamaya gider. */
-function Stepper({ done, current, onPick }: { done: boolean[]; current: number; onPick: (index: number) => void }) {
+type StepState = 'done' | 'default' | 'open'
+const STATE_TEXT: Record<StepState, string> = { done: ' · tamam', default: ' · varsayılan', open: '' }
+
+/**
+ * Aşama çubuğu (Stitch): "Aşama 01 · Başlık", tamamlanan ✓, dokunulmamış varsayılan "varsayılan". Tıklayınca o aşamaya gider.
+ * aria-current="step" yalnız mobilde (adım adım); masaüstünde ilerleme metinle.
+ */
+function Stepper({ states, current, onPick }: { states: StepState[]; current?: number; onPick: (index: number) => void }) {
+  const done = states.map((s) => s === 'done')
   return (
     <nav aria-label="Aşamalar">
       {/* Dört sütun yalnız ≥1440 (form sütunu ~690 px'te başlıklar kesiliyordu). */}
       <ol className="grid grid-cols-2 gap-2 min-[1440px]:grid-cols-4">
         {STEPS.map((title, i) => (
           <li key={title}>
-            <button type="button" data-done={done[i]} aria-current={i === current ? 'step' : undefined} onClick={() => onPick(i)}
+            <button type="button" data-state={states[i]} aria-current={i === current ? 'step' : undefined} onClick={() => onPick(i)}
               className={`glass flex min-h-11 w-full items-center gap-3 px-3 py-2 text-left ${i === current ? 'shadow-[inset_0_0_0_2px_var(--accent)]' : 'hover:bg-[var(--glass-hover)]'}`}>
               <span aria-hidden="true" className={`grid h-7 w-7 shrink-0 place-items-center rounded-[var(--radius-sm)] text-sm font-bold ${done[i] ? 'bg-[var(--accent)] text-[var(--accent-ink)]' : 'border border-line text-ink-2'}`}>
                 {done[i] ? <Check size={16} /> : i + 1}
               </span>
               <span className="flex min-w-0 flex-col">
-                <span className="text-xs font-semibold uppercase tracking-[0.06em] text-muted">Aşama {String(i + 1).padStart(2, '0')}{done[i] ? ' · tamam' : ''}</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.06em] text-muted">Aşama {String(i + 1).padStart(2, '0')}{STATE_TEXT[states[i]]}</span>
                 <span data-step-title className="truncate text-sm font-semibold text-ink">{title}</span>
               </span>
             </button>
@@ -148,6 +155,9 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
   const [draft, setDraft] = useState<ManagerDraft>(() => (initial ? draftOf(initial.profile) : emptyDraft()))
   const [replicaId, setReplicaId] = useState('')
   const [step, setStep] = useState(0)
+  // FCA-4c: tarz ve zorluk varsayılanla dolu gelir; kullanıcı dokunana (ya da kayıtlı profil) kadar "varsayılan", "tamam" değil.
+  const [touched, setTouched] = useState({ style: initial !== undefined, goal: initial !== undefined })
+  const touch = (key: keyof typeof touched) => setTouched((t) => (t[key] ? t : { ...t, [key]: true }))
   const [errors, setErrors] = useState<string[]>([])
   const [notice, setNotice] = useState<string>()
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
@@ -170,17 +180,23 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
       }
     },
   })
+  // Mobil adım değişimi: yeni bölümün başına kaydır (azaltılmış harekette animasyonsuz), odağı başlığına taşı. İlk açılışta kaydırma yok.
+  const goTo = (next: number) => {
+    if (next === step) {
+      return
+    }
+    stepMoved.current = true
+    setStep(next)
+  }
   const submit = () => {
     const missing = validate(draft)
     setErrors(missing)
     if (missing.length === 0) {
       save.mutate()
+    } else if (narrow) {
+      // FCA-4c: çubuktan son adıma atlanmış olabilir; eksik olan ilk aşamaya dön (geçmiş 1., diploma 2. aşama).
+      goTo(draft.background === undefined ? 0 : draft.licence === undefined ? 1 : step)
     }
-  }
-  // Mobil adım değişimi: yeni bölümün başına kaydır (azaltılmış harekette animasyonsuz), odağı başlığına taşı. İlk açılışta kaydırma yok.
-  const goTo = (next: number) => {
-    stepMoved.current = true
-    setStep(next)
   }
   useEffect(() => {
     if (!stepMoved.current) {
@@ -196,6 +212,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
     const replica = replicas.data?.find((r) => r.id === id)
     if (replica) {
       set({ formation: replica.formationId, style: styleFromReplica(replica.buildUp, replica.defensiveApproach) })
+      touch('style')
     }
   }
   const formationOptions = formations.data ?? []
@@ -209,6 +226,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
       </div>
       <OptionCards label="Futbolculuk geçmişi" options={BACKGROUNDS} value={draft.background} onChange={(background) => set({ background })}
         points={(id) => `${backgroundPoints(id)} itibar`} />
+      <p className="text-xs text-muted">İtibar puanları tahmindir (kalibre edilmedi); kayıttan sonra sunucunun hesabı geçerlidir.</p>
     </Section>,
     <Section key="licence" title={STEPS[1]}>
       <OptionCards label="Antrenörlük diploması" options={LICENCES} value={draft.licence} onChange={(licence) => set({ licence })}
@@ -235,7 +253,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
         </div>
       </div>
       <Field title="Tarz">
-        <OptionCards label="Tarz" options={STYLES} value={draft.style} onChange={(style) => { setReplicaId(''); set({ style }) }} />
+        <OptionCards label="Tarz" options={STYLES} value={draft.style} onChange={(style) => { setReplicaId(''); set({ style }); touch('style') }} />
       </Field>
     </Section>,
     <Section key="priority" title={STEPS[3]}>
@@ -255,7 +273,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
         {draft.priorities.length >= MAX_PRIORITIES && <p className="text-xs text-ink-2">En çok {MAX_PRIORITIES} öncelik seçilir; değiştirmek için birini kaldır.</p>}
       </Field>
       <Field title="Zorluk isteği">
-        <OptionCards label="Zorluk isteği" options={DIFFICULTIES} value={draft.difficulty} onChange={(difficulty) => set({ difficulty })} columns="sm:grid-cols-3" />
+        <OptionCards label="Zorluk isteği" options={DIFFICULTIES} value={draft.difficulty} onChange={(difficulty) => { set({ difficulty }); touch('goal') }} columns="sm:grid-cols-3" />
       </Field>
       <Field title="Filtreler (isteğe bağlı)">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -274,9 +292,13 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
   ]
   const last = !narrow || step === STEPS.length - 1
   // FCA-4c: aşama tamam mı (tarz ve zorluk varsayılanla dolu gelir); masaüstünde geçerli aşama ilk eksik olan.
-  const done = [draft.background !== undefined, draft.licence !== undefined, draft.style !== undefined, draft.difficulty !== undefined]
-  const firstOpen = done.indexOf(false)
-  const current = narrow ? step : firstOpen === -1 ? STEPS.length - 1 : firstOpen
+  const states: StepState[] = [
+    draft.background !== undefined ? 'done' : 'open',
+    draft.licence !== undefined ? 'done' : 'open',
+    touched.style ? 'done' : 'default',
+    touched.goal || draft.priorities.length > 0 ? 'done' : 'default',
+  ]
+  const current = narrow ? step : undefined
   const pickStep = (index: number) => {
     if (narrow) {
       goTo(index)
@@ -290,7 +312,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
   return (
     <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="flex min-w-0 flex-col gap-3">
-        <Stepper done={done} current={current} onPick={pickStep} />
+        <Stepper states={states} current={current} onPick={pickStep} />
         {narrow && <p className="text-xs font-semibold text-ink-2">Adım {step + 1}/{STEPS.length}</p>}
         <div ref={stepBox} className="flex flex-col gap-3">{narrow ? sections[step] : sections}</div>
         {errors.length > 0 && (
