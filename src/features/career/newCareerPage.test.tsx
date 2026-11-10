@@ -62,6 +62,15 @@ beforeEach(() => {
   vi.mocked(endpoints.clubRecommendations).mockReset().mockResolvedValue(recs() as never)
 })
 
+describe('FCA-3 Parça 6: Yeni kariyer başlığı', () => {
+  it('konum çizgisi "Kariyer › Yeni kariyer", h1 page-title', async () => {
+    renderPage()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Yeni kariyer')).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('heading', { level: 1, name: 'Yeni kariyer' })).toHaveClass('page-title')
+  })
+})
+
 describe('Kulüp önerisi (MGR-b, Yeni kariyer ilk adım)', () => {
   const section = async () => within(await screen.findByRole('region', { name: 'Kulüp önerileri' }))
 

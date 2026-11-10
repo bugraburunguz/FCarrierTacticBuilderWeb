@@ -31,6 +31,7 @@ const api = async (method, path, body) => {
 const club = (await (await fetch(`${base}/api/v1/clubs?q=Crewe&limit=1&gender=0`)).json()).data[0]
 const career = await api('POST', '/careers', { clubId: club.id, name: 'FCA-3 kapı', budgetEur: 5_000_000 })
 await api('PATCH', `/careers/${career.id}`, { gameDate: '2027-09-19' })
+const firstPlayer = (await api('GET', `/careers/${career.id}/squad`))[0]?.player.id
 
 const browser = await chromium.launch({ channel: 'chrome' })
 const results = []
@@ -77,6 +78,14 @@ for (const w of [1280, 375]) {
     await page.getByRole('button', { name: /Sıfırdan kur/ }).click()
     await page.locator('[data-empty-slot]').first().waitFor({ timeout: 15000 })
   })
+}
+// Parça 6: oyuncu profili (statlar), Takımlar, Menajer, Yeni kariyer, Kayıt yükle
+for (const w of [1280, 375]) {
+  await shot('oyuncu-profili', `/players/${firstPlayer}?sekme=statlar`, w, 'career')
+  await shot('takimlar', '/teams', w, 'career')
+  await shot('menajer', '/career/manager', w, 'career')
+  await shot('yeni-kariyer', '/career/new', w, 'career')
+  await shot('kayit-yukle', '/career/import', w, 'career')
 }
 // Parça 3: en dar telefon (üst barda mod + kariyer değiştirici + menü)
 await shot('masa', '/career/dashboard', 320, 'career')

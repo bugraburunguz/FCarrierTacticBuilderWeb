@@ -6,6 +6,7 @@ import type { Club } from '../../api/types'
 import { DeleteCareerButton } from '../../components/DeleteCareerButton'
 import { MoneyInput } from '../../components/MoneyInput'
 import { Chip, EmptyState, Skeleton } from '../../design/components/primitives'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { formatEur } from '../../lib/format'
 import { careerStore, useActiveCareerId } from '../../state/careerStore'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
@@ -67,7 +68,7 @@ export function NewCareerPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[960px] flex-col gap-3 py-2">
-      <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Yeni kariyer</h1>
+      <CareerPageHeader crumb="Yeni kariyer" title="Yeni kariyer" />
       <ClubRecommendations onStart={startWith} onPickOther={pickOther} />
       <section aria-label="Kariyer bilgileri" className="glass flex flex-col gap-4 p-4 sm:p-5">
         <div className="relative flex flex-col gap-1">
