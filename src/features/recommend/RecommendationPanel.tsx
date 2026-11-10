@@ -53,6 +53,8 @@ interface Props {
   budgetEur?: number
   /** FCA-4: gelen sonucu tarayıcıda süzer (sayfanın ayrıntılı filtresi); yeni istek atılmaz, kredi düşmez. */
   resultFilter?: (item: CareerRecommendationItem) => boolean
+  /** FCA-5: isteğe giden sunucu süzgeci (lig, uyruk); değişince sonuç bayat sayılır, yeniden getirmek gerekir (ücretli). */
+  requestFilters?: { leagueId?: number; nationalityId?: number }
 }
 
 // Oturum içi "tekrar sorma" tercihi (kalıcı değil; kredi harcamasını açık tutar).
@@ -62,7 +64,7 @@ let skipConfirm = false
  * Kariyer öneri paneli (E3-10): `POST /careers/{id}/recommendations`. Ücretli olduğu için açılışta istek atmaz; düğme kaç kredi düşeceğini yazar,
  * ücretsiz üyelerde bir onay adımı vardır, PREMIUM'da yoktur. Filtre değişince sonuç bayatlar ve yeniden getirmek gerekir.
  */
-export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur, resultFilter }: Props) {
+export function RecommendationPanel({ careerId, position, slotId, roleId, rowAction, rowExtra, cardWidth, longShots: controlledLongShots, onLongShotsChange, longShotsLabel = 'Hayal transferlerini göster', budgetEur, resultFilter, requestFilters }: Props) {
   const { me } = useAuth()
   const queryClient = useQueryClient()
   const ids = { age: useId(), budget: useId() }
@@ -99,6 +101,10 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
   })
 
+  // FCA-5: sayfanın sunucu süzgeci (lig, uyruk) son istekten farklıysa sonuç bayattır; ücretli olduğu için kendiliğinden yeniden istenmez.
+  const filterKey = `${requestFilters?.leagueId ?? ''}|${requestFilters?.nationalityId ?? ''}`
+  const [fetchedKey, setFetchedKey] = useState(filterKey)
+
   if (careerId === undefined) {
     return <EmptyState>Öneri almak için bir kariyer seç.</EmptyState>
   }
@@ -115,10 +121,13 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
     budgetUnknown: budgetMode === 'unknown',
     budgetEur: budgetMode === 'custom' ? customBudget : undefined,
     includeLongShots: longShots,
+    leagueId: requestFilters?.leagueId,
+    nationalityId: requestFilters?.nationalityId,
   })
   const fetchNow = () => {
     setConfirming(false)
     setStale(false)
+    setFetchedKey(filterKey)
     skipConfirm = skipConfirm || dontAsk
     run.mutate(body())
   }
@@ -130,6 +139,8 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
 
   const fromSaved = !run.data && saved.data ? saved.data : undefined
   const result = run.data?.result ?? fromSaved?.response.result
+  // FCA-5: gösterilen sonucun hangi lig/uyrukla alındığı (yeni istek ya da kayıtlı sonuç); şimdiki süzgeçten farklıysa bayat.
+  const shownKey = run.data ? fetchedKey : fromSaved ? `${fromSaved.request?.leagueId ?? ''}|${fromSaved.request?.nationalityId ?? ''}` : filterKey
   // FAZ 6a-J: bütçeye uyanlar önce; aşanlar ayrı başlıkta, anahtarla açılır (değeri bilinmeyen aday uyanlarda kalır).
   const budget = budgetMode === 'custom' ? customBudget : budgetMode === 'career' ? budgetEur : undefined
   const overBudget = (i: CareerRecommendationItem) => budget !== undefined && i.player.valueEur !== undefined && i.player.valueEur > budget
@@ -205,7 +216,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
           {run.isPending ? 'Aranıyor…' : `Önerileri getir · ${priceLabel}`}
         </Button>
       )}
-      {stale && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
+      {(stale || (result !== undefined && shownKey !== filterKey)) && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
       <ErrorBox error={outOfCredit ? undefined : run.error} />
       {outOfCredit && (
         <p className="text-sm">
@@ -232,7 +243,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             {result.userFirstElevenAverage !== undefined ? ` · ilk 11 ort. ${result.userFirstElevenAverage}` : ''}
           </p>
           {result.items.length === 0 ? (
-            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi gevşetmeyi dene.</EmptyState>
+            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi{shownKey !== '|' ? ', lig ya da uyruk süzgecini' : ''} gevşetmeyi dene.</EmptyState>
           ) : (
             <ul className="space-y-1.5">
               {fitting.map((item) => (

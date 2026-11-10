@@ -17,6 +17,9 @@ vi.mock('../../api/endpoints', () => {
       fitRole: vi.fn(), careerRecommendations: vi.fn(), creditCosts: vi.fn(() => Promise.resolve({ recommend: 3, squadFit: 5, advisor: 8 })), playerFacets: vi.fn(),
       setPlayerTag: vi.fn(() => Promise.resolve()), clearPlayerTag: vi.fn(() => Promise.resolve()),
       recommendTactic: vi.fn(), previewSlot: vi.fn(), development: vi.fn(), fitSquad: vi.fn(),
+      // FCA-5: lig ve uyruk seçicileri
+      leagues: vi.fn(() => Promise.resolve([{ id: 13, name: 'Premier League' }, { id: 60, name: 'EFL League Two' }])),
+      nationalities: vi.fn(() => Promise.resolve([{ id: 14, name: 'England' }, { id: 18, name: 'France' }])),
     },
   }
 })
@@ -174,8 +177,21 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('maxdeger=5000000'))
     fireEvent.change(within(panel).getByLabelText('Birim'), { target: { value: 'K' } })
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('maxdeger=5000'))
+    // FCA-5: lig ve uyruk sunucu süzgeci (yeni öneri ister)
+    fireEvent.change(await within(panel).findByLabelText('Lig'), { target: { value: '13' } })
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('lig=13'))
+    fireEvent.change(within(panel).getByLabelText('Uyruk'), { target: { value: '14' } })
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('uyruk=14'))
+    expect(within(panel).getByText(/Lig ve uyruk yeni öneri ister/)).toBeInTheDocument()
     fireEvent.click(within(panel).getByRole('button', { name: 'Sıfırla' }))
-    await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/minovr|minpot|maxdeger/))
+    await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/minovr|minpot|maxdeger|lig=|uyruk=/))
+  })
+
+  it('FCA-5 inceleme: adresteki lig listede yoksa seçici "Bilinmeyen lig" gösterir (istek süzgeci gizli kalmaz)', async () => {
+    renderPage('/career/transfer?lig=999')
+    const panel = await screen.findByRole('region', { name: 'Ayrıntılı filtre' })
+    const select = within(panel).getByLabelText('Lig') as HTMLSelectElement
+    await waitFor(() => expect(select.selectedOptions[0]?.textContent).toBe('Bilinmeyen lig (999)'))
   })
 
   it('FCA-4: ≥1440 px üç sütun — solda ihtiyaçlar + filtre, ortada sekmeler, sağda kısa liste özeti + bütçe planı', async () => {

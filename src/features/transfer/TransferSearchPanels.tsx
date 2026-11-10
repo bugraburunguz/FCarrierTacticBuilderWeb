@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { useId } from 'react'
+import { endpoints } from '../../api/endpoints'
 import type { ShortlistItem } from '../../api/types'
 import { MoneyInput } from '../../components/MoneyInput'
 import { Button, OvrBox } from '../../design/components/primitives'
@@ -11,12 +13,39 @@ const INPUT = 'min-h-10 w-full rounded-[var(--radius-sm)] border border-line bg-
  * FCA-4 Ayrıntılı filtre (Stitch sol panel): en düşük OVR / POT, en yüksek değer. Adrese yazar; öneri sonucunu tarayıcıda süzer
  * (yeni istek ve kredi yok). Mevki, rol, yaş ve bütçe aday panelindeki istek filtreleridir.
  */
-export function FilterPanel({ filters, onChange }: { filters: TransferFilters; onChange: (next: Record<string, string | undefined>) => void }) {
-  const ids = { ovr: useId(), pot: useId() }
+export function FilterPanel({ filters, onChange, gender }: { filters: TransferFilters; onChange: (next: Record<string, string | undefined>) => void; gender?: number }) {
+  const ids = { ovr: useId(), pot: useId(), league: useId(), nation: useId() }
   const num = (v: string) => (v === '' ? undefined : v)
+  // FCA-5: lig ve uyruk listeleri (herkese açık arama listeleri; kariyerin cinsiyetine göre lig).
+  const leagues = useQuery({ queryKey: ['leagues', gender], queryFn: () => endpoints.leagues(gender), staleTime: Infinity })
+  const nationalities = useQuery({ queryKey: ['nationalities'], queryFn: endpoints.nationalities, staleTime: Infinity })
   return (
     <section aria-label="Ayrıntılı filtre" className="glass-2 flex flex-col gap-3 p-3 sm:p-4">
       <h2 className="panel-title font-display text-xl font-semibold leading-6">Ayrıntılı filtre</h2>
+      <div className="grid grid-cols-1 gap-2">
+        <label htmlFor={ids.league} className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.06em] text-muted">
+          Lig
+          <select id={ids.league} className={INPUT} value={filters.leagueId ?? ''} onChange={(e) => onChange({ [FILTER_PARAMS.leagueId]: num(e.target.value) })}>
+            <option value="">Fark etmez</option>
+            {/* Adresteki lig listede yoksa (eski bağlantı, başka cinsiyet) süzgeç gizli kalmasın. */}
+            {filters.leagueId !== undefined && !(leagues.data ?? []).some((l) => l.id === filters.leagueId) && (
+              <option value={filters.leagueId}>Bilinmeyen lig ({filters.leagueId})</option>
+            )}
+            {(leagues.data ?? []).map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+        </label>
+        <label htmlFor={ids.nation} className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.06em] text-muted">
+          Uyruk
+          <select id={ids.nation} className={INPUT} value={filters.nationalityId ?? ''} onChange={(e) => onChange({ [FILTER_PARAMS.nationalityId]: num(e.target.value) })}>
+            <option value="">Fark etmez</option>
+            {filters.nationalityId !== undefined && !(nationalities.data ?? []).some((n) => n.id === filters.nationalityId) && (
+              <option value={filters.nationalityId}>Bilinmeyen uyruk ({filters.nationalityId})</option>
+            )}
+            {(nationalities.data ?? []).map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
+          </select>
+        </label>
+        <p className="text-xs text-ink-2">Lig ve uyruk yeni öneri ister (kredi): değiştirince "Önerileri getir".</p>
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <label htmlFor={ids.ovr} className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.06em] text-muted">
           En düşük OVR
@@ -35,8 +64,8 @@ export function FilterPanel({ filters, onChange }: { filters: TransferFilters; o
         <MoneyInput ariaLabel="En yüksek değer" value={filters.maxValue}
           onChange={(v, meta) => meta?.valid !== false && onChange({ [FILTER_PARAMS.maxValue]: v === undefined ? undefined : String(v) })} />
       </div>
-      <p className="text-xs text-ink-2">Gelen adayları süzer; yeni istek atılmaz, kredi düşmez.</p>
-      <Button variant="ghost" onClick={() => onChange({ [FILTER_PARAMS.minOvr]: undefined, [FILTER_PARAMS.minPot]: undefined, [FILTER_PARAMS.maxValue]: undefined })}>Sıfırla</Button>
+      <p className="text-xs text-ink-2">OVR, POT ve değer gelen adayları süzer; yeni istek atılmaz, kredi düşmez.</p>
+      <Button variant="ghost" onClick={() => onChange(Object.fromEntries(Object.values(FILTER_PARAMS).map((p) => [p, undefined])))}>Sıfırla</Button>
     </section>
   )
 }
