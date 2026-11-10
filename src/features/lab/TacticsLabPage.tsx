@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { ReplicaSummary } from '../../api/types'
-import { CareerSelect } from '../../components/CareerSelect'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
+import { ModeCards, type LabMode } from './ModeCards'
 import { Button, EmptyState, Skeleton, TabPanel, Tabs } from '../../design/components/primitives'
 import { useActiveCareerId } from '../../state/careerStore'
 import { labStore, useLab } from '../../state/labStore'
@@ -40,6 +41,17 @@ function createFrom(careerId: number, active: ActiveTactic | undefined, role?: {
   })
   return created.ok ? { id: created.draft.id } : { message: created.message }
 }
+
+/** FCA-3 "Sıfırdan kur": ana taktiğin (yoksa önerinin) formasyonunda boş taslak; kimse dizili değil, roller formasyon varsayılanı. */
+function createBlank(careerId: number, active: ActiveTactic | undefined): { message?: string } {
+  const formation = active?.tactic.formation ?? DEFAULT_FORMATION
+  const created = labStore.create(careerId, { name: `Sıfırdan · ${formation}`, origin: { kind: 'blank' }, tactic: { formation, slots: {} }, lineup: {} })
+  return created.ok ? {} : { message: created.message }
+}
+
+const DEFAULT_FORMATION = '4-3-3'
+/** Açık sekme → etkin mod kartı (Kod ve Karşılaştır'da mod yok). */
+const TAB_MODE: Record<string, LabMode | undefined> = { kurucu: 'blank', replikalar: 'replica', sihirbaz: 'squad' }
 
 const TABS = [
   { id: 'kurucu', label: 'Kurucu' },
@@ -144,10 +156,20 @@ export function TacticsLabPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Taktik Laboratuvarı</h1>
-        <CareerSelect />
-      </header>
+      {/* FCA-3: Stitch başlığı ve mod kartları; kariyer seçimi üst barda. */}
+      <CareerPageHeader crumb="Taktik" title="Taktik Laboratuvarı" subtitle="Sıfırdan kur, replika uygula ya da kadrona göre bul" />
+      <ModeCards active={TAB_MODE[tab]} disabled={isLoading} onPick={(mode) => {
+        if (mode === 'blank') {
+          const result = createBlank(id, active)
+          setMessage(result.message)
+          if (!result.message) {
+            setTab('kurucu')
+          }
+          return
+        }
+        setMessage(undefined)
+        setTab(mode === 'replica' ? 'replikalar' : 'sihirbaz')
+      }} />
       {draft && <DraftBar careerId={id} lab={lab} draft={draft} onNew={onNew} newDisabled={isLoading} />}
       <Tabs label="Lab sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="kurucu" active={tab === 'kurucu'}>
@@ -156,7 +178,7 @@ export function TacticsLabPage() {
             Henüz taslak yok
           </EmptyState>
         ) : (
-          <LabBuilder key={draft.id} initialSlot={openSlot} onSlotOpened={slotOpened} />
+          <LabBuilder key={draft.id} initialSlot={openSlot} onSlotOpened={slotOpened} blank={draft.origin.kind === 'blank'} />
         )}
       </TabPanel>
       <TabPanel idPrefix={PREFIX} id="sihirbaz" active={tab === 'sihirbaz'}>

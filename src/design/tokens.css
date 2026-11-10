@@ -82,6 +82,8 @@
   --pawn-bg: #f2f5fb; --pawn-ink: #090d1a;
   --pawn-label-bg: #090d1a; --pawn-label-ink: #f2f5fb;
   --edge-glow: transparent; --edge-draft: var(--glass-border);
+  /* FCA-3: Cyber-Pitch boş slot kartı (yarı saydam koyu, ince açık kenar) */
+  --slot-empty-bg: rgba(9, 13, 26, 0.55); --slot-empty-line: rgba(255, 255, 255, 0.45);
 }
 
 /* Kariyer modu: Cyber-Pitch (D-27; eski amber vurgunun yerine). Antrasit-lacivert zemin; mor, siber mavi, neon yeşil aurora; neon yeşil vurgu.

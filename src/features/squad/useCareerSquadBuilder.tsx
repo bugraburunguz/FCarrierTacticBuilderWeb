@@ -22,7 +22,8 @@ export type CareerBuilderBinding = (careerId: number | undefined, squad: CareerP
  * slot görünümleri, rol uyumu, otomatik diziliş ("En iyi 11'i diz" + boş kadroda ilk açılışta) ve slot paneli sekmeleri. v2 ve v3 Lab bunu kullanır;
  * nereye yazıldığını yalnız bağlama (`useBind`) belirler (KARIYER-UX FAZ 4a).
  */
-export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
+/** `autoFillEmpty: false` (FCA-3 "Sıfırdan kur"): boş diziliş kendiliğinden doldurulmaz; "En iyi 11'i diz" yine elle çalışır. */
+export function useCareerSquadBuilder(useBind: CareerBuilderBinding, { autoFillEmpty = true }: { autoFillEmpty?: boolean } = {}) {
   const careerId = useActiveCareerId()
   const { authenticated } = useAuth()
 
@@ -81,11 +82,11 @@ export function useCareerSquadBuilder(useBind: CareerBuilderBinding) {
   const autoFilled = useRef<string>('')
   useEffect(() => {
     const key = `${careerId}|${formation?.id}`
-    if (hasCareer && formation && !ws.stale && (squad.data?.length ?? 0) >= 11 && Object.keys(assignments).length === 0 && autoFilled.current !== key && !autoFill.isPending) {
+    if (autoFillEmpty && hasCareer && formation && !ws.stale && (squad.data?.length ?? 0) >= 11 && Object.keys(assignments).length === 0 && autoFilled.current !== key && !autoFill.isPending) {
       autoFilled.current = key
       autoFill.mutate()
     }
-  }, [hasCareer, careerId, formation, ws.stale, squad.data, assignments, autoFill])
+  }, [autoFillEmpty, hasCareer, careerId, formation, ws.stale, squad.data, assignments, autoFill])
 
   function changeFormation(id: string) {
     ws.changeFormation(id, preset?.formation === id)

@@ -322,8 +322,13 @@ export function Pitch({ slots, onPickPlayer, onPickRole, onRemove, onSwap, readO
                 </span>
               ) : slot.player ? (
                 <PlayerCard player={slot.player} width={cardWidth} chem={slot.chem} fit={slot.fit} price={slot.price} minText={11} minRating={14} eaCard={eaCards} />
+              ) : cyber ? (
+                // FCA-3 (Stitch): boş slot yarı saydam koyu kart, beyaz "+"; mevki etiketi kartın altında (salt okunurda kartın içinde).
+                <span data-empty-slot className="flex flex-col items-center justify-center rounded-[var(--radius-sm)] border border-[var(--slot-empty-line)] bg-[var(--slot-empty-bg)] font-display text-[var(--pawn-label-ink)]" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
+                  {readOnly ? <span className="text-sm font-semibold tracking-[0.04em]">{slot.position}</span> : <span aria-hidden="true" className="text-2xl leading-none">+</span>}
+                </span>
               ) : (
-                <span className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
+                <span data-empty-slot className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-chalk/70 bg-grass-900/40 font-display text-chalk" style={{ width: cardWidth, height: Math.round(cardWidth * 1.39) }}>
                   {readOnly ? <span className="font-mono text-xs">{slot.position}</span> : <span className="text-xl leading-none">+</span>}
                 </span>
               )}
