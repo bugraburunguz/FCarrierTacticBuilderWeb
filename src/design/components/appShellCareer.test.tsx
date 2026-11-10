@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { careerStore } from '../../state/careerStore'
@@ -83,6 +83,25 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     const label = within(menu).getByText('Kadro')
     expect(label.className).toMatch(/sr-only/)
     expect(label.className).toMatch(/min-\[1024px\]:not-sr-only/)
+  })
+
+  it('seçili kariyer yokken (yeni cihaz, temizlenmiş depo) listenin ilki seçilir: üst bar ve sayfalar aynı kariyeri kullanır', async () => {
+    careerStore.set(undefined)
+    renderAt('/career/dashboard')
+    await waitFor(() => expect(careerStore.get()).toBe(7))
+  })
+
+  it('değiştiricinin erişilebilir adı aktif kulübü söyler (dar ekranda kulüp adı gizli)', async () => {
+    renderAt('/career/dashboard')
+    expect(await screen.findByRole('button', { name: 'Kariyer değiştir · aktif: Kuzey Liman SK' })).toBeInTheDocument()
+  })
+
+  it('<1024 px: kulüp bilgisi gizlenir ama kariyer değiştirici her genişlikte (sayfa içi seçici kalktı); dar ekranda yalnız ikon', async () => {
+    renderAt('/career/dashboard')
+    const bar = screen.getByRole('region', { name: 'Aktif kariyer' })
+    expect(bar.className).not.toMatch(/max-\[1023px\]:hidden/)
+    expect((await within(bar).findByText('Kuzey Liman SK')).closest('div')!.className).toMatch(/max-\[1023px\]:hidden/)
+    expect(within(bar).getByText('Kariyer değiştir').className).toMatch(/max-sm:sr-only/)
   })
 
   it('kariyerler yüklenemezse "Aktif kariyer yok" değil, hata metni', async () => {

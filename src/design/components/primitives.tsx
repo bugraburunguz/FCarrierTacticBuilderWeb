@@ -137,13 +137,13 @@ const TIER_CLASS: Record<RatingTier, string> = {
  * OVR kutusu (FCA-3, Stitch): 4 px köşeli kare, kademe rengiyle çerçeve; elitte dolu zemin, koyu rakam. Barlow kalın, tablo hizalı rakam.
  * Kademe `data-tier` ile de okunur; erişilebilir ad "OVR 76". Boyut: md 36 px, sm 28 px (tablo).
  */
-export function OvrBox({ value, size = 'md', className }: { value: number | null | undefined; size?: 'sm' | 'md'; className?: string }) {
+export function OvrBox({ value, size = 'md', className, label = 'OVR' }: { value: number | null | undefined; size?: 'sm' | 'md'; className?: string; label?: string }) {
   const known = typeof value === 'number' && Number.isFinite(value)
   const tier = known ? ratingTier(value) : undefined
   return (
     <span
       role="img"
-      aria-label={known ? `OVR ${value}` : 'OVR bilinmiyor'}
+      aria-label={known ? `${label} ${value}` : `${label} bilinmiyor`}
       data-tier={tier}
       className={cx(
         'inline-grid shrink-0 place-items-center rounded-[var(--radius-sm)] border bg-[var(--glass-3)] font-display font-bold tabular-nums leading-none',

@@ -105,6 +105,11 @@ describe('1–99 derece skalası ve OVR kutusu (Stitch)', () => {
     expect(contrastRatio(parseColor(career['--accent-ink']), parseColor(career['--rate-90']))).toBeGreaterThanOrEqual(4.5)
   })
 
+  it('OvrBox: label verilirse erişilebilir ad "{label} {değer}" (sarmalayıcıya ad verilmez)', () => {
+    render(<OvrBox value={63} label="Takım ortalaması" />)
+    expect(screen.getByRole('img', { name: 'Takım ortalaması 63' })).toHaveTextContent('63')
+  })
+
   it('OvrBox: değer yoksa tire ve "OVR bilinmiyor"', () => {
     render(<OvrBox value={undefined} />)
     expect(screen.getByLabelText('OVR bilinmiyor')).toHaveTextContent('–')

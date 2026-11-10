@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
-import { Chip } from '../design/components/primitives'
+import { Chip, OvrBox } from '../design/components/primitives'
 import { HelpPopover } from './ui'
 import { formatEur } from '../lib/format'
 import { squadGroups, type SquadGrouping } from '../lib/squadGroups'
@@ -163,9 +163,12 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping }: R
                   {entry.loanUntil && <span className="text-xs text-muted">bitiş {day(entry.loanUntil)}</span>}
                 </span>
               )
+              // FCA-3: Stitch durum şeridi (solda 3 px; renk çipin tonuyla aynı, metin çipte — renk tek başına anlam taşımaz).
+              const rowStatus = entry.loanedOut ? 'loaned-out' : entry.onLoan ? 'on-loan' : undefined
+              const stripe = rowStatus === 'loaned-out' ? ' pl-2 shadow-[inset_3px_0_0_var(--info)]' : rowStatus === 'on-loan' ? ' pl-2 shadow-[inset_3px_0_0_var(--warn)]' : ''
               return (
-                <tr key={entry.player.id} className="border-t border-line align-top">
-                  <td data-col="name" className="py-1.5 pr-2 font-medium">
+                <tr key={entry.player.id} data-status={rowStatus} className="border-t border-line align-top">
+                  <td data-col="name" className={`py-1.5 pr-2 font-medium${stripe}`}>
                     <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline">{entry.player.name}</Link>
                     <span data-compact className="block text-xs font-normal text-muted lg:hidden">
                       {positions}<span className="sm:hidden">{entry.player.age !== undefined && ` · ${entry.player.age} yaş`}</span>
@@ -196,7 +199,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping }: R
                       <span className="text-muted">{entry.loanedOut ? 'Kiralıkta' : '—'}</span>
                     )}
                   </td>
-                  <td data-col="ovr" className={`py-1.5 font-semibold ${NUM}`}>{entry.player.overall}</td>
+                  <td data-col="ovr" className={`py-1 font-semibold ${NUM}`}><OvrBox value={entry.player.overall} size="sm" /></td>
                   <td data-col="pot" className={`py-1.5 ${NUM}`}>{entry.dynamicPotential ?? entry.player.potential ?? '—'}</td>
                   {recordColumns && (
                     <td data-col="wage" className={`py-1.5 ${NUM} ${LG}`}>{entry.wageEur !== undefined && entry.wageEur !== null ? formatEur(entry.wageEur) : '—'}</td>

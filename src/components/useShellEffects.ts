@@ -15,6 +15,10 @@ export function useShellEffects(pathname: string) {
     if (authenticated && careers.data && activeCareer !== undefined && !careers.data.some((c) => c.id === activeCareer)) {
       careerStore.set(careers.data[0]?.id)
     }
+    // FCA-3: seçili kariyer hiç yoksa (yeni cihaz, temizlenmiş depo) listenin ilki; eskiden sayfa içi seçici yazıyordu, artık kabuk.
+    if (authenticated && careers.data && careers.data.length > 0 && activeCareer === undefined) {
+      careerStore.set(careers.data[0].id)
+    }
   }, [authenticated, careers.data, activeCareer])
   useEffect(() => {
     const forced = modeForPath(pathname)

@@ -37,12 +37,13 @@ export function CareerBar() {
   const season = seasonLabel(active?.season)
 
   return (
-    <section aria-label="Aktif kariyer" className="flex min-w-0 items-center gap-3 max-[1023px]:hidden">
-      <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] text-ink-2">
+    // <1024 px: kulüp bilgisi gizli, değiştirici kalır (Masa/Kadro'da sayfa içi seçici yok).
+    <section aria-label="Aktif kariyer" className="flex min-w-0 items-center gap-3">
+      <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] text-ink-2 max-[1023px]:hidden">
         <Shield size={18} />
       </span>
       {active ? (
-        <div className="min-w-0 leading-tight">
+        <div className="min-w-0 leading-tight max-[1023px]:hidden">
           <p className="truncate font-[family-name:var(--font-display)] text-lg font-bold uppercase tracking-wide text-ink">{active.clubName ?? `Kulüp ${active.clubId}`}</p>
           <p className="truncate text-xs text-muted">
             {date ? <span>{date}</span> : null}
@@ -51,23 +52,24 @@ export function CareerBar() {
           </p>
         </div>
       ) : careers.isError ? (
-        <p className="text-sm text-bad">Kariyerler yüklenemedi</p>
+        <p className="text-sm text-bad max-[1023px]:hidden">Kariyerler yüklenemedi</p>
       ) : careers.isLoading ? (
-        <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)]" />
+        <span role="status" aria-label="Kariyer yükleniyor" className="inline-block h-8 w-40 animate-pulse rounded-[var(--radius-sm)] bg-[var(--glass-3)] max-[1023px]:hidden" />
       ) : (
-        <p className="text-sm text-muted">Aktif kariyer yok</p>
+        <p className="text-sm text-muted max-[1023px]:hidden">Aktif kariyer yok</p>
       )}
-      <CareerSwitcher list={list} activeId={active?.id} />
+      <CareerSwitcher list={list} activeId={active?.id} activeName={active ? active.clubName ?? `Kulüp ${active.clubId}` : undefined} />
     </section>
   )
 }
 
-function CareerSwitcher({ list, activeId }: { list: Career[]; activeId?: number }) {
+function CareerSwitcher({ list, activeId, activeName }: { list: Career[]; activeId?: number; activeName?: string }) {
   return (
     <Popover.Root>
-      <Popover.Trigger className="inline-flex min-h-9 items-center gap-2 rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] px-3 text-sm text-ink-2 hover:border-[var(--accent)]">
+      {/* Dar ekranda kulüp adı gizli: aktif kariyer erişilebilir adda duyurulur. */}
+      <Popover.Trigger aria-label={activeName ? `Kariyer değiştir · aktif: ${activeName}` : 'Kariyer değiştir'} className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-line bg-[var(--glass-3)] px-3 text-sm text-ink-2 hover:border-[var(--accent)] max-sm:min-h-11 max-sm:min-w-11 max-sm:px-0">
         <FolderOpen size={16} aria-hidden="true" />
-        <span>Kariyer değiştir</span>
+        <span className="max-sm:sr-only">Kariyer değiştir</span>
         <ChevronDown size={14} aria-hidden="true" />
       </Popover.Trigger>
       <Popover.Portal>
