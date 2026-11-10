@@ -1,8 +1,8 @@
-import type { AcademyPlayer, CareerPlayer, CareerSnapshot, RosterEventType } from '../api/types'
+import type { AcademyPlayer, CareerPlayer, CareerSnapshot, DepthEntry, RosterEventType } from '../api/types'
 import { CONTRACT_MONTHS, contractMonthsLeft, daysBetween } from './contract'
 import { deskLink } from './deskLinks'
 import { compareWeakClass, isWeakClass, roleFitText, WEAK_CLASS_ORDER, WEAK_CLASS_TEXT, type FitLabel, type WeakClass } from './fitLabels'
-import { SLOT_URGENCY_LABEL, slotDepth, type SlotDepthRow, type SlotUrgency } from './slotDepth'
+import { slotDepth, urgencyLabel, type SlotDepthRow, type SlotUrgency } from './slotDepth'
 
 /** Masa, saha ve İhtiyaçlar aynı v3 rol uyumundan okur: dizilimdeki bir slot (fitLabels sözlüğüyle). */
 export interface DeskSlot {
@@ -20,6 +20,8 @@ export interface DeskSlot {
   strength?: number
   /** FIT-2 madde 6: sunucunun önerdiği daha uygun rol; ROL_UYUMSUZ işi Lab'da onu uygular. */
   betterRoleId?: string
+  /** FCA-15: /fit/lineup slot.depth (sunucunun tekil yedekleri); Masa derinlik işi Derinlik sekmesiyle aynı veriden. */
+  depth?: readonly DepthEntry[]
 }
 
 /** Kariyer "Menajer Masası" kuralları (13 §3.1, §5): saf fonksiyonlar, sunucuya gitmeden masada gösterilir; her öneri gerekçelidir. */
@@ -249,7 +251,7 @@ export function jobLayer(kind: ActionKind): 'tactic' | 'record' {
 
 /** Tüm işler öncelik sırasıyla (V3-06e: v3 Masa, zayıf halka kartlarında gösterilen slotları çıkarıp ilk 3'ü alır). */
 /** Slot bazlı derinlik işi önceliği: sözleşmenin altında, eski grup işiyle aynı bantta (20–35); yedek yok en önde. */
-const DEPTH_PRIORITY: Record<SlotUrgency, number> = { NO_BACKUP: 35, YOUTH_ONLY: 28, OLD_STARTER: 24, QUALITY_GAP: 22 }
+const DEPTH_PRIORITY: Record<SlotUrgency, number> = { NO_BACKUP: 35, YOUTH_ONLY: 28, WEAK_BACKUP: 26, OLD_STARTER: 24, QUALITY_GAP: 22 }
 
 function depthReason(row: SlotDepthRow): string {
   switch (row.urgency) {
@@ -257,6 +259,8 @@ function depthReason(row: SlotDepthRow): string {
       return `${row.position} slotunda ilk 11 dışında oynayabilecek oyuncu yok; sakatlık ve rotasyonda açık kalır.`
     case 'YOUTH_ONLY':
       return `${row.position} slotunda yalnız genç yedek var${row.youth ? ` (${row.youth.name})` : ''}; deneyimli bir yedek düşün.`
+    case 'WEAK_BACKUP':
+      return `${row.position} slotunun yedeği ${row.backup?.name ?? 'oyuncu'} bu rolde zayıf; daha uygun bir yedek düşün.`
     case 'OLD_STARTER':
       return `İlk 11'deki ${row.starter?.name ?? 'oyuncu'} ${row.starter?.age ?? 30} yaşında; düşüş başlamadan yerine hazırlık yap.`
     default:
@@ -315,7 +319,7 @@ export function rankActions({ squad, slots, tags, gameDate, academy, depthBySlot
       actions.push({
         slotId: row.slotId,
         kind: 'DEPTH',
-        title: `Derinlik: ${where} · ${SLOT_URGENCY_LABEL[row.urgency]}`,
+        title: `Derinlik: ${where} · ${urgencyLabel(row)}`,
         reason: depthReason(row),
         to: deskLink.depthSlot(row.slotId),
         priority: DEPTH_PRIORITY[row.urgency],

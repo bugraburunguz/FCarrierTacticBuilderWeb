@@ -8,6 +8,7 @@ const endpoints = vi.hoisted(() => ({ lineup: vi.fn(), fitRole: vi.fn() }))
 vi.mock('../../api/endpoints', () => ({ endpoints }))
 
 import { useLineupFits } from './useLineupFits'
+import { toDeskSlots } from './useSlotFits'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
 
 const slots = [
@@ -54,6 +55,17 @@ describe('useLineupFits', () => {
     await waitFor(() => expect(result.current.rows).toHaveLength(1))
     expect(endpoints.lineup).toHaveBeenCalledTimes(1)
     expect(result.current.rows[0]).toMatchObject({ roleAlternatives: alts, betterRole: alts[0] })
+  })
+
+  it('FCA-15: aynı yanıtın slot.depth\'i satırda; Masa satırına (toDeskSlots) da geçer', async () => {
+    const depth = [{ playerId: 4, playerName: 'Yedek', combined: 60, roleFitScore: 60, badge: 'YELLOW', currentFit: 41, weak: true }]
+    endpoints.lineup.mockResolvedValue({ slots: [
+      { slotId: 'LST', position: 'ST', roleId: 'af', roleName: 'Forvet', tags: [], playerId: 9, roleFit: roleFit(9, 35, 'WEAK'), depth },
+    ] })
+    const { result } = renderHook(() => useLineupFits(ws({ LST: 9 }), players, 7), { wrapper })
+    await waitFor(() => expect(result.current.rows).toHaveLength(1))
+    expect(result.current.rows[0].depth).toEqual(depth)
+    expect(toDeskSlots(result.current.rows)[0].depth).toEqual(depth)
   })
 
   it('kariyer yoksa ya da dolu slot yoksa istek yok', () => {

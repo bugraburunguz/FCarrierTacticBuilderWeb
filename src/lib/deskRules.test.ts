@@ -108,7 +108,7 @@ describe('iş sıralaması (V3-06e)', () => {
    */
   it('derinlik işi slot bazlı: başlık slot ve aciliyet metni, bağlantı ?slot=; altyapı bilinmiyorsa "Yedek yok" yok', () => {
     const team = [player(1, 'GK', 80, 30), player(2, 'CB', 78, 26), player(3, 'ST', 70, 32), player(5, 'GK', 60, 19)]
-    const xi = [slot('GK', 'GK', 70, 1), slot('LCB', 'CB', 70, 2), slot('ST', 'ST', 70, 3)]
+    const xi = [slot('GK', 'GK', 70, 1), slot('LCB', 'CB', 70, 2), slot('ST', 'ST', 70, 3)].map((s) => ({ ...s, depth: [] }))
     const jobs = rankActions({ squad: team, slots: xi, tags: {}, academy: [], depthBySlot: true }).filter((a) => a.kind === 'DEPTH')
     expect(jobs.map((j) => j.title)).toEqual(expect.arrayContaining(['Derinlik: GK · Yalnız genç yedek', 'Derinlik: CB (LCB) · Yedek yok', 'Derinlik: ST · Yedek yok']))
     expect(jobs.find((j) => j.title.includes('LCB'))?.to).toBe('/career/squad?sekme=derinlik&slot=LCB')
@@ -118,6 +118,19 @@ describe('iş sıralaması (V3-06e)', () => {
     expect(unknown.map((j) => j.title)).toEqual(['Derinlik: GK · Yalnız genç yedek'])
     // v2: grup işi aynen.
     expect(rankActions({ squad: team, slots: xi, tags: {} }).find((a) => a.kind === 'DEPTH')?.to).toMatch(/grup=/)
+  })
+
+  /** FCA-15: Masa derinlik işi /fit/lineup depth'ini okur; zayıf yedek "Yedek zayıf (Güç X)", depth yoksa (eski backend) yedek işi üretilmez. */
+  it('derinlik işi sunucu yedeğinden: zayıf yedek "Yedek zayıf (Güç 41)"; depth yoksa "Yedek yok" üretilmez', () => {
+    const team = [player(1, 'GK', 80, 26), player(2, 'CB', 78, 26), player(6, 'GK', 70, 27), player(7, 'RB', 60, 27)]
+    const entry = (playerId: number, weak: boolean, currentFit: number) =>
+      ({ playerId, playerName: `P${playerId}`, combined: 50, roleFitScore: 50, badge: 'GREEN' as const, currentFit, weak })
+    const xi = [{ ...slot('GK', 'GK', 70, 1), depth: [entry(6, false, 70)] }, { ...slot('LCB', 'CB', 70, 2), depth: [entry(7, true, 41.2)] }]
+    const jobs = rankActions({ squad: team, slots: xi, tags: {}, academy: [], depthBySlot: true }).filter((a) => a.kind === 'DEPTH')
+    expect(jobs.map((j) => j.title)).toEqual(['Derinlik: CB (LCB) · Yedek zayıf (Güç 41)'])
+    expect(jobs[0].reason).toContain('P7')
+    const legacy = xi.map((s) => ({ ...s, depth: undefined }))
+    expect(rankActions({ squad: team, slots: legacy, tags: {}, academy: [], depthBySlot: true }).filter((a) => a.kind === 'DEPTH')).toEqual([])
   })
 
   it('sözleşme işi yalnız oyun tarihi verilince (Masa uyarısıyla aynı kural ve eşik); v2 çağrısında yok', () => {

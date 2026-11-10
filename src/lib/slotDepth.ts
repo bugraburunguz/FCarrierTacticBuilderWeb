@@ -1,16 +1,20 @@
-import type { AcademyPlayer, CareerPlayer } from '../api/types'
+import type { AcademyPlayer, CareerPlayer, DepthEntry } from '../api/types'
 import type { WeakClass } from './fitLabels'
 
 /** Derinlikte "Genç" kolonu ve yaş bandı sınırı. Kural Kadro › Derinlik ile Masa'nın derinlik işinde ortak (GT-b). */
 export const YOUTH_MAX_AGE = 21
 
-/** Matris satırı: ana taktiğin (yoksa başlangıç önerisinin) slotu ve dizilen oyuncu; weakClass /fit/lineup sınıfı (kalite açığı). */
+/**
+ * Matris satırı: ana taktiğin (yoksa başlangıç önerisinin) slotu ve dizilen oyuncu; weakClass /fit/lineup sınıfı (kalite açığı).
+ * depth: /fit/lineup slot.depth (FCA-15, sunucu tekil atar); alan yoksa (eski backend ya da uyum satırı yok) derinlik bilinmiyor.
+ */
 export interface DepthSlot {
   slotId: string
   position: string
   roleId: string
   playerId?: number
   weakClass?: WeakClass
+  depth?: readonly DepthEntry[]
 }
 
 export interface DepthCell {
@@ -21,14 +25,18 @@ export interface DepthCell {
   age?: number
   /** Altyapı oyuncusu (Genç kolonunda). */
   academy?: boolean
+  /** Yedek: sunucunun zayıf işareti ve bu slottaki Güç'ü. */
+  weak?: boolean
+  currentFit?: number
 }
 
-/** Aciliyet (satır başına tek, öncelik sırasıyla): yedek yok > yalnız genç yedek > ilk 11 ≥ 30 yaş > ilk 11 kalite açığı. */
-export type SlotUrgency = 'NO_BACKUP' | 'YOUTH_ONLY' | 'OLD_STARTER' | 'QUALITY_GAP'
+/** Aciliyet (satır başına tek, öncelik sırasıyla): yedek yok > yalnız genç yedek > yedek zayıf > ilk 11 ≥ 30 yaş > ilk 11 kalite açığı. */
+export type SlotUrgency = 'NO_BACKUP' | 'YOUTH_ONLY' | 'WEAK_BACKUP' | 'OLD_STARTER' | 'QUALITY_GAP'
 
 export const SLOT_URGENCY_LABEL: Record<SlotUrgency, string> = {
   NO_BACKUP: 'Yedek yok',
   YOUTH_ONLY: 'Yalnız genç yedek',
+  WEAK_BACKUP: 'Yedek zayıf',
   OLD_STARTER: 'İlk 11 ≥ 30 yaş',
   QUALITY_GAP: 'İlk 11 kalite açığı',
 }
@@ -40,8 +48,17 @@ export interface SlotDepthRow extends DepthSlot {
   urgency?: SlotUrgency
   /** Altyapıda bu mevkide oynayan en yüksek OVR'li oyuncu ("Altyapıda: {ad}"). */
   academyName?: string
-  /** Yedek kaç slotta yedek sayılıyor (farklı mevkili slotlar aynı oyuncuyu paylaşabilir; ≥ 2 ise hücrede not). */
-  backupSlots?: number
+  /** Slotta /fit/lineup depth alanı geldi mi; gelmediyse Yedek kolonu "Derinlik bilgisi yok". */
+  depthKnown: boolean
+}
+
+/** Aciliyet metni; zayıf yedekte Güç yazılır ("Yedek zayıf (Güç 41)"). */
+export function urgencyLabel(row: Pick<SlotDepthRow, 'urgency' | 'backup'>): string {
+  if (!row.urgency) {
+    return ''
+  }
+  const fit = row.backup?.currentFit
+  return row.urgency === 'WEAK_BACKUP' && fit !== undefined ? `${SLOT_URGENCY_LABEL.WEAK_BACKUP} (Güç ${Math.round(fit)})` : SLOT_URGENCY_LABEL[row.urgency]
 }
 
 const OLD_STARTER_AGE = 30
@@ -52,47 +69,75 @@ const academyCell = (p: AcademyPlayer): DepthCell => ({ id: p.playerId, name: p.
 const ovr = (c: DepthCell) => c.overall ?? 0
 const young = (age?: number | null) => age !== undefined && age !== null && age <= YOUTH_MAX_AGE
 
+/** Genç kolonu slotlar arasında tekil: her genç ilk mevkisine en yakın slotta (mevki sırası, sonra OVR, sonra slot sırası). */
+function assignYouth(slots: DepthSlot[], youth: { cell: DepthCell; positions: readonly string[] }[]): (DepthCell | undefined)[] {
+  const pairs = slots.flatMap((s, slotIndex) => youth.flatMap((y, youthIndex) => {
+    const rank = y.positions.indexOf(s.position)
+    return rank < 0 ? [] : [{ slotIndex, youthIndex, rank, ovr: ovr(y.cell) }]
+  }))
+  pairs.sort((a, b) => a.rank - b.rank || b.ovr - a.ovr || a.slotIndex - b.slotIndex)
+  const out: (DepthCell | undefined)[] = slots.map(() => undefined)
+  const taken = new Set<number>()
+  pairs.forEach((p) => {
+    if (!out[p.slotIndex] && !taken.has(p.youthIndex)) {
+      out[p.slotIndex] = youth[p.youthIndex].cell
+      taken.add(p.youthIndex)
+    }
+  })
+  return out
+}
+
 /**
- * GT-b: slot bazlı derinlik. Yedek: ilk 11 dışı, kiralık gönderilmemiş, 21 yaş üstü ve mevkiyi listeleyen en yüksek OVR'li oyuncu; Genç: ilk 11 dışı
- * ≤ 21 yaş kadro oyuncusu ya da altyapı oyuncusu. Aynı mevkideki slotlar sırayla farklı oyuncu alır (iki CB slotu → 1. ve 2. yedek).
+ * GT-b + FCA-15: slot bazlı derinlik. Yedek: /fit/lineup slotunun depth listesindeki ilk geçerli girdi (sunucu tekil atar: oyuncu en çok bir slotun
+ * yedeği, kaleci yalnız kalede, ≤ 21 yok; web yalnız kadroda olmayan, kiralık gönderilen, ilk 11'deki ya da başka satırda kullanılanı atlar).
+ * Genç: ilk 11 dışı ≤ 21 yaş kadro oyuncusu ya da altyapı oyuncusu, slotlar arasında tekil.
  */
 export function slotDepth(slots: DepthSlot[], squad: CareerPlayer[], academy: AcademyPlayer[]): SlotDepthRow[] {
   const byId = new Map(squad.map((c) => [c.player.id, c]))
   const starters = new Set(slots.flatMap((s) => (s.playerId !== undefined ? [s.playerId] : [])))
-  const bench = squad.filter((c) => !starters.has(c.player.id) && !c.loanedOut).sort((a, b) => b.player.overall - a.player.overall)
-  const seen = new Map<string, number>()
-  const rows = slots.map((s): SlotDepthRow => {
-    const index = seen.get(s.position) ?? 0
-    seen.set(s.position, index + 1)
-    const plays = (c: CareerPlayer) => c.player.positions.includes(s.position)
-    const backups = bench.filter((c) => plays(c) && !young(c.player.age)).map(cell)
-    const academyAt = academy.filter((p) => p.positions.includes(s.position)).sort((a, b) => (b.overall ?? 0) - (a.overall ?? 0))
-    const youth = [...bench.filter((c) => plays(c) && young(c.player.age)).map(cell), ...academyAt.map(academyCell)].sort((a, b) => ovr(b) - ovr(a))
+  const used = new Set<number>()
+  const backups = slots.map((s): DepthCell | undefined => {
+    const hit = (s.depth ?? []).find((d) => {
+      const c = byId.get(d.playerId)
+      return c !== undefined && !c.loanedOut && !starters.has(d.playerId) && !used.has(d.playerId)
+    })
+    if (!hit) {
+      return undefined
+    }
+    used.add(hit.playerId)
+    return { ...cell(byId.get(hit.playerId)!), weak: hit.weak ?? false, currentFit: hit.currentFit }
+  })
+  const youthPool = [
+    ...squad.filter((c) => !starters.has(c.player.id) && !c.loanedOut && !used.has(c.player.id) && young(c.player.age))
+      .map((c) => ({ cell: cell(c), positions: c.player.positions })),
+    ...academy.map((p) => ({ cell: academyCell(p), positions: p.positions })),
+  ]
+  const youths = assignYouth(slots, youthPool)
+  return slots.map((s, i): SlotDepthRow => {
     const starterEntry = s.playerId !== undefined ? byId.get(s.playerId) : undefined
     const starter = starterEntry ? cell(starterEntry) : undefined
-    // Yedek gibi genç de aynı mevkideki slotlar arasında paylaşılmaz (tek genç iki slotun uyarısını birden gizlemesin).
-    const backup = backups[index]
-    const youngest = youth[index]
-    const urgency: SlotUrgency | undefined = !backup && !youngest ? 'NO_BACKUP'
-      : !backup ? 'YOUTH_ONLY'
-        : starter?.age !== undefined && starter.age >= OLD_STARTER_AGE ? 'OLD_STARTER'
-          : s.weakClass && QUALITY_GAP.has(s.weakClass) ? 'QUALITY_GAP' : undefined
-    return { ...s, starter, backup, youth: youngest, urgency, academyName: academyAt[0]?.name }
+    const backup = backups[i]
+    const youth = youths[i]
+    const depthKnown = s.depth !== undefined
+    const academyAt = academy.filter((p) => p.positions.includes(s.position)).sort((a, b) => (b.overall ?? 0) - (a.overall ?? 0))
+    const urgency: SlotUrgency | undefined = depthKnown && !backup && !youth ? 'NO_BACKUP'
+      : depthKnown && !backup ? 'YOUTH_ONLY'
+        : backup?.weak ? 'WEAK_BACKUP'
+          : starter?.age !== undefined && starter.age >= OLD_STARTER_AGE ? 'OLD_STARTER'
+            : s.weakClass && QUALITY_GAP.has(s.weakClass) ? 'QUALITY_GAP' : undefined
+    return { ...s, starter, backup, youth, urgency, academyName: academyAt[0]?.name, depthKnown }
   })
-  const backupCount = new Map<number, number>()
-  rows.forEach((r) => r.backup && backupCount.set(r.backup.id, (backupCount.get(r.backup.id) ?? 0) + 1))
-  return rows.map((r) => (r.backup ? { ...r, backupSlots: backupCount.get(r.backup.id) } : r))
 }
 
 /**
  * Matris satırları her zaman formasyonun slotlarından (11): dizilmemiş ya da oyuncusu kadrodan çıkmış slot da satırdır (sorunun en büyük olduğu yer).
- * Rol taktiğin slotundan (yoksa formasyonun varsayılanı); rol ve kalite sınıfı uyum satırından (varsa).
+ * Rol taktiğin slotundan (yoksa formasyonun varsayılanı); rol, kalite sınıfı ve depth uyum satırından (varsa; /fit/lineup, aynı sorgu).
  */
 export function buildDepthSlots(
   formation: { slots: { slotId: string; position: string; defaultRole: string }[] } | undefined,
   lineup: Readonly<Record<string, number | null | undefined>> | undefined,
   tacticSlots: Readonly<Record<string, { roleId?: string }>> | undefined,
-  fitRows: { slotId: string; roleId?: string; weakClass?: WeakClass }[],
+  fitRows: { slotId: string; roleId?: string; weakClass?: WeakClass; depth?: readonly DepthEntry[] }[],
 ): DepthSlot[] {
   if (!formation) {
     return []
@@ -103,7 +148,7 @@ export function buildDepthSlots(
     const id = lineup?.[s.slotId]
     return {
       slotId: s.slotId, position: s.position, roleId: fit?.roleId ?? tacticSlots?.[s.slotId]?.roleId ?? s.defaultRole,
-      playerId: typeof id === 'number' ? id : undefined, weakClass: fit?.weakClass,
+      playerId: typeof id === 'number' ? id : undefined, weakClass: fit?.weakClass, depth: fit?.depth,
     }
   })
 }

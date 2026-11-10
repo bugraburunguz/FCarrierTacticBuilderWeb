@@ -9,21 +9,21 @@ import { deskLink } from '../../lib/deskLinks'
 import { ageProfile, GROUP_LABEL, type PositionGroup } from '../../lib/deskRules'
 import type { SlotFitRow } from '../squad/useSlotFits'
 import { DevelopmentRecommendations } from '../growth/DevelopmentRecommendations'
-import { SLOT_URGENCY_LABEL, slotDepth, type DepthCell, type DepthSlot, type SlotDepthRow, type SlotUrgency } from '../../lib/slotDepth'
+import { slotDepth, urgencyLabel, type DepthCell, type DepthSlot, type SlotDepthRow, type SlotUrgency } from '../../lib/slotDepth'
 import { ageBands, contractTimeline, slotForGroup, YOUTH_MAX_AGE } from './careerSquadRules'
 
 const DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const decimal = (value: number) => value.toLocaleString('tr-TR', { maximumFractionDigits: 1 })
 const LINK = 'inline-flex min-h-8 items-center text-xs font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11'
 /** Renk yalnız destekler: yedek yok (kötü), diğerleri uyarı; metin her zaman yazılı. */
-const URGENCY_TONE: Record<SlotUrgency, 'bad' | 'warn'> = { NO_BACKUP: 'bad', YOUTH_ONLY: 'warn', OLD_STARTER: 'warn', QUALITY_GAP: 'warn' }
+const URGENCY_TONE: Record<SlotUrgency, 'bad' | 'warn'> = { NO_BACKUP: 'bad', YOUTH_ONLY: 'warn', WEAK_BACKUP: 'warn', OLD_STARTER: 'warn', QUALITY_GAP: 'warn' }
 const COLUMNS: { key: 'starter' | 'backup' | 'youth'; label: string }[] = [
   { key: 'starter', label: 'İlk 11' },
   { key: 'backup', label: 'Yedek' },
   { key: 'youth', label: `Genç (≤${YOUTH_MAX_AGE})` },
 ]
 
-function Cell({ label, value, note }: { label: string; value?: DepthCell; note?: string }) {
+function Cell({ label, value, note, empty = 'Yok' }: { label: string; value?: DepthCell; note?: string; empty?: string }) {
   return (
     <div role="group" aria-label={label} className="flex min-w-0 flex-col gap-0.5">
       <span className="text-xs text-ink-2">{label}</span>
@@ -33,7 +33,7 @@ function Cell({ label, value, note }: { label: string; value?: DepthCell; note?:
             className="inline-flex min-h-8 min-w-0 items-center truncate underline-offset-2 hover:underline max-sm:min-h-11">{value.name}</Link>
           <span className="shrink-0 font-[var(--font-num)] tabular-nums text-ink-2">&nbsp;· {value.overall ?? '–'}{value.age ? ` · ${value.age}` : ''}</span>
         </span>
-      ) : <span className="text-sm text-muted">Yok</span>}
+      ) : <span className="text-sm text-muted">{empty}</span>}
       {note && <span className="text-xs text-warn">{note}</span>}
     </div>
   )
@@ -43,7 +43,7 @@ function Cell({ label, value, note }: { label: string; value?: DepthCell; note?:
 type AcademyState = 'ready' | 'loading' | 'error'
 
 /** Slot satırı: mevki, tek aciliyet metni, üç kolon ve eylemler ("Transferde aday bul", altyapıda aday varsa "Altyapıda: {ad}"). */
-function SlotRow({ row: raw, focus, academy }: { row: SlotDepthRow; focus: boolean; academy: AcademyState }) {
+function SlotRow({ row: raw, focus, academy, pending }: { row: SlotDepthRow; focus: boolean; academy: AcademyState; pending: boolean }) {
   const row = academy !== 'ready' && raw.urgency === 'NO_BACKUP' ? { ...raw, urgency: undefined } : raw
   const ref = useRef<HTMLLIElement>(null)
   useEffect(() => {
@@ -57,11 +57,11 @@ function SlotRow({ row: raw, focus, academy }: { row: SlotDepthRow; focus: boole
       className={`glass-3 flex flex-col gap-2 rounded-[var(--radius-sm)] p-3 outline-none focus-visible:ring-2 focus-visible:ring-accent ${focus ? 'ring-1 ring-[var(--accent)]' : ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-semibold">{row.position}{row.slotId !== row.position && <span className="font-normal text-ink-2"> · {row.slotId}</span>}</h3>
-        {row.urgency && <Chip tone={URGENCY_TONE[row.urgency]}>{SLOT_URGENCY_LABEL[row.urgency]}</Chip>}
+        {row.urgency && <Chip tone={URGENCY_TONE[row.urgency]}>{urgencyLabel(row)}</Chip>}
       </div>
       <div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-3">
-        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} note={c.key === 'youth' && academy === 'error' ? 'Altyapı yüklenemedi'
-          : c.key === 'backup' && (row.backupSlots ?? 0) > 1 ? `${row.backupSlots} slotta yedek` : undefined} />)}
+        {COLUMNS.map((c) => <Cell key={c.key} label={c.label} value={row[c.key]} note={c.key === 'youth' && academy === 'error' ? 'Altyapı yüklenemedi' : undefined}
+          empty={c.key === 'backup' && !row.depthKnown ? (pending ? '…' : 'Derinlik bilgisi yok') : undefined} />)}
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
         <Link to={deskLink.candidate(row.slotId, row.position, row.roleId)} className={LINK}>Transferde aday bul</Link>
@@ -175,7 +175,7 @@ export function DepthTab({ squad, slots, auto = false, wanted, wantedSlot, gameD
         {missingGroup && <p role="status" className="mb-2 text-sm text-ink-2">Bu formasyonda {GROUP_LABEL[missingGroup].toLocaleLowerCase('tr-TR')} slotu yok.</p>}
         {rows.length === 0 ? <EmptyState>Ana taktik ya da başlangıç önerisi hazır olunca slotlar görünür.</EmptyState> : (
           <ul aria-label="Slot derinliği" className="flex flex-col gap-2">
-            {rows.map((r) => <SlotRow key={r.slotId} row={r} focus={r.slotId === focusSlot} academy={academyState} />)}
+            {rows.map((r) => <SlotRow key={r.slotId} row={r} focus={r.slotId === focusSlot} academy={academyState} pending={tacticPending} />)}
           </ul>
         )}
       </Panel>
