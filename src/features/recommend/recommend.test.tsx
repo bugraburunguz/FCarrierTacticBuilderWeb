@@ -145,6 +145,20 @@ describe('RecommendationPanel (E3-10)', () => {
     expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
   })
 
+  it('FCA-4 inceleme: filtre uzak ihtimallere de uygulanır; hepsi elenirse "filtreyi gevşet"; durum bölgesi hep var', async () => {
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue(response([item({ player: { ...player(1, 'Ada Oyuncu'), overall: 70 } })],
+      { longShots: [item({ player: { ...player(3, 'Uzak Düşük'), overall: 70 } }), item({ player: { ...player(4, 'Uzak Yüksek'), overall: 85 } })] }))
+    renderPanel({ resultFilter: (i) => i.player.overall >= 80 })
+    expect(screen.getByRole('status', { name: 'Filtre sonucu' })).toBeEmptyDOMElement()
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · 3 kredi/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Onayla/ }))
+    expect(await screen.findByText('Uzak Yüksek')).toBeInTheDocument()
+    expect(screen.queryByText('Uzak Düşük')).toBeNull()
+    expect(screen.queryByText('Ada Oyuncu')).toBeNull()
+    expect(screen.getByRole('status', { name: 'Filtre sonucu' })).toHaveTextContent('2 aday filtreye takıldı')
+    expect(screen.getByText('Filtreye uyan aday yok; filtreyi gevşet.')).toBeInTheDocument()
+  })
+
   it('PREMIUM: onay istemez, kredi yerine "PREMIUM\'da ücretsiz" yazar', async () => {
     premium = true
     vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })

@@ -9,19 +9,22 @@ export interface TransferFilters {
 
 export const FILTER_PARAMS = { minOvr: 'minovr', minPot: 'minpot', maxValue: 'maxdeger' } as const
 
+const MAX_RATING = 99
+
 const positive = (raw: string | null): number | undefined => {
   const n = Number(raw)
-  return raw !== null && Number.isFinite(n) && n > 0 ? n : undefined
+  return raw !== null && Number.isFinite(n) && n >= 1 ? Math.floor(n) : undefined
 }
 
+/** OVR/POT 1–99'a sıkışır (150 → 99), tam sayı; değer tam euro. 0, negatif ya da sayı olmayan yok sayılır. */
 export function parseFilters(params: URLSearchParams): TransferFilters {
   const out: TransferFilters = {}
-  for (const [key, param] of Object.entries(FILTER_PARAMS) as [keyof TransferFilters, string][]) {
-    const value = positive(params.get(param))
-    if (value !== undefined) {
-      out[key] = value
-    }
-  }
+  const ovr = positive(params.get(FILTER_PARAMS.minOvr))
+  const pot = positive(params.get(FILTER_PARAMS.minPot))
+  const value = positive(params.get(FILTER_PARAMS.maxValue))
+  if (ovr !== undefined) out.minOvr = Math.min(MAX_RATING, ovr)
+  if (pot !== undefined) out.minPot = Math.min(MAX_RATING, pot)
+  if (value !== undefined) out.maxValue = value
   return out
 }
 

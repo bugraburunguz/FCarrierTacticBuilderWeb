@@ -176,10 +176,11 @@ export function TransferCenterPage() {
       {shortlist.isError && <ErrorState message="Kısa liste yüklenemedi." onRetry={() => shortlist.refetch()} />}
       {tagList.isError && <ErrorState message="Satış planı yüklenemedi." onRetry={() => tagList.refetch()} />}
       {mobile && budgetPanel}
-      {/* FCA-4 (Stitch): ≥1280 px üç sütun — solda arama (ihtiyaçlar + filtre), ortada sekmeler, sağda kısa liste özeti + bütçe planı. */}
+      {/* FCA-4 (Stitch): ≥1440 px üç sütun — solda arama (ihtiyaçlar + filtre), ortada sekmeler, sağda kısa liste özeti + bütçe planı. */}
       <div className={wide ? 'grid grid-cols-[300px_minmax(0,1fr)_320px] items-start gap-3' : 'flex flex-col gap-3 min-[1024px]:flex-row min-[1024px]:items-start'}>
         {wide && (
-          <aside aria-label="Arama" className="sticky top-[calc(var(--header-h)+0.75rem)] flex flex-col gap-3">{needsSection}{filterPanel}</aside>
+          // Görünür alandan uzunsa içi kayar (yoksa alttaki "Sıfırla" orta sütun bitene kadar ulaşılamaz).
+          <aside aria-label="Arama" className="sticky top-[calc(var(--header-h)+0.75rem)] flex max-h-[calc(100dvh-var(--header-h)-1.5rem)] flex-col gap-3 overflow-y-auto">{needsSection}{filterPanel}</aside>
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           <Tabs label="Transfer sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
@@ -187,7 +188,7 @@ export function TransferCenterPage() {
           {/* REVIEW Y6: öneri sonucu (kredi düşer) Kısa liste/Satış sekmesine geçince kaybolmasın. */}
           <TabPanel idPrefix={PREFIX} id="adaylar" active={tab === 'adaylar'} keepMounted>
             <div className="flex flex-col gap-3">
-      {/* FCA-4: ≥1280 px'te ihtiyaçlar ve filtre sol sütunda; daha darda burada. */}
+      {/* FCA-4: ≥1440 px'te ihtiyaçlar ve filtre sol sütunda; daha darda burada. */}
       {!wide && needsSection}
       {!wide && filterPanel}
 
@@ -253,7 +254,7 @@ export function TransferCenterPage() {
           </TabPanel>
         </div>
         {wide ? (
-          <aside aria-label="Kısa liste ve bütçe" className="sticky top-[calc(var(--header-h)+0.75rem)] flex flex-col gap-3">
+          <aside aria-label="Kısa liste ve bütçe" className="sticky top-[calc(var(--header-h)+0.75rem)] flex max-h-[calc(100dvh-var(--header-h)-1.5rem)] flex-col gap-3 overflow-y-auto">
             <ShortlistSummary items={items} onOpen={() => setTab('kisa-liste')} />
             {budgetPanel}
           </aside>

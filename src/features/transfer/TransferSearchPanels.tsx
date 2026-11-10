@@ -31,8 +31,9 @@ export function FilterPanel({ filters, onChange }: { filters: TransferFilters; o
       </div>
       <div className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.06em] text-muted">
         En yüksek değer
-        <MoneyInput ariaLabel="En yüksek değer" value={filters.maxValue} onChange={() => undefined}
-          onCommit={(v) => onChange({ [FILTER_PARAMS.maxValue]: v === undefined ? undefined : String(v) })} />
+        {/* Yazınca ve birim değişince hemen uygulanır (yalnız süzgeç, istek yok); geçersiz yazım adresi değiştirmez. */}
+        <MoneyInput ariaLabel="En yüksek değer" value={filters.maxValue}
+          onChange={(v, meta) => meta?.valid !== false && onChange({ [FILTER_PARAMS.maxValue]: v === undefined ? undefined : String(v) })} />
       </div>
       <p className="text-xs text-ink-2">Gelen adayları süzer; yeni istek atılmaz, kredi düşmez.</p>
       <Button variant="ghost" onClick={() => onChange({ [FILTER_PARAMS.minOvr]: undefined, [FILTER_PARAMS.minPot]: undefined, [FILTER_PARAMS.maxValue]: undefined })}>Sıfırla</Button>

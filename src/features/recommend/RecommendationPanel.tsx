@@ -136,7 +136,11 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
   // FCA-4: sayfanın ayrıntılı filtresi (en düşük OVR/POT, en yüksek değer) sonucu tarayıcıda süzer; yeni istek ve kredi yok.
   const all = result?.items ?? []
   const shown = resultFilter ? all.filter(resultFilter) : all
-  const filteredOut = all.length - shown.length
+  // Uzak ihtimaller de aynı süzgeçten geçer (en düşük OVR 80'ken 70'lik "hayal" görünmesin).
+  const allLong = result?.longShots ?? []
+  const longShown = resultFilter ? allLong.filter(resultFilter) : allLong
+  const filteredOut = all.length - shown.length + allLong.length - longShown.length
+  const allFiltered = all.length > 0 && shown.length === 0
   const fitting = shown.filter((i) => !overBudget(i))
   const over = shown.filter(overBudget)
   const outOfCredit = run.error instanceof ApiError && run.error.code === ErrorCodes.insufficientCredit
@@ -144,6 +148,8 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
 
   return (
     <div className="space-y-3">
+      {/* Canlı bölge hep var (sonradan eklenen bölgeyi ekran okuyucu duyurmayabilir); yalnız metin değişir. */}
+      {resultFilter && <p role="status" aria-label="Filtre sonucu" className="text-xs text-ink-2 empty:hidden">{filteredOut > 0 ? `${filteredOut} aday filtreye takıldı` : ''}</p>}
       <div className="space-y-2">
         <Segmented label="Profil" value={profile} options={PROFILES} onChange={changed(setProfile)} />
         <div className="grid grid-cols-2 gap-2">
@@ -235,7 +241,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             </ul>
           )}
           {fitting.length === 0 && over.length > 0 && <p className="text-sm text-ink-2">Bütçeye uyan aday yok.</p>}
-          {filteredOut > 0 && <p role="status" className="text-xs text-ink-2">{filteredOut} aday filtreye takıldı</p>}
+          {allFiltered && <p className="text-sm text-ink-2">Filtreye uyan aday yok; filtreyi gevşet.</p>}
           {over.length > 0 && (
             <>
               <button type="button" aria-expanded={showOver} onClick={() => setShowOver((v) => !v)}
@@ -254,11 +260,11 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
               )}
             </>
           )}
-          {result.longShots && result.longShots.length > 0 && (
+          {longShown.length > 0 && (
             <section aria-label="Hayal transferler" className="space-y-1.5 pt-2">
               <h3 className="text-xs font-semibold text-ink-2">Hayal transferler (ana listede değil)</h3>
               <ul className="space-y-1.5">
-                {result.longShots.slice(0, MAX_LONG_SHOTS).map((item) => (
+                {longShown.slice(0, MAX_LONG_SHOTS).map((item) => (
                   <RecommendationRow key={item.player.id} item={item} showRole={alternatives} action={rowAction?.(item)} extra={rowExtra?.(item)} cardWidth={cardWidth} />
                 ))}
               </ul>

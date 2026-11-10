@@ -11,6 +11,10 @@ describe('FCA-4 Transfer ayrıntılı filtre', () => {
     expect(parseFilters(new URLSearchParams('minovr=abc&minpot=0'))).toEqual({})
   })
 
+  it('OVR/POT 1–99 aralığına sıkışır ve tam sayı olur (150 → 99, 60.5 → 60); değer tam euro', () => {
+    expect(parseFilters(new URLSearchParams('minovr=150&minpot=60.5&maxdeger=2500000.7'))).toEqual({ minOvr: 99, minPot: 60, maxValue: 2_500_000 })
+  })
+
   it('filtre yoksa süzgeç yok (undefined); varsa en düşük OVR/POT ve en yüksek değer uygulanır', () => {
     expect(candidateFilter({})).toBeUndefined()
     const f = candidateFilter({ minOvr: 70, minPot: 78, maxValue: 2_000_000 })!
