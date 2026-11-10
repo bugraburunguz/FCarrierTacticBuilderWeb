@@ -1557,6 +1557,20 @@ export interface TacticAnalysis {
   levelLabel?: string | null
 }
 
+export interface ReplicaVariant {
+  id: string
+  label: string
+  author?: string
+  note?: string
+  formation: string
+  buildUp: string
+  defensiveApproach: string
+  lineHeight: number
+  slots: ReplicaDetailSlot[]
+  smartTactics?: string[]
+  tacticCode: string
+}
+
 export interface ReplicaDetailSlot {
   slot: string
   position: string
@@ -1585,6 +1599,7 @@ export interface ReplicaDetail {
     slots: ReplicaDetailSlot[]
     planB?: { label: string; formation: string; buildUp: string; defensiveApproach: string; lineHeight: number; changes: string[] }
     smartTactics?: string[]
+    variants?: ReplicaVariant[]
   }
   replicaFidelity?: { score: number; cannotReplicate?: string[] }
   /** Yalnız yönetici görünümünde gelir. */
