@@ -27,6 +27,10 @@ export function FilterPanel({ filters, onChange, gender }: { filters: TransferFi
           Lig
           <select id={ids.league} className={INPUT} value={filters.leagueId ?? ''} onChange={(e) => onChange({ [FILTER_PARAMS.leagueId]: num(e.target.value) })}>
             <option value="">Fark etmez</option>
+            {/* Adresteki lig listede yoksa (eski bağlantı, başka cinsiyet) süzgeç gizli kalmasın. */}
+            {filters.leagueId !== undefined && !(leagues.data ?? []).some((l) => l.id === filters.leagueId) && (
+              <option value={filters.leagueId}>Bilinmeyen lig ({filters.leagueId})</option>
+            )}
             {(leagues.data ?? []).map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
         </label>
@@ -34,6 +38,9 @@ export function FilterPanel({ filters, onChange, gender }: { filters: TransferFi
           Uyruk
           <select id={ids.nation} className={INPUT} value={filters.nationalityId ?? ''} onChange={(e) => onChange({ [FILTER_PARAMS.nationalityId]: num(e.target.value) })}>
             <option value="">Fark etmez</option>
+            {filters.nationalityId !== undefined && !(nationalities.data ?? []).some((n) => n.id === filters.nationalityId) && (
+              <option value={filters.nationalityId}>Bilinmeyen uyruk ({filters.nationalityId})</option>
+            )}
             {(nationalities.data ?? []).map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
           </select>
         </label>

@@ -187,6 +187,13 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     await waitFor(() => expect(screen.getByTestId('where').textContent).not.toMatch(/minovr|minpot|maxdeger|lig=|uyruk=/))
   })
 
+  it('FCA-5 inceleme: adresteki lig listede yoksa seçici "Bilinmeyen lig" gösterir (istek süzgeci gizli kalmaz)', async () => {
+    renderPage('/career/transfer?lig=999')
+    const panel = await screen.findByRole('region', { name: 'Ayrıntılı filtre' })
+    const select = within(panel).getByLabelText('Lig') as HTMLSelectElement
+    await waitFor(() => expect(select.selectedOptions[0]?.textContent).toBe('Bilinmeyen lig (999)'))
+  })
+
   it('FCA-4: ≥1440 px üç sütun — solda ihtiyaçlar + filtre, ortada sekmeler, sağda kısa liste özeti + bütçe planı', async () => {
     const original = window.matchMedia
     window.matchMedia = ((query: string) => ({ matches: query.includes('1440'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined })) as never

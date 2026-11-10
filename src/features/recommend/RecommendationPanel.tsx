@@ -139,6 +139,8 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
 
   const fromSaved = !run.data && saved.data ? saved.data : undefined
   const result = run.data?.result ?? fromSaved?.response.result
+  // FCA-5: gösterilen sonucun hangi lig/uyrukla alındığı (yeni istek ya da kayıtlı sonuç); şimdiki süzgeçten farklıysa bayat.
+  const shownKey = run.data ? fetchedKey : fromSaved ? `${fromSaved.request?.leagueId ?? ''}|${fromSaved.request?.nationalityId ?? ''}` : filterKey
   // FAZ 6a-J: bütçeye uyanlar önce; aşanlar ayrı başlıkta, anahtarla açılır (değeri bilinmeyen aday uyanlarda kalır).
   const budget = budgetMode === 'custom' ? customBudget : budgetMode === 'career' ? budgetEur : undefined
   const overBudget = (i: CareerRecommendationItem) => budget !== undefined && i.player.valueEur !== undefined && i.player.valueEur > budget
@@ -214,7 +216,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
           {run.isPending ? 'Aranıyor…' : `Önerileri getir · ${priceLabel}`}
         </Button>
       )}
-      {(stale || (run.data !== undefined && fetchedKey !== filterKey)) && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
+      {(stale || (result !== undefined && shownKey !== filterKey)) && <p className="text-xs text-warn">Filtreler değişti; sonuçlar eski. Yeniden getir.</p>}
       <ErrorBox error={outOfCredit ? undefined : run.error} />
       {outOfCredit && (
         <p className="text-sm">
@@ -241,7 +243,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
             {result.userFirstElevenAverage !== undefined ? ` · ilk 11 ort. ${result.userFirstElevenAverage}` : ''}
           </p>
           {result.items.length === 0 ? (
-            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi gevşetmeyi dene.</EmptyState>
+            <EmptyState>Bu filtrelerle uygun oyuncu bulunamadı. Yaşı ya da bütçeyi{shownKey !== '|' ? ', lig ya da uyruk süzgecini' : ''} gevşetmeyi dene.</EmptyState>
           ) : (
             <ul className="space-y-1.5">
               {fitting.map((item) => (

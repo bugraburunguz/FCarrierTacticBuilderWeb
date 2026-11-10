@@ -181,6 +181,13 @@ describe('RecommendationPanel (E3-10)', () => {
     expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1)
   })
 
+  it('FCA-5 inceleme: kayıtlı sonuç başka lig/uyrukla alındıysa açılışta da "sonuçlar eski"; boş sonuçta lig/uyruk ipucu', async () => {
+    bigStore.set(lastRecommendationsKey(4, 'ST', 'ST1'), { at: '2027-01-01T00:00:00Z', response: response([]), request: { position: 'ST', leagueId: 13 } })
+    renderPanel({ requestFilters: {} })
+    expect(await screen.findByText(/sonuçlar eski/)).toBeInTheDocument()
+    expect(screen.getByText(/lig ya da uyruk süzgecini gevşet/)).toBeInTheDocument()
+  })
+
   it('PREMIUM: onay istemez, kredi yerine "PREMIUM\'da ücretsiz" yazar', async () => {
     premium = true
     vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })
