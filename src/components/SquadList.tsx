@@ -79,7 +79,7 @@ export function SquadList({ squad, positionAdvice, recordColumns = false, groupi
                     return (
                       <tr key={entry.player.id} className="border-t border-line">
                         <td className="py-1.5 pr-2 font-medium">
-                          <Link to={`/players/${entry.player.id}`} className="hover:underline">{entry.player.name}</Link>
+                          <Link to={`/players/${entry.player.id}`} className="hover:underline max-sm:inline-flex max-sm:min-h-11 max-sm:items-center">{entry.player.name}</Link>
                         </td>
                         <td className="pr-2">{entry.player.age ?? '—'}</td>
                         <td className="pr-2 text-muted">{entry.player.positions.slice(0, 4).join(', ')}</td>
@@ -175,7 +175,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
               return (
                 <tr key={entry.player.id} data-status={rowStatus} className="border-t border-line align-top">
                   <td data-col="name" className={`py-1.5 pr-2 font-medium${stripe}`}>
-                    <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline">{entry.player.name}</Link>
+                    <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline max-sm:flex max-sm:min-h-11 max-sm:items-center">{entry.player.name}</Link>
                     <span data-compact className="block text-xs font-normal text-muted lg:hidden">
                       {positions}<span className="sm:hidden">{entry.player.age !== undefined && ` · ${entry.player.age} yaş`}</span>
                     </span>
@@ -196,7 +196,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
                         {/* FIT-3 madde 12: rol bazlı dönüşüm; ayrıntı oyuncunun Roller sekmesinde. */}
                         {advice.conversion && (
                           <Link to={`/players/${entry.player.id}?sekme=roller`} title={advice.conversion.text}
-                            className="inline-flex min-h-6 items-center rounded-full bg-[var(--info-soft)] px-2 text-xs font-medium text-info hover:underline max-sm:min-h-8">
+                            className="inline-flex min-h-6 items-center rounded-full bg-[var(--info-soft)] px-2 text-xs font-medium text-info hover:underline max-sm:min-h-11">
                             Dönüşüm: {advice.conversion.position}
                           </Link>
                         )}
