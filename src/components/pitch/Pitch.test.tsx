@@ -17,20 +17,15 @@ describe('Pitch (WEB-BUG-11)', () => {
     expect(onPickPlayer).not.toHaveBeenCalled()
   })
 
-  it('FCA-12: telefonda rol çipi ve "×" düğmesi görünüm ve yerleşim değişmeden 44 px dokunma alanı taşır (::before)', () => {
+  it('FCA-12: rol çipi ve "×" düğmesi dokunma alanı işaretini taşır; ölçü kariyer CSS\'inde (UT\'de sınıf yok)', () => {
     const filled: PitchSlot = { ...empty, player: { id: 1, name: 'Oyuncu Bir', overall: 70 } as never }
     render(<Pitch slots={[filled]} onPickPlayer={() => undefined} onPickRole={() => undefined} onRemove={() => undefined} />)
     const role = screen.getByRole('button', { name: 'Hedef Forvet · Hücum' })
-    expect(role).toHaveAttribute('data-hit-area')
+    expect(role).toHaveAttribute('data-hit-area', 'role')
     expect(role.className).toMatch(/\brelative\b/)
-    expect(role.className).toContain('max-sm:before:-inset-y-3.5')
     const remove = screen.getByRole('button', { name: 'Oyuncu Bir kartını kaldır' })
-    expect(remove).toHaveAttribute('data-hit-area')
-    // Alan karttan dışarı (sol-üst) büyür: kartın örtülen köşesi eskisi kadar kalır.
-    expect(remove.className).toContain('max-sm:before:-left-4')
-    expect(remove.className).toContain('max-sm:before:-top-4')
-    expect(remove.className).toContain('max-sm:before:right-0')
-    expect(remove.className).toContain('max-sm:before:bottom-0')
+    expect(remove).toHaveAttribute('data-hit-area', 'remove')
+    expect(`${role.className} ${remove.className}`).not.toContain('before:')
   })
 
   it('rol etiketi yoksa çip çizilmez', () => {

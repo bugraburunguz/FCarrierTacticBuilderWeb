@@ -120,6 +120,15 @@ await shot('transfer-filtre', '/career/transfer?minovr=60', 375, async (page) =>
   await page.getByRole('button', { name: /^Filtre \(/ }).click()
   await page.getByRole('dialog', { name: 'Filtre' }).waitFor({ timeout: 5000 })
 })
+await shot('taktik-secici', '/career/tactics-lab', 375, async (page) => {
+  await page.getByRole('button', { name: /Sıfırdan kur/ }).click()
+  await page.locator('[data-empty-slot]').first().click()
+  await page.getByRole('dialog').waitFor({ timeout: 10000 })
+})
+await shot('kariyer-degistirici', '/career/dashboard', 375, async (page) => {
+  await page.getByRole('button', { name: /^Kariyer değiştir/ }).click()
+  await page.getByRole('dialog', { name: 'Kariyerler' }).waitFor({ timeout: 5000 })
+})
 await shot('taktik-dolu', '/career/tactics-lab', 375, async (page) => {
   await page.getByRole('button', { name: /Sıfırdan kur/ }).click()
   await page.locator('[data-empty-slot]').first().click()

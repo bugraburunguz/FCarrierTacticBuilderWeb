@@ -82,6 +82,10 @@ export function TransferCenterPage() {
   const client = useQueryClient()
   const mobile = useIsMobile()
   const [filterOpen, setFilterOpen] = useState(false)
+  // Sheet açıkken ekran genişlerse (döndürme) kapanır; telefona dönünce kendiliğinden yeniden açılmaz.
+  if (!mobile && filterOpen) {
+    setFilterOpen(false)
+  }
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
   const id = career?.id

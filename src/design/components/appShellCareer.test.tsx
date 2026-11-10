@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { careerStore } from '../../state/careerStore'
@@ -102,6 +102,17 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     expect(bar.className).not.toMatch(/max-\[1023px\]:hidden/)
     expect((await within(bar).findByText('Kuzey Liman SK')).closest('div')!.className).toMatch(/max-\[1023px\]:hidden/)
     expect(within(bar).getByText('Kariyer değiştir').className).toMatch(/max-sm:sr-only/)
+  })
+
+  it('FCA-12: kariyer değiştirici menüsünün öğeleri telefonda 44 px', async () => {
+    renderAt('/career/dashboard')
+    fireEvent.click(await screen.findByRole('button', { name: /^Kariyer değiştir/ }))
+    const menu = await screen.findByRole('dialog', { name: 'Kariyerler' })
+    const items = [...within(menu).getAllByRole('button'), within(menu).getByRole('link', { name: 'Yeni kariyer' })]
+    expect(items.length).toBeGreaterThan(1)
+    for (const item of items) {
+      expect(item.className).toContain('max-sm:min-h-11')
+    }
   })
 
   it('kariyerler yüklenemezse "Aktif kariyer yok" değil, hata metni', async () => {

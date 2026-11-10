@@ -224,7 +224,8 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
       const panel = within(sheet).getByRole('region', { name: 'Ayrıntılı filtre' })
       fireEvent.change(within(panel).getByLabelText('En düşük POT'), { target: { value: '80' } })
       fireEvent.click(within(sheet).getByRole('button', { name: 'Kapat' }))
-      expect(await screen.findByRole('button', { name: 'Filtre (3)' })).toBeInTheDocument()
+      const again = await screen.findByRole('button', { name: 'Filtre (3)' })
+      await waitFor(() => expect(again).toHaveFocus())
     } finally {
       window.matchMedia = original
     }
