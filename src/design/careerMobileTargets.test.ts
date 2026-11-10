@@ -17,12 +17,13 @@ describe('kariyer mobil dokunma hedefleri', () => {
   it('kural yalnız kariyer yüzeyinde ve yalnız <640 px', () => {
     expect(start).toBeGreaterThanOrEqual(0)
     expect(block).toContain('@media (max-width: 639.98px)')
-    expect(block.match(/:root\[data-surface="career"\] main/g)?.length).toBeGreaterThanOrEqual(3)
+    // Parça 3: kariyer sayfası ve kariyerde açılan alttan panel/diyaloglar (portal, main dışı).
+    expect(block.match(/:root\[data-surface="career"\] :is\(main, \[role="dialog"\]\)/g)?.length).toBeGreaterThanOrEqual(3)
   })
 
   it('düğme, seçim kutusu, metin alanı ve açılır başlık en az 44 px yüksek; düğme en az 44 px geniş; saha içi hariç', () => {
-    expect(block).toMatch(/main :is\(button, select, summary, input:not\(\[type="checkbox"\], \[type="radio"\], \[type="hidden"\], \[type="file"\]\)\):not\(\.pitch-field \*\)\s*\{\s*min-height: 44px;/)
-    expect(block).toMatch(/main button:not\(\.pitch-field \*\)\s*\{\s*min-width: 44px;/)
+    expect(block).toMatch(/\[role="dialog"\]\) :is\(button, select, summary, input:not\(\[type="checkbox"\], \[type="radio"\], \[type="hidden"\], \[type="file"\]\)\):not\(\.pitch-field \*\)\s*\{\s*min-height: 44px;/)
+    expect(block).toMatch(/\[role="dialog"\]\) button:not\(\.pitch-field \*\)\s*\{\s*min-width: 44px;/)
   })
 
   it('kural katmansız ve son @layer bloğu kapandıktan sonra: bileşenin min-h-8 / h-9 utility\'si telefonda ezilir', () => {
@@ -54,7 +55,7 @@ describe('kariyer mobil dokunma hedefleri', () => {
     expect(tag).not.toContain('max-sm:')
     expect(tag).not.toContain('border-line')
     expect(help.slice(open, help.indexOf('</summary>', open))).toMatch(/<span aria-hidden="true" className="[^"]*h-5 w-5[^"]*rounded-full border border-line/)
-    expect(block).toMatch(/main summary\[data-help\]\s*\{\s*min-width: 44px;/)
+    expect(block).toMatch(/\[role="dialog"\]\) summary\[data-help\]\s*\{\s*min-width: 44px;/)
   })
 
   it('Taktik notu: kapat düğmesi 44 px olunca telefonda kırpılmaz', () => {

@@ -211,6 +211,31 @@ describe('Transfer (KARIYER-UX FAZ 5, 15 §4.4)', () => {
     await waitFor(() => expect(select.selectedOptions[0]?.textContent).toBe('Bilinmeyen lig (999)'))
   })
 
+  it('FCA-12: telefonda filtre sayfada değil, "Filtre (N)" düğmesinin açtığı panelde; panelden süzgeç adrese yazılır', async () => {
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ matches: query.includes('819'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined })) as never
+    try {
+      renderPage('/career/transfer?minovr=70&lig=13')
+      const open = await screen.findByRole('button', { name: 'Filtre (2)' })
+      expect(screen.queryByRole('region', { name: 'Ayrıntılı filtre' })).toBeNull()
+      expect(open).toHaveAttribute('aria-haspopup', 'dialog')
+      fireEvent.click(open)
+      const sheet = await screen.findByRole('dialog', { name: 'Filtre' })
+      const panel = within(sheet).getByRole('region', { name: 'Ayrıntılı filtre' })
+      fireEvent.change(within(panel).getByLabelText('En düşük POT'), { target: { value: '80' } })
+      fireEvent.click(within(sheet).getByRole('button', { name: 'Kapat' }))
+      expect(await screen.findByRole('button', { name: 'Filtre (3)' })).toBeInTheDocument()
+    } finally {
+      window.matchMedia = original
+    }
+  })
+
+  it('FCA-12: masaüstünde filtre sayfada kalır, düğme yok', async () => {
+    renderPage('/career/transfer?minovr=70')
+    expect(await screen.findByRole('region', { name: 'Ayrıntılı filtre' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Filtre/ })).toBeNull()
+  })
+
   it('FCA-4: ≥1440 px üç sütun — solda ihtiyaçlar + filtre, ortada sekmeler, sağda kısa liste özeti + bütçe planı', async () => {
     const original = window.matchMedia
     window.matchMedia = ((query: string) => ({ matches: query.includes('1440'), media: query, addEventListener: () => undefined, removeEventListener: () => undefined })) as never

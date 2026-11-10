@@ -69,8 +69,18 @@ async function shot(name, path, w, act = undefined) {
       const style = getComputedStyle(el)
       if (r.width === 0 || r.height === 0 || style.visibility === 'hidden' || el.closest('[aria-hidden="true"]')) return false
       if (el.tagName === 'A' && style.display === 'inline' && el.closest('p, li')) return false
+      // FCA-12 Parça 3: [data-hit-area] öğesinin dokunma alanı ::before ile genişler (görünüm ve yerleşim değişmez); ölçü onu sayar.
+      if (el.hasAttribute('data-hit-area')) {
+        const b = getComputedStyle(el, '::before')
+        if (b.position === 'absolute' && b.content !== 'none') {
+          const px = (v) => (v === 'auto' ? 0 : parseFloat(v))
+          const w = r.width - px(b.left) - px(b.right)
+          const h = r.height - px(b.top) - px(b.bottom)
+          return Math.min(Math.max(w, r.width), Math.max(h, r.height)) < 44 - 0.5
+        }
+      }
       return Math.min(r.width, r.height) < 44 - 0.5 && !(el.tagName === 'INPUT' && ['checkbox', 'radio'].includes(el.type) && el.closest('label'))
-    }).map((el) => `${el.closest('header:not(main header), nav[aria-label="Mobil menü"], main > footer, [role="dialog"]') ? 'kabuk ' : ''}${el.tagName.toLowerCase()}${el.tagName === 'INPUT' ? `[${el.type} ${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)}${el.closest('main') ? '' : ' main dışı'}]` : ''}:${(el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 24)}`)
+    }).map((el) => `${el.closest('header:not(main header), nav[aria-label="Mobil menü"], main > footer, [role="dialog"]') ? 'kabuk ' : ''}${el.tagName.toLowerCase()}${el.hasAttribute('data-hit-area') ? `[hit ${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)} before ${getComputedStyle(el, '::before').position}/${getComputedStyle(el, '::before').top}/${getComputedStyle(el, '::before').left}]` : ''}${el.tagName === 'INPUT' ? `[${el.type}${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)}${el.closest('main') ? '' : ' main dışı'}]` : ''}:${(el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 24)}`)
   }) : []
   const axe = (await new AxeBuilder({ page }).analyze()).violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => v.id)
   await page.screenshot({ path: file(`${tag}-${name}-${w}-ekran.png`) })
@@ -104,6 +114,20 @@ await shot('menu', '/career/dashboard', 375, async (page) => {
 await shot('taktik-sifirdan', '/career/tactics-lab', 375, async (page) => {
   await page.getByRole('button', { name: /Sıfırdan kur/ }).click()
   await page.locator('[data-empty-slot]').first().waitFor({ timeout: 15000 })
+})
+// Parça 3: Transfer filtresi panelde; Taktik sahasında dolu slot ("×" ve rol çipi dokunma alanı).
+await shot('transfer-filtre', '/career/transfer?minovr=60', 375, async (page) => {
+  await page.getByRole('button', { name: /^Filtre \(/ }).click()
+  await page.getByRole('dialog', { name: 'Filtre' }).waitFor({ timeout: 5000 })
+})
+await shot('taktik-dolu', '/career/tactics-lab', 375, async (page) => {
+  await page.getByRole('button', { name: /Sıfırdan kur/ }).click()
+  await page.locator('[data-empty-slot]').first().click()
+  const sheet = page.getByRole('dialog')
+  await sheet.waitFor({ timeout: 10000 })
+  await sheet.locator('li button, [role="option"]').first().click()
+  await page.getByRole('dialog').waitFor({ state: 'detached', timeout: 10000 }).catch(() => page.keyboard.press('Escape'))
+  await page.locator('[data-hit-area]').first().scrollIntoViewIfNeeded()
 })
 await shot('masa', '/career/dashboard', 320)
 await shot('kadro', '/career/squad', 320)

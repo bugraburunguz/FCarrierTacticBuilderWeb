@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useId, useMemo, type ReactNode } from 'react'
+import { useId, useMemo, useState, type ReactNode } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerRecommendationItem } from '../../api/types'
@@ -8,7 +9,7 @@ import { MoneyInput } from '../../components/MoneyInput'
 import { ShortlistButton } from '../../components/ShortlistButton'
 import { ShortlistLabel } from '../../components/ShortlistLabel'
 import { HelpPopover } from '../../components/ui'
-import { useIsMobile } from '../../design/components/MobileSheet'
+import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton, SourceTag, TabPanel, Tabs } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
@@ -22,7 +23,7 @@ import { budgetAfterPurchase, budgetPlan, needsForTransfer } from './transferPla
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { useMediaQuery } from '../../design/useMediaQuery'
-import { candidateFilter, parseFilters } from './transferFilters'
+import { candidateFilter, countActiveFilters, parseFilters } from './transferFilters'
 import { FilterPanel, ShortlistSummary } from './TransferSearchPanels'
 
 // Üç sütun (Stitch 1440 tasarımı): 1280'de orta sütun aday kartlarına ~350 px kalıyordu; altında iki sütunlu eski düzen.
@@ -80,6 +81,7 @@ export function TransferCenterPage() {
   const careerId = useActiveCareerId()
   const client = useQueryClient()
   const mobile = useIsMobile()
+  const [filterOpen, setFilterOpen] = useState(false)
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
   const id = career?.id
@@ -190,7 +192,19 @@ export function TransferCenterPage() {
             <div className="flex flex-col gap-3">
       {/* FCA-4: ≥1440 px'te ihtiyaçlar ve filtre sol sütunda; daha darda burada. */}
       {!wide && needsSection}
-      {!wide && filterPanel}
+      {!wide && !mobile && filterPanel}
+      {mobile && (
+        // FCA-12: telefonda filtre alttan açılan panelde; süzgeç değişince adres hemen güncellenir, "Kapat" yeterli.
+        <Button variant="secondary" aria-haspopup="dialog" data-filter-open onClick={() => setFilterOpen(true)}>
+          <SlidersHorizontal size={16} aria-hidden="true" />
+          {`Filtre (${countActiveFilters(filters)})`}
+        </Button>
+      )}
+      {mobile && filterOpen && (
+        <MobileSheet title="Filtre" onClose={() => setFilterOpen(false)} restoreFocusTo="[data-filter-open]">
+          {filterPanel}
+        </MobileSheet>
+      )}
 
         <Section title={need ? `Adaylar · ${need.label}` : 'Adaylar'}>
           {need ? (

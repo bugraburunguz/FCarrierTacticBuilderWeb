@@ -174,15 +174,15 @@
 /* FCA-12 kariyer mobil dokunma hedefleri */
 /* Telefonda sayfa içi denetimler ≥ 44 px; katmansız, bileşenin min-h-8 / h-9 utility'sini ezer. Bağlantılar bileşende.
  * Saha hariç: kart/piyon kutusu ve etiket yerleşimi Pitch'te hesaplanır. Kaydırıcı (range) dahil: dokunma alanı yükselir, iz ortada kalır.
- * Portal'la body'ye basılan diyalog, sheet ve menüler main dışında; kendi ölçülerini taşırlar. */
+ * Portal'la body'ye basılan alttan panel ve diyaloglar (role="dialog") da kapsamda; menüler (Popover) kendi ölçülerini taşır. */
 @media (max-width: 639.98px) {
-  :root[data-surface="career"] main :is(button, select, summary, input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="file"])):not(.pitch-field *) {
+  :root[data-surface="career"] :is(main, [role="dialog"]) :is(button, select, summary, input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="file"])):not(.pitch-field *) {
     min-height: 44px;
   }
-  :root[data-surface="career"] main button:not(.pitch-field *) {
+  :root[data-surface="career"] :is(main, [role="dialog"]) button:not(.pitch-field *) {
     min-width: 44px;
   }
-  :root[data-surface="career"] main summary[data-help] {
+  :root[data-surface="career"] :is(main, [role="dialog"]) summary[data-help] {
     min-width: 44px;
   }
 }
