@@ -72,6 +72,15 @@ describe('AcademyPage', () => {
     expect(document.querySelector('[data-source="record"]')).toHaveTextContent('Kayıt verisi')
   })
 
+  it('FCA-3: Stitch başlığı "Kariyer › Altyapı"; oyuncu satırında OVR kutusu', async () => {
+    renderAt()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Altyapı')).toHaveAttribute('aria-current', 'page')
+    const list = await screen.findByRole('list', { name: 'Oyuncular' })
+    const kyle = within(list).getByRole('button', { name: /Kyle Preston/ })
+    expect(within(kyle).getByRole('img', { name: 'OVR 55' })).toHaveAttribute('data-tier', 'avg')
+  })
+
   it('öne çıkanlar: en çok 3 kart; "A takıma hazır" tahmin etiketli', async () => {
     renderAt()
     const region = await screen.findByRole('region', { name: 'Öne çıkanlar' })

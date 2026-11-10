@@ -5,6 +5,7 @@ import { endpoints } from '../../api/endpoints'
 import type { AgeGroup } from '../../api/types'
 import { EmptyState, ErrorState, Segmented, SidePanel, Skeleton } from '../../design/components/primitives'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { isPlateau } from '../../lib/deskRules'
 import { useActiveCareerId } from '../../state/careerStore'
 import { useYouthOpener } from '../academy/useYouthOpener'
@@ -20,7 +21,7 @@ function Section({ title, children, actions, subtitle }: { title: string; childr
     <section aria-labelledby={id} className="glass-2 flex min-w-0 flex-col gap-3 p-3 sm:p-4">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 id={id} className="font-display text-xl font-semibold leading-6">{title}</h2>
+          <h2 id={id} className="panel-title font-display text-xl font-semibold leading-6">{title}</h2>
           {subtitle && <p className="text-xs text-ink-2">{subtitle}</p>}
         </div>
         {actions}
@@ -88,10 +89,8 @@ export function GrowthPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header>
-        {heading}
-        <p className="text-sm text-ink-2">Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?</p>
-      </header>
+      {/* FCA-3: Stitch başlığı. */}
+      <CareerPageHeader crumb="Gelişim" title="Gelişim" subtitle="Kadromdaki her oyuncuya hangi antrenmanı vermeliyim?" />
       <div className="flex flex-col gap-3 min-[820px]:flex-row min-[820px]:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           {training.isLoading ? <Skeleton className="h-40" /> : training.isError && !training.data ? (

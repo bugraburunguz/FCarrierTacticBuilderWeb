@@ -20,6 +20,7 @@ import { BudgetPlanPanel } from './BudgetPlanPanel'
 import { SellPlanTab } from './SellPlanTab'
 import { budgetAfterPurchase, budgetPlan, needsForTransfer } from './transferPlan'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 
 const STALE_MS = 120_000
 const PREFIX = 'transfer'
@@ -34,7 +35,7 @@ function Section({ title, actions, children, className = '' }: { title: string; 
   return (
     <section aria-labelledby={id} className={`glass-2 flex min-w-0 flex-col gap-3 p-3 sm:p-4 ${className}`}>
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id={id} className="font-display text-xl font-semibold leading-6">{title}</h2>
+        <h2 id={id} className="panel-title font-display text-xl font-semibold leading-6">{title}</h2>
         {actions}
       </header>
       {children}
@@ -132,10 +133,8 @@ export function TransferCenterPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Transfer Merkezi</h1>
-        <p className="text-sm text-ink-2">{career.clubName ?? career.name}</p>
-      </header>
+      {/* FCA-3: Stitch başlığı. */}
+      <CareerPageHeader crumb="Transfer" title="Transfer Merkezi" subtitle={career.clubName ?? career.name} />
       {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
       {shortlist.isError && <ErrorState message="Kısa liste yüklenemedi." onRetry={() => shortlist.refetch()} />}
       {tagList.isError && <ErrorState message="Satış planı yüklenemedi." onRetry={() => tagList.refetch()} />}
