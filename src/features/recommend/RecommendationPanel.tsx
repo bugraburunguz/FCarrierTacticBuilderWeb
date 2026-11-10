@@ -284,6 +284,10 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
           {run.data && run.data.charged > 0 && (
             <p className="text-xs text-muted">{run.data.charged} kredi harcandı{run.data.balance !== undefined ? ` · kalan ${run.data.balance}` : ''}.</p>
           )}
+          {/* FCA-7: gösterilecek aday yoksa sunucu krediyi iade eder (charged 0); PREMIUM/beta zaten ücretsiz, onlarda yazılmaz. */}
+          {run.data && run.data.charged === 0 && !premium && !freeBeta && result.items.length === 0 && longShown.length === 0 && (
+            <p role="status" className="text-xs text-muted">Aday çıkmadı; kredi iade edildi{run.data.balance !== undefined && run.data.balance !== null ? ` · kalan ${run.data.balance}` : ''}.</p>
+          )}
         </section>
       )}
     </div>
