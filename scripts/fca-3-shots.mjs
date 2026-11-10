@@ -96,6 +96,8 @@ for (const w of [1280, 375]) {
   await shot('gelisim', '/career/growth', w, 'career')
   // Parça 6: oyuncu profili (statlar), Takımlar, Menajer, Yeni kariyer, Kayıt yükle
   await shot('oyuncu-profili', `/players/${firstPlayer}?sekme=statlar`, w, 'career')
+  // FCA-4d: Roller sekmesi, mevkiye göre OVR sahası
+  await shot('oyuncu-roller', `/players/${firstPlayer}?sekme=roller`, w, 'career')
   await shot('takimlar', '/teams', w, 'career')
   await shot('menajer', '/career/manager', w, 'career')
   await shot('yeni-kariyer', '/career/new', w, 'career')
