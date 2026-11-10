@@ -147,7 +147,7 @@ export function TeamsV3Page() {
     // FCA-3: kariyer seçimi üst barda; sayfa içi seçici yok.
     <CatalogShell title="Takımlar" bar={bar}>
       {careerId === undefined ? (
-        <EmptyState action={<Link to="/career/new" className="font-semibold text-accent underline-offset-2 hover:underline">Yeni kariyer başlat</Link>}>Takımları görmek için bir kariyer seç.</EmptyState>
+        <EmptyState action={<Link to="/career/new" className="font-semibold text-accent underline-offset-2 hover:underline">Yeni kariyer başlat</Link>}>Üst bardan bir kariyer seç ya da yeni kariyer başlat.</EmptyState>
       ) : teams.isLoading ? (
         <div className="flex flex-col gap-1.5">{[0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-10" />)}</div>
       ) : teams.isError ? (

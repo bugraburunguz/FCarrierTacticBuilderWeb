@@ -59,12 +59,12 @@ beforeEach(() => {
 })
 
 describe('FCA-3 Parça 6: oyuncu profili', () => {
-  it('h1 page-title; statlar sekmesinde çubuk rengi kesintisiz kırmızı → amber → yeşil (color-mix)', async () => {
+  it('oyuncu adı başlığı olduğu gibi; statlar sekmesinde çubuk rengi kesintisiz kırmızı → amber → yeşil (color-mix)', async () => {
     renderPage('/players/7?sekme=statlar')
     const h1 = await screen.findByRole('heading', { level: 1, name: 'Ollie Watkins' })
-    expect(h1).toHaveClass('page-title')
-    // büyük harf dönüşümü Türkçe i → İ yapmasın (Mickey → MİCKEY): oyuncu adı Türkçe değil
-    expect(h1).toHaveAttribute('lang', 'en')
+    // Oyuncu adı büyük harfe çevrilmez: tek dil kuralı her adı bozar (tr: Mickey → MİCKEY; en: Merih → MERIH).
+    expect(h1).not.toHaveClass('page-title')
+    expect(h1).not.toHaveAttribute('lang')
     const bars = [...document.querySelectorAll<HTMLElement>('[data-attr-bar]')]
     expect(bars.length).toBeGreaterThan(0)
     bars.forEach((b) => expect(b.style.background).toMatch(/var\(--rate-(low|60|90)\)/))
