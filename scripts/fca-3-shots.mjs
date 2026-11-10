@@ -79,14 +79,6 @@ for (const w of [1280, 375]) {
     await page.locator('[data-empty-slot]').first().waitFor({ timeout: 15000 })
   })
 }
-// Parça 6: oyuncu profili (statlar), Takımlar, Menajer, Yeni kariyer, Kayıt yükle
-for (const w of [1280, 375]) {
-  await shot('oyuncu-profili', `/players/${firstPlayer}?sekme=statlar`, w, 'career')
-  await shot('takimlar', '/teams', w, 'career')
-  await shot('menajer', '/career/manager', w, 'career')
-  await shot('yeni-kariyer', '/career/new', w, 'career')
-  await shot('kayit-yukle', '/career/import', w, 'career')
-}
 // Parça 3: en dar telefon (üst barda mod + kariyer değiştirici + menü)
 await shot('masa', '/career/dashboard', 320, 'career')
 // Parça 2: tablo, rozet ve panel başlığı olan ekranlar
@@ -96,6 +88,12 @@ for (const w of [1280, 375]) {
   await shot('transfer', '/career/transfer', w, 'career')
   await shot('altyapi', '/career/academy', w, 'career')
   await shot('gelisim', '/career/growth', w, 'career')
+  // Parça 6: oyuncu profili (statlar), Takımlar, Menajer, Yeni kariyer, Kayıt yükle
+  await shot('oyuncu-profili', `/players/${firstPlayer}?sekme=statlar`, w, 'career')
+  await shot('takimlar', '/teams', w, 'career')
+  await shot('menajer', '/career/manager', w, 'career')
+  await shot('yeni-kariyer', '/career/new', w, 'career')
+  await shot('kayit-yukle', '/career/import', w, 'career')
 }
 // Açık tema seçiliyken kariyer ekranı yine koyu; herkese açık sayfa ve UT kullanıcının temasında, eski kabukta.
 await shot('masa', '/career/dashboard', 1280, 'career', 'light')
