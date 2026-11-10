@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { CareerSelect } from '../../components/CareerSelect'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { SquadCards } from '../../components/SquadCards'
 import { SquadList } from '../../components/SquadList'
 import { SquadTagsView } from '../../components/SquadTagsView'
@@ -91,10 +91,9 @@ export function CareerSquadPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kadro</h1>
-        <CareerSelect />
-      </header>
+      {/* FCA-3: Stitch başlığı; kariyer seçimi üst barda. */}
+      <CareerPageHeader crumb="Kadro" title="Kadro" subtitle={`${players.length} oyuncu kayıtlı`} />
+
       {k.squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => k.squad.refetch()} />}
       <Tabs label="Kadro sekmeleri" idPrefix={PREFIX} value={tab} tabs={tabs} onChange={setTab} />
 

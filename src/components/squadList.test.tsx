@@ -27,6 +27,22 @@ describe('SquadList (v3 gruplama)', () => {
     tables[0].querySelectorAll('th[scope="rowgroup"]').forEach((th) => expect(th).toHaveAttribute('colspan'))
   })
 
+  it('FCA-3: OVR hücresinde Stitch OVR kutusu (küçük); POT düz sayı', () => {
+    const { container } = renderList()
+    const row = screen.getByRole('link', { name: 'Oyuncu 1' }).closest('tr')!
+    expect(within(row).getByRole('img', { name: 'OVR 70' })).toHaveAttribute('data-tier', 'good')
+    expect(container.querySelectorAll('td[data-col="ovr"] [role="img"]')).toHaveLength(SQUAD.length)
+  })
+
+  it('FCA-3: kiralık satırları solda 3 px durum şeridi taşır (renk + çip metni birlikte); diğer satırlarda şerit yok', () => {
+    renderList()
+    const row = screen.getByRole('link', { name: 'Oyuncu 5' }).closest('tr')!
+    expect(row).toHaveAttribute('data-status', 'loaned-out')
+    expect(row.querySelector('td[data-col="name"]')!.className).toMatch(/shadow-\[inset_3px_0_0_var\(--info\)\]/)
+    const plain = screen.getByRole('link', { name: 'Oyuncu 1' }).closest('tr')!
+    expect(plain).not.toHaveAttribute('data-status')
+  })
+
   it('sayılar sağa hizalı ve tabular-nums', () => {
     const { container } = renderList()
     const ovr = [...container.querySelectorAll('table td[data-col="ovr"]')]

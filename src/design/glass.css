@@ -140,6 +140,10 @@
   letter-spacing: 0.02em;
   font-weight: 700;
 }
+:root[data-surface="career"] .page-title {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
 @layer components {
 :root[data-surface="career"] main table thead th {
   height: 32px;

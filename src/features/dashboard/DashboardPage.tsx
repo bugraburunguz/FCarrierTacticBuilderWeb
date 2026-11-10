@@ -4,7 +4,8 @@ import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { CareerSnapshot, RosterEvent } from '../../api/types'
-import { CareerSelect } from '../../components/CareerSelect'
+import { CareerPageHeader } from '../../design/components/CareerPageHeader'
+import { KpiStrip } from './KpiStrip'
 import { Chip, EmptyState, ErrorState, Panel, Skeleton, SourceTag, StatTile, TabPanel, Tabs, type DataSource, type StatDelta } from '../../design/components/primitives'
 import { deskLink } from '../../lib/deskLinks'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
@@ -342,15 +343,13 @@ export function DashboardPage() {
 
   return (
     <div className={`mx-auto flex w-full ${CAREER_PAGE_WIDTH} flex-col gap-3 py-2`}>
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="font-display text-[26px] font-bold leading-[30px] tracking-[-0.005em] sm:text-[32px] sm:leading-9">Kariyer Masası</h1>
-          {record && <SourceTag source={record} />}
-        </div>
-        <CareerSelect />
+      {/* FCA-3: Stitch başlığı; kariyer seçimi üst barda (sayfa içi seçici yok). */}
+      <div className="flex flex-col gap-2">
+        <CareerPageHeader crumb="Masa" title="Kariyer Masası" subtitle="Genel durum ve yönetim özeti" actions={record && <SourceTag source={record} />} />
         <ManagerLine />
-      </header>
+      </div>
       {squad.isError && <ErrorState message="Kadro yüklenemedi." onRetry={() => squad.refetch()} />}
+      <KpiStrip squad={players} starters={isMain ? rows.map((r) => r.playerId) : []} isMain={isMain} pending={tacticPending} />
 
       <Tabs label="Masa sekmeleri" idPrefix={PREFIX} value={tab} tabs={[...TABS]} onChange={setTab} />
       <TabPanel idPrefix={PREFIX} id="masa" active={tab === 'masa'}>

@@ -147,6 +147,27 @@ describe('Kariyer Masası hata durumları', () => {
 })
 
 describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
+  it('FCA-3: üstte konum çizgisi ve özet şeridi (takım ortalaması, ilk 11 ortalaması, ortalama yaş); sayfa içi kariyer seçici yok (üst bar)', async () => {
+    renderPage()
+    const strip = await screen.findByRole('region', { name: 'Kadro özeti' })
+    expect(await within(strip).findByText('Takım ortalaması')).toBeInTheDocument()
+    // kiralık bizdekiler dahil 5 oyuncu: (61+62+63+64+65)/5
+    expect(within(strip).getByLabelText('Takım ortalaması 63')).toBeInTheDocument()
+    // ana taktiğin ilk 11'i: oyuncu 1, 2, 3
+    expect(await within(strip).findByLabelText('İlk 11 ortalaması 62')).toBeInTheDocument()
+    expect(within(strip).getByText('26,4')).toBeInTheDocument()
+    expect(within(screen.getByRole('navigation', { name: 'Konum' })).getByText('Masa')).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
+  })
+
+  it('FCA-3: ana taktik yokken ilk 11 ortalaması "—" ve neden', async () => {
+    vi.mocked(endpoints.mainTactic).mockResolvedValue(null as never)
+    vi.mocked(endpoints.starterTactic).mockResolvedValue(undefined as never)
+    renderPage()
+    const strip = await screen.findByRole('region', { name: 'Kadro özeti' })
+    expect(await within(strip).findByText('Ana taktik yok')).toBeInTheDocument()
+  })
+
   it('ana taktik varsa: takım uyumu ve zayıf halkalar ana taktikten, "Kararın" etiketiyle; saha yok', async () => {
     renderPage()
     const fit = await screen.findByRole('region', { name: 'Takım gücü' })

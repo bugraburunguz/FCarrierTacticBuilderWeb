@@ -100,6 +100,14 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     expect(screen.queryByRole('tab', { name: /Kariyer|Altyapı/ })).toBeNull()
   })
 
+  it('FCA-3: Stitch başlığı — konum çizgisi "Kariyer › Kadro", alt başlıkta oyuncu sayısı; sayfa içi kariyer seçici yok (üst bar)', async () => {
+    renderAt()
+    const trail = await screen.findByRole('navigation', { name: 'Konum' })
+    expect(within(trail).getByText('Kadro')).toHaveAttribute('aria-current', 'page')
+    expect(await screen.findByText(/oyuncu kayıtlı$/)).toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Kariyer' })).toBeNull()
+  })
+
   it('ACADEMY-b: eski ?sekme=altyapi bağlantısı /career/academy sayfasına yönlenir', async () => {
     renderAt('/career/squad?sekme=altyapi')
     await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/career/academy'))

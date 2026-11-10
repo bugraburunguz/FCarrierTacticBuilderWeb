@@ -85,6 +85,14 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     expect(label.className).toMatch(/min-\[1024px\]:not-sr-only/)
   })
 
+  it('<1024 px: kulüp bilgisi gizlenir ama kariyer değiştirici her genişlikte (sayfa içi seçici kalktı); dar ekranda yalnız ikon', async () => {
+    renderAt('/career/dashboard')
+    const bar = screen.getByRole('region', { name: 'Aktif kariyer' })
+    expect(bar.className).not.toMatch(/max-\[1023px\]:hidden/)
+    expect((await within(bar).findByText('Kuzey Liman SK')).closest('div')!.className).toMatch(/max-\[1023px\]:hidden/)
+    expect(within(bar).getByText('Kariyer değiştir').className).toMatch(/max-sm:sr-only/)
+  })
+
   it('kariyerler yüklenemezse "Aktif kariyer yok" değil, hata metni', async () => {
     const { endpoints } = await import('../../api/endpoints')
     vi.mocked(endpoints.careers).mockRejectedValueOnce(new Error('ağ'))
