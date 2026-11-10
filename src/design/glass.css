@@ -170,3 +170,15 @@
   background-color: var(--glass-2);
 }
 }
+
+/* FCA-12 kariyer mobil dokunma hedefleri */
+/* Telefonda sayfa içi denetimler ≥ 44 px; katmansız, bileşenin min-h-8 / h-9 utility'sini ezer. Bağlantılar bileşende. */
+@media (max-width: 639.98px) {
+  :root[data-surface="career"] main :is(button, select, summary, input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="file"])) {
+    min-height: 44px;
+  }
+  :root[data-surface="career"] main button {
+    min-width: 44px;
+  }
+}
+/* FCA-12 son */

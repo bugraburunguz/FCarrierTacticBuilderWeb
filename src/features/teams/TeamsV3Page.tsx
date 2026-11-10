@@ -153,7 +153,7 @@ export function TeamsV3Page() {
       ) : teams.isError ? (
         <ErrorState message="Takımlar yüklenemedi." onRetry={() => teams.refetch()} />
       ) : all.length === 0 && !term ? (
-        <EmptyState action={<Link to="/career/import" className="font-semibold text-accent underline-offset-2 hover:underline">Kariyer verisini içe aktar</Link>}>Takım verisi oyundaki kariyerinden gelir.</EmptyState>
+        <EmptyState action={<Link to="/career/import" className="inline-flex items-center font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11">Kariyer verisini içe aktar</Link>}>Takım verisi oyundaki kariyerinden gelir.</EmptyState>
       ) : rows.length === 0 ? (
         <EmptyState>Bu süzgeçlere uyan takım yok.</EmptyState>
       ) : (
