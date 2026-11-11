@@ -89,12 +89,40 @@ describe('Ana sayfa (v3, mod başına)', () => {
     expect(screen.queryByRole('region', { name: 'Kariyerine devam et' })).toBeNull()
   })
 
-  it('kariyer, girişsiz: kısa tanıtım + Kayıt ol / Giriş yap; kariyer isteği yok', () => {
+  it('FCA-26 girişsiz: Stitch karşılama sayfası (hero, saha önizlemesi, 3 özellik, Nasıl çalışır, bağımsızlık); kariyer isteği yok', () => {
     authenticated = false
     renderPage()
-    expect(screen.getByRole('link', { name: 'Kayıt ol' })).toHaveAttribute('href', '/register')
+    expect(screen.getByRole('heading', { level: 1, name: 'Kariyerinde yanında.' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Ücretsiz başla' })).toHaveAttribute('href', '/register')
     expect(screen.getByRole('link', { name: 'Giriş yap' })).toHaveAttribute('href', '/login')
+    expect(screen.getByRole('link', { name: 'Nasıl çalışır?' })).toHaveAttribute('href', '#nasil-calisir')
+    // Taktik tahtası önizlemesi: kurgusal oyuncular, ortak saha bileşeni.
+    const board = screen.getByRole('region', { name: 'Taktik tahtası önizlemesi' })
+    expect(board.querySelector('.pitch-field')).not.toBeNull()
+    const features = screen.getByRole('region', { name: 'Özellikler' })
+    expect(within(features).getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual(['Kaydını yükle', 'Taktiğini kur', 'Doğru transferi bul'])
+    const how = screen.getByRole('region', { name: 'Nasıl çalışır?' })
+    expect(how).toHaveAttribute('id', 'nasil-calisir')
+    expect(within(how).getAllByRole('listitem').map((li) => li.querySelector('h3')?.textContent)).toEqual(['Kayıt ol', 'Kaydını yükle', 'Masan hazır'])
+    expect(screen.getByText(/Bağımsız hayran projesi/)).toBeInTheDocument()
+    // Uydurma kullanıcı sayısı ya da sürüm iddiası yok.
+    expect(document.body.textContent).not.toMatch(/15\.000|V24|aktif kullan/i)
     expect(endpoints.careers).not.toHaveBeenCalled()
+  })
+
+  it('FCA-26 girişsiz UT modunda da karşılama sayfası; UT araçlarına bağlantı', () => {
+    authenticated = false
+    modeStore.set('ut')
+    renderPage()
+    expect(screen.getByRole('heading', { level: 1, name: 'Kariyerinde yanında.' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /UT araçları/ })).toHaveAttribute('href', '/players')
+    expect(endpoints.kbSbc).not.toHaveBeenCalled()
+  })
+
+  it('FCA-26 girişli kullanıcı karşılama sayfasını görmez', async () => {
+    renderPage()
+    await screen.findByRole('region', { name: 'Kariyerine devam et' })
+    expect(screen.queryByRole('heading', { name: 'Kariyerinde yanında.' })).toBeNull()
   })
 
   it('UT: bugünün SBC\'leri (en yeni 4 aktif set), kadrom özeti (yakalanmış kulüp varsa); izlenen oyuncu verisi yok → blok yok', async () => {
