@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { findCareerExportRange, trimCareerLog } from './leLogTrim'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { findCareerExportRange, prepareCareerLog, trimCareerLog } from './leLogTrim'
 
 const REQUIRED = ['players', 'teams', 'teamplayerlinks']
 
@@ -95,5 +95,36 @@ describe('trimCareerLog (FCA-18)', () => {
   it('kırpılacak bir şey yoksa aynı dosyayı döndürür', async () => {
     const file = new File([exportBlock({ inCareer: true, seq: 1 })], 'a.log')
     expect(await trimCareerLog(file)).toBe(file)
+  })
+})
+
+async function gunzip(file: File): Promise<Uint8Array> {
+  const { gunzipSync } = await import('node:zlib')
+  return new Uint8Array(gunzipSync(new Uint8Array(await file.arrayBuffer())))
+}
+
+describe('prepareCareerLog (FCA-21)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('son export\'u kırpar ve gzip\'ler; açılınca ham baytlar aynıdır', async () => {
+    const { CompressionStream } = await import('node:stream/web')
+    vi.stubGlobal('CompressionStream', CompressionStream)
+    const lastText = exportBlock({ inCareer: true, seq: 2 })
+    const raw = new Uint8Array([...new TextEncoder().encode(lastText), 0xff, 0x9d, 0x81])
+    const file = new File([exportBlock({ inCareer: true, seq: 1 }), raw], 'aylik.log')
+    const sent = await prepareCareerLog(file)
+    expect(sent.name).toBe('aylik.log.gz')
+    expect(sent.type).toBe('application/gzip')
+    const bytes = new Uint8Array(await sent.arrayBuffer())
+    expect([bytes[0], bytes[1]]).toEqual([0x1f, 0x8b])
+    expect(await gunzip(sent)).toEqual(raw)
+  })
+
+  it('tarayıcıda CompressionStream yoksa kırpılmış dosyayı sıkıştırmadan gönderir', async () => {
+    vi.stubGlobal('CompressionStream', undefined)
+    const file = new File([exportBlock({ inCareer: true, seq: 1 })], 'a.log')
+    expect(await prepareCareerLog(file)).toBe(file)
   })
 })

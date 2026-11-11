@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { gunzipSync } from 'node:zlib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { ImportSummary } from '../../api/types'
@@ -87,7 +88,9 @@ describe('Kariyer içe aktarma (v3)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
     expect(await screen.findByRole('progressbar', { name: 'Yükleniyor' })).toBeInTheDocument()
     await waitFor(() => expect(endpoints.importCareer).toHaveBeenCalledWith(3, expect.any(FormData)))
-    expect((vi.mocked(endpoints.importCareer).mock.calls[0][1] as FormData).get('log')).toBe(file)
+    const uploaded = (vi.mocked(endpoints.importCareer).mock.calls[0][1] as FormData).get('log') as File
+    expect(uploaded.name).toBe('live_editor_2026.log.gz')
+    expect(gunzipSync(new Uint8Array(await uploaded.arrayBuffer())).length).toBe(file.size)
     resolve(summary({ warnings: ['NOT_IN_CAREER'] }))
     const table = await screen.findByRole('table', { name: 'Doğrulama sonucu' })
     expect(within(table).getAllByRole('row').slice(1).map((r) => r.textContent)).toEqual([
@@ -112,8 +115,8 @@ describe('Kariyer içe aktarma (v3)', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Yükle' }))
     await waitFor(() => expect(endpoints.importCareer).toHaveBeenCalled())
     const sent = (vi.mocked(endpoints.importCareer).mock.calls[0][1] as FormData).get('log') as File
-    expect(sent.name).toBe('aylik.log')
-    expect(await sent.text()).toBe(block(2))
+    expect(sent.name).toBe('aylik.log.gz')
+    expect(gunzipSync(new Uint8Array(await sent.arrayBuffer())).toString('latin1')).toBe(block(2))
   })
 
   it('FAZ 6a-A: kariyer export\'unda maaş/sözleşme yoksa (CONTRACTS_MISSING) neyi etkilediği ve rehber', async () => {
