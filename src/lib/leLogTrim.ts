@@ -97,3 +97,28 @@ export async function trimCareerLog(file: File): Promise<File> {
   }
   return new File([file.slice(range.start, range.end)], file.name, { type: file.type })
 }
+
+export async function gzipFile(file: File): Promise<File> {
+  if (typeof CompressionStream === 'undefined') {
+    return file
+  }
+  const compression = new CompressionStream('gzip') as unknown as TransformStream<Uint8Array, Uint8Array>
+  const writer = compression.writable.getWriter()
+  const bytes = new Uint8Array(await file.arrayBuffer())
+  const writing = writer.write(bytes).then(() => writer.close())
+  const reader = compression.readable.getReader()
+  const parts: Uint8Array[] = []
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) {
+      break
+    }
+    parts.push(value)
+  }
+  await writing
+  return new File(parts as BlobPart[], `${file.name}.gz`, { type: 'application/gzip' })
+}
+
+export async function prepareCareerLog(file: File): Promise<File> {
+  return gzipFile(await trimCareerLog(file))
+}
