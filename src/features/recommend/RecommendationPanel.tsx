@@ -131,7 +131,8 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
     skipConfirm = skipConfirm || dontAsk
     run.mutate(body())
   }
-  const onStart = () => (premium || skipConfirm ? fetchNow() : setConfirming(true))
+  // FCA-24: beta'da sunucu herkese PREMIUM hakkı verir ve kredi düşmez (EntitlementService); "X kredi düşecek" onayı yanıltıcı olurdu.
+  const onStart = () => (premium || freeBeta || skipConfirm ? fetchNow() : setConfirming(true))
   const changed = <T,>(set: (v: T) => void) => (v: T) => {
     set(v)
     setStale(run.data !== undefined)
