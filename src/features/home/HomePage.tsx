@@ -13,6 +13,7 @@ import { useMode } from '../../state/modeStore'
 import { utCardStore } from '../../state/utCardStore'
 import { SbcCard } from '../sbc/SbcCard'
 import { useActiveSbcSets, useNow } from '../sbc/useActiveSbcSets'
+import { Landing } from './Landing'
 import { SeasonJobs } from '../career/SeasonJobs'
 import { useMainTacticFits } from '../career/useMainTacticFits'
 import { FIT_TERMS, teamStrength } from '../../lib/fitLabels'
@@ -66,17 +67,6 @@ function CareerHome() {
   const careerId = useActiveCareerId()
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers, enabled: authenticated })
   const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  if (!authenticated) {
-    return (
-      <Section title="Kariyer modunu kendi kaydınla kullan">
-        <p className="text-sm text-ink-2">Live Editor kaydını içe aktar; kadronun taktiğe uyumunu, zayıf halkaları ve bütçene uygun transfer adaylarını tek yerde gör.</p>
-        <div className="flex flex-wrap gap-2">
-          <Link to="/register" className={`${LINK_BUTTON} bg-accent text-on-accent hover:opacity-90`}>Kayıt ol</Link>
-          <Link to="/login" className={`${LINK_BUTTON} glass-3 text-ink hover:bg-[var(--glass-hover)]`}>Giriş yap</Link>
-        </div>
-      </Section>
-    )
-  }
   return (
     <>
       {careers.isLoading ? <Skeleton className="h-40" /> : career ? <ContinueCareer key={career.id} career={career} /> : (
@@ -134,6 +124,11 @@ function ClubSummary() {
 export function HomePage() {
   const mode = useMode()
   const capture = extensionCaptureEnabled()
+  const { authenticated } = useAuth()
+  // FCA-26: giriş yapmamış ziyaretçi her modda karşılama sayfasını görür.
+  if (!authenticated) {
+    return <Landing />
+  }
   return (
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-2">
       <header className="flex flex-col gap-0.5">
