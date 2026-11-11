@@ -14,6 +14,7 @@ import { LeagueLevelChip } from '../careerPlayers/LeagueLevelChip'
 import { ContractTab, DevelopmentTab } from './CareerPlayerTabs'
 import { BackLink, FactGrid, PlayerDetailLayout, PlayerPageError, PlayerPageLoading } from './PlayerDetailLayout'
 import { CARD_WIDTH, footText, MOBILE_CARD_WIDTH, potentialText, useTabParam } from './playerPage'
+import { MatchesTab } from './MatchesTab'
 import { RolesTab } from './RolesTab'
 import { StatsTab } from './StatsTab'
 import { PositionPitch } from './PositionPitch'
@@ -23,13 +24,14 @@ const TABS = [
   { id: 'roller', label: 'Roller' },
   { id: 'gelisim', label: 'Gelişim' },
   { id: 'sozlesme', label: 'Sözleşme ve değer' },
+  { id: 'maclar', label: 'Maçlar' },
 ] as const
 const STALE_MS = 120_000
 const PREFIX = 'kariyeroyuncu'
 
 /**
  * Kariyer oyuncu sayfası (V3-06b, v3 Detay şablonu): veri seçili kariyerin kaydından (`?career=`), roller kariyer motoru v3 ile ve
- * seviye referansı kariyerin ligi. Sekmeler adres çubuğunda: Statlar · Roller · Gelişim · Sözleşme ve değer. Rota `/players/:id` (kariyer modu, v3).
+ * seviye referansı kariyerin ligi. Sekmeler adres çubuğunda: Statlar · Roller · Gelişim · Sözleşme ve değer · Maçlar (FCA-22). Rota `/players/:id` (kariyer modu, v3).
  */
 export function CareerPlayerPage({ careerId }: { careerId: number }) {
   const id = Number(useParams().id)
@@ -106,6 +108,7 @@ export function CareerPlayerPage({ careerId }: { careerId: number }) {
       </TabPanel>
       <TabPanel idPrefix={PREFIX} id="gelisim" active={tab === 'gelisim'}><DevelopmentTab summary={summary} inSquad={inSquad} careerId={careerId} /></TabPanel>
       <TabPanel idPrefix={PREFIX} id="sozlesme" active={tab === 'sozlesme'}><ContractTab query={contract} /></TabPanel>
+      <TabPanel idPrefix={PREFIX} id="maclar" active={tab === 'maclar'}>{tab === 'maclar' && <MatchesTab careerId={careerId} playerId={summary.id} />}</TabPanel>
     </PlayerDetailLayout>
   )
 }

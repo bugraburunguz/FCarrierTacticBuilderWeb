@@ -1,6 +1,11 @@
 import { api, request } from './client'
 import type { CaptureRules } from '../lib/har/harCapture'
 import type {
+  CompetitionStat,
+  LeaderMetric,
+  PlayerMatches,
+  SquadFormEntry,
+  StatLeader,
   BehaviorTag,
   CareerRecommendation,
   CareerRecommendationRequest,
@@ -155,6 +160,12 @@ export const endpoints = {
   playerFacets: (careerId: number) => api.get<CareerPlayerFacets>('/players/facets', { career: careerId }),
   player: (id: number, careerId?: number) => api.get<PlayerDetail>(`/players/${id}`, { career: careerId }),
   playerRoles: (id: number, careerId?: number, engine?: 'v1' | 'v3') => api.get<PlayerRoleFit[]>(`/players/${id}/roles`, { career: careerId, engine }),
+  /** FCA-22 (ücretsiz, sahibine özel): maç notları ve turnuva bazında sezon istatistiği. */
+  playerMatches: (careerId: number, playerId: number) => api.get<PlayerMatches>(`/careers/${careerId}/players/${playerId}/matches`),
+  squadForm: (careerId: number) => api.get<SquadFormEntry[]>(`/careers/${careerId}/squad/form`),
+  competitionStats: (careerId: number) => api.get<CompetitionStat[]>(`/careers/${careerId}/stats/competitions`),
+  statLeaders: (careerId: number, params: { competition?: number; metric: LeaderMetric; limit?: number }) =>
+    api.get<StatLeader[]>(`/careers/${careerId}/stats/leaders`, { ...(params.competition !== undefined ? { competition: params.competition } : {}), metric: params.metric, ...(params.limit !== undefined ? { limit: params.limit } : {}) }),
   playerContract: (id: number, careerId: number) => api.get<CareerPlayerContract>(`/players/${id}/contract`, { career: careerId }),
   playerByAsset: (assetId: number) => api.get<PlayerDetail>(`/players/asset/${assetId}`),
   /** V3-05c-c: ödül kartı adı için toplu assetId → katalog adı (bilinmeyen kimlik yanıtta yok). */

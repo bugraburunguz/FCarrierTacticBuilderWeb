@@ -56,6 +56,9 @@ export function CareerSquadPage() {
   const wanted = params.get('grup') as PositionGroup | null
   // Liste ve Kartlar ?grup=mevki|hat (varsayılan mevki); Derinlik'in grup değerleri burada geçersiz sayılır ve mevkiye düşer.
   const grouping = parseGrouping(params.get('grup'))
+  // FCA-22: son 5 not, sezon G/A ve ortalama; yalnız Liste'de istenir. Uç yoksa ya da veri boşsa sütun çizilmez.
+  const squadForm = useQuery({ queryKey: ['squad-form', k.career?.id], queryFn: () => endpoints.squadForm(k.career!.id), enabled: k.career !== undefined && tab === 'liste', retry: false, staleTime: 120_000 })
+  const form = useMemo(() => (squadForm.data && squadForm.data.length > 0 ? new Map(squadForm.data.map((f) => [f.playerId, f])) : undefined), [squadForm.data])
   // FIT-1: rozet ve piyon metni sayıların adıyla ("Rol oturması %38 · Güç 65").
   const fitsBySlot = useMemo(() => new Map(k.fits.rows.map((r) => [r.slotId, { ...r.display, title: fitTitle(r.display) }])), [k.fits.rows])
   // GT-b: derinlik matrisinin satırları her zaman ana taktiğin (yoksa başlangıç önerisinin) 11 slotu; rol ve kalite sınıfı uyum satırlarından.
@@ -153,7 +156,7 @@ export function CareerSquadPage() {
           ) : view === 'tags' ? (
             <SquadTagsView careerId={career.id} squad={players} />
           ) : view === 'list' ? (
-            <SquadList squad={players} positionAdvice={k.positionAdvice.data ?? []} recordColumns grouping={grouping} advice={advice} />
+            <SquadList squad={players} positionAdvice={k.positionAdvice.data ?? []} recordColumns grouping={grouping} advice={advice} form={form} />
           ) : (
             <SquadCards squad={players} grouping={grouping} busy={k.move.isPending} needs={k.needs} positionAdvice={k.positionAdvice.data ?? []} onSell={(entry) => k.openMove('SELL', entry)} onLoanOut={(entry) => k.openMove('LOAN_OUT', entry)} />
           )}

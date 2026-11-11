@@ -55,6 +55,16 @@ describe('careerQueries', () => {
     expect(stale(client, keys[3])).toBe(false)
   })
 
+  it('FCA-22: oyuncu maç notları ve kadro formu kariyer kapsamında (içe aktarma sonrası eski not kalmaz)', async () => {
+    const client = new QueryClient()
+    const keys = [['career-player-matches', 7, 120], ['squad-form', 7], ['squad-form', 8]]
+    keys.forEach((k) => client.setQueryData(k, { ok: true }))
+    await invalidateCareerScope(client, 7)
+    expect(stale(client, keys[0])).toBe(true)
+    expect(stale(client, keys[1])).toBe(true)
+    expect(stale(client, keys[2])).toBe(false)
+  })
+
   it('kimlik yalnız kariyer konumunda sayılır: aynı sayıyı taşıyan ilgisiz anahtarlar (cinsiyet, oyuncu/asset id, filtre) silinmez', () => {
     const client = new QueryClient()
     const unrelated = [['leagues', 7], ['clubs', 'ab', 7], ['transfer-search', 'ab', 7], ['ut-player', 7], ['kb-prices', 7, 'ps'], ['slot-fit', 'v3', 7, 'r', 'ST', ''], ['wonderkids', { maxAge: 7 }, 8], ['player', 7, 8]]
