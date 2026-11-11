@@ -46,6 +46,12 @@ describe('FCA-22 Maçlar sekmesi', () => {
     expect(items[1]).toHaveTextContent('64 dk')
     expect(items[1]).not.toHaveTextContent('Mevki')
     expect(endpoints.playerMatches).toHaveBeenCalledWith(4, 7)
+    // FCA-23: koyu temada soluk kalan çubuklar dolu ton rengiyle (yumuşak zemin değil); not 9 iyi, 6 uyarı.
+    const bars = chart.querySelectorAll('[data-rating-bar]')
+    expect(bars).toHaveLength(3)
+    expect(bars[2].className).toContain('bg-good')
+    expect(bars[1].className).toContain('bg-warn')
+    expect(chart.innerHTML).not.toContain('-soft')
   })
 
   it('turnuva bazında sezon tablosu; adı bilinmeyen turnuva kodla, kiralık kulüp ayrı satır; ortalama yoksa "—"', async () => {

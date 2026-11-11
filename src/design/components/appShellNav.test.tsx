@@ -57,7 +57,7 @@ describe('v3 kabuk: kariyer menüsü tek (V3-06d)', () => {
     expect(more).toHaveAttribute('aria-current', 'page')
     fireEvent.click(more)
     const sheet = screen.getByRole('dialog', { name: 'Daha fazla' })
-    expect(within(sheet).getAllByRole('link').map((a) => a.textContent)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer', 'UT moduna geç'])
+    expect(within(sheet).getAllByRole('link').map((a) => a.textContent)).toEqual(['Maç Merkezi', 'Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer', 'UT moduna geç'])
     expect(within(sheet).getByRole('link', { name: 'Gelişim' })).toHaveAttribute('aria-current', 'page')
   })
 

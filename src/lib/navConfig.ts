@@ -31,6 +31,8 @@ export const CAREER_NAV: NavGroup[] = [
     match: ['/career/tactics-lab', '/tactics', '/squad', '/fit', '/recommend', '/scouting', '/replicas'],
   },
   { to: '/career/transfer', label: 'Transfer', match: ['/career/transfer'] },
+  // FCA-23: rakip raporu ve maç planı; mobilde "Daha fazla"nın ilk öğesi (alt çubuk 5 öğede kalır).
+  { to: '/career/match', label: 'Maç Merkezi', match: ['/career/match'], mobile: 'more' },
   // ACADEMY-b: masaüstünde Transfer'den sonra; mobilde "Daha fazla"nın ilk öğesi (alt çubuk 5 öğede kalır).
   { to: '/career/academy', label: 'Altyapı', match: ['/career/academy'], mobile: 'more' },
   {

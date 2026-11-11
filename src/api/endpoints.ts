@@ -1,6 +1,9 @@
 import { api, request } from './client'
 import type { CaptureRules } from '../lib/har/harCapture'
 import type {
+  MatchOpponent,
+  MatchPlan,
+  OpponentReport,
   CompetitionStat,
   LeaderMetric,
   PlayerMatches,
@@ -164,6 +167,10 @@ export const endpoints = {
   playerMatches: (careerId: number, playerId: number) => api.get<PlayerMatches>(`/careers/${careerId}/players/${playerId}/matches`),
   squadForm: (careerId: number) => api.get<SquadFormEntry[]>(`/careers/${careerId}/squad/form`),
   competitionStats: (careerId: number) => api.get<CompetitionStat[]>(`/careers/${careerId}/stats/competitions`),
+  /** FCA-23 Maç Merkezi (ücretsiz, sahibine özel). */
+  matchOpponents: (careerId: number) => api.get<MatchOpponent[]>(`/careers/${careerId}/match/opponents`),
+  opponentReport: (careerId: number, teamId: number) => api.get<OpponentReport>(`/careers/${careerId}/match/opponents/${teamId}/report`),
+  matchPlan: (careerId: number, teamId: number) => api.get<MatchPlan>(`/careers/${careerId}/match/opponents/${teamId}/plan`),
   statLeaders: (careerId: number, params: { competition?: number; metric: LeaderMetric; limit?: number }) =>
     api.get<StatLeader[]>(`/careers/${careerId}/stats/leaders`, { ...(params.competition !== undefined ? { competition: params.competition } : {}), metric: params.metric, ...(params.limit !== undefined ? { limit: params.limit } : {}) }),
   playerContract: (id: number, careerId: number) => api.get<CareerPlayerContract>(`/players/${id}/contract`, { career: careerId }),

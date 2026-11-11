@@ -65,6 +65,15 @@ describe('careerQueries', () => {
     expect(stale(client, keys[2])).toBe(false)
   })
 
+  it('FCA-23: Maç Merkezi rakip listesi, rapor ve plan kariyer kapsamında', async () => {
+    const client = new QueryClient()
+    const keys = [['match-opponents', 7], ['match-report', 7, 55], ['match-plan', 7, 55], ['match-plan', 8, 55]]
+    keys.forEach((k) => client.setQueryData(k, { ok: true }))
+    await invalidateCareerScope(client, 7)
+    keys.slice(0, 3).forEach((k) => expect(stale(client, k), JSON.stringify(k)).toBe(true))
+    expect(stale(client, keys[3])).toBe(false)
+  })
+
   it('kimlik yalnız kariyer konumunda sayılır: aynı sayıyı taşıyan ilgisiz anahtarlar (cinsiyet, oyuncu/asset id, filtre) silinmez', () => {
     const client = new QueryClient()
     const unrelated = [['leagues', 7], ['clubs', 'ab', 7], ['transfer-search', 'ab', 7], ['ut-player', 7], ['kb-prices', 7, 'ps'], ['slot-fit', 'v3', 7, 'r', 'ST', ''], ['wonderkids', { maxAge: 7 }, 8], ['player', 7, 8]]
