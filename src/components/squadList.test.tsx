@@ -13,6 +13,44 @@ const renderList = (props: Partial<Parameters<typeof SquadList>[0]> = {}) => ren
   <MemoryRouter><SquadList squad={SQUAD} positionAdvice={ADVICE as never} recordColumns grouping="mevki" {...props} /></MemoryRouter>,
 )
 
+/** FCA-22: /squad/form verisiyle son 5 not, sezon G/A ve ortalama not; telefonda yalnız son 5 not (isim altında). */
+describe('SquadList form kolonları (FCA-22)', () => {
+  const form = new Map([
+    [1, { playerId: 1, playerName: 'Oyuncu 1', lastRatings: [9, 7, 6, 8, 5], appearances: 12, goals: 6, assists: 2, averageRating: 7.04 }],
+    [2, { playerId: 2, playerName: 'Oyuncu 2', lastRatings: [], appearances: 0, goals: 0, assists: 0, averageRating: null }],
+  ])
+
+  it('tek "Form" sütunu: son 5 not en yeni sağda (renk metinle birlikte), altında sezon G/A ve ortalama; isim sütunu daralmasın diye ayrı sütun yok', () => {
+    const { container } = renderList({ form })
+    const head = container.querySelector('thead')!
+    expect(within(head as HTMLElement).getByText('Form')).toBeInTheDocument()
+    expect(within(head as HTMLElement).queryByText('G/A')).toBeNull()
+    const row = screen.getByRole('link', { name: 'Oyuncu 1' }).closest('tr')!
+    const cell = row.querySelector('td[data-col="form"]')!
+    expect(within(cell as HTMLElement).getByRole('list', { name: 'Son 5 maç notu' }).textContent).toBe('58679')
+    expect(cell.querySelector('[data-form-totals]')).toHaveTextContent('G/A 6/2 · Ort. 7,04')
+  })
+
+  it('telefonda form sütunu gizli, yalnız son 5 not isim hücresinde', () => {
+    const { container } = renderList({ form })
+    const row = screen.getByRole('link', { name: 'Oyuncu 1' }).closest('tr')!
+    expect(row.querySelector('td[data-col="form"]')!.className).toContain('hidden sm:table-cell')
+    const compact = row.querySelector('td[data-col="name"] [data-form-compact]')!
+    expect(compact.className).toContain('sm:hidden')
+    expect(compact.textContent).toBe('58679')
+    expect(container.querySelectorAll('colgroup col').length).toBe(container.querySelectorAll('thead th').length)
+  })
+
+  it('maçı olmayan oyuncu "—"; form verisi verilmezse kolonlar hiç çizilmez', () => {
+    renderList({ form })
+    const row = screen.getByRole('link', { name: 'Oyuncu 2' }).closest('tr')!
+    expect(row.querySelector('td[data-col="form"]')).toHaveTextContent('—')
+    expect(row.querySelector('td[data-col="form"] [data-form-totals]')).toBeNull()
+    const plain = renderList()
+    expect(plain.container.querySelector('td[data-col="form"]')).toBeNull()
+  })
+})
+
 /** KARIYER-UX FAZ 3.1 (v3 opt-in `grouping`): tek tablo, sütun başlığı bir kez, gruplar tbody + rowgroup başlığı, sabit sütun genişlikleri. */
 describe('SquadList (v3 gruplama)', () => {
   it('tek tablo: bir thead, colgroup, grup başına tbody ve "LW · Sol kanat · 2" rowgroup başlığı', () => {

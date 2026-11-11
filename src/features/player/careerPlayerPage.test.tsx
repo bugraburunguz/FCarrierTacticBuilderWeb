@@ -14,7 +14,8 @@ vi.mock('../../api/endpoints', () => ({
       best: [{ position: 'CAM', roleName: 'Shadow Striker (Attack)', score: 74, natural: false }], sideReason: null,
       conversion: { position: 'CAM', roleName: 'Shadow Striker (Attack)', strength: 74, fromPosition: 'ST', fromRoleName: 'Poacher (Attack)', fromStrength: 68,
         text: "ST listeli ama CAM'de daha etkili: CAM · Shadow Striker gücü 74, ST · Poacher 68. CAM mevki planı önerilir." } }])),
-    shortlist: vi.fn(() => Promise.resolve([])), shortlistAdd: vi.fn(() => Promise.resolve()), shortlistRemove: vi.fn(() => Promise.resolve()) },
+    shortlist: vi.fn(() => Promise.resolve([])), shortlistAdd: vi.fn(() => Promise.resolve()), shortlistRemove: vi.fn(() => Promise.resolve()),
+    playerMatches: vi.fn(() => Promise.resolve({ ratings: [{ date: '2027-01-10', minutes: 90, position: 25, rating: 8 }], seasons: [] })) },
 }))
 
 const CAREER = 4
@@ -141,11 +142,17 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
   it('dört sekme; sekme adres çubuğunda (?sekme=), doğrudan adresle açılır', async () => {
     renderPage()
     const tabs = await screen.findAllByRole('tab')
-    expect(tabs.map((t) => t.textContent)).toEqual(['Statlar', 'Roller', 'Gelişim', 'Sözleşme ve değer'])
+    expect(tabs.map((t) => t.textContent)).toEqual(['Statlar', 'Roller', 'Gelişim', 'Sözleşme ve değer', 'Maçlar'])
     fireEvent.click(screen.getByRole('tab', { name: 'Roller' }))
     await waitFor(() => expect(screen.getByTestId('where').textContent).toContain('sekme=roller'))
     fireEvent.click(screen.getByRole('tab', { name: 'Statlar' }))
     await waitFor(() => expect(screen.getByTestId('where').textContent).toBe(''))
+  })
+
+  it('FCA-22: Maçlar sekmesi adresle açılır ve oyuncunun maç notlarını gösterir', async () => {
+    renderPage('/players/7?sekme=maclar')
+    expect(await screen.findByRole('list', { name: 'Maç notları' })).toBeInTheDocument()
+    expect(endpoints.playerMatches).toHaveBeenCalledWith(CAREER, 7)
   })
 
   it('Roller: kariyer motoru v3 kariyerle istenir; tek yardım fitLabels\'teki "kendi seviyesindeki" metni (lig referans satırı yok)', async () => {

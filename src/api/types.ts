@@ -1731,3 +1731,64 @@ export interface ClubRecommendations {
   cards: ClubRecommendationCard[]
   missing: { category: ClubCategory; reason: string }[]
 }
+
+/** FCA-22: bir maçtaki not (kayıttan biriken). `position` oyunun ham mevki kodu. */
+export interface MatchRating {
+  date: string
+  minutes: number
+  position: number
+  rating: number
+}
+
+/** FCA-22: oyuncunun bir turnuvadaki sezon istatistiği; kiralık kulüp ayrı satır. Turnuva adı yok (kod). */
+export interface CompetitionSeason {
+  teamId: number
+  teamName: string
+  competitionId: number
+  appearances: number
+  goals: number
+  assists: number
+  averageRating: number | null
+  yellowCards: number
+  redCards: number
+  cleanSheets: number
+}
+
+/** FCA-22: `GET /careers/{id}/players/{playerId}/matches`. `ratings` en yeni önce; `seasons` maç sayısına göre azalan. */
+export interface PlayerMatches {
+  ratings: MatchRating[]
+  seasons: CompetitionSeason[]
+}
+
+/** FCA-22: `GET /careers/{id}/squad/form`. `lastRatings` en yeni önce, en çok 5; toplamlar bütün turnuvalar. */
+export interface SquadFormEntry {
+  playerId: number
+  playerName: string
+  lastRatings: number[]
+  appearances: number
+  goals: number
+  assists: number
+  averageRating: number | null
+}
+
+/** FCA-22: `GET /careers/{id}/stats/competitions` (Maç Merkezi için; bu parçada kullanılmıyor). */
+export interface CompetitionStat {
+  competitionId: number
+  teams: number
+  players: number
+  goals: number
+}
+
+export type LeaderMetric = 'goals' | 'assists' | 'rating'
+
+/** FCA-22: `GET /careers/{id}/stats/leaders` (Maç Merkezi için; bu parçada kullanılmıyor). */
+export interface StatLeader {
+  playerId: number
+  playerName: string
+  teamId: number
+  teamName: string
+  appearances: number
+  goals: number
+  assists: number
+  averageRating: number | null
+}
