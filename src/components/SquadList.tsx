@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
-import type { CareerPlayer, PlayerPositionAdvice } from '../api/types'
+import type { CareerPlayer, PlayerPositionAdvice, SquadFormEntry } from '../api/types'
+import { formatAverageRating } from '../lib/matchData'
+import { LastRatings } from './MatchRatings'
 import { Chip, OvrBox } from '../design/components/primitives'
 import { HelpPopover } from './ui'
 import { formatEur } from '../lib/format'
@@ -25,15 +27,17 @@ interface Props {
   grouping?: SquadGrouping
   /** FCA-3 3b (v3, yalnız `grouping` ile): oyuncu başına Masa önerisi (Sat / Süre ver), `rowAdvice`. */
   advice?: Map<number, SellAdvice>
+  /** FCA-22 (v3, yalnız `grouping` ile): `/squad/form` verisi; verilirse son 5 not, sezon G/A ve ortalama not sütunları. */
+  form?: Map<number, SquadFormEntry>
 }
 
 const DAY = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const day = (date: string) => DAY.format(new Date(`${date.slice(0, 10)}T00:00:00Z`))
 const loanDate = (date?: string) => (date ? ` · ${day(date)}` : '')
 
-export function SquadList({ squad, positionAdvice, recordColumns = false, grouping, advice }: Props) {
+export function SquadList({ squad, positionAdvice, recordColumns = false, grouping, advice, form }: Props) {
   if (grouping) {
-    return <GroupedSquadTable squad={squad} positionAdvice={positionAdvice} recordColumns={recordColumns} grouping={grouping} rowAdvice={advice} />
+    return <GroupedSquadTable squad={squad} positionAdvice={positionAdvice} recordColumns={recordColumns} grouping={grouping} rowAdvice={advice} form={form} />
   }
   const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
   const placed = new Set<number>()
@@ -120,7 +124,7 @@ const NUM = 'pr-2 text-right tabular-nums'
 // Grup başlığı her genişlikte en az görünen sütun sayısı kadar yayılır; daha geniş colSpan dar ekranda boş sütun açar.
 const GROUP_SPAN = 4
 
-function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, rowAdvice }: Required<Omit<Props, 'grouping' | 'advice'>> & { grouping: SquadGrouping; rowAdvice?: Map<number, SellAdvice> }) {
+function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, rowAdvice, form }: Required<Omit<Props, 'grouping' | 'advice' | 'form'>> & { grouping: SquadGrouping; rowAdvice?: Map<number, SellAdvice>; form?: Map<number, SquadFormEntry> }) {
   const adviceById = new Map(positionAdvice.map((a) => [a.playerId, a]))
   const groups = squadGroups(squad, grouping)
   const noWages = recordColumns && squad.length > 0 && squad.every((s) => s.wageEur === undefined || s.wageEur === null)
@@ -135,6 +139,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
           <col className="w-16 sm:w-24" />
           <col className="w-12" />
           <col className="w-12" />
+          {form && <col className="hidden w-32 sm:table-column" />}
           {recordColumns && <col className="hidden w-28 lg:table-column" />}
           <col className="hidden w-48 sm:table-column" />
         </colgroup>
@@ -146,6 +151,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
             <th scope="col" className="pr-2">En iyi mevki</th>
             <th scope="col" className="pr-2 text-right">OVR</th>
             <th scope="col" className="pr-2 text-right">POT</th>
+            {form && <th scope="col" className={`pr-2 ${SM}`} title="Son 5 maç notu; altında sezon gol/asist ve ortalama not (bütün turnuvalar)">Form</th>}
             {recordColumns && <th scope="col" className={`pr-2 text-right ${LG}`}>Maaş (hafta)</th>}
             <th scope="col" className={SM}>Durum</th>
           </tr>
@@ -159,6 +165,7 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
             </tr>
             {group.players.map((entry) => {
               const advice = adviceById.get(entry.player.id)
+              const stats = form?.get(entry.player.id)
               const positions = entry.player.positions.slice(0, 4).join(', ')
               // Tarih çipin dışında, ayrı satırda: dar durum sütununda çip taşmaz.
               // FCA-3: Stitch durum şeridi ve çipi (kiralık mavi önce; Masa önerisi Sat kırmızı, Süre ver amber). Tarih çipin dışında, ayrı satırda.
@@ -180,6 +187,8 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
                       {positions}<span className="sm:hidden">{entry.player.age !== undefined && ` · ${entry.player.age} yaş`}</span>
                     </span>
                     {view && <span className="mt-1 block sm:hidden">{status(true)}</span>}
+                    {/* FCA-22: telefonda form sütunu sığmaz; son 5 not isim altında. */}
+                    {stats && stats.lastRatings.length > 0 && <span data-form-compact className="mt-1 block sm:hidden"><LastRatings newestFirst={stats.lastRatings} /></span>}
                   </td>
                   <td data-col="age" className={`py-1.5 ${NUM} ${SM}`}>{entry.player.age ?? '—'}</td>
                   <td data-col="positions" className={`py-1.5 pr-2 text-muted ${LG}`}>{positions}</td>
@@ -207,6 +216,15 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
                   </td>
                   <td data-col="ovr" className={`py-1 font-semibold ${NUM}`}><OvrBox value={entry.player.overall} size="sm" /></td>
                   <td data-col="pot" className={`py-1.5 ${NUM}`}>{entry.dynamicPotential ?? entry.player.potential ?? '—'}</td>
+                  {form && (
+                    <td data-col="form" className={`py-1.5 pr-2 ${SM}`}>
+                      <LastRatings newestFirst={stats?.lastRatings ?? []} />
+                      {/* İsim sütunu daralmasın: sezon G/A ve ortalama ayrı sütun değil, rozetlerin altında. */}
+                      {stats && stats.appearances > 0 && (
+                        <span data-form-totals className="mt-0.5 block text-xs text-muted tabular-nums">{`G/A ${stats.goals}/${stats.assists} · Ort. ${formatAverageRating(stats.averageRating)}`}</span>
+                      )}
+                    </td>
+                  )}
                   {recordColumns && (
                     <td data-col="wage" className={`py-1.5 ${NUM} ${LG}`}>{entry.wageEur !== undefined && entry.wageEur !== null ? formatEur(entry.wageEur) : '—'}</td>
                   )}

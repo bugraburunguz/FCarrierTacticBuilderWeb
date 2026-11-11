@@ -49,6 +49,7 @@ vi.mock('../../api/endpoints', () => ({
     players: vi.fn(() => Promise.resolve({ items: [{ id: 99, name: 'Aday Oyuncu', overall: 80, positions: ['ST'], club: 'Başka', valuationEstimated: false }], total: 1 })),
     playerTags: vi.fn(() => Promise.resolve([])),
     saveUserTactic: vi.fn(), setMainTactic: vi.fn(), userTactics: vi.fn(() => Promise.resolve([])),
+    squadForm: vi.fn(() => Promise.resolve([])),
   },
 }))
 
@@ -134,6 +135,21 @@ describe('Kadro Analizi (/career/squad, KARIYER-UX FAZ 3)', () => {
     await waitFor(() => expect(screen.getByRole('link', { name: 'Oyuncu 14' }).closest('tr')).toHaveAttribute('data-status', 'sell'))
     // gerekçe dokunmatik/ekran okuyucu için metin olarak da var
     expect(screen.getAllByText(/31 yaşında/).length).toBeGreaterThan(0)
+  })
+
+  it('FCA-22: Liste görünümünde /squad/form verisi oyuncu kimliğiyle eşlenir (son 5 not); veri yoksa ya da uç hata verirse form sütunu yok', async () => {
+    vi.mocked(endpoints.squadForm).mockResolvedValue([{ playerId: 14, playerName: 'Oyuncu 14', lastRatings: [8, 7], appearances: 3, goals: 1, assists: 0, averageRating: 7.5 }] as never)
+    vi.mocked(endpoints.squad).mockResolvedValue([...SQUAD, player(14, 'CB', 60, { age: 24 })] as never)
+    const first = renderAt('/career/squad?sekme=liste')
+    const row = (await screen.findByRole('link', { name: 'Oyuncu 14' })).closest('tr')!
+    await waitFor(() => expect(row.querySelector('td[data-col="form"]')).toHaveTextContent('78'))
+    expect(endpoints.squadForm).toHaveBeenCalledWith(CAREER.id)
+    first.unmount()
+    vi.mocked(endpoints.squadForm).mockRejectedValueOnce(new Error('404'))
+    renderAt('/career/squad?sekme=liste')
+    const again = (await screen.findByRole('link', { name: 'Oyuncu 14' })).closest('tr')!
+    await new Promise((r) => setTimeout(r, 50))
+    expect(again.querySelector('td[data-col="form"]')).toBeNull()
   })
 
   it('FCA-3 3b inceleme: ana taktik ve öneri yoksa Diziliş listesi boş durum metni', async () => {
