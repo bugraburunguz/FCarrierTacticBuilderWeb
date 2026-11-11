@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, ArrowRightLeft, CalendarClock, DatabaseZap, FlaskConical, HeartPulse, Info, Repeat, Search, UserRound } from 'lucide-react'
+import { AlertTriangle, ArrowRightLeft, CalendarClock, Crosshair, DatabaseZap, FlaskConical, HeartPulse, Info, Repeat, Search, UserRound } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
@@ -201,6 +201,17 @@ export function DashboardPage() {
     <SeasonJobs careerId={career.id} squad={players} rows={rows} tacticSource={main.source} gameDate={gameDate}
       pending={main.isLoading || pending || squad.isLoading} exclude={shownSlots} />
   )
+  // FCA-23: fikstür olmadığı için rakip elle seçilir; kart yalnız sayfaya götürür.
+  const matchPanel = (
+    <Panel title="Maç Merkezi" label="Maç Merkezi">
+      <p className="flex flex-wrap items-center justify-between gap-2 text-sm text-ink-2">
+        <span>Rakip raporu ve maç planı</span>
+        <Link to="/career/match" className="inline-flex min-h-10 items-center gap-1 font-semibold text-accent underline-offset-2 hover:underline max-sm:min-h-11">
+          <Crosshair size={16} aria-hidden="true" />Rakip seç
+        </Link>
+      </p>
+    </Panel>
+  )
   const financePanel = (
     <Panel title="Finansal sağlık" label="Finansal sağlık" source={record}>
       <div className={wide ? 'grid grid-cols-1 gap-2' : 'grid grid-cols-1 gap-2 min-[480px]:grid-cols-3 min-[768px]:grid-cols-1'}>
@@ -360,14 +371,14 @@ export function DashboardPage() {
           <div className="grid grid-cols-3 items-start gap-3">
             <div data-masa-col="left" className="flex min-w-0 flex-col gap-3">{jobsPanel}{weakPanel}</div>
             <div data-masa-col="middle" className="flex min-w-0 flex-col gap-3">{fitPanel}{starterPanel}</div>
-            <div data-masa-col="right" className="flex min-w-0 flex-col gap-3">{financePanel}{alertsPanel}{timelinePanel}</div>
+            <div data-masa-col="right" className="flex min-w-0 flex-col gap-3">{matchPanel}{financePanel}{alertsPanel}{timelinePanel}</div>
           </div>
         ) : (
           // Mobil ve orta genişlik düzeni değişmez.
           <div className="flex flex-col gap-3">
             {jobsPanel}
             <div className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[1100px]:grid-cols-3">
-              {financePanel}{alertsPanel}{fitPanel}
+              {matchPanel}{financePanel}{alertsPanel}{fitPanel}
             </div>
             {starterPanel}
             {weakPanel}

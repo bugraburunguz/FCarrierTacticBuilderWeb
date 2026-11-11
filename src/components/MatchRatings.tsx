@@ -9,6 +9,11 @@ const TONE: Record<RatingTone, string> = {
 
 export const ratingToneClass = (rating: number) => TONE[ratingTone(rating)]
 
+/** FCA-23: grafik çubuğu dolu ton rengiyle (yumuşak zemin koyu temada soluk kalıyordu); üstündeki sayı ayrıca yazılır. */
+const BAR: Record<RatingTone, string> = { good: 'bg-good', info: 'bg-info', warn: 'bg-warn', bad: 'bg-bad' }
+
+export const ratingBarClass = (rating: number) => BAR[ratingTone(rating)]
+
 export const formatRating = (rating: number) => String(rating).replace('.', ',')
 
 /** FCA-22: son maç notları küçük renkli rozetler; sunucu en yeniyi önce verir, en yeni sağda çizilir. Renk sayıyla birlikte. */

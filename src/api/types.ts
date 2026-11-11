@@ -1792,3 +1792,66 @@ export interface StatLeader {
   assists: number
   averageRating: number | null
 }
+
+/** FCA-23 `GET /careers/{id}/match/opponents`: önce ligdekiler, sonra OVR azalan. Kullanıcı takımı bilinmiyorsa `[]`. */
+export interface MatchOpponent {
+  teamId: number
+  name: string
+  leagueName?: string | null
+  overall: number
+  sameLeague: boolean
+  competitionIds: number[]
+}
+
+export interface PlayerRef {
+  playerId: number
+  name: string
+}
+
+export interface LineStrength {
+  overall: number
+  attack: number
+  midfield: number
+  defence: number
+  matchdayOverall?: number | null
+  matchdayAttack?: number | null
+  matchdayMidfield?: number | null
+  matchdayDefence?: number | null
+}
+
+export type OpponentReportMissing = 'USER_TEAM' | 'FORMATION' | 'LIKELY_ELEVEN' | 'SEASON_STATS' | 'SET_PIECES'
+
+/** FCA-23 `GET /careers/{id}/match/opponents/{teamId}/report`. `roleCode` ham (çözülmedi): ekranda rol adı yok, yalnız mevki. */
+export interface OpponentReport {
+  teamId: number
+  name: string
+  leagueName?: string | null
+  formation?: { name: string; matchedFormationId?: string | null; defaultFormation: boolean; slots: { index: number; positionCode?: number; position: string; roleCode?: number }[] } | null
+  lines?: { ours: LineStrength; opponent: LineStrength } | null
+  buildUpPlay?: number | string | null
+  defensiveDepth?: number | null
+  likelyEleven: { slotId: string; position: string; playerId: number; name: string; overall: number; averageRating: number | null }[]
+  dangerousPlayers: { playerId: number; name: string; overall: number; appearances: number; goals: number; assists: number; averageRating: number | null }[]
+  setPieces?: Partial<Record<'captain' | 'penaltyTaker' | 'freeKickTaker' | 'leftCornerTaker' | 'rightCornerTaker', PlayerRef>> | null
+  cardRisk: { playerId: number; name: string; appearances: number; yellowCards: number; redCards: number }[]
+  missing: OpponentReportMissing[]
+}
+
+export type MatchPlanMissing = 'USER_TEAM' | 'OUR_FORMATION' | 'MATCH_RATINGS'
+
+/** FCA-23 `GET /careers/{id}/match/opponents/{teamId}/plan`. Dinlendirme adayı ilk 11'den çıkarılmaz, `restSuggested` ile işaretlenir. */
+export interface MatchPlan {
+  opponentTeamId: number
+  ourFormation?: { id: string; source: 'MAIN_TACTIC' | 'TEAM_DEFAULT' } | null
+  ourEleven: { slotId: string; position: string; playerId: number; name: string; overall: number; combined?: number | null; lastRatings: number[]; recentAverage: number | null; restSuggested: boolean }[]
+  restCandidates: { playerId: number; name: string; minutes: number; matches: number }[]
+  tacticalNotes: { code: string; text: string }[]
+  setPieces?: {
+    ourAerialThreats: (PlayerRef & { score: number })[]
+    theirAerialThreats: (PlayerRef & { score: number })[]
+    ourCornerTaker?: PlayerRef
+    theirCornerTaker?: PlayerRef
+    theirFreeKickTaker?: PlayerRef
+  } | null
+  missing: MatchPlanMissing[]
+}
