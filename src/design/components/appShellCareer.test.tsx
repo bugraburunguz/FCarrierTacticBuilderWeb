@@ -39,7 +39,7 @@ describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
     const ops = within(menu).getByRole('group', { name: 'Operasyon' })
     const admin = within(menu).getByRole('group', { name: 'Yönetim' })
     // FCA-3 Parça 2: Stitch adları (Taktik, Kayıt yükle)
-    expect(within(ops).getAllByRole('link').map((a) => a.textContent)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar'])
+    expect(within(ops).getAllByRole('link').map((a) => a.textContent)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Maç Merkezi', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar'])
     expect(within(admin).getAllByRole('link').map((a) => a.textContent)).toEqual(['Menajer', 'Kayıt yükle'])
     expect(within(admin).getByRole('link', { name: 'Menajer' })).toHaveAttribute('href', '/career/manager')
   })

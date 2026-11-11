@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { endpoints } from '../../api/endpoints'
 import type { MatchRating } from '../../api/types'
-import { formatRating, ratingToneClass } from '../../components/MatchRatings'
+import { formatRating, ratingBarClass } from '../../components/MatchRatings'
 import { EmptyState, Skeleton } from '../../design/components/primitives'
 import { competitionName, formatAverageRating, matchPositionLabel, oldestFirst } from '../../lib/matchData'
 
@@ -96,7 +96,7 @@ function RatingChart({ ratings }: { ratings: MatchRating[] }) {
                 <span className="sr-only">{full}</span>
                 <span aria-hidden="true" className="text-xs font-semibold tabular-nums">{formatRating(m.rating)}</span>
                 <span aria-hidden="true" className="flex h-20 w-6 items-end rounded-[var(--radius-sm)] bg-[var(--glass-3)]">
-                  <span className={`block w-full rounded-[var(--radius-sm)] ${ratingToneClass(m.rating)}`} style={{ height: `${Math.max(0, Math.min(10, m.rating)) * 10}%` }} />
+                  <span data-rating-bar className={`block w-full rounded-[var(--radius-sm)] ${ratingBarClass(m.rating)}`} style={{ height: `${Math.max(0, Math.min(10, m.rating)) * 10}%` }} />
                 </span>
                 <span aria-hidden="true" className="text-xs leading-4 text-muted">{SHORT.format(asDate(m.date))}</span>
                 <span aria-hidden="true" className="text-xs leading-4 text-muted tabular-nums">{m.minutes}&apos;</span>

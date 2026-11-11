@@ -262,6 +262,12 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(within(jobs).getByRole('list', { name: 'Benzer işler · Kiralık' }).querySelectorAll('li')).toHaveLength(2)
   })
 
+  it('FCA-23: Masa\'da küçük Maç Merkezi kartı; fikstür yok, yalnız "Rakip seç" bağlantısı', async () => {
+    renderPage()
+    const card = await screen.findByRole('region', { name: 'Maç Merkezi' })
+    expect(within(card).getByRole('link', { name: 'Rakip seç' })).toHaveAttribute('href', '/career/match')
+  })
+
   it('tek IMPORT varsa Δ çipi hiç gösterilmez', async () => {
     vi.mocked(endpoints.snapshots).mockResolvedValue([{ id: 9, takenAt: '2026-10-19T12:00:00Z', source: 'IMPORT', playerCount: 30, budgetEur: 5_000_000 }] as never)
     renderPage()
@@ -468,7 +474,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
       const names = (col: Element) => [...col.querySelectorAll(':scope > section[aria-label]')].map((s) => s.getAttribute('aria-label'))
       expect(names(columns[0])).toEqual(['Bu dönemin 3 işi', 'Zayıf halkalar'])
       expect(names(columns[1])).toEqual(['Takım gücü'])
-      expect(names(columns[2])).toEqual(['Finansal sağlık', 'Acil uyarılar', 'Zaman çizelgesi'])
+      expect(names(columns[2])).toEqual(['Maç Merkezi', 'Finansal sağlık', 'Acil uyarılar', 'Zaman çizelgesi'])
     } finally {
       window.matchMedia = original
     }

@@ -70,6 +70,7 @@ const NewCareerPage = lazy(() => import('./features/career/NewCareerPage').then(
 const GrowthPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthPage })))
 const ManagerProfilePage = lazy(() => import('./features/manager/ManagerProfilePage').then((m) => ({ default: m.ManagerProfilePage })))
 const AcademyPage = lazy(() => import('./features/academy/AcademyPage').then((m) => ({ default: m.AcademyPage })))
+const MatchCenterPage = lazy(() => import('./features/match/MatchCenterPage').then((m) => ({ default: m.MatchCenterPage })))
 const AcademyPlayerPage = lazy(() => import('./features/academy/AcademyPlayerPage').then((m) => ({ default: m.AcademyPlayerPage })))
 const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })))
 const TransferCenterPage = lazy(() => import('./features/transfer/TransferCenterPage').then((m) => ({ default: m.TransferCenterPage })))
@@ -153,6 +154,7 @@ export function App() {
         <Route path="career/growth" element={<RequireAuth>{isV3() ? <GrowthPage /> : <CareerGrowthPage />}</RequireAuth>} />
         <Route path="career/manager" element={<RequireAuth><ManagerProfilePage /></RequireAuth>} />
         <Route path="career/academy" element={<RequireAuth><AcademyPage /></RequireAuth>} />
+        <Route path="career/match" element={<RequireAuth><MatchCenterPage /></RequireAuth>} />
         <Route path="career/academy/:playerId" element={<RequireAuth><AcademyPlayerPage /></RequireAuth>} />
         <Route path="teams" element={<RequireAuth>{isV3() ? <TeamsV3Page /> : <TeamsPage />}</RequireAuth>} />
         <Route path="ut/players/:assetId" element={<UtPlayerPage />} />

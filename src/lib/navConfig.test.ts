@@ -5,7 +5,11 @@ describe('v3 kariyer menüsü tek (V3-06d)', () => {
   const career = navFor('career', true, true)
 
   it('KARIYER-UX FAZ 4a sıra + ACADEMY-b: Masa · Kadro · Taktik Lab · Transfer · Altyapı · Oyuncular, sonra Gelişim · Takımlar · İçe aktar', () => {
-    expect(career.map((g) => g.label)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle'])
+    // FCA-23: Maç Merkezi Operasyon bölümünde, Transfer'den sonra.
+    expect(career.map((g) => g.label)).toEqual(['Masa', 'Kadro', 'Taktik', 'Transfer', 'Maç Merkezi', 'Altyapı', 'Oyuncular', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle'])
+    const match = career.find((g) => g.label === 'Maç Merkezi')
+    expect(match?.to).toBe('/career/match')
+    expect(match?.section).toBeUndefined()
     expect(career.find((g) => g.to === '/career/dashboard')?.tabs).toBeUndefined()
     expect(career.find((g) => g.label === 'Kadro')?.tabs).toBeUndefined()
   })
@@ -27,7 +31,7 @@ describe('v3 kariyer menüsü tek (V3-06d)', () => {
     expect(career.find((g) => g.label === 'Taktik')?.to).toBe('/career/tactics-lab')
     // FAZ 4b: Lab sekmeleri sayfa içinde (Kurucu · Sihirbaz · Replikalar · Kod · Karşılaştır); kabukta ikinci sekme satırı yok.
     expect(career.find((g) => g.label === 'Taktik')?.tabs).toBeUndefined()
-    expect(bar.more.map((g) => g.label)).toEqual(['Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer'])
+    expect(bar.more.map((g) => g.label)).toEqual(['Maç Merkezi', 'Altyapı', 'Gelişim', 'Takımlar', 'Menajer', 'Kayıt yükle', 'Yeni kariyer'])
     expect(CAREER_MORE.map((g) => g.to)).toEqual(['/career/new'])
   })
 
