@@ -9,7 +9,7 @@ import { CareerSelect } from '../components/CareerSelect'
 import { Button, Card, ErrorBox, Field, Input, Pill } from '../components/ui'
 import { importWarningText } from '../lib/importWarnings'
 import { EXPORT_DONE_WINDOW } from '../lib/leExport'
-import { trimCareerLog } from '../lib/leLogTrim'
+import { prepareCareerLog } from '../lib/leLogTrim'
 import { useActiveCareerId } from '../state/careerStore'
 
 const FILES = [
@@ -45,7 +45,7 @@ export function ImportPage() {
     mutationFn: async () => {
       const form = new FormData()
       if (logFile) {
-        form.append('log', await trimCareerLog(logFile))
+        form.append('log', await prepareCareerLog(logFile))
         return endpoints.importCareer(careerId!, form)
       }
       FILES.forEach((f) => {
