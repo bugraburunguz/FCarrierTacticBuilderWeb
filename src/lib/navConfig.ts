@@ -132,6 +132,10 @@ export function navFor(mode: AppMode, captureEnabled: boolean, v3 = false): NavG
   return captureEnabled ? UT_NAV : UT_NAV.filter((g) => !g.captureOnly)
 }
 
+export function homeFor(mode: AppMode, authenticated: boolean): string {
+  return authenticated && mode === 'career' ? '/career/dashboard' : '/'
+}
+
 export const MODES: { id: AppMode; label: string; home: string }[] = [
   { id: 'career', label: 'FC Career', home: '/' },
   { id: 'ut', label: 'Ultimate Team', home: '/ut/squad' },

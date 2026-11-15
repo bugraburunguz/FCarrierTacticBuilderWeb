@@ -1,3 +1,4 @@
+import { tokens } from '../api/tokens'
 import { isCareerSurface, modeStore } from '../state/modeStore'
 import { applyTheme, themeStore } from '../state/themeStore'
 import { applyDesignAttributes, resolveUiVersion } from './uiVersion'
@@ -35,7 +36,7 @@ export function bootDesign() {
 export function syncDesign(pathname: string = window.location.pathname) {
   const mode = modeStore.get()
   const root = document.documentElement
-  const career = isCareerSurface(mode, pathname)
+  const career = isCareerSurface(mode, pathname, tokens.authenticated)
   if (career) {
     if (!root.classList.contains('dark')) {
       root.classList.add('dark')

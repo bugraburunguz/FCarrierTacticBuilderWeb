@@ -8,7 +8,7 @@ import { useShellEffects } from '../../components/useShellEffects'
 import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
 import { PrivacyNoticeBanner } from '../../features/legal/PrivacyNoticeBanner'
 import { extensionCaptureEnabled } from '../../lib/features'
-import { activeNav, MODES, mobileBar, navFor, type NavGroup } from '../../lib/navConfig'
+import { activeNav, homeFor, MODES, mobileBar, navFor, type NavGroup } from '../../lib/navConfig'
 import { MobileSheet } from './MobileSheet'
 import { BETA_TEXT, useAppConfig } from '../../state/appConfig'
 import { useStorageError } from '../../state/bigStore'
@@ -116,8 +116,8 @@ export function AppShell() {
   const { freeBeta } = useAppConfig()
   useShellEffects(pathname)
   // FCA-3: Stitch kariyer görünümü yalnız kariyer ekranlarında; herkese açık/hesap sayfalarında bugünkü kabuk ve tema.
-  const careerSurface = isCareerSurface(mode, pathname)
-  useEffect(() => syncDesign(pathname), [pathname, mode])
+  const careerSurface = isCareerSurface(mode, pathname, authenticated)
+  useEffect(() => syncDesign(pathname), [pathname, mode, authenticated])
   // Uzantı yakalaması kapalıyken (VITE_EXTENSION_CAPTURE=off) yakalamaya bağlı UT öğeleri yan menüden ve mobil alt menüden çıkar (V3-06a).
   // V3-06d: kariyerde tek menü (CAREER_NAV); aktif öğe rotadan.
   const nav = navFor(mode, extensionCaptureEnabled(), true)
@@ -148,7 +148,7 @@ export function AppShell() {
   return (
     <div className="min-h-screen text-ink">
       <header className="glass glass-sticky sticky top-0 z-30 flex h-[var(--header-h)] min-w-0 items-center gap-2 sm:gap-3 rounded-none border-x-0 border-t-0 px-4 max-[359px]:gap-1.5 max-[359px]:px-3">
-        <LogoLockup size={32} collapse className={careerSurface ? 'justify-center max-sm:min-h-11 max-sm:min-w-11' : ''} />
+        <LogoLockup size={32} collapse to={homeFor(mode, authenticated)} className={careerSurface ? 'justify-center max-sm:min-h-11 max-sm:min-w-11' : ''} />
         <div className={careerSurface ? 'max-sm:hidden' : undefined}>
           <Segmented
             label="Mod"
@@ -156,7 +156,7 @@ export function AppShell() {
             options={MODES.map((m) => ({ id: m.id, label: m.id === 'ut' ? 'UT' : 'Kariyer' }))}
             onChange={(id) => {
               modeStore.set(id)
-              navigate(MODES.find((m) => m.id === id)?.home ?? '/')
+              navigate(id === 'career' ? homeFor('career', authenticated) : utHome)
             }}
           />
         </div>

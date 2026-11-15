@@ -81,6 +81,23 @@ describe('kariyer yalnız koyu tema', () => {
     expect(document.documentElement.dataset.surface).toBeUndefined()
     expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
+
+  it('FCA-28: girişli kariyerde / (Masa\'ya yönlenirken) kariyer yüzeyi ve koyu kalır; UT\'de bugünkü tema', () => {
+    document.documentElement.dataset.ui = 'v3'
+    themeStore.set('light')
+    modeStore.set('career')
+    localStorage.setItem('fc.access', 'x')
+    try {
+      syncDesign('/')
+      expect(document.documentElement.dataset.surface).toBe('career')
+      expect(document.documentElement.classList.contains('dark')).toBe(true)
+      modeStore.set('ut')
+      syncDesign('/')
+      expect(document.documentElement.classList.contains('dark')).toBe(false)
+    } finally {
+      localStorage.removeItem('fc.access')
+    }
+  })
 })
 
 describe('ilk boyama (public/theme-init.js)', () => {
@@ -103,5 +120,17 @@ describe('ilk boyama (public/theme-init.js)', () => {
     expect(run('/players', 'ut', 'light')).toBe(false)
     // kariyer yolu modu kariyere çeker
     expect(run('/career/squad', 'ut', 'light')).toBe(true)
+  })
+
+  it('FCA-28: girişli kariyer kullanıcısı / adresinde Masa\'ya yönlenir; açık tema yanıp sönmez. Girişsiz ve UT açık kalır', () => {
+    localStorage.setItem('fc.access', 'x')
+    try {
+      expect(run('/', 'career', 'light')).toBe(true)
+      expect(run('/', 'ut', 'light')).toBe(false)
+      expect(run('/login', 'career', 'light')).toBe(false)
+    } finally {
+      localStorage.removeItem('fc.access')
+    }
+    expect(run('/', 'career', 'light')).toBe(false)
   })
 })

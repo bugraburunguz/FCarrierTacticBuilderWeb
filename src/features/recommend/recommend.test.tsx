@@ -9,6 +9,11 @@ import { lastRecommendationsKey, RecommendationPanel } from './RecommendationPan
 import { RecommendationRow } from './RecommendationRow'
 
 let premium = false
+let freeBeta = false
+
+vi.mock('../../state/appConfig', () => ({
+  useAppConfig: () => ({ freeBeta, dailyCredits: 30 }),
+}))
 
 vi.mock('../../auth/AuthContext', () => ({
   useAuth: () => ({ authenticated: true, me: { subscriptionType: premium ? 'PREMIUM' : 'FREE', creditBalance: 17, dailyCreditLimit: 20 } }),
@@ -71,6 +76,7 @@ function renderPanel(props: Partial<React.ComponentProps<typeof RecommendationPa
 
 beforeEach(() => {
   premium = false
+  freeBeta = false
   vi.mocked(endpoints.careerRecommendations).mockReset()
   bigStore.clear(lastRecommendationsKey(4, 'ST', 'ST1'))
 })
@@ -203,6 +209,16 @@ describe('RecommendationPanel (E3-10)', () => {
     fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · PREMIUM/ }))
     await waitFor(() => expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1))
     expect(screen.queryByRole('button', { name: /Onayla/ })).not.toBeInTheDocument()
+  })
+
+  it('FCA-24: beta\'da kredi düşmez (sunucu herkese PREMIUM hakkı verir); "X kredi düşecek" onayı çıkmaz', async () => {
+    freeBeta = true
+    vi.mocked(endpoints.careerRecommendations).mockResolvedValue({ ...response([item()]), charged: 0 })
+    renderPanel()
+    fireEvent.click(await screen.findByRole('button', { name: /Önerileri getir · Beta'da ücretsiz/ }))
+    await waitFor(() => expect(endpoints.careerRecommendations).toHaveBeenCalledTimes(1))
+    expect(screen.queryByRole('alertdialog', { name: 'Kredi onayı' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/kredi düşecek/)).not.toBeInTheDocument()
   })
 
   it('filtreler isteğe yansır: profil, maks yaş, bütçe bilinmiyor, alternatif roller, hayal transferler', async () => {
