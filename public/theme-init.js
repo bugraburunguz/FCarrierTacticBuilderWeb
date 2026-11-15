@@ -8,6 +8,7 @@ try {
   // Kariyer yolları modu kariyere çeker (modeForPath); ortak yollarda son seçim geçerli.
   var careerPath = /^\/(career|squad|tactics|recommend|scouting|teams|wonderkids)(\/|$)/.test(path);
   var careerMode = careerPath || (localStorage.getItem('fc.mode') !== 'ut' && !/^\/ut(\/|$)/.test(path));
-  if (careerMode && publicPaths.indexOf(path) < 0) dark = true;
+  var careerHome = path === '/' && !!localStorage.getItem('fc.access');
+  if (careerMode && (careerHome || publicPaths.indexOf(path) < 0)) dark = true;
   document.documentElement.classList.toggle('dark', dark);
 } catch { document.documentElement.classList.add('dark'); }

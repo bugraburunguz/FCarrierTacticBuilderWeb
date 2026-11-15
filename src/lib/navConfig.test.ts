@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { activeNav, CAREER_MORE, mobileBar, NAV, UT_NAV, navFor } from './navConfig'
+import { activeNav, CAREER_MORE, homeFor, mobileBar, NAV, UT_NAV, navFor } from './navConfig'
 
 describe('v3 kariyer menüsü tek (V3-06d)', () => {
   const career = navFor('career', true, true)
@@ -60,5 +60,14 @@ describe('UT menüsü ve yakalama bayrağı', () => {
   it('kariyer menüsü bayraktan etkilenmez', () => {
     expect(navFor('career', false)).toEqual(NAV)
     expect(navFor('career', true)).toEqual(NAV)
+  })
+})
+
+describe('FCA-28 logo hedefi', () => {
+  it('girişli kariyer Masa\'ya; girişli UT ve girişsiz her mod ana sayfaya', () => {
+    expect(homeFor('career', true)).toBe('/career/dashboard')
+    expect(homeFor('ut', true)).toBe('/')
+    expect(homeFor('career', false)).toBe('/')
+    expect(homeFor('ut', false)).toBe('/')
   })
 })

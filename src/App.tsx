@@ -9,6 +9,7 @@ import { LegacySquadRedirect, RedirectWithSearch } from './components/RedirectWi
 const LAB_BUILDER = '/career/tactics-lab?sekme=kurucu'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { AppShell } from './design/components/AppShell'
+import { HomeRoute } from './features/home/HomeRoute'
 import { isV3 } from './design/uiVersion'
 import { useActiveCareerId } from './state/careerStore'
 import { playerDetailView, playersView } from './features/careerPlayers/playersView'
@@ -59,7 +60,6 @@ const ReplicaDetailPage = lazy(() => import('./features/replicas/ReplicaDetailPa
 const AboutPage = lazy(() => import('./features/about/AboutPage').then((m) => ({ default: m.AboutPage })))
 const CardDatabasePage = lazy(() => import('./features/cards/CardDatabasePage').then((m) => ({ default: m.CardDatabasePage })))
 const CareerPlayersPage = lazy(() => import('./features/careerPlayers/CareerPlayersPage').then((m) => ({ default: m.CareerPlayersPage })))
-const HomeV3 = lazy(() => import('./features/home/HomePage').then((m) => ({ default: m.HomePage })))
 const LoginV3 = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.LoginPage })))
 const RegisterV3 = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.RegisterPage })))
 const VerifyEmailV3 = lazy(() => import('./features/account/AuthPages').then((m) => ({ default: m.VerifyEmailPage })))
@@ -119,7 +119,7 @@ export function App() {
     <Routes>
       <Route element={isV3() ? <AppShell /> : <Layout />}>
         {/* V3-07a: v3'te ana sayfa, hesap ekranları, içe aktarma, yeni kariyer ve profil yeni; v2 sayfaları v2 için kalır. */}
-        <Route index element={isV3() ? <HomeV3 /> : <HomePage />} />
+        <Route index element={isV3() ? <HomeRoute /> : <HomePage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="login" element={isV3() ? <LoginV3 /> : <LoginPage />} />
         <Route path="register" element={isV3() ? <RegisterV3 /> : <RegisterPage />} />
