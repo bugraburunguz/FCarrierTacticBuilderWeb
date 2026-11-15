@@ -127,11 +127,8 @@ for (const { w, h } of [{ w: 375, h: 812 }, { w: 768, h: 1024 }, { w: 1280, h: 9
     await shoot(anon, 'ana-sayfa-anonim')
     await anon.context.close()
 
-    // Girişli: ana sayfa (kariyer + UT), içe aktarma, yeni kariyer, profil.
+    // Girişli: içe aktarma, yeni kariyer, profil. FCA-28: girişli kariyerde / Masa'ya yönlenir; ayrı ana sayfa yok.
     const auth = await newPage(w, h, theme, { auth: true, mode: 'career' })
-    await go(auth, '/')
-    await auth.page.getByRole('region', { name: 'Kariyerine devam et' }).waitFor({ timeout: 20000 })
-    await shoot(auth, 'ana-sayfa-kariyer')
     await go(auth, '/career/import')
     await shoot(auth, 'ice-aktarma-bos')
     await go(auth, '/career/new')

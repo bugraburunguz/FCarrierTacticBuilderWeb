@@ -42,8 +42,12 @@ const CAREER_PREFIXES = ['/career', '/squad', '/tactics', '/recommend', '/scouti
 export const PUBLIC_PATHS = ['/', '/login', '/register', '/verify-email', '/about', '/privacy', '/profile']
 
 /** FCA-3: Stitch kariyer görünümü (sol menü, üst kariyer barı, yalnız koyu) yalnız kariyer modunda ve herkese açık sayfalar dışında. */
-export function isCareerSurface(mode: AppMode, pathname: string): boolean {
-  return mode === 'career' && modeForPath(pathname) !== 'ut' && !PUBLIC_PATHS.includes(pathname.replace(/\/+$/, '') || '/')
+export function isCareerSurface(mode: AppMode, pathname: string, authenticated = false): boolean {
+  const path = pathname.replace(/\/+$/, '') || '/'
+  if (mode !== 'career' || modeForPath(pathname) === 'ut') {
+    return false
+  }
+  return (authenticated && path === '/') || !PUBLIC_PATHS.includes(path)
 }
 
 /** Mod URL önekinden çıkar (WEB-BUG-07): /ut → ut, kariyer yolları → career; ortak sayfalarda (ana sayfa, oyuncular, profil) son seçim korunur (undefined). */
