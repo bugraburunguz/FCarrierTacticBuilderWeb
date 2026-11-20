@@ -185,6 +185,8 @@ describe('FCA-23 Maç Merkezi', () => {
     expect(left).toHaveTextContent('Sol Kanadımız')
     expect(left).toHaveTextContent('Rakip Sağ Kanat')
     expect(left).toHaveTextContent('Winger (Attack)')
+    expect(within(left).getByRole('list', { name: 'Sol kanat · Rakip' })).toHaveTextContent('Rakip Sağ Kanat')
+    expect(within(left).getByRole('list', { name: 'Sol kanat · Biz' })).toHaveTextContent('Sol Kanadımız')
     expect(within(card).getByRole('group', { name: 'Sağ kanat' })).toHaveTextContent('Dengeli')
   })
 

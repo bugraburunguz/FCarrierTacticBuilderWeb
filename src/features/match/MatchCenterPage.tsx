@@ -219,11 +219,11 @@ function OpponentSection({ query, formations }: { query: { data?: OpponentReport
 
 const LANE_EDGE = { bad: 'border-[var(--bad)]', good: 'border-[var(--good)]' } as const
 
-function LanePlayers({ title, players }: { title: string; players: FlankLane['ours'] }) {
+function LanePlayers({ title, label, players }: { title: string; label: string; players: FlankLane['ours'] }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <p className="text-xs text-muted">{title}</p>
-      <ul aria-label={title} className="flex flex-col gap-1 text-sm">
+      <ul aria-label={label} className="flex flex-col gap-1 text-sm">
         {players.map((pl) => (
           <li key={pl.id} className="flex min-w-0 items-baseline gap-2">
             <span className="w-9 shrink-0 font-mono text-xs text-muted">{pl.position}</span>
@@ -243,8 +243,8 @@ function FlankLaneCard({ lane }: { lane: FlankLane }) {
         <span className="font-semibold">{lane.label}</span>
         <Chip tone={lane.tone}>{lane.verdictText}</Chip>
       </div>
-      <LanePlayers title="Rakip" players={lane.theirs} />
-      <LanePlayers title="Biz" players={lane.ours} />
+      <LanePlayers title="Rakip" label={`${lane.label} · Rakip`} players={lane.theirs} />
+      <LanePlayers title="Biz" label={`${lane.label} · Biz`} players={lane.ours} />
       <dl className="grid grid-cols-2 gap-2 text-xs">
         {lane.stats.map((s) => <div key={s.label}><dt className="text-muted">{s.label}</dt><dd className="font-semibold tabular-nums">{s.value}</dd></div>)}
       </dl>
@@ -319,7 +319,7 @@ function PlanSection({ query, formations, careerId }: { query: { data?: MatchPla
       )}
       {lanes.length > 0 && (
         <Block title="Kanat eşleşmesi">
-          <div role="group" aria-label="Kanat eşleşmesi" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div role="group" aria-label="Kanat eşleşmesi" className="grid grid-cols-1 gap-2 min-[640px]:grid-cols-2 min-[1100px]:grid-cols-1">
             {lanes.map((lane) => <FlankLaneCard key={lane.side} lane={lane} />)}
           </div>
         </Block>
