@@ -1837,12 +1837,39 @@ export interface OpponentReport {
   missing: OpponentReportMissing[]
 }
 
-export type MatchPlanMissing = 'USER_TEAM' | 'OUR_FORMATION' | 'MATCH_RATINGS'
+export type MatchPlanMissing = 'USER_TEAM' | 'OUR_FORMATION' | 'MATCH_RATINGS' | 'FLANKS'
+
+export type FlankSide = 'LEFT' | 'RIGHT'
+export type FlankVerdict = 'EXPOSED' | 'OPPORTUNITY' | 'BALANCED'
+
+export interface FlankPlayer {
+  playerId: number
+  name: string
+  position: string
+  roleId?: string | null
+  role?: string | null
+  focus?: string | null
+  attackLean: number
+  pace: number
+}
+
+/** FCA-29 kanat eşleşmesi: bizim sol kanat rakibin sağıyla eşleşir. Puanlar 0–100. */
+export interface FlankMatchup {
+  side: FlankSide
+  ours: { players: FlankPlayer[]; attackLean: number; defensiveCover: number }
+  theirs: { players: FlankPlayer[]; threat: number; attackLean: number; keyThreat: { playerId: number; name: string; threat: number; pace: number; goalsAssists: number } }
+  verdict: FlankVerdict
+  counter: boolean
+}
 
 /** FCA-23 `GET /careers/{id}/match/opponents/{teamId}/plan`. Dinlendirme adayı ilk 11'den çıkarılmaz, `restSuggested` ile işaretlenir. */
 export interface MatchPlan {
   opponentTeamId: number
   ourFormation?: { id: string; source: 'MAIN_TACTIC' | 'TEAM_DEFAULT' } | null
+  /** FCA-29: USER_LINEUP = ana taktikteki 11 aynen; ENGINE = motor seçti. */
+  lineupSource?: 'USER_LINEUP' | 'ENGINE' | null
+  /** FCA-29: kanatta oyuncu yoksa o taraf gelmez; veri yoksa alan yok ve missing'de FLANKS. */
+  flanks?: { left?: FlankMatchup; right?: FlankMatchup } | null
   ourEleven: { slotId: string; position: string; playerId: number; name: string; overall: number; combined?: number | null; lastRatings: number[]; recentAverage: number | null; restSuggested: boolean }[]
   restCandidates: { playerId: number; name: string; minutes: number; matches: number }[]
   tacticalNotes: { code: string; text: string }[]

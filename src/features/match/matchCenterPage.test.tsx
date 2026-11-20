@@ -169,6 +169,33 @@ describe('FCA-23 Maç Merkezi', () => {
     expect(screen.getByRole('combobox', { name: 'Rakip' })).toBeEnabled()
   })
 
+  it('FCA-29: kanat eşleşmesi kartı karar etiketiyle; kendi 11 başlığı lineupSource\'a göre', async () => {
+    const side = (s: 'LEFT' | 'RIGHT', verdict: 'EXPOSED' | 'BALANCED') => ({
+      side: s, verdict, counter: false,
+      ours: { players: [{ playerId: 2, name: s === 'LEFT' ? 'Sol Kanadımız' : 'Sağ Kanadımız', position: s === 'LEFT' ? 'LM' : 'RM', role: 'Winger (Attack)', attackLean: 61, pace: 80 }], attackLean: 42, defensiveCover: 29 },
+      theirs: { players: [{ playerId: 4, name: s === 'LEFT' ? 'Rakip Sağ Kanat' : 'Rakip Sol Kanat', position: s === 'LEFT' ? 'RW' : 'LW', role: 'Winger (Balanced)', attackLean: 78, pace: 86 }], threat: 79, attackLean: 57, keyThreat: { playerId: 4, name: 'Rakip Sağ Kanat', threat: 79, pace: 86, goalsAssists: 0 } },
+    })
+    vi.mocked(endpoints.matchPlan).mockResolvedValue(plan({ lineupSource: 'USER_LINEUP', flanks: { left: side('LEFT', 'EXPOSED'), right: side('RIGHT', 'BALANCED') } }))
+    renderAt('/career/match?rakip=55')
+    const section = await screen.findByRole('region', { name: 'Maç planı' })
+    expect(await within(section).findByRole('list', { name: 'Senin 11\'in' })).toBeInTheDocument()
+    const card = within(section).getByRole('group', { name: 'Kanat eşleşmesi' })
+    const left = within(card).getByRole('group', { name: 'Sol kanat' })
+    expect(left).toHaveTextContent('Açık')
+    expect(left).toHaveTextContent('Sol Kanadımız')
+    expect(left).toHaveTextContent('Rakip Sağ Kanat')
+    expect(left).toHaveTextContent('Winger (Attack)')
+    expect(within(card).getByRole('group', { name: 'Sağ kanat' })).toHaveTextContent('Dengeli')
+  })
+
+  it('FCA-29: flanks yoksa kanat kartı görünmez; motor seçtiyse başlık "Önerilen ilk 11"', async () => {
+    vi.mocked(endpoints.matchPlan).mockResolvedValue(plan({ lineupSource: 'ENGINE', missing: ['FLANKS'] }))
+    renderAt('/career/match?rakip=55')
+    const section = await screen.findByRole('region', { name: 'Maç planı' })
+    expect(await within(section).findByRole('list', { name: 'Önerilen ilk 11' })).toBeInTheDocument()
+    expect(within(section).queryByRole('group', { name: 'Kanat eşleşmesi' })).toBeNull()
+  })
+
   it('kullanıcı takımı bilinmiyorsa (boş rakip listesi) içe aktarma çağrısı', async () => {
     vi.mocked(endpoints.matchOpponents).mockResolvedValue([] as never)
     renderAt()

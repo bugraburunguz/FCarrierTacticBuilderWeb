@@ -11,7 +11,7 @@ import { Chip, EmptyState, ErrorState, OvrBox, Skeleton } from '../../design/com
 import { formatAverageRating } from '../../lib/matchData'
 import { useActiveCareerId } from '../../state/careerStore'
 import { mainTacticKey } from '../career/activeTactic'
-import { elevenDiff, groupOpponents, lineRows, missingText, pitchSlotsOf } from './matchCenter'
+import { elevenDiff, flankLanes, groupOpponents, lineRows, missingText, pitchSlotsOf, type FlankLane } from './matchCenter'
 
 const STALE_MS = 120_000
 const INPUT = 'min-h-10 w-full rounded-[var(--radius-sm)] border border-line bg-[var(--bg-base)] px-3 text-sm text-ink max-sm:min-h-11'
@@ -217,6 +217,41 @@ function OpponentSection({ query, formations }: { query: { data?: OpponentReport
   )
 }
 
+const LANE_EDGE = { bad: 'border-[var(--bad)]', good: 'border-[var(--good)]' } as const
+
+function LanePlayers({ title, players }: { title: string; players: FlankLane['ours'] }) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1">
+      <p className="text-xs text-muted">{title}</p>
+      <ul aria-label={title} className="flex flex-col gap-1 text-sm">
+        {players.map((pl) => (
+          <li key={pl.id} className="flex min-w-0 items-baseline gap-2">
+            <span className="w-9 shrink-0 font-mono text-xs text-muted">{pl.position}</span>
+            <span className="min-w-0 flex-1 truncate font-medium">{pl.name}</span>
+            {pl.role && <span className="shrink-0 truncate text-xs text-ink-2">{pl.role}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function FlankLaneCard({ lane }: { lane: FlankLane }) {
+  return (
+    <div role="group" aria-label={lane.label} className={`glass-3 flex min-w-0 flex-col gap-2 border-l-4 p-2 ${lane.tone ? LANE_EDGE[lane.tone] : 'border-[var(--glass-border)]'}`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-semibold">{lane.label}</span>
+        <Chip tone={lane.tone}>{lane.verdictText}</Chip>
+      </div>
+      <LanePlayers title="Rakip" players={lane.theirs} />
+      <LanePlayers title="Biz" players={lane.ours} />
+      <dl className="grid grid-cols-2 gap-2 text-xs">
+        {lane.stats.map((s) => <div key={s.label}><dt className="text-muted">{s.label}</dt><dd className="font-semibold tabular-nums">{s.value}</dd></div>)}
+      </dl>
+    </div>
+  )
+}
+
 function PlanSection({ query, formations, careerId }: { query: { data?: MatchPlan; isPending: boolean; isError: boolean }; formations?: Formation[]; careerId?: number }) {
   // Ana taktik ilk 11'i ve oyuncu adları: "öneride X yerine Y" (yalnız plan ana taktiğin dizilişiyle kurulduysa).
   const main = useQuery({ queryKey: mainTacticKey(careerId), queryFn: () => endpoints.mainTactic(careerId!), enabled: careerId !== undefined, retry: false })
@@ -235,7 +270,10 @@ function PlanSection({ query, formations, careerId }: { query: { data?: MatchPla
     return <Section title="Maç planı" label="Maç planı"><MissingNote code="USER_TEAM" /></Section>
   }
   const formation = formations?.find((f) => f.id === p.ourFormation?.id)
-  const diff = p.ourFormation?.source === 'MAIN_TACTIC' ? elevenDiff(main.data?.lineup ?? undefined, p.ourEleven, names) : []
+  const ownLineup = p.lineupSource === 'USER_LINEUP'
+  const elevenTitle = ownLineup ? 'Senin 11\'in' : 'Önerilen ilk 11'
+  const lanes = flankLanes(p.flanks)
+  const diff = p.ourFormation?.source === 'MAIN_TACTIC' && !ownLineup ? elevenDiff(main.data?.lineup ?? undefined, p.ourEleven, names) : []
   const source = p.ourFormation ? `${p.ourFormation.id} · ${p.ourFormation.source === 'MAIN_TACTIC' ? 'ana taktik' : 'takımın varsayılanı'}` : undefined
   const sp = p.setPieces
   const setRows = sp ? [
@@ -247,7 +285,7 @@ function PlanSection({ query, formations, careerId }: { query: { data?: MatchPla
   ] : []
   return (
     <Section title="Maç planı" label="Maç planı" subtitle={source}>
-      <Block title="Önerilen ilk 11">
+      <Block title={elevenTitle}>
         {missing.has('OUR_FORMATION') || p.ourEleven.length === 0 ? <MissingNote code="OUR_FORMATION" /> : (
           <>
             {formation && <Pitch slots={pitchSlotsOf(formation.slots, p.ourEleven)} onPickPlayer={() => undefined} readOnly field="cyber" marker="pawn" />}
@@ -256,7 +294,7 @@ function PlanSection({ query, formations, careerId }: { query: { data?: MatchPla
                 {diff.map((d) => <li key={d.slotId}>{`Öneride ${d.out} yerine ${d.in}`}</li>)}
               </ul>
             )}
-            <ol aria-label="Önerilen ilk 11" className="flex flex-col gap-1 text-sm">
+            <ol aria-label={elevenTitle} className="flex flex-col gap-1 text-sm">
               {p.ourEleven.map((e) => (
                 <li key={e.slotId} className="flex min-h-8 items-center gap-2">
                   <span className="w-10 shrink-0 font-mono text-xs text-muted">{e.position}</span>
@@ -277,6 +315,13 @@ function PlanSection({ query, formations, careerId }: { query: { data?: MatchPla
             {p.restCandidates.map((c) => <li key={c.playerId}>{`${c.name} · ${c.matches} maç · ${c.minutes} dk`}</li>)}
           </ul>
           <p className="text-xs text-muted">İlk 11'den çıkarılmadı; karar senin.</p>
+        </Block>
+      )}
+      {lanes.length > 0 && (
+        <Block title="Kanat eşleşmesi">
+          <div role="group" aria-label="Kanat eşleşmesi" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {lanes.map((lane) => <FlankLaneCard key={lane.side} lane={lane} />)}
+          </div>
         </Block>
       )}
       <Block title="Taktik notları">
