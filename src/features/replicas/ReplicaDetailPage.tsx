@@ -10,7 +10,7 @@ import { Workspace } from '../../design/components/Workspace'
 import { cardPlayerOfSummary } from '../../lib/cardPlayer'
 import { ApplyTab } from './ApplyTab'
 import { AttentionPoints } from './AttentionPoints'
-import { CATEGORY_LABEL } from './labels'
+import { CATEGORY_LABEL, replicaOriginLabel } from './labels'
 import { StoryTab, TacticTab } from './ReplicaTabs'
 import { slotFit } from './slotFit'
 import { useReplicaApply } from './useReplicaApply'
@@ -94,6 +94,7 @@ export function ReplicaDetailPage() {
                 <p className="flex flex-wrap items-center gap-2 text-sm text-ink-2">
                   {summary.coach}
                   <Chip>{CATEGORY_LABEL[summary.category]}</Chip>
+                  {summary.variant && <Chip>{replicaOriginLabel(summary)}</Chip>}
                 </p>
               </>
             ) : (

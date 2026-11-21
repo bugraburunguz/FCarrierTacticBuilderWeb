@@ -1472,7 +1472,8 @@ export interface CreditCosts {
 
 // ── Replikalar (E3-9 / REP-04, REP-07) ────────────────────────────────────────────────────────────────────────────────
 
-export type ReplicaCategory = 'CURRENT' | 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaCategory = 'PERSONAL_STYLE' | 'CURRENT' | 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaStyleVariant = 'DENGELI' | 'HUCUM' | 'DEFANS' | 'BUYUK_MAC' | 'KUCUK_MAC'
 /** Kulübün o sezon oynadığı lig (REP-c). */
 export type ReplicaLeague =
   | 'TR_SUPER_LIG'
@@ -1501,10 +1502,11 @@ export interface ReplicaRoleSlot {
 export interface ReplicaSummary {
   id: string
   category: ReplicaCategory
+  variant?: ReplicaStyleVariant | null
   club: string
   coach: string
   season: string
-  league: ReplicaLeague
+  league: ReplicaLeague | null
   formationId: string
   eaFormation: string
   buildUp: ReplicaBuildUp

@@ -1,9 +1,10 @@
-import type { ReplicaApproach, ReplicaBuildUp, ReplicaCategory, ReplicaLeague, ReplicaSlotState } from '../../api/types'
+import type { ReplicaApproach, ReplicaBuildUp, ReplicaCategory, ReplicaLeague, ReplicaSlotState, ReplicaStyleVariant } from '../../api/types'
 
 /** Replika ekranlarının tek sözlüğü (kategori, lig, build-up, hat, slot durumu). */
-export const CATEGORY_ORDER: ReplicaCategory[] = ['CURRENT', 'UCL_WINNER', 'LEGENDARY_SQUAD', 'LEGENDARY_COACH', 'UNDERRATED_COACH', 'TURKISH_BIG4', 'TURKISH_CHAMPION']
+export const CATEGORY_ORDER: ReplicaCategory[] = ['PERSONAL_STYLE', 'CURRENT', 'UCL_WINNER', 'LEGENDARY_SQUAD', 'LEGENDARY_COACH', 'UNDERRATED_COACH', 'TURKISH_BIG4', 'TURKISH_CHAMPION']
 
 export const CATEGORY_LABEL: Record<ReplicaCategory, string> = {
+  PERSONAL_STYLE: 'Benim stilim',
   CURRENT: 'Güncel',
   UCL_WINNER: 'UCL şampiyonu',
   LEGENDARY_SQUAD: 'Efsane kadro',
@@ -29,10 +30,11 @@ export const LEAGUE_LABEL: Record<ReplicaLeague, string> = {
 }
 
 /** Lig sekmeleri (REP-d): altı büyük lig + "Diğer" (Championship, Serie B, Eredivisie, Portekiz, İskoçya, Avusturya). */
-export type LeagueTab = 'ALL' | 'TR_SUPER_LIG' | 'EN_PREMIER_LEAGUE' | 'ES_LALIGA' | 'IT_SERIE_A' | 'DE_BUNDESLIGA' | 'FR_LIGUE_1' | 'OTHER'
-export const LEAGUE_TABS: LeagueTab[] = ['ALL', 'TR_SUPER_LIG', 'EN_PREMIER_LEAGUE', 'ES_LALIGA', 'IT_SERIE_A', 'DE_BUNDESLIGA', 'FR_LIGUE_1', 'OTHER']
+export type LeagueTab = 'ALL' | 'PERSONAL' | 'TR_SUPER_LIG' | 'EN_PREMIER_LEAGUE' | 'ES_LALIGA' | 'IT_SERIE_A' | 'DE_BUNDESLIGA' | 'FR_LIGUE_1' | 'OTHER'
+export const LEAGUE_TABS: LeagueTab[] = ['ALL', 'PERSONAL', 'TR_SUPER_LIG', 'EN_PREMIER_LEAGUE', 'ES_LALIGA', 'IT_SERIE_A', 'DE_BUNDESLIGA', 'FR_LIGUE_1', 'OTHER']
 export const LEAGUE_TAB_LABEL: Record<LeagueTab, string> = {
   ALL: 'Tümü',
+  PERSONAL: CATEGORY_LABEL.PERSONAL_STYLE,
   TR_SUPER_LIG: LEAGUE_LABEL.TR_SUPER_LIG,
   EN_PREMIER_LEAGUE: LEAGUE_LABEL.EN_PREMIER_LEAGUE,
   ES_LALIGA: LEAGUE_LABEL.ES_LALIGA,
@@ -40,6 +42,21 @@ export const LEAGUE_TAB_LABEL: Record<LeagueTab, string> = {
   DE_BUNDESLIGA: LEAGUE_LABEL.DE_BUNDESLIGA,
   FR_LIGUE_1: LEAGUE_LABEL.FR_LIGUE_1,
   OTHER: 'Diğer',
+}
+
+export const STYLE_VARIANT_LABEL: Record<ReplicaStyleVariant, string> = {
+  DENGELI: 'Dengeli',
+  HUCUM: 'Hücum',
+  DEFANS: 'Defans',
+  BUYUK_MAC: 'Büyük maç',
+  KUCUK_MAC: 'Küçük maç',
+}
+
+export function replicaOriginLabel(r: { league: ReplicaLeague | null; variant?: ReplicaStyleVariant | null }): string {
+  if (r.variant) {
+    return STYLE_VARIANT_LABEL[r.variant] ?? ''
+  }
+  return r.league ? (LEAGUE_LABEL[r.league] ?? r.league) : ''
 }
 
 /** Formasyon ailesi: savunma hattındaki oyuncu sayısı (EA etiketinin ilk hanesi). */

@@ -76,6 +76,22 @@ describe('lig sekmeleri (REP-d)', () => {
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
   })
 
+  it('FCA-30: kişisel stil varsa "Benim stilim" sekmesi Tümü\'nden sonra; grup en üstte, kartta varyant adı', async () => {
+    const personal = [
+      replica({ id: 'bugra_dengeli', category: 'PERSONAL_STYLE', variant: 'DENGELI', club: 'Buğra FC', coach: 'Buğra', season: 'FC27', league: null }),
+      replica({ id: 'bugra_buyuk_mac', category: 'PERSONAL_STYLE', variant: 'BUYUK_MAC', club: 'Buğra FC', coach: 'Buğra', season: 'FC27', league: null }),
+    ]
+    vi.mocked(endpoints.replicas).mockResolvedValue([...LIST, ...personal])
+    renderPage()
+    await screen.findByText(/Inter/)
+    const tabs = within(screen.getByRole('tablist', { name: 'Lig' })).getAllByRole('tab')
+    expect(tabs.slice(0, 2).map((t) => t.textContent)).toEqual(['Tümü7', 'Benim stilim2'])
+    const groupButtons = screen.getAllByRole('button', { name: /· \d+$/ })
+    expect(groupButtons[0]).toHaveAccessibleName(/Benim stilim · 2/)
+    expect(screen.getByText('Büyük maç')).toBeInTheDocument()
+    expect(screen.queryByText('null')).toBeNull()
+  })
+
   it('sekme ?lig= ile adreste durur; seçili lig düz liste gösterir', async () => {
     renderPage('/replicas?lig=serie-a')
     expect(await screen.findByText(/Inter/)).toBeInTheDocument()
