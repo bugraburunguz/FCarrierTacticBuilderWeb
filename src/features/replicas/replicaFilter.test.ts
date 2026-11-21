@@ -104,6 +104,21 @@ describe('replika filtreleri', () => {
     ])
   })
 
+  it('FCA-30: kişisel stil kartları ligden bağımsız "Benim stilim" sekmesinde ve "Tümü"nde ilk grupta, API sırasıyla', () => {
+    const personal = [
+      make({ id: 'p1', category: 'PERSONAL_STYLE', variant: 'DENGELI', club: 'Buğra FC', coach: 'Buğra', season: 'FC27', league: null }),
+      make({ id: 'p2', category: 'PERSONAL_STYLE', variant: 'HUCUM', club: 'Buğra FC', coach: 'Buğra', season: 'FC27', league: null }),
+    ]
+    expect(leagueTabOf(personal[0])).toBe('PERSONAL')
+    const all = [...LIST, ...personal]
+    expect(groupByLeague(all)[0]).toEqual({ tab: 'PERSONAL', items: personal })
+    expect(ids(filterReplicas(all, { ...DEFAULT_FILTERS, league: 'PERSONAL' }))).toEqual(['p1', 'p2'])
+    expect(ids(filterReplicas(all, { ...DEFAULT_FILTERS, league: 'OTHER' }))).toEqual(['c'])
+    expect(leagueCounts(all, DEFAULT_FILTERS)).toMatchObject({ ALL: 9, PERSONAL: 2, OTHER: 1 })
+    expect(filtersToParams({ ...DEFAULT_FILTERS, league: 'PERSONAL' }).toString()).toBe('lig=benim-stilim')
+    expect(filtersFromParams(new URLSearchParams('lig=benim-stilim')).league).toBe('PERSONAL')
+  })
+
   it('uyum sıralaması: hesaplananlar yüzdeye göre önde, kalanlar sırasını korur', () => {
     const fits = new Map([['b', 61], ['d', 88], ['a', 74]])
     expect(ids(rankByFit(LIST, fits))).toEqual(['d', 'a', 'b', 'c', 'e', 'f', 'g'])
