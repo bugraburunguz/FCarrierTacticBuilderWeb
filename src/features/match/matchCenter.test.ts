@@ -1,6 +1,28 @@
 import { describe, expect, it } from 'vitest'
-import type { FormationSlot, LineStrength, MatchOpponent } from '../../api/types'
-import { elevenDiff, groupOpponents, lineRows, missingText, pitchSlotsOf } from './matchCenter'
+import type { FlankMatchup, FormationSlot, LineStrength, MatchOpponent } from '../../api/types'
+import { elevenDiff, flankLanes, groupOpponents, lineRows, missingText, pitchSlotsOf } from './matchCenter'
+
+const flank = (side: 'LEFT' | 'RIGHT', verdict: FlankMatchup['verdict'], counter = false): FlankMatchup => ({
+  side, verdict, counter,
+  ours: { players: [{ playerId: 1, name: 'Bizim Bek', position: side === 'LEFT' ? 'LB' : 'RB', role: 'Fullback (Balanced)', attackLean: 22, pace: 79 }, { playerId: 2, name: 'Bizim Kanat', position: side === 'LEFT' ? 'LM' : 'RM', role: 'Winger (Attack)', attackLean: 61, pace: 77 }], attackLean: 42, defensiveCover: 29 },
+  theirs: { players: [{ playerId: 3, name: 'Rakip Bek', position: side === 'LEFT' ? 'RB' : 'LB', role: 'Fullback (Balanced)', attackLean: 35, pace: 79 }, { playerId: 4, name: 'Rakip Kanat', position: side === 'LEFT' ? 'RW' : 'LW', role: 'Winger (Balanced)', attackLean: 78, pace: 86 }], threat: 79, attackLean: 57, keyThreat: { playerId: 4, name: 'Rakip Kanat', threat: 79, pace: 86, goalsAssists: 0 } },
+})
+
+describe('FCA-29 kanat eşleşmesi', () => {
+  it('iki kanat soldan sağa; karar metni ve tonu; bizim ve rakip oyuncular mevkileriyle', () => {
+    const lanes = flankLanes({ left: flank('LEFT', 'EXPOSED'), right: flank('RIGHT', 'OPPORTUNITY') })
+    expect(lanes.map((l) => [l.side, l.label, l.verdictText, l.tone])).toEqual([['LEFT', 'Sol kanat', 'Açık', 'bad'], ['RIGHT', 'Sağ kanat', 'Fırsat', 'good']])
+    expect(lanes[0].ours).toEqual([{ id: 1, position: 'LB', name: 'Bizim Bek', role: 'Fullback (Balanced)' }, { id: 2, position: 'LM', name: 'Bizim Kanat', role: 'Winger (Attack)' }])
+    expect(lanes[0].theirs.map((p) => p.name)).toEqual(['Rakip Bek', 'Rakip Kanat'])
+    expect(lanes[0].stats).toEqual([{ label: 'Rakip tehdidi', value: 79 }, { label: 'Bizim savunma desteği', value: 29 }])
+  })
+
+  it('dengeli kanat nötr; eksik taraf atlanır; veri yoksa boş', () => {
+    expect(flankLanes({ right: flank('RIGHT', 'BALANCED') }).map((l) => [l.side, l.verdictText, l.tone])).toEqual([['RIGHT', 'Dengeli', undefined]])
+    expect(flankLanes(undefined)).toEqual([])
+    expect(flankLanes(null)).toEqual([])
+  })
+})
 
 const opp = (teamId: number, name: string, leagueName: string | null, sameLeague = false): MatchOpponent => ({ teamId, name, leagueName, overall: 70, sameLeague, competitionIds: [] })
 

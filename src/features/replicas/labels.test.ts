@@ -1,12 +1,26 @@
 import { describe, expect, it } from 'vitest'
 import type { ReplicaLeague } from '../../api/types'
-import { CATEGORY_LABEL, CATEGORY_ORDER, EVIDENCE_LABEL, LEAGUE_LABEL, evidenceText } from './labels'
+import { CATEGORY_LABEL, CATEGORY_ORDER, EVIDENCE_LABEL, LEAGUE_LABEL, LEAGUE_TABS, LEAGUE_TAB_LABEL, evidenceText, replicaOriginLabel } from './labels'
 
 describe('kategori ve lig sözlüğü (REP-c/e)', () => {
-  it('güncel sezon kategorisi listenin başında, etiketi "Güncel"', () => {
-    expect(CATEGORY_ORDER[0]).toBe('CURRENT')
+  it('kişisel stil listenin başında, ardından güncel sezon', () => {
+    expect(CATEGORY_ORDER.slice(0, 2)).toEqual(['PERSONAL_STYLE', 'CURRENT'])
+    expect(CATEGORY_LABEL.PERSONAL_STYLE).toBe('Benim stilim')
     expect(CATEGORY_LABEL.CURRENT).toBe('Güncel')
     CATEGORY_ORDER.forEach((c) => expect(CATEGORY_LABEL[c]).toBeTruthy())
+  })
+
+  it('FCA-30: "Benim stilim" sekmesi Tümü\'nden hemen sonra', () => {
+    expect(LEAGUE_TABS.slice(0, 2)).toEqual(['ALL', 'PERSONAL'])
+    expect(LEAGUE_TAB_LABEL.PERSONAL).toBe('Benim stilim')
+  })
+
+  it('FCA-30: kartın köken satırı kişisel stilde varyant adını, diğerlerinde ligi yazar; kod ya da "null" sızmaz', () => {
+    expect(replicaOriginLabel({ league: null, variant: 'BUYUK_MAC' })).toBe('Büyük maç')
+    expect(replicaOriginLabel({ league: null, variant: 'KUCUK_MAC' })).toBe('Küçük maç')
+    expect(replicaOriginLabel({ league: null, variant: 'HUCUM' })).toBe('Hücum')
+    expect(replicaOriginLabel({ league: 'TR_SUPER_LIG', variant: null })).toBe('Süper Lig')
+    expect(replicaOriginLabel({ league: null, variant: null })).toBe('')
   })
 
   it('her lig kodunun okunur adı var, iç kod sızmaz', () => {

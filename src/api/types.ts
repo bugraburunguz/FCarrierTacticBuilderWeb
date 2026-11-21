@@ -1472,7 +1472,8 @@ export interface CreditCosts {
 
 // ── Replikalar (E3-9 / REP-04, REP-07) ────────────────────────────────────────────────────────────────────────────────
 
-export type ReplicaCategory = 'CURRENT' | 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaCategory = 'PERSONAL_STYLE' | 'CURRENT' | 'UCL_WINNER' | 'LEGENDARY_SQUAD' | 'LEGENDARY_COACH' | 'UNDERRATED_COACH' | 'TURKISH_BIG4' | 'TURKISH_CHAMPION'
+export type ReplicaStyleVariant = 'DENGELI' | 'HUCUM' | 'DEFANS' | 'BUYUK_MAC' | 'KUCUK_MAC'
 /** Kulübün o sezon oynadığı lig (REP-c). */
 export type ReplicaLeague =
   | 'TR_SUPER_LIG'
@@ -1501,10 +1502,11 @@ export interface ReplicaRoleSlot {
 export interface ReplicaSummary {
   id: string
   category: ReplicaCategory
+  variant?: ReplicaStyleVariant | null
   club: string
   coach: string
   season: string
-  league: ReplicaLeague
+  league: ReplicaLeague | null
   formationId: string
   eaFormation: string
   buildUp: ReplicaBuildUp
@@ -1837,12 +1839,39 @@ export interface OpponentReport {
   missing: OpponentReportMissing[]
 }
 
-export type MatchPlanMissing = 'USER_TEAM' | 'OUR_FORMATION' | 'MATCH_RATINGS'
+export type MatchPlanMissing = 'USER_TEAM' | 'OUR_FORMATION' | 'MATCH_RATINGS' | 'FLANKS'
+
+export type FlankSide = 'LEFT' | 'RIGHT'
+export type FlankVerdict = 'EXPOSED' | 'OPPORTUNITY' | 'BALANCED'
+
+export interface FlankPlayer {
+  playerId: number
+  name: string
+  position: string
+  roleId?: string | null
+  role?: string | null
+  focus?: string | null
+  attackLean: number
+  pace: number
+}
+
+/** FCA-29 kanat eşleşmesi: bizim sol kanat rakibin sağıyla eşleşir. Puanlar 0–100. */
+export interface FlankMatchup {
+  side: FlankSide
+  ours: { players: FlankPlayer[]; attackLean: number; defensiveCover: number }
+  theirs: { players: FlankPlayer[]; threat: number; attackLean: number; keyThreat: { playerId: number; name: string; threat: number; pace: number; goalsAssists: number } }
+  verdict: FlankVerdict
+  counter: boolean
+}
 
 /** FCA-23 `GET /careers/{id}/match/opponents/{teamId}/plan`. Dinlendirme adayı ilk 11'den çıkarılmaz, `restSuggested` ile işaretlenir. */
 export interface MatchPlan {
   opponentTeamId: number
   ourFormation?: { id: string; source: 'MAIN_TACTIC' | 'TEAM_DEFAULT' } | null
+  /** FCA-29: USER_LINEUP = ana taktikteki 11 aynen; ENGINE = motor seçti. */
+  lineupSource?: 'USER_LINEUP' | 'ENGINE' | null
+  /** FCA-29: kanatta oyuncu yoksa o taraf gelmez; veri yoksa alan yok ve missing'de FLANKS. */
+  flanks?: { left?: FlankMatchup; right?: FlankMatchup } | null
   ourEleven: { slotId: string; position: string; playerId: number; name: string; overall: number; combined?: number | null; lastRatings: number[]; recentAverage: number | null; restSuggested: boolean }[]
   restCandidates: { playerId: number; name: string; minutes: number; matches: number }[]
   tacticalNotes: { code: string; text: string }[]

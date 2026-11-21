@@ -181,7 +181,7 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
               idPrefix="replica-lig"
               value={filters.league}
               onChange={(league) => set({ league })}
-              tabs={LEAGUE_TABS.map((t) => ({
+              tabs={LEAGUE_TABS.filter((t) => t !== 'PERSONAL' || counts.PERSONAL > 0 || filters.league === 'PERSONAL').map((t) => ({
                 id: t,
                 label: (
                   <span className="inline-flex items-center gap-1.5 whitespace-nowrap">

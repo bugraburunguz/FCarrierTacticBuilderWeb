@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import type { Formation, ReplicaSummary } from '../../api/types'
 import { Chip } from '../../design/components/primitives'
 import { CopyCodeButton } from './CopyCodeButton'
-import { APPROACH_LABEL, BUILD_UP_LABEL, CATEGORY_LABEL, LEAGUE_LABEL } from './labels'
+import { APPROACH_LABEL, BUILD_UP_LABEL, CATEGORY_LABEL, replicaOriginLabel } from './labels'
 import { MiniPitch } from './MiniPitch'
 
 /**
@@ -29,7 +29,7 @@ export function ReplicaCard({ replica, formation, action, fit }: { replica: Repl
           </h2>
           <p className="truncate text-sm text-ink-2">{replica.coach}</p>
           <p className="text-xs text-muted">
-            <span>{LEAGUE_LABEL[replica.league] ?? replica.league}</span>
+            <span>{replicaOriginLabel(replica)}</span>
             <span aria-hidden="true"> · </span>
             <span>{CATEGORY_LABEL[replica.category]}</span>
           </p>

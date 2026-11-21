@@ -1,4 +1,4 @@
-import type { FormationSlot, LineStrength, MatchOpponent } from '../../api/types'
+import type { FlankMatchup, FlankSide, FlankVerdict, FormationSlot, LineStrength, MatchOpponent, MatchPlan } from '../../api/types'
 import type { PitchSlot } from '../../components/pitch/Pitch'
 
 /** FCA-23 Maç Merkezi: saf kurallar (rakip seçici gruplaması, eksik veri metni, ilk 11 farkı, saha slotları, hat güçleri). */
@@ -61,6 +61,41 @@ export function pitchSlotsOf(formation: readonly FormationSlot[], players: reado
   return formation.map((s) => {
     const p = taken.get(s.slotId)
     return { slotId: s.slotId, position: s.position, x: s.x, y: s.y, player: p && { name: p.name, rating: p.overall, position: s.position } }
+  })
+}
+
+const SIDE_LABEL: Record<FlankSide, string> = { LEFT: 'Sol kanat', RIGHT: 'Sağ kanat' }
+const VERDICT: Record<FlankVerdict, { text: string; tone?: 'bad' | 'good' }> = {
+  EXPOSED: { text: 'Açık', tone: 'bad' },
+  OPPORTUNITY: { text: 'Fırsat', tone: 'good' },
+  BALANCED: { text: 'Dengeli' },
+}
+
+export interface FlankLane {
+  side: FlankSide
+  label: string
+  verdictText: string
+  tone?: 'bad' | 'good'
+  ours: { id: number; position: string; name: string; role?: string | null }[]
+  theirs: { id: number; position: string; name: string; role?: string | null }[]
+  stats: { label: string; value: number }[]
+}
+
+const toLanePlayers = (players: FlankMatchup['ours']['players']) => players.map((p) => ({ id: p.playerId, position: p.position, name: p.name, role: p.role }))
+
+/** FCA-29: kanatlar soldan sağa; bizim kanat rakibin karşı kanadıyla. Gelmeyen taraf atlanır. */
+export function flankLanes(flanks: MatchPlan['flanks']): FlankLane[] {
+  if (!flanks) {
+    return []
+  }
+  return [flanks.left, flanks.right].flatMap((m) => {
+    if (!m) return []
+    const verdict = VERDICT[m.verdict]
+    return [{
+      side: m.side, label: SIDE_LABEL[m.side], verdictText: verdict.text, tone: verdict.tone,
+      ours: toLanePlayers(m.ours.players), theirs: toLanePlayers(m.theirs.players),
+      stats: [{ label: 'Rakip tehdidi', value: m.theirs.threat }, { label: 'Bizim savunma desteği', value: m.ours.defensiveCover }],
+    }]
   })
 }
 

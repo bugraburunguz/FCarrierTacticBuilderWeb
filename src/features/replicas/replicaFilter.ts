@@ -56,8 +56,13 @@ export function formationFamily(eaFormation: string): FormationFamily | undefine
   return (FAMILY_ORDER as string[]).includes(first) ? (first as FormationFamily) : undefined
 }
 
-export function leagueTabOf(r: Pick<ReplicaSummary, 'league'>): Exclude<LeagueTab, 'ALL'> {
-  return (LEAGUE_TABS as string[]).includes(r.league) ? (r.league as Exclude<LeagueTab, 'ALL'>) : 'OTHER'
+const LEAGUE_ONLY_TABS: string[] = LEAGUE_TABS.filter((t) => t !== 'ALL' && t !== 'PERSONAL' && t !== 'OTHER')
+
+export function leagueTabOf(r: Pick<ReplicaSummary, 'league' | 'category'>): Exclude<LeagueTab, 'ALL'> {
+  if (r.category === 'PERSONAL_STYLE') {
+    return 'PERSONAL'
+  }
+  return r.league && LEAGUE_ONLY_TABS.includes(r.league) ? (r.league as Exclude<LeagueTab, 'ALL'>) : 'OTHER'
 }
 
 /** Lig sekmesi dışındaki süzgeçler (sekme sayıları bunlara uyar). */
@@ -140,7 +145,7 @@ export const FIT_KEY = 'uyum'
 export const FILTER_KEYS: readonly string[] = [...Object.values(KEYS), FIT_KEY]
 
 const LEAGUE_SLUG: Record<Exclude<LeagueTab, 'ALL'>, string> = {
-  TR_SUPER_LIG: 'super-lig', EN_PREMIER_LEAGUE: 'premier-league', ES_LALIGA: 'laliga', IT_SERIE_A: 'serie-a', DE_BUNDESLIGA: 'bundesliga', FR_LIGUE_1: 'ligue-1', OTHER: 'diger',
+  PERSONAL: 'benim-stilim', TR_SUPER_LIG: 'super-lig', EN_PREMIER_LEAGUE: 'premier-league', ES_LALIGA: 'laliga', IT_SERIE_A: 'serie-a', DE_BUNDESLIGA: 'bundesliga', FR_LIGUE_1: 'ligue-1', OTHER: 'diger',
 }
 
 /** Süzgeçler adres çubuğunda durur (paylaşılabilir "filtreli liste"). Çoklu değerler virgülle. */
