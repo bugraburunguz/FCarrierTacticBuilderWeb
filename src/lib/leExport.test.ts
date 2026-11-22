@@ -22,8 +22,13 @@ describe('LE export script kopyası (WEB-BUG-25)', () => {
     expect(script).toContain('{"career_playergrowthuserseason",0,1}')
   })
 
-  it('FCA-17: betik 2.0.5 her dışa aktarımı etiketler ve ay başında kendisi alır', () => {
-    expect(script).toContain('"FCX2", "2.0.5"')
+  it('FCA-37: betik genel kadroda da kiralıkları (playerloans) dışa aktarır', () => {
+    expect(script).toContain('"FCX2", "2.0.6"')
+    expect(script).toContain('{"playerloans",0}')
+    expect(script).not.toContain('{"playerloans",0,1}')
+  })
+
+  it('FCA-17: betik her dışa aktarımı etiketler ve ay başında kendisi alır', () => {
     expect(script).toContain('FC Assist export #')
     expect(script).toContain('AddEventHandler("post__CareerModeEvent"')
   })
