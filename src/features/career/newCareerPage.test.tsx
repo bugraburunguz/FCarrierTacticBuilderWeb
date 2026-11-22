@@ -63,7 +63,7 @@ beforeEach(() => {
   vi.mocked(endpoints.squadVersions).mockReset().mockResolvedValue([])
 })
 
-const V2 = { id: 2, versionNo: 2, label: 'Kadro güncellemesi 22.11.2026 (1.0.142.20665)', gameBuild: '1.0.142.20665', exportedAt: '2026-11-22T10:00:00Z', playerCount: 22154, latest: true }
+const V2 = { id: 2, versionNo: 2, label: 'Kadro güncellemesi 22.11.2026 (1.0.142)', gameBuild: '1.0.142.20665', exportedAt: '2026-11-22T10:00:00Z', playerCount: 22154, latest: true }
 const V1 = { id: 1, versionNo: 1, label: 'İlk kadro (Sürüm 1)', gameBuild: null, exportedAt: null, playerCount: 21900, latest: false }
 
 describe('FCA-27: kadro sürümü seçici', () => {
@@ -72,7 +72,7 @@ describe('FCA-27: kadro sürümü seçici', () => {
     renderPage()
     const select = await screen.findByRole('combobox', { name: 'Kadro sürümü' })
     expect(select).toHaveValue('2')
-    expect(within(select).getByRole('option', { name: 'Kadro güncellemesi 22.11.2026 (1.0.142.20665) · 22.11.2026' })).toBeInTheDocument()
+    expect(within(select).getByRole('option', { name: 'Kadro güncellemesi 22.11.2026 (1.0.142)' })).toBeInTheDocument()
     expect(within(select).getByRole('option', { name: 'İlk kadro (Sürüm 1)' })).toBeInTheDocument()
   })
 
@@ -100,10 +100,19 @@ describe('FCA-27: kadro sürümü seçici', () => {
     await waitFor(() => expect(endpoints.createCareer).toHaveBeenCalledWith({ clubId: 9, squadVersionId: 1 }))
   })
 
+  it('kulüp önerileri seçili kadro sürümüyle istenir; sürüm değişince yeniden istenir', async () => {
+    vi.mocked(endpoints.managerProfile).mockResolvedValue(PROFILE as never)
+    vi.mocked(endpoints.squadVersions).mockResolvedValue([V2, V1])
+    renderPage()
+    await waitFor(() => expect(endpoints.clubRecommendations).toHaveBeenCalledWith({ squadVersionId: 2 }))
+    fireEvent.change(await screen.findByRole('combobox', { name: 'Kadro sürümü' }), { target: { value: '1' } })
+    await waitFor(() => expect(endpoints.clubRecommendations).toHaveBeenCalledWith({ squadVersionId: 1 }))
+  })
+
   it('tek sürüm varsa seçici yerine salt okunur satır; o sürüm gönderilir', async () => {
     vi.mocked(endpoints.squadVersions).mockResolvedValue([{ ...V2, id: 7 }])
     renderPage()
-    expect(await screen.findByText('Kadro güncellemesi 22.11.2026 (1.0.142.20665) · 22.11.2026')).toBeInTheDocument()
+    expect(await screen.findByText('Kadro güncellemesi 22.11.2026 (1.0.142)')).toBeInTheDocument()
     expect(screen.queryByRole('combobox', { name: 'Kadro sürümü' })).not.toBeInTheDocument()
     await pickClub()
     fireEvent.click(screen.getByRole('button', { name: 'Kariyeri oluştur' }))

@@ -75,7 +75,7 @@ export function NewCareerPage() {
   return (
     <div className="mx-auto flex w-full max-w-[960px] flex-col gap-3 py-2">
       <CareerPageHeader crumb="Yeni kariyer" title="Yeni kariyer" />
-      <ClubRecommendations onStart={startWith} onPickOther={pickOther} />
+      <ClubRecommendations onStart={startWith} onPickOther={pickOther} squadVersionId={squadVersionId} isVersionPending={versions.isPending} />
       <section aria-label="Kariyer bilgileri" className="glass flex flex-col gap-4 p-4 sm:p-5">
         <div className="relative flex flex-col gap-1">
           <label htmlFor={ids.club} className={LABEL}>Kulüp</label>

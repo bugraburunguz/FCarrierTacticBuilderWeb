@@ -226,7 +226,7 @@ export const endpoints = {
   // MGR-a: menajer profili (yoksa null) ve ücretsiz kulüp önerisi (gövde boş → kayıtlı profil; kendi hız kovası 5/dk).
   managerProfile: () => api.get<ManagerProfileView | null>('/me/manager-profile'),
   saveManagerProfile: (profile: ManagerProfile) => request<ManagerProfileView>('/me/manager-profile', { method: 'PUT', body: profile }),
-  clubRecommendations: (body: { profile?: ManagerProfile; leagueId?: number; gender?: number } = {}) =>
+  clubRecommendations: (body: { profile?: ManagerProfile; leagueId?: number; gender?: number; squadVersionId?: number } = {}) =>
     api.post<ClubRecommendations>('/manager/club-recommendations', body),
 
   roles: () => api.get<Role[]>('/roles'),
