@@ -52,12 +52,19 @@ function RecommendationCard({ card, onStart }: { card: ClubRecommendationCard; o
  * Kulüp önerisi (MGR-b, Yeni kariyer ilk adımı): menajer profili özeti + 6 kategorili kart. "Bu kulüple başla" kariyer formunu o kulüple
  * açar (onStart); "Başka kulüp seç" takım aramasına götürür. Profil yoksa önce profil; katalogda kulüp profili yoksa ayrı durum.
  */
-export function ClubRecommendations({ onStart, onPickOther }: { onStart: (club: Club) => void; onPickOther: () => void }) {
+export interface ClubRecommendationsProps {
+  onStart: (club: Club) => void
+  onPickOther: () => void
+  squadVersionId?: number
+  isVersionPending?: boolean
+}
+
+export function ClubRecommendations({ onStart, onPickOther, squadVersionId, isVersionPending = false }: ClubRecommendationsProps) {
   const profile = useManagerProfile()
   const recs = useQuery({
-    queryKey: [CLUB_RECS_KEY, profile.data?.profile],
-    queryFn: () => endpoints.clubRecommendations({}),
-    enabled: profile.data != null,
+    queryKey: [CLUB_RECS_KEY, profile.data?.profile, squadVersionId ?? null],
+    queryFn: () => endpoints.clubRecommendations(squadVersionId !== undefined ? { squadVersionId } : {}),
+    enabled: profile.data != null && !isVersionPending,
     staleTime: RECS_STALE_MS,
     retry: false,
   })
