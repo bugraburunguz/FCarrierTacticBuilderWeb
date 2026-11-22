@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { findCareerExportRange, prepareCareerLog, trimCareerLog } from './leLogTrim'
+import { findBaseExportRange, findCareerExportRange, prepareCareerLog, trimBaseLog, trimCareerLog } from './leLogTrim'
 
 const REQUIRED = ['players', 'teams', 'teamplayerlinks']
 
@@ -95,6 +95,37 @@ describe('trimCareerLog (FCA-18)', () => {
   it('kırpılacak bir şey yoksa aynı dosyayı döndürür', async () => {
     const file = new File([exportBlock({ inCareer: true, seq: 1 })], 'a.log')
     expect(await trimCareerLog(file)).toBe(file)
+  })
+})
+
+describe('trimBaseLog (FCA-32)', () => {
+  it('iki BASE ve bir kariyer export\'u olan logda yalnız son BASE export\'u kalır (DBMAP/DONE dahil, ham bayt)', async () => {
+    const head = 'INFO\tLE started\n'
+    const firstBase = exportBlock({ inCareer: false, mode: 'BASE', seq: 1 })
+    const career = exportBlock({ inCareer: true, seq: 2 })
+    const lastBase = exportBlock({ inCareer: false, mode: 'BASE', seq: 3 }).replace(/(\n)([^\n]*\tDONE\t)/, `$1${line('DBMAP', '1').trimEnd()}\n$2`)
+    const raw = new Uint8Array([...new TextEncoder().encode(lastBase), 0xff, 0x9d])
+    const file = new File([head, firstBase, career, raw], 'base.log')
+    const trimmed = await trimBaseLog(file)
+    expect(trimmed.name).toBe('base.log')
+    expect(new Uint8Array(await trimmed.arrayBuffer())).toEqual(raw)
+    expect(new TextDecoder().decode(raw)).toContain('\tDBMAP\t1')
+  })
+
+  it('son BASE export\'u yarım kaldıysa ondan önceki tam BASE export\'u kalır', () => {
+    const first = exportBlock({ inCareer: false, mode: 'BASE', seq: 1 })
+    const second = exportBlock({ inCareer: false, mode: 'BASE', seq: 2, tables: ['players'], done: false })
+    expect(findBaseExportRange(first + second)).toEqual({ start: 0, end: first.length })
+  })
+
+  it('tek BASE export\'u varsa dosya olduğu gibi döner', async () => {
+    const file = new File([exportBlock({ inCareer: false, mode: 'BASE', seq: 1 })], 'base.log')
+    expect(await trimBaseLog(file)).toBe(file)
+  })
+
+  it('logda BASE export\'u yoksa Türkçe hata verir', async () => {
+    await expect(trimBaseLog(new File([exportBlock({ inCareer: true, seq: 1 })], 'kariyer.log'))).rejects.toThrow('Logda ana menü (BASE) export\'u yok')
+    await expect(trimBaseLog(new File(['INFO\tnothing here\n'], 'bos.log'))).rejects.toThrow('Logda ana menü (BASE) export\'u yok')
   })
 })
 
