@@ -4,6 +4,7 @@ import { formatAverageRating } from '../lib/matchData'
 import { LastRatings } from './MatchRatings'
 import { Chip, OvrBox } from '../design/components/primitives'
 import { HelpPopover } from './ui'
+import { CompareButton } from './CompareButton'
 import { formatEur } from '../lib/format'
 import { squadGroups, type SquadGrouping } from '../lib/squadGroups'
 import type { SellAdvice } from '../lib/deskRules'
@@ -182,7 +183,10 @@ function GroupedSquadTable({ squad, positionAdvice, recordColumns, grouping, row
               return (
                 <tr key={entry.player.id} data-status={rowStatus} className="border-t border-line align-top">
                   <td data-col="name" className={`py-1.5 pr-2 font-medium${stripe}`}>
-                    <Link to={`/players/${entry.player.id}`} className="block truncate hover:underline max-sm:flex max-sm:min-h-11 max-sm:items-center">{entry.player.name}</Link>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <CompareButton compact entry={{ id: entry.player.id, name: entry.player.name, overall: entry.player.overall, position: entry.player.positions[0] ?? '' }} />
+                      <Link to={`/players/${entry.player.id}`} className="min-w-0 truncate hover:underline max-sm:flex max-sm:min-h-11 max-sm:items-center" title={entry.player.name}>{entry.player.name}</Link>
+                    </span>
                     <span data-compact className="block text-xs font-normal text-muted lg:hidden">
                       {positions}<span className="sm:hidden">{entry.player.age !== undefined && ` · ${entry.player.age} yaş`}</span>
                     </span>

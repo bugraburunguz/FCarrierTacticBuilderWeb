@@ -1,7 +1,8 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import type { CareerPlayer } from '../api/types'
+import { compareStore } from '../state/compareStore'
 import { SquadList } from './SquadList'
 
 const p = (id: number, positions: string[], overall: number, extra: Partial<CareerPlayer> = {}): CareerPlayer =>
@@ -12,6 +13,24 @@ const ADVICE = [{ playerId: 1, playerName: 'Oyuncu 1', listedPositions: ['ST'], 
 const renderList = (props: Partial<Parameters<typeof SquadList>[0]> = {}) => render(
   <MemoryRouter><SquadList squad={SQUAD} positionAdvice={ADVICE as never} recordColumns grouping="mevki" {...props} /></MemoryRouter>,
 )
+
+describe('SquadList karşılaştırma artısı (FCA-38)', () => {
+  it('Kadro listesinde ismin solunda artı; her tıklama oyuncuyu karşılaştırma listesine ekler, tekrar tıklama çıkarır', () => {
+    compareStore.clear()
+    renderList()
+    const link = screen.getByRole('link', { name: 'Oyuncu 1' })
+    const cell = link.closest('td')!
+    const add = within(cell).getByRole('button', { name: 'Karşılaştırmaya ekle' })
+    expect(add.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    fireEvent.click(add)
+    expect(compareStore.get()).toEqual([{ id: 1, name: 'Oyuncu 1', overall: 70, position: 'ST' }])
+    fireEvent.click(within(screen.getByRole('link', { name: 'Oyuncu 4' }).closest('td')!).getByRole('button', { name: 'Karşılaştırmaya ekle' }))
+    expect(compareStore.get().map((c) => c.id)).toEqual([1, 4])
+    fireEvent.click(within(cell).getByRole('button', { name: 'Karşılaştırmadan çıkar' }))
+    expect(compareStore.get().map((c) => c.id)).toEqual([4])
+    compareStore.clear()
+  })
+})
 
 /** FCA-22: /squad/form verisiyle son 5 not, sezon G/A ve ortalama not; telefonda yalnız son 5 not (isim altında). */
 describe('SquadList form kolonları (FCA-22)', () => {
