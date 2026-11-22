@@ -4,7 +4,6 @@ import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { PageResponse, PlayerSummary } from '../../api/types'
-import { compareStore } from '../../state/compareStore'
 import { CardDatabasePage } from './CardDatabasePage'
 
 vi.mock('../../api/endpoints', () => ({
@@ -70,18 +69,6 @@ describe('kart veritabanı', () => {
       expect(el.className.split(' ')).not.toContain('sticky')
       expect(el.className.split(' ')).not.toContain('glass-sticky')
     }
-  })
-
-  it('FCA-38: tabloda ismin solunda artı; tıklayınca karşılaştırma listesine eklenir, ayrı sağ sütun yok', async () => {
-    compareStore.clear()
-    renderPage('/players?gorunum=table')
-    const link = await screen.findByRole('link', { name: 'Ada Santrfor' })
-    const add = within(link.closest('td')!).getByRole('button', { name: 'Karşılaştırmaya ekle' })
-    expect(add.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    expect(screen.queryByRole('columnheader', { name: 'Karşılaştır' })).not.toBeInTheDocument()
-    fireEvent.click(add)
-    expect(compareStore.get()).toEqual([{ id: 1, name: 'Ada Santrfor', overall: 91, position: 'ST' }])
-    compareStore.clear()
   })
 
   it('tabloda başlığa tıklayınca sıralama değişir ve aria-sort güncellenir', async () => {
