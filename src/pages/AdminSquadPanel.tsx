@@ -1,11 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Download } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { BaseImportResult } from '../api/types'
 import { Button, Card, EmptyState, Field, Input, Pill } from '../components/ui'
 import { formatSquadVersion, squadVersionKeys, squadVersionsQuery } from '../features/career/squadVersion'
 import { errorMessage } from '../lib/errorMessage'
+import { EXPORT_DONE_WINDOW } from '../lib/leExport'
 import { gzipFile, trimBaseLog } from '../lib/leLogTrim'
+
+const SCRIPT_URL = `${import.meta.env.BASE_URL}fc27_career_export.lua`
 
 type Step = 'idle' | 'confirm' | 'compressing' | 'uploading'
 
@@ -94,6 +98,18 @@ export function AdminSquadPanel({ onBusyChange }: AdminSquadPanelProps) {
 
   return (
     <div ref={formRef} className="space-y-4">
+      <Card title="Kadro logunu al">
+        <a href={SCRIPT_URL} download className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-accent-bg px-3 text-sm font-semibold text-on-accent hover:opacity-90 sm:min-h-9">
+          <Download size={16} aria-hidden="true" />Script'i indir (fc27_career_export.lua)
+        </a>
+        <ol aria-label="Kadro logu nasıl alınır" className="mt-3 flex list-decimal flex-col gap-1 pl-5 text-sm text-ink">
+          <li>Oyunu aç ve ana menüde kal; kariyer yükleme.</li>
+          <li>Live Editor'de Lua Engine'den script'i çalıştır.</li>
+          <li>"{EXPORT_DONE_WINDOW}" penceresinde "DİKKAT: kariyer değil (ana menü)" yazmalı; bu kadro logu demektir.</li>
+          <li>Live Editor klasörü → Logs içindeki en yeni <code>live_editor_&lt;tarih&gt;.log</code> dosyasını aşağıdan yükle.</li>
+        </ol>
+        <p className="mt-2 text-xs text-muted">CSV gerekmez: log tek dosya, oyun sürümü ve tarihi taşır (etiket otomatik); son kadro export'u kırpılıp sıkıştırılarak gider.</p>
+      </Card>
       <Card title="Kadro yükle">
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Log dosyası">

@@ -268,3 +268,27 @@ describe('Admin · Kadro yükle (FCA-32)', () => {
     expect(screen.queryByText('Henüz kadro sürümü yok.')).toBeNull()
   })
 })
+
+describe('AdminSquadPanel — kadro log scripti (FCA-34)', () => {
+  it('script indirme bağlantısını aynı public dosyaya verir', () => {
+    renderPanel()
+    const link = screen.getByRole('link', { name: /Script'i indir/ })
+    expect(link).toHaveAttribute('href', expect.stringMatching(/fc27_career_export\.lua$/))
+    expect(link).toHaveAttribute('download')
+  })
+
+  it('ana menüde (kariyer dışında) çalıştırma adımlarını ve beklenen pencereyi gösterir', () => {
+    renderPanel()
+    const steps = screen.getByRole('list', { name: 'Kadro logu nasıl alınır' })
+    const items = within(steps).getAllByRole('listitem')
+    expect(items).toHaveLength(4)
+    expect(steps).toHaveTextContent('ana menüde')
+    expect(steps).toHaveTextContent('kariyer değil (ana menü)')
+    expect(steps).toHaveTextContent('live_editor_<tarih>.log')
+  })
+
+  it('CSV yerine log yolunun neden seçildiğini söyler', () => {
+    renderPanel()
+    expect(screen.getByText(/CSV gerekmez/)).toBeInTheDocument()
+  })
+})
