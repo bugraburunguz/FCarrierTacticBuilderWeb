@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
 import { describe, expect, it } from 'vitest'
-import { invalidateCareerScope, removeCareerScope } from './careerQueries'
+import { applyQueryDefaults, CAREER_STALE_MS, invalidateCareerScope, removeCareerScope } from './careerQueries'
 
 const seed = () => {
   const client = new QueryClient()
@@ -85,6 +85,20 @@ describe('careerQueries', () => {
     }
     for (const key of related) {
       expect(client.getQueryData(key), JSON.stringify(key)).toBeUndefined()
+    }
+  })
+
+  it('FCA-35: kariyer kapsamı 5 dk taze (mutasyonlar zaten tazeler); sabit kataloglar oturum boyu; diğer anahtarlar genel varsayılanda', () => {
+    const client = new QueryClient()
+    applyQueryDefaults(client)
+    for (const key of [['careers'], ['squad', 7], ['main-tactic', 7], ['snapshots', 7], ['events', 7], ['tags', 7], ['shortlist', 7], ['slot-fit', 'lineup', 7, '{}'], ['wonderkids', {}, 7]]) {
+      expect(client.getQueryDefaults(key).staleTime, JSON.stringify(key)).toBe(CAREER_STALE_MS)
+    }
+    for (const key of [['formations'], ['roles'], ['presets'], ['tags-all'], ['ea-roles'], ['key-attributes'], ['credit-costs']]) {
+      expect(client.getQueryDefaults(key).staleTime, JSON.stringify(key)).toBe(Infinity)
+    }
+    for (const key of [['me'], ['ut-player', 7], ['leagues', 1]]) {
+      expect(client.getQueryDefaults(key).staleTime, JSON.stringify(key)).toBeUndefined()
     }
   })
 

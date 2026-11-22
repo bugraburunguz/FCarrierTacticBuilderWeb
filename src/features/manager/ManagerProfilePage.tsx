@@ -160,7 +160,7 @@ function ProfileForm({ initial }: { initial?: ManagerProfileView }) {
   const touch = (key: keyof typeof touched) => setTouched((t) => (t[key] ? t : { ...t, [key]: true }))
   const [errors, setErrors] = useState<string[]>([])
   const [notice, setNotice] = useState<string>()
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const replicas = useQuery({ queryKey: ['replicas'], queryFn: endpoints.replicas, staleTime: Infinity })
   const leagues = useQuery({ queryKey: ['leagues', draft.gender], queryFn: () => endpoints.leagues(draft.gender), staleTime: Infinity })
   const set = (patch: Partial<ManagerDraft>) => {

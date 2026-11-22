@@ -35,7 +35,7 @@ export function useUtImport() {
       let placed = ''
       if (data.activeSquad) {
         try {
-          const formations = await queryClient.fetchQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
+          const formations = await queryClient.fetchQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
           const loaded = mapActiveSquad(data.activeSquad, formations)
           if (loaded.formationId) {
             utSquadStore.set({ formationId: loaded.formationId, setup: DEFAULT_UT_SETUP, picked: loaded.picked, roleOverride: {}, origin: 'active-squad' })

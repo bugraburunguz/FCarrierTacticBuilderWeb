@@ -36,7 +36,7 @@ function resolveNames(wanted: Record<string, number>, list: LookupItem[]): { id:
 }
 
 export function TraditionalSbc({ challenge, autoRun = false }: { challenge?: SbcChallenge; autoRun?: boolean }) {
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const setup = useMemo(() => (challenge && formations.data ? challengeSetup(challenge, formations.data) : undefined), [challenge, formations.data])
   const [formationId, setFormationId] = useState('4-4-2')
   const [rating, setRating] = useState(challenge ? '' : '80')

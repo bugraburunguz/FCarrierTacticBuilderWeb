@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { endpoints } from '../../api/endpoints'
 import { EmptyState, Skeleton } from '../../design/components/primitives'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { OvrPotBar } from './YouthRow'
 import { YouthDetailBody } from './YouthDetailBody'
 import { youthDetailQuery } from './youthDetail'
@@ -13,9 +12,7 @@ import { youthDetailQuery } from './youthDetail'
 export function AcademyPlayerPage() {
   const { playerId } = useParams()
   const [params] = useSearchParams()
-  const activeId = useActiveCareerId()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const careerId = (careers.data?.find((c) => c.id === activeId) ?? careers.data?.[0])?.id
+  const { careers, id: careerId } = useActiveCareer()
   const id = Number(playerId)
   const detail = useQuery({ ...youthDetailQuery(careerId ?? 0, id), enabled: careerId !== undefined && Number.isFinite(id) })
   const fromGrowth = params.get('geri') === 'gelisim'

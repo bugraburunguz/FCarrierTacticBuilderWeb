@@ -5,11 +5,11 @@ import type { DepthEntry, PlayerSummary, RoleFit } from '../../api/types'
 import { fitDisplay } from '../../lib/fitLabels'
 import { useDebouncedValue } from '../../lib/useDebouncedValue'
 import type { SlotFitRow } from './useSlotFits'
-import type { SquadWorkspaceApi } from './useSquadWorkspace'
+import type { WorkspaceCore } from './useWorkspaceCore'
 
 const LINEUP_DEBOUNCE_MS = 300
 
-type LineupBody = { tactic: SquadWorkspaceApi<number>['tactic']; locked: Record<string, number> }
+type LineupBody = { tactic: WorkspaceCore['tactic']; locked: Record<string, number> }
 
 const askable = (json: string) => {
   const body = JSON.parse(json) as LineupBody
@@ -21,7 +21,7 @@ const askable = (json: string) => {
  * sunucunun rolünü, etiketini, levelFit'i ve nedenlerini (/fit/role ile aynı biçim) taşır. 11 ayrı /fit/role yerine. useSlotFits ile aynı dönüş şekli.
  * Anahtar 'slot-fit' ile başlar: "Ana taktiğim yap" sonrası yenilenir. Oyuncu kadro kaydıyla (kariyer) hesaplanır.
  */
-export function useLineupFits(ws: SquadWorkspaceApi<number>, playerById: Map<number, PlayerSummary>, careerId: number | undefined) {
+export function useLineupFits(ws: WorkspaceCore, playerById: Map<number, PlayerSummary>, careerId: number | undefined) {
   const { state, slots, stale, tactic } = ws
   const locked = useMemo(
     () => Object.fromEntries(slots.flatMap((s) => (state.assigned[s.slotId] !== undefined && playerById.has(state.assigned[s.slotId]) ? [[s.slotId, state.assigned[s.slotId]]] : []))) as Record<string, number>,

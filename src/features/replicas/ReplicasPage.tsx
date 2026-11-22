@@ -138,7 +138,7 @@ export function ReplicasPage({ embedded = false, cardAction }: { embedded?: bool
     ? (replica: ReplicaSummary) => <ReplicaCloneButton careerId={careerId} replica={replica} />
     : undefined)
   const replicas = useQuery({ queryKey: ['replicas'], queryFn: endpoints.replicas, staleTime: STALE_MS })
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: STALE_MS })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const formationById = useMemo(() => new Map((formations.data ?? []).map((f) => [f.id, f])), [formations.data])
   const formationOptions = useMemo(() => [...new Set((replicas.data ?? []).map((r) => r.eaFormation))].sort((a, b) => a.localeCompare(b, 'tr', { numeric: true })), [replicas.data])
   const years = useMemo(() => yearRange(replicas.data ?? []), [replicas.data])

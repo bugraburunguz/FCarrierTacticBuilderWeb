@@ -21,7 +21,7 @@ export interface EaRolesState {
 
 /** EA'nın izin verdiği (mevki, rol, odak) kümesi (TAC-10): rol seçici yalnız bundan beslenir; yüklenene kadar kilitli, hata olursa yeniden denenir. */
 export function useEaRoles(): EaRolesState {
-  const query = useQuery({ queryKey: ['ea-roles'], queryFn: endpoints.eaRoles, staleTime: 3_600_000, retry: 3 })
+  const query = useQuery({ queryKey: ['ea-roles'], queryFn: endpoints.eaRoles, retry: 3 })
   const ready = query.data !== undefined && query.data.length > 0
   return {
     allowed: ready ? eaRoleSet(query.data!) : undefined,
