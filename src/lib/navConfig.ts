@@ -54,6 +54,8 @@ export const CAREER_NAV: NavGroup[] = [
   { to: '/career/import', label: 'Kayıt yükle', match: ['/career/import'], mobile: 'more', section: 'admin' },
 ]
 
+export const ADMIN_NAV: NavGroup = { to: '/admin/ut?sekme=kadro', label: 'Yönetici', match: ['/admin/ut'], mobile: 'more', section: 'admin' }
+
 /** Yalnız mobil "Daha fazla" sheet'inde (masaüstünde Masa'daki düğme). */
 export const CAREER_MORE: NavGroup[] = [{ to: '/career/new', label: 'Yeni kariyer', match: [] }]
 
@@ -125,9 +127,12 @@ export const UT_NAV: NavGroup[] = [
 ]
 
 /** Modun menüsü; yakalama kapalıyken yalnız yakalamaya bağlı UT öğeleri çıkar (kariyer etkilenmez). v3 kariyerde tek menü (CAREER_NAV), v2 NAV. */
-export function navFor(mode: AppMode, captureEnabled: boolean, v3 = false): NavGroup[] {
+export function navFor(mode: AppMode, captureEnabled: boolean, v3 = false, isAdmin = false): NavGroup[] {
   if (mode !== 'ut') {
-    return v3 ? CAREER_NAV : NAV
+    if (!v3) {
+      return NAV
+    }
+    return isAdmin ? [...CAREER_NAV, ADMIN_NAV] : CAREER_NAV
   }
   return captureEnabled ? UT_NAV : UT_NAV.filter((g) => !g.captureOnly)
 }

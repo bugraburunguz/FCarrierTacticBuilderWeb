@@ -1,6 +1,7 @@
 import { api, request } from './client'
 import type { CaptureRules } from '../lib/har/harCapture'
 import type {
+  BaseImportResult,
   MatchOpponent,
   MatchPlan,
   OpponentReport,
@@ -285,6 +286,8 @@ export const endpoints = {
   createCareer: (body: { clubId: number; budgetEur?: number; name?: string; season?: number; squadVersionId?: number }) => api.post<Career>('/careers', body),
   /** FCA-27: kadro sürümleri (kariyer dışı, ücretsiz), en yeni önce. */
   squadVersions: () => api.get<SquadVersion[]>('/squad-versions'),
+  importBaseSquad: (form: FormData) =>
+    request<BaseImportResult>('/admin/ingestion/import-base', { method: 'POST', query: { overwrite: true, full: true }, body: form }),
   updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number; spoilerMode?: string; wageBudgetEur?: number; windowEndsOn?: string; challengeId?: string; gameDate?: string }) =>
     request<Career>(`/careers/${careerId}`, { method: 'PATCH', body }),
   importCareer: (careerId: number, form: FormData) => request<ImportSummary>(`/careers/${careerId}/import`, { method: 'POST', body: form }),

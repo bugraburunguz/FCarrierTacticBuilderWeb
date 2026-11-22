@@ -63,6 +63,23 @@ describe('UT menüsü ve yakalama bayrağı', () => {
   })
 })
 
+describe('FCA-32 yönetici bağlantısı', () => {
+  it('ADMIN için kariyer menüsünün Yönetim grubunun sonunda "Yönetici" → /admin/ut?sekme=kadro; mobilde Daha fazla', () => {
+    const admin = navFor('career', true, true, true)
+    const link = admin.at(-1)
+    expect(link).toMatchObject({ label: 'Yönetici', to: '/admin/ut?sekme=kadro', section: 'admin', mobile: 'more' })
+    expect(activeNav(admin, '/admin/ut')?.label).toBe('Yönetici')
+    expect(mobileBar('career', admin).more.map((g) => g.label)).toContain('Yönetici')
+  })
+
+  it('ADMIN olmayan görmez; UT ve v2 menüleri değişmez', () => {
+    expect(navFor('career', true, true).map((g) => g.label)).not.toContain('Yönetici')
+    expect(navFor('career', true, true, false).map((g) => g.label)).not.toContain('Yönetici')
+    expect(navFor('ut', true, true, true)).toEqual(UT_NAV)
+    expect(navFor('career', true, false, true)).toEqual(NAV)
+  })
+})
+
 describe('FCA-28 logo hedefi', () => {
   it('girişli kariyer Masa\'ya; girişli UT ve girişsiz her mod ana sayfaya', () => {
     expect(homeFor('career', true)).toBe('/career/dashboard')
