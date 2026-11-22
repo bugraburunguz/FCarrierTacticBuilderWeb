@@ -419,7 +419,20 @@ export interface Career {
   /** Kariyerin oyun içi tarihi (BE-BUG-18); yaş filtreleri buna göre çalışır. */
   gameDate?: string
   challengeId?: string
+  squadVersion?: CareerSquadVersion
 }
+
+export interface SquadVersion {
+  id: number
+  versionNo: number
+  label: string
+  gameBuild: string | null
+  exportedAt: string | null
+  playerCount: number
+  latest: boolean
+}
+
+export type CareerSquadVersion = Pick<SquadVersion, 'id' | 'versionNo' | 'label' | 'exportedAt' | 'latest'>
 
 export interface CareerSnapshot {
   id: number
