@@ -503,6 +503,25 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     expect(screen.getByRole('button', { name: /Kariyeri sil/ })).toBeInTheDocument()
   })
 
+  it('FCA-27: Ayarlar sekmesinde kadro sürümü salt okunur rozet; değiştirme kontrolü yok', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValue([{ ...CAREER, squadVersion: { id: 2, versionNo: 2, label: 'Kadro güncellemesi 22.11.2026', exportedAt: '2026-11-22T10:00:00Z', latest: true } }] as never)
+    renderPage('/career/dashboard?sekme=ayarlar')
+    const badge = await screen.findByText('Kadro: Kadro güncellemesi 22.11.2026')
+    expect(badge).not.toHaveTextContent('eski sürüm')
+    expect(screen.queryByLabelText(/Kadro sürümü/)).not.toBeInTheDocument()
+  })
+
+  it('FCA-27: eski sürüme bağlı kariyerde rozet "(eski sürüm)" der; squadVersion yoksa rozet yok', async () => {
+    vi.mocked(endpoints.careers).mockResolvedValue([{ ...CAREER, squadVersion: { id: 1, versionNo: 1, label: 'İlk kadro (Sürüm 1)', exportedAt: null, latest: false } }] as never)
+    const { unmount } = renderPage('/career/dashboard?sekme=ayarlar')
+    expect(await screen.findByText('Kadro: İlk kadro (Sürüm 1) (eski sürüm)')).toBeInTheDocument()
+    unmount()
+    vi.mocked(endpoints.careers).mockResolvedValue([CAREER] as never)
+    renderPage('/career/dashboard?sekme=ayarlar')
+    await screen.findByLabelText('Ad')
+    expect(screen.queryByText(/^Kadro:/)).not.toBeInTheDocument()
+  })
+
   it('Masa taslak (katman 3) okumaz: Lab taslağı varken bile gösterilen diziliş ana taktikten', async () => {
     labStore.create(1, { name: 'Deneme', origin: { kind: 'blank' }, tactic: { formation: '4-4-2', slots: {} }, lineup: { CM1: 4 } })
     const read = vi.spyOn(labStore, 'get')

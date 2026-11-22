@@ -9,7 +9,7 @@ import { NewCareerPage } from './NewCareerPage'
 
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { subscriptionType: 'FREE' } }) }))
 vi.mock('../../api/endpoints', () => ({
-  endpoints: { clubs: vi.fn(), createCareer: vi.fn(), updateCareer: vi.fn(), careers: vi.fn(), deleteCareer: vi.fn(), managerProfile: vi.fn(), clubRecommendations: vi.fn() },
+  endpoints: { clubs: vi.fn(), createCareer: vi.fn(), updateCareer: vi.fn(), careers: vi.fn(), deleteCareer: vi.fn(), managerProfile: vi.fn(), clubRecommendations: vi.fn(), squadVersions: vi.fn() },
 }))
 
 function Where() {
@@ -60,6 +60,73 @@ beforeEach(() => {
   // Profil yok: 200 + data null (hata değil).
   vi.mocked(endpoints.managerProfile).mockReset().mockResolvedValue(null)
   vi.mocked(endpoints.clubRecommendations).mockReset().mockResolvedValue(recs() as never)
+  vi.mocked(endpoints.squadVersions).mockReset().mockResolvedValue([])
+})
+
+const V2 = { id: 2, versionNo: 2, label: 'Kadro güncellemesi 22.11.2026 (1.0.142.20665)', gameBuild: '1.0.142.20665', exportedAt: '2026-11-22T10:00:00Z', playerCount: 22154, latest: true }
+const V1 = { id: 1, versionNo: 1, label: 'İlk kadro (Sürüm 1)', gameBuild: null, exportedAt: null, playerCount: 21900, latest: false }
+
+describe('FCA-27: kadro sürümü seçici', () => {
+  it('varsayılan en yeni sürüm; seçenek metni etiket + tarih, tarihsiz sürümde yalnız etiket', async () => {
+    vi.mocked(endpoints.squadVersions).mockResolvedValue([V2, V1])
+    renderPage()
+    const select = await screen.findByRole('combobox', { name: 'Kadro sürümü' })
+    expect(select).toHaveValue('2')
+    expect(within(select).getByRole('option', { name: 'Kadro güncellemesi 22.11.2026 (1.0.142.20665) · 22.11.2026' })).toBeInTheDocument()
+    expect(within(select).getByRole('option', { name: 'İlk kadro (Sürüm 1)' })).toBeInTheDocument()
+  })
+
+  it('en yeni sürüm listede ilk değilse de varsayılan latest olan', async () => {
+    vi.mocked(endpoints.squadVersions).mockResolvedValue([V1, V2])
+    renderPage()
+    expect(await screen.findByRole('combobox', { name: 'Kadro sürümü' })).toHaveValue('2')
+  })
+
+  it('varsayılanla oluşturunca en yeni sürüm kimliği gider; başka sürüm seçilirse o gider', async () => {
+    vi.mocked(endpoints.squadVersions).mockResolvedValue([V2, V1])
+    renderPage()
+    await screen.findByRole('combobox', { name: 'Kadro sürümü' })
+    await pickClub()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri oluştur' }))
+    await waitFor(() => expect(endpoints.createCareer).toHaveBeenCalledWith({ clubId: 9, squadVersionId: 2 }))
+  })
+
+  it('eski sürüm seçilirse onun kimliği gider', async () => {
+    vi.mocked(endpoints.squadVersions).mockResolvedValue([V2, V1])
+    renderPage()
+    fireEvent.change(await screen.findByRole('combobox', { name: 'Kadro sürümü' }), { target: { value: '1' } })
+    await pickClub()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri oluştur' }))
+    await waitFor(() => expect(endpoints.createCareer).toHaveBeenCalledWith({ clubId: 9, squadVersionId: 1 }))
+  })
+
+  it('tek sürüm varsa seçici yerine salt okunur satır; o sürüm gönderilir', async () => {
+    vi.mocked(endpoints.squadVersions).mockResolvedValue([{ ...V2, id: 7 }])
+    renderPage()
+    expect(await screen.findByText('Kadro güncellemesi 22.11.2026 (1.0.142.20665) · 22.11.2026')).toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Kadro sürümü' })).not.toBeInTheDocument()
+    await pickClub()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri oluştur' }))
+    await waitFor(() => expect(endpoints.createCareer).toHaveBeenCalledWith({ clubId: 9, squadVersionId: 7 }))
+  })
+
+  it('sürümler alınamazsa kısa not; kariyer açılır, sürüm gönderilmez (sunucu en yeniyi seçer)', async () => {
+    vi.mocked(endpoints.squadVersions).mockRejectedValue(new ApiError('Hata', 'err', 500))
+    renderPage()
+    expect(await screen.findByText(/Kadro sürümleri alınamadı/)).toBeInTheDocument()
+    await pickClub()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri oluştur' }))
+    await waitFor(() => expect(endpoints.createCareer).toHaveBeenCalledWith({ clubId: 9 }))
+  })
+
+  it('sürümler yüklenirken kariyer açma engellenmez; sürüm gönderilmez', async () => {
+    vi.mocked(endpoints.squadVersions).mockReturnValue(new Promise(() => {}))
+    renderPage()
+    await pickClub()
+    expect(screen.getByRole('button', { name: 'Kariyeri oluştur' })).toBeEnabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Kariyeri oluştur' }))
+    await waitFor(() => expect(endpoints.createCareer).toHaveBeenCalledWith({ clubId: 9 }))
+  })
 })
 
 describe('FCA-3 Parça 6: Yeni kariyer başlığı', () => {

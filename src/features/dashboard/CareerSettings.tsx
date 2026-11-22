@@ -8,6 +8,7 @@ import { MoneyInput } from '../../components/MoneyInput'
 import { ErrorBox, Field, Input, Select } from '../../components/ui'
 import { invalidateCareerScope } from '../../lib/careerQueries'
 import { Button, Chip, Panel } from '../../design/components/primitives'
+import { formatCareerSquadBadge } from '../career/squadVersion'
 
 const GENDER_LABEL: Record<number, string> = { 0: 'Erkek', 1: 'Kadın' }
 /** Ayar değişince tazelenen sorgular (kariyer listesi, kadro, hareketler, diziliş). */
@@ -60,7 +61,12 @@ export function CareerSettings({ career }: { career: Career }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <Panel title="Kariyer ayarları" source={{ kind: 'decision' }} actions={career.gender !== undefined ? <Chip tone="info">{GENDER_LABEL[career.gender]} futbolu</Chip> : undefined}>
+      <Panel title="Kariyer ayarları" source={{ kind: 'decision' }} actions={career.gender !== undefined || career.squadVersion ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {career.squadVersion && <Chip tone={career.squadVersion.latest ? undefined : 'warn'}>{formatCareerSquadBadge(career.squadVersion)}</Chip>}
+          {career.gender !== undefined && <Chip tone="info">{GENDER_LABEL[career.gender]} futbolu</Chip>}
+        </div>
+      ) : undefined}>
         <div className="grid gap-3 sm:grid-cols-2 min-[1024px]:grid-cols-3">
           <Field label="Ad"><Input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} /></Field>
           <Field label="Transfer bütçesi (€)"><MoneyInput value={budget} onChange={setBudget} ariaLabel="Transfer bütçesi (€)" /></Field>

@@ -11,6 +11,7 @@ import { formatEur } from '../../lib/format'
 import { careerStore, useActiveCareerId } from '../../state/careerStore'
 import { ErrorAlert, PRIMARY_BUTTON } from '../account/AccountParts'
 import { ClubRecommendations } from '../manager/ClubRecommendations'
+import { formatSquadVersion, pickDefaultSquadVersion, squadVersionsQuery } from './squadVersion'
 
 const INPUT = 'glass-3 min-h-10 w-full rounded-[var(--radius-sm)] px-3 text-sm text-ink placeholder:text-muted max-sm:min-h-11'
 const LABEL = 'text-xs font-medium text-ink-2'
@@ -24,7 +25,7 @@ export function NewCareerPage() {
   const navigate = useNavigate()
   const client = useQueryClient()
   const activeId = useActiveCareerId()
-  const ids = { club: useId(), name: useId(), season: useId(), date: useId(), list: useId() }
+  const ids = { club: useId(), name: useId(), season: useId(), date: useId(), list: useId(), version: useId() }
   const [term, setTerm] = useState('')
   const [club, setClub] = useState<Club>()
   const [name, setName] = useState('')
@@ -46,6 +47,10 @@ export function NewCareerPage() {
   }
   const clubs = useQuery({ queryKey: ['clubs', term], queryFn: () => endpoints.clubs(term), enabled: term.trim().length >= 2 && !club })
   const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
+  const versions = useQuery(squadVersionsQuery)
+  const [pickedVersion, setPickedVersion] = useState<number>()
+  const versionList = versions.data ?? []
+  const squadVersionId = pickedVersion ?? pickDefaultSquadVersion(versionList)
   const create = useMutation({
     mutationFn: async () => {
       const career = await endpoints.createCareer({
@@ -53,6 +58,7 @@ export function NewCareerPage() {
         ...(budget !== undefined ? { budgetEur: budget } : {}),
         ...(name.trim() ? { name: name.trim() } : {}),
         ...(season ? { season: Number(season) } : {}),
+        ...(squadVersionId !== undefined ? { squadVersionId } : {}),
       })
       if (gameDate) {
         await endpoints.updateCareer(career.id, { gameDate })
@@ -88,6 +94,21 @@ export function NewCareerPage() {
           )}
           {club && <p className="text-xs text-ink-2">Seçili: <b className="text-ink">{club.name}</b>{club.league ? ` · ${club.league}` : ''}</p>}
         </div>
+        {versionList.length > 1 ? (
+          <div className="flex flex-col gap-1">
+            <label htmlFor={ids.version} className={LABEL}>Kadro sürümü</label>
+            <select id={ids.version} className={INPUT} value={squadVersionId} onChange={(e) => setPickedVersion(Number(e.target.value))}>
+              {versionList.map((v) => <option key={v.id} value={v.id}>{formatSquadVersion(v)}</option>)}
+            </select>
+          </div>
+        ) : versionList.length === 1 ? (
+          <div className="flex flex-col gap-1">
+            <span className={LABEL}>Kadro sürümü</span>
+            <p className="text-sm text-ink">{formatSquadVersion(versionList[0])}</p>
+          </div>
+        ) : versions.isError ? (
+          <p className="text-xs text-ink-2">Kadro sürümleri alınamadı; kariyer en yeni kadroyla açılır.</p>
+        ) : null}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
             <label htmlFor={ids.name} className={LABEL}>Kariyer adı (isteğe bağlı)</label>

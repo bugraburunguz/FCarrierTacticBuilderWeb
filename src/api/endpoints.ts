@@ -20,6 +20,7 @@ import type {
   AcademyPlayer,
   YouthDetail,
   Career,
+  SquadVersion,
   CareerPlayer,
   CareerPlayerContract,
   CareerPlayerFacets,
@@ -281,7 +282,9 @@ export const endpoints = {
   creditCosts: () => api.get<CreditCosts>('/billing/costs'),
 
   careers: () => api.get<Career[]>('/careers'),
-  createCareer: (body: { clubId: number; budgetEur?: number; name?: string; season?: number }) => api.post<Career>('/careers', body),
+  createCareer: (body: { clubId: number; budgetEur?: number; name?: string; season?: number; squadVersionId?: number }) => api.post<Career>('/careers', body),
+  /** FCA-27: kadro sürümleri (kariyer dışı, ücretsiz), en yeni önce. */
+  squadVersions: () => api.get<SquadVersion[]>('/squad-versions'),
   updateCareer: (careerId: number, body: { name?: string; budgetEur?: number; season?: number; spoilerMode?: string; wageBudgetEur?: number; windowEndsOn?: string; challengeId?: string; gameDate?: string }) =>
     request<Career>(`/careers/${careerId}`, { method: 'PATCH', body }),
   importCareer: (careerId: number, form: FormData) => request<ImportSummary>(`/careers/${careerId}/import`, { method: 'POST', body: form }),
