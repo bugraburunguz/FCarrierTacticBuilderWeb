@@ -434,6 +434,22 @@ export interface SquadVersion {
 
 export type CareerSquadVersion = Pick<SquadVersion, 'id' | 'versionNo' | 'label' | 'exportedAt' | 'latest'>
 
+export interface BaseImportResult {
+  playersInFile: number
+  existing: number
+  created: number
+  skippedNoTeam: number
+  skippedNoPosition: number
+  nationalitiesCreated: number
+  clubsCreated: number
+  leaguesCreated: number
+  updated: number
+  changesRecorded: number
+  squadVersionId: number | null
+  squadVersionNo: number | null
+  archivedPlayers: number
+}
+
 export interface CareerSnapshot {
   id: number
   takenAt: string

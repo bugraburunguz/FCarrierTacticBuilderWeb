@@ -1,20 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { request } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import { useRulesStale } from '../state/rulesStore'
 import { Button, Card, EmptyState, ErrorBox, Field, Input, Pill, Select } from '../components/ui'
 import { parseChallengeText } from '../lib/sbcText'
 import { AdminGrowthPanel } from './AdminGrowthPanel'
+import { AdminSquadPanel } from './AdminSquadPanel'
 
-type Tab = 'queue' | 'entry' | 'contributors' | 'maintenance' | 'growth'
+type Tab = 'queue' | 'entry' | 'contributors' | 'maintenance' | 'growth' | 'kadro'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'queue', label: 'Onay kuyruğu' },
   { id: 'entry', label: 'Elle giriş' },
   { id: 'contributors', label: 'Katkıcılar' },
   { id: 'maintenance', label: 'Bakım' },
   { id: 'growth', label: 'Gelişim ölçümü' },
+  { id: 'kadro', label: 'Kadro yükle' },
 ]
+const TAB_PARAM = 'sekme'
+const readTab = (value: string | null): Tab => TABS.find((t) => t.id === value)?.id ?? 'queue'
 const KINDS = [
   { id: 'sbc-set', label: 'SBC seti' },
   { id: 'sbc-challenge', label: 'SBC challenge' },
@@ -26,7 +31,14 @@ const KINDS = [
 export function AdminUtPage() {
   const { me, authenticated } = useAuth()
   const rulesStale = useRulesStale()
-  const [tab, setTab] = useState<Tab>('queue')
+  const [params, setParams] = useSearchParams()
+  const tab = readTab(params.get(TAB_PARAM))
+  const setTab = (id: Tab) => setParams((current) => {
+    const next = new URLSearchParams(current)
+    next.set(TAB_PARAM, id)
+    return next
+  }, { replace: true })
+  const [squadBusy, setSquadBusy] = useState(false)
   const call = <T,>(path: string, method: 'GET' | 'POST' | 'PUT' = 'GET', body?: unknown) => request<T>(`/admin/ut${path}`, { method, body })
 
   if (!authenticated) {
@@ -41,8 +53,8 @@ export function AdminUtPage() {
       <Card title="Yönetici">
         <div role="tablist" aria-label="Bölüm" className="flex flex-wrap gap-1.5">
           {TABS.map((t) => (
-            <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}
-              className={`rounded-md px-2.5 py-1 font-display text-sm font-semibold uppercase tracking-wide ${tab === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink hover:bg-line'}`}>
+            <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} disabled={squadBusy} onClick={() => setTab(t.id)}
+              className={`rounded-md px-2.5 py-1 font-display text-sm font-semibold uppercase tracking-wide disabled:cursor-not-allowed disabled:opacity-40 ${tab === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink hover:bg-line'}`}>
               {t.label}
             </button>
           ))}
@@ -53,6 +65,7 @@ export function AdminUtPage() {
       {tab === 'contributors' && <ContributorPanel call={call} />}
       {tab === 'maintenance' && <MaintenancePanel call={call} />}
       {tab === 'growth' && <AdminGrowthPanel />}
+      {tab === 'kadro' && <AdminSquadPanel onBusyChange={setSquadBusy} />}
     </div>
   )
 }

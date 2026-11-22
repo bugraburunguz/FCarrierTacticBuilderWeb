@@ -53,49 +53,77 @@ function listBlocks(text: string): (Block | null)[] {
   })
 }
 
+export type ExportKind = 'career' | 'base'
+export type ExportPick = { range: ByteRange | null; missing: boolean }
+
+export const NO_BASE_EXPORT = "Logda ana menü (BASE) export'u yok"
+
 /**
- * Sunucunun kariyer içe aktarmada seçeceği export'un bayt aralığı (LeExportV2Parser, Prefer.CAREER): en son tam kariyer export'u, tamı yoksa
- * en son kariyer export'u. text Latin-1 çözülmüş olmalı (her karakter bir bayt). Kırpmaya gerek yoksa ya da emin olunamıyorsa null.
+ * Sunucunun seçeceği export'un bayt aralığı (LeExportV2Parser, Prefer.CAREER / Prefer.BASE): istenen türün en son tam export'u, tamı yoksa
+ * en son export'u. text Latin-1 çözülmüş olmalı (her karakter bir bayt). Kırpmaya gerek yoksa ya da emin olunamıyorsa range null.
+ * missing: bütün META'lar okundu ve istenen türde export yok.
  */
-export function findCareerExportRange(text: string): ByteRange | null {
+export function pickExport(text: string, kind: ExportKind): ExportPick {
   const blocks = listBlocks(text)
-  if (blocks.length < 2 || blocks.some((b) => b === null)) {
-    return null
+  const readable = blocks.every((b) => b !== null)
+  const matching = (blocks.filter((b) => b !== null) as Block[]).filter((b) => b.career === (kind === 'career'))
+  const missing = readable && matching.length === 0
+  if (blocks.length < 2 || !readable) {
+    return { range: null, missing }
   }
-  const career = (blocks as Block[]).filter((b) => b.career)
-  const chosen = [...career].reverse().find((b) => b.complete) ?? career.at(-1)
-  return chosen ? { start: chosen.start, end: chosen.end } : null
+  const chosen = [...matching].reverse().find((b) => b.complete) ?? matching.at(-1)
+  return { range: chosen ? { start: chosen.start, end: chosen.end } : null, missing }
 }
 
-export function findCareerExportRangeInBytes(bytes: ArrayBuffer): ByteRange | null {
-  return findCareerExportRange(new TextDecoder('latin1').decode(bytes))
+export function findCareerExportRange(text: string): ByteRange | null {
+  return pickExport(text, 'career').range
 }
 
-function findRangeInWorker(file: File): Promise<ByteRange | null> {
+export function findBaseExportRange(text: string): ByteRange | null {
+  return pickExport(text, 'base').range
+}
+
+export function pickExportInBytes(bytes: ArrayBuffer, kind: ExportKind): ExportPick {
+  return pickExport(new TextDecoder('latin1').decode(bytes), kind)
+}
+
+function pickInWorker(file: File, kind: ExportKind): Promise<ExportPick> {
   return new Promise((resolve) => {
     const worker = new Worker(new URL('./leLogTrimWorker.ts', import.meta.url), { type: 'module' })
     worker.onmessage = (event: MessageEvent<LeLogTrimResponse>) => {
       worker.terminate()
-      resolve(event.data.range)
+      resolve(event.data.pick)
     }
     worker.onerror = () => {
       worker.terminate()
-      resolve(null)
+      resolve({ range: null, missing: false })
     }
-    worker.postMessage({ file })
+    worker.postMessage({ file, kind })
   })
+}
+
+async function trimLog(file: File, kind: ExportKind): Promise<File> {
+  const { range, missing } = typeof Worker === 'undefined' ? pickExportInBytes(await file.arrayBuffer(), kind) : await pickInWorker(file, kind)
+  if (kind === 'base' && missing) {
+    throw new Error(NO_BASE_EXPORT)
+  }
+  if (!range || (range.start === 0 && range.end === file.size)) {
+    return file
+  }
+  return new File([file.slice(range.start, range.end)], file.name, { type: file.type })
 }
 
 /**
  * FCA-18: betik 2.0.5 her ay başında aynı loga yeni bir tam export ekler; log yükleme sınırını aşar. Sunucu zaten yalnız bir export'u içe
  * aktardığı için yalnız o export'un ham baytları gönderilir. Ham bayt korunur (sunucu FNV özetini ham bayt üzerinden doğrular).
  */
-export async function trimCareerLog(file: File): Promise<File> {
-  const range = typeof Worker === 'undefined' ? findCareerExportRangeInBytes(await file.arrayBuffer()) : await findRangeInWorker(file)
-  if (!range || (range.start === 0 && range.end === file.size)) {
-    return file
-  }
-  return new File([file.slice(range.start, range.end)], file.name, { type: file.type })
+export function trimCareerLog(file: File): Promise<File> {
+  return trimLog(file, 'career')
+}
+
+/** FCA-32: genel kadro yüklemesinde yalnız son ana menü (BASE) export'u gider; logda BASE export'u yoksa NO_BASE_EXPORT hatası. */
+export function trimBaseLog(file: File): Promise<File> {
+  return trimLog(file, 'base')
 }
 
 export async function gzipFile(file: File): Promise<File> {

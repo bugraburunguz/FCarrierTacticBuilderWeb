@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Crosshair, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, Shirt, Sparkles, Sprout, Swords, Target, TrendingUp, Upload, UserCog, Users, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Crosshair, Database, FlaskConical, Layers, LayoutDashboard, LayoutTemplate, MoreHorizontal, Plus, Puzzle, Shield, ShieldCheck, Shirt, Sparkles, Sprout, Swords, Target, TrendingUp, Upload, UserCog, Users, type LucideIcon } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { isStaticHostWithoutApi } from '../../api/client'
@@ -39,6 +39,7 @@ const ICONS: Record<string, LucideIcon> = {
   '/squad/builder': Swords,
   '/teams': Shield,
   '/career/import': Upload,
+  '/admin/ut?sekme=kadro': ShieldCheck,
   '/ut/squad': LayoutTemplate,
   '/ut/club': Layers,
   '/ut/meta': Sparkles,
@@ -120,7 +121,7 @@ export function AppShell() {
   useEffect(() => syncDesign(pathname), [pathname, mode, authenticated])
   // Uzantı yakalaması kapalıyken (VITE_EXTENSION_CAPTURE=off) yakalamaya bağlı UT öğeleri yan menüden ve mobil alt menüden çıkar (V3-06a).
   // V3-06d: kariyerde tek menü (CAREER_NAV); aktif öğe rotadan.
-  const nav = navFor(mode, extensionCaptureEnabled(), true)
+  const nav = navFor(mode, extensionCaptureEnabled(), true, me?.role === 'ADMIN')
   const active = activeNav(nav, pathname)
   // FAZ 4a: aktif kariyerde kaydedilmemiş (kirli) Lab taslağı varsa "Taktik Lab" öğesinde nokta (labStore.hasUnsaved ile aynı kural).
   const careerId = useActiveCareerId()

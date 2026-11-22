@@ -6,7 +6,8 @@ import { careerStore } from '../../state/careerStore'
 import { modeStore } from '../../state/modeStore'
 import { AppShell } from './AppShell'
 
-vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { email: 'kapi@example.test', subscriptionType: 'FREE', creditBalance: 20 }, logout: vi.fn() }) }))
+const auth = vi.hoisted(() => ({ role: 'USER' as 'USER' | 'ADMIN' }))
+vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ authenticated: true, me: { email: 'kapi@example.test', subscriptionType: 'FREE', creditBalance: 20, role: auth.role }, logout: vi.fn() }) }))
 vi.mock('../../api/endpoints', () => ({
   endpoints: {
     appConfig: vi.fn(() => Promise.resolve({ freeBeta: true, dailyCredits: 30 })),
@@ -28,8 +29,28 @@ function renderAt(path: string) {
 }
 
 beforeEach(() => {
+  auth.role = 'USER'
   modeStore.set('career')
   careerStore.set(7)
+})
+
+describe('FCA-32 yönetici bağlantısı', () => {
+  it('ADMIN: Yönetim grubunda "Yönetici" → /admin/ut?sekme=kadro; mobil Daha fazla sheet\'inde de', () => {
+    auth.role = 'ADMIN'
+    renderAt('/career/dashboard')
+    const admin = within(screen.getByRole('navigation', { name: 'Ana menü' })).getByRole('group', { name: 'Yönetim' })
+    expect(within(admin).getAllByRole('link').map((a) => a.textContent)).toEqual(['Menajer', 'Kayıt yükle', 'Yönetici'])
+    expect(within(admin).getByRole('link', { name: 'Yönetici' })).toHaveAttribute('href', '/admin/ut?sekme=kadro')
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Mobil menü' })).getByRole('button', { name: 'Daha fazla' }))
+    expect(within(screen.getByRole('dialog', { name: 'Daha fazla' })).getByRole('link', { name: 'Yönetici' })).toHaveAttribute('href', '/admin/ut?sekme=kadro')
+  })
+
+  it('USER "Yönetici" bağlantısını görmez (masaüstü ve mobil)', () => {
+    renderAt('/career/dashboard')
+    expect(screen.queryByRole('link', { name: 'Yönetici' })).toBeNull()
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Mobil menü' })).getByRole('button', { name: 'Daha fazla' }))
+    expect(within(screen.getByRole('dialog', { name: 'Daha fazla' })).queryByRole('link', { name: 'Yönetici' })).toBeNull()
+  })
 })
 
 describe('FCA-3 kariyer kabuğu (Stitch, FM alışkanlığı)', () => {
