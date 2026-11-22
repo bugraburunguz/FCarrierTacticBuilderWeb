@@ -34,7 +34,16 @@ const contractText = (date?: string) => (date ? new Date(`${date}T00:00:00`).toL
 
 function columns(careerId: number, facets: CareerPlayerFacets | undefined, role: boolean): CatalogColumn<PlayerSummary, CareerSort>[] {
   const cols: (CatalogColumn<PlayerSummary, CareerSort> | false)[] = [
-    { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="block truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link> },
+    {
+      sort: 'name',
+      label: 'Oyuncu',
+      cell: (p) => (
+        <div className="flex min-w-0 items-center gap-2">
+          <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact />
+          <Link to={playerHref(p)} className="min-w-0 truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link>
+        </div>
+      ),
+    },
     { sort: 'overall', label: 'OVR', align: 'right', cellClassName: NUM, cell: (p) => p.overall },
     { sort: 'potential', label: 'POT', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.potentialRange ?? p.potential ?? '–' },
     { sort: 'age', label: 'Yaş', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.age ?? '–' },
@@ -50,7 +59,6 @@ function columns(careerId: number, facets: CareerPlayerFacets | undefined, role:
     },
     role && { sort: 'role', label: 'Rol uyumu', align: 'right', cellClassName: NUM, cell: (p) => p.roleFit?.toFixed(1) ?? '–' },
     { label: <span className="sr-only">Kısa liste</span>, align: 'right', cell: (p) => <ShortlistButton careerId={careerId} playerId={p.id} compact /> },
-    { label: <span className="sr-only">Karşılaştır</span>, align: 'right', cell: (p) => <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact /> },
   ]
   return cols.filter((c): c is CatalogColumn<PlayerSummary, CareerSort> => c !== false)
 }

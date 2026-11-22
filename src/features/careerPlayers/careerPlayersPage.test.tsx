@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import type { PageResponse, PlayerSummary } from '../../api/types'
+import { compareStore } from '../../state/compareStore'
 import { CareerPlayersPage } from './CareerPlayersPage'
 
 vi.mock('../../api/endpoints', () => ({
@@ -70,6 +71,21 @@ describe('kariyer oyuncu listesi (v3 Katalog)', () => {
     renderPage('/players?gorunum=table')
     const row = (await screen.findByRole('link', { name: 'Bora Stoper' })).closest('tr')!
     expect(within(row).getByRole('button', { name: 'Kısa listeye ekle' })).toBeInTheDocument()
+  })
+
+  it('FCA-38: tabloda ismin solunda artı; tıklayınca oyuncu karşılaştırma listesine eklenir, ayrı sağ sütun yok', async () => {
+    compareStore.clear()
+    renderPage('/players?gorunum=table')
+    const link = await screen.findByRole('link', { name: 'Ada Golcü' })
+    const cell = link.closest('td')!
+    const add = within(cell).getByRole('button', { name: 'Karşılaştırmaya ekle' })
+    expect(add.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.queryByRole('columnheader', { name: 'Karşılaştır' })).not.toBeInTheDocument()
+    fireEvent.click(add)
+    expect(compareStore.get()).toEqual([{ id: 1, name: 'Ada Golcü', overall: 74, position: 'ST' }])
+    fireEvent.click(within(screen.getByRole('link', { name: 'Bora Stoper' }).closest('td')!).getByRole('button', { name: 'Karşılaştırmaya ekle' }))
+    expect(compareStore.get().map((c) => c.id)).toEqual([1, 2])
+    compareStore.clear()
   })
 
   it('yapışkan opak filtre çubuğu kart veritabanıyla aynı parçadır', async () => {

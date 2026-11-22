@@ -7,7 +7,16 @@ import { playerHref } from './CardTile'
 
 const NUM = 'font-[var(--font-num)] tabular-nums'
 const COLUMNS: CatalogColumn<PlayerSummary, CardSort>[] = [
-  { sort: 'name', label: 'Oyuncu', cell: (p) => <Link to={playerHref(p)} className="block truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link> },
+  {
+    sort: 'name',
+    label: 'Oyuncu',
+    cell: (p) => (
+      <div className="flex min-w-0 items-center gap-2">
+        <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact />
+        <Link to={playerHref(p)} className="min-w-0 truncate font-medium text-ink hover:underline" title={p.name}>{p.name}</Link>
+      </div>
+    ),
+  },
   { sort: 'overall', label: 'OVR', align: 'right', cellClassName: NUM, cell: (p) => p.overall },
   { sort: 'position', label: 'Mevki', cellClassName: 'font-[var(--font-num)] text-xs text-ink-2', cell: (p) => p.positions.join(' ') },
   { sort: 'age', label: 'Yaş', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.age ?? '–' },
@@ -15,7 +24,6 @@ const COLUMNS: CatalogColumn<PlayerSummary, CardSort>[] = [
   { sort: 'league', label: 'Lig', cellClassName: 'max-w-[160px] truncate text-ink-2', cell: (p) => p.league ?? '–' },
   { sort: 'weakfoot', label: 'ZA', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.weakFoot ?? '–' },
   { sort: 'skillmoves', label: 'HR', align: 'right', cellClassName: `${NUM} text-ink-2`, cell: (p) => p.skillMoves ?? '–' },
-  { label: <span className="sr-only">Karşılaştır</span>, align: 'right', cell: (p) => <CompareButton entry={{ id: p.id, name: p.name, overall: p.overall, position: p.positions[0] ?? '' }} compact /> },
 ]
 
 /** Kart veritabanı tablosu: ortak Katalog tablosu (yapışkan başlık, sabit ilk iki sütun, pencereli parçalar). */
