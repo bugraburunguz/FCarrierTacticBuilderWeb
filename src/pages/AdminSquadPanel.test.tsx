@@ -3,7 +3,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError, request } from '../api/client'
 import type { BaseImportResult, SquadVersion } from '../api/types'
-import { gzipFile } from '../lib/leLogTrim'
+import { gzipFile, trimBaseLog } from '../lib/leLogTrim'
 import { AdminSquadPanel } from './AdminSquadPanel'
 
 vi.mock('../api/client', async (orig) => {
@@ -11,7 +11,7 @@ vi.mock('../api/client', async (orig) => {
   const request = vi.fn()
   return { ...actual, request, api: { ...actual.api, get: (path: string, query?: unknown) => request(path, { query }) } }
 })
-vi.mock('../lib/leLogTrim', async (orig) => ({ ...(await orig<object>()), gzipFile: vi.fn() }))
+vi.mock('../lib/leLogTrim', async (orig) => ({ ...(await orig<object>()), gzipFile: vi.fn(), trimBaseLog: vi.fn() }))
 
 const VERSIONS: SquadVersion[] = [
   { id: 2, versionNo: 2, label: 'Kadro güncellemesi 20.11.2026', gameBuild: '1.2.3', exportedAt: '2026-11-20T10:00:00Z', playerCount: 18234, latest: true },
@@ -48,9 +48,10 @@ beforeEach(() => {
     return Promise.reject(new Error(`beklenmeyen ${path}`))
   })
   vi.mocked(gzipFile).mockReset().mockImplementation(async (file: File) => new File(['gz'], `${file.name}.gz`, { type: 'application/gzip' }))
+  vi.mocked(trimBaseLog).mockReset().mockImplementation(async (file: File) => file)
 })
 
-const renderPanel = () => render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><AdminSquadPanel /></QueryClientProvider>)
+const renderPanel = (onBusyChange?: (busy: boolean) => void) => render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><AdminSquadPanel onBusyChange={onBusyChange} /></QueryClientProvider>)
 
 function choose(file: File, label?: string) {
   fireEvent.change(screen.getByLabelText('Log dosyası'), { target: { files: [file] } })
@@ -160,6 +161,82 @@ describe('Admin · Kadro yükle (FCA-32)', () => {
     const message = await screen.findByText('Dosya çok büyük')
     expect(message.closest('[aria-live]')).not.toBeNull()
     expect(screen.getByRole('button', { name: 'Yükle' })).toBeEnabled()
+  })
+
+  it('ham log son BASE export\'una kırpılıp gzip\'lenir; .gz dosya kırpılmaz', async () => {
+    const trimmed = new File(['son base'], 'base.log')
+    vi.mocked(trimBaseLog).mockResolvedValue(trimmed)
+    renderPanel()
+    const file = new File(['iki base'], 'base.log')
+    choose(file)
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Onayla' }))
+    await screen.findByText('Sürüm 3 açıldı.')
+    expect(trimBaseLog).toHaveBeenCalledWith(file)
+    expect(gzipFile).toHaveBeenCalledWith(trimmed)
+  })
+
+  it('.gz dosya için kırpma çağrılmaz', async () => {
+    renderPanel()
+    choose(new File(['x'], 'base.log.gz'))
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Onayla' }))
+    await screen.findByText('Sürüm 3 açıldı.')
+    expect(trimBaseLog).not.toHaveBeenCalled()
+  })
+
+  it('logda BASE export\'u yoksa hata gösterilir, istek gitmez', async () => {
+    vi.mocked(trimBaseLog).mockRejectedValue(new Error('Logda ana menü (BASE) export\'u yok'))
+    renderPanel()
+    choose(new File(['kariyer'], 'kariyer.log'))
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Onayla' }))
+    const message = await screen.findByText('Logda ana menü (BASE) export\'u yok')
+    expect(message.closest('[aria-live]')).not.toBeNull()
+    expect(importArgs()).toBeUndefined()
+    expect(gzipFile).not.toHaveBeenCalled()
+  })
+
+  it('odak: onay açılınca Onayla\'ya, Vazgeç ile Yükle\'ye döner', () => {
+    renderPanel()
+    choose(new File(['x'], 'base.log'))
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    expect(screen.getByRole('button', { name: 'Onayla' })).toHaveFocus()
+    fireEvent.click(screen.getByRole('button', { name: 'Vazgeç' }))
+    expect(screen.getByRole('button', { name: 'Yükle' })).toHaveFocus()
+  })
+
+  it('odak: yükleme bitince sonuç bölgesine taşınır', async () => {
+    renderPanel()
+    choose(new File(['x'], 'base.log'))
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Onayla' }))
+    const result = await screen.findByRole('region', { name: 'Yükleme sonucu' })
+    await vi.waitFor(() => expect(result).toHaveFocus())
+  })
+
+  it('odak: yükleme hata verince hata metnine taşınır', async () => {
+    importCall = () => Promise.reject(new ApiError('Dosya çok büyük', 'common.payload_too_large', 413))
+    renderPanel()
+    choose(new File(['x'], 'base.log'))
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Onayla' }))
+    const message = await screen.findByText('Dosya çok büyük')
+    await vi.waitFor(() => expect(message).toHaveFocus())
+  })
+
+  it('yükleme sürerken onBusyChange(true), bitince onBusyChange(false) bildirir', async () => {
+    const upload = deferred<BaseImportResult>()
+    importCall = () => upload.promise
+    const onBusyChange = vi.fn()
+    renderPanel(onBusyChange)
+    choose(new File(['x'], 'base.log'))
+    fireEvent.click(screen.getByRole('button', { name: 'Yükle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Onayla' }))
+    await vi.waitFor(() => expect(onBusyChange).toHaveBeenLastCalledWith(true))
+    upload.resolve(RESULT)
+    await screen.findByText('Sürüm 3 açıldı.')
+    await vi.waitFor(() => expect(onBusyChange).toHaveBeenLastCalledWith(false))
   })
 
   it('AC-4: mevcut kadro sürümleri listelenir, en yeni işaretli', async () => {

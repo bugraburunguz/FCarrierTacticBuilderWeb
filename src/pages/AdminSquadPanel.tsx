@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { BaseImportResult } from '../api/types'
 import { Button, Card, EmptyState, Field, Input, Pill } from '../components/ui'
 import { formatSquadVersion, squadVersionKeys, squadVersionsQuery } from '../features/career/squadVersion'
 import { errorMessage } from '../lib/errorMessage'
-import { gzipFile } from '../lib/leLogTrim'
+import { gzipFile, trimBaseLog } from '../lib/leLogTrim'
 
 type Step = 'idle' | 'confirm' | 'compressing' | 'uploading'
 
@@ -21,19 +21,27 @@ async function isGzip(file: File): Promise<boolean> {
   return head[0] === 0x1f && head[1] === 0x8b
 }
 
-export function AdminSquadPanel() {
+type FocusTarget = 'confirm' | 'upload' | 'outcome'
+
+export interface AdminSquadPanelProps {
+  onBusyChange?: (busy: boolean) => void
+}
+
+export function AdminSquadPanel({ onBusyChange }: AdminSquadPanelProps) {
   const client = useQueryClient()
   const versions = useQuery(squadVersionsQuery)
   const [file, setFile] = useState<File>()
   const [label, setLabel] = useState('')
   const [step, setStep] = useState<Step>('idle')
+  const formRef = useRef<HTMLDivElement>(null)
+  const pendingFocus = useRef<FocusTarget | null>(null)
   const upload = useMutation({
     mutationFn: async ({ log, name }: { log: File; name: string }) => {
       const compressed = await isGzip(log)
       if (!compressed) {
         setStep('compressing')
       }
-      const body = compressed ? log : await gzipFile(log)
+      const body = compressed ? log : await gzipFile(await trimBaseLog(log))
       setStep('uploading')
       const form = new FormData()
       form.append('log', body)
@@ -43,20 +51,49 @@ export function AdminSquadPanel() {
       return endpoints.importBaseSquad(form)
     },
     onSuccess: () => client.invalidateQueries({ queryKey: squadVersionKeys.all }),
-    onSettled: () => setStep('idle'),
+    onSettled: () => {
+      setStep('idle')
+      onBusyChange?.(false)
+    },
   })
   const busy = upload.isPending || step === 'compressing' || step === 'uploading'
+
+  useEffect(() => {
+    const target = pendingFocus.current
+    const root = formRef.current
+    if (!target || !root || (target === 'outcome' && (upload.isPending || step !== 'idle'))) {
+      return
+    }
+    const element = root.querySelector<HTMLElement>(`[data-focus="${target}"]`) ?? root.querySelector<HTMLElement>('[data-focus="upload"]')
+    if (element && !(element as HTMLButtonElement).disabled) {
+      element.focus()
+      pendingFocus.current = null
+    }
+  }, [step, upload.isPending, upload.status])
+
+  function openConfirm() {
+    upload.reset()
+    pendingFocus.current = 'confirm'
+    setStep('confirm')
+  }
+
+  function cancelConfirm() {
+    pendingFocus.current = 'upload'
+    setStep('idle')
+  }
 
   function startUpload() {
     if (!file) {
       return
     }
+    pendingFocus.current = 'outcome'
     setStep('uploading')
+    onBusyChange?.(true)
     upload.mutate({ log: file, name: label.trim() })
   }
 
   return (
-    <div className="space-y-4">
+    <div ref={formRef} className="space-y-4">
       <Card title="Kadro yükle">
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Log dosyası">
@@ -72,16 +109,16 @@ export function AdminSquadPanel() {
           <div className="mt-3 rounded-md border border-line bg-surface-2 p-3">
             <p className="text-sm text-ink">{CONFIRM_TEXT}</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Button onClick={startUpload}className="min-h-11 sm:min-h-0">Onayla</Button>
-              <Button variant="secondary" onClick={() => setStep('idle')} className="min-h-11 sm:min-h-0">Vazgeç</Button>
+              <Button data-focus="confirm" onClick={startUpload} className="min-h-11 sm:min-h-0">Onayla</Button>
+              <Button variant="secondary" onClick={cancelConfirm} className="min-h-11 sm:min-h-0">Vazgeç</Button>
             </div>
           </div>
         ) : (
-          <Button className="mt-3 min-h-11 sm:min-h-0" disabled={!file || busy} onClick={() => { upload.reset(); setStep('confirm') }}>Yükle</Button>
+          <Button data-focus="upload" className="mt-3 min-h-11 sm:min-h-0" disabled={!file || busy} onClick={openConfirm}>Yükle</Button>
         )}
         <div aria-live="polite" className="mt-3 space-y-2 text-sm">
           {busy && STEP_TEXT[step] && <p className="text-muted">{STEP_TEXT[step]}</p>}
-          {upload.isError && <p className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-danger">{errorMessage(upload.error).message}</p>}
+          {upload.isError && <p data-focus="outcome" tabIndex={-1} className="rounded-md border border-danger-line bg-danger-soft px-3 py-2 text-danger">{errorMessage(upload.error).message}</p>}
           {upload.data && <ImportSummary result={upload.data} />}
         </div>
       </Card>
@@ -116,7 +153,7 @@ function ImportSummary({ result }: { result: BaseImportResult }) {
     ['Güncellenen', result.updated],
   ]
   return (
-    <section aria-label="Yükleme sonucu" className="rounded-md border border-line bg-surface-2 p-3">
+    <section aria-label="Yükleme sonucu" data-focus="outcome" tabIndex={-1} className="rounded-md border border-line bg-surface-2 p-3">
       <p className="font-semibold text-ink">
         {result.squadVersionId === null ? 'Değişiklik yok; yeni sürüm açılmadı.' : `Sürüm ${result.squadVersionNo ?? ''} açıldı.`}
       </p>

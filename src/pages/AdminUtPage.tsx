@@ -37,7 +37,8 @@ export function AdminUtPage() {
     const next = new URLSearchParams(current)
     next.set(TAB_PARAM, id)
     return next
-  })
+  }, { replace: true })
+  const [squadBusy, setSquadBusy] = useState(false)
   const call = <T,>(path: string, method: 'GET' | 'POST' | 'PUT' = 'GET', body?: unknown) => request<T>(`/admin/ut${path}`, { method, body })
 
   if (!authenticated) {
@@ -52,8 +53,8 @@ export function AdminUtPage() {
       <Card title="Yönetici">
         <div role="tablist" aria-label="Bölüm" className="flex flex-wrap gap-1.5">
           {TABS.map((t) => (
-            <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}
-              className={`rounded-md px-2.5 py-1 font-display text-sm font-semibold uppercase tracking-wide ${tab === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink hover:bg-line'}`}>
+            <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} disabled={squadBusy} onClick={() => setTab(t.id)}
+              className={`rounded-md px-2.5 py-1 font-display text-sm font-semibold uppercase tracking-wide disabled:cursor-not-allowed disabled:opacity-40 ${tab === t.id ? 'bg-accent-bg text-on-accent' : 'bg-surface-2 text-ink hover:bg-line'}`}>
               {t.label}
             </button>
           ))}
@@ -64,7 +65,7 @@ export function AdminUtPage() {
       {tab === 'contributors' && <ContributorPanel call={call} />}
       {tab === 'maintenance' && <MaintenancePanel call={call} />}
       {tab === 'growth' && <AdminGrowthPanel />}
-      {tab === 'kadro' && <AdminSquadPanel />}
+      {tab === 'kadro' && <AdminSquadPanel onBusyChange={setSquadBusy} />}
     </div>
   )
 }
