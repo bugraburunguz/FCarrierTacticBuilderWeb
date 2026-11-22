@@ -27,5 +27,5 @@ export function pickDefaultSquadVersion(versions: SquadVersion[]): number | unde
 }
 
 export function formatCareerSquadBadge(version: CareerSquadVersion): string {
-  return `Kadro: ${version.label}${version.latest ? '' : ' (eski sürüm)'}`
+  return `Kadro: ${version.label}${version.latest ? '' : ' · eski sürüm'}`
 }

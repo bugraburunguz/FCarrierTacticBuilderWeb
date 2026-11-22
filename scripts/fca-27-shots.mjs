@@ -91,14 +91,14 @@ for (const w of [375, 1280]) {
 
   errors.length = 0
   await page.goto(`${base}/career/dashboard?sekme=ayarlar`, { waitUntil: 'networkidle' })
-  const badge = page.getByText(/^Kadro: .*\(eski sürüm\)$/)
+  const badge = page.getByText(/^Kadro: .* · eski sürüm$/)
   const badgeGate = await measure(page, 'kadro-rozeti', w, badge)
   results.push({ screen: 'kadro-rozeti', w, ...badgeGate, text: await badge.textContent(), errors: [...errors] })
   await context.close()
 }
 await browser.close()
 
-writeFileSync(file('gates.json'), JSON.stringify(results, null, 2))
+writeFileSync(file('gates-report.json'), JSON.stringify(results, null, 2))
 for (const r of results) {
   console.log(`${r.screen} dark ${r.w}: taşma ${r.overflow}px · axe ${r.axe.join(',') || 'temiz'} · hata ${r.errors.length}${r.errors.length ? ` (${r.errors.slice(0, 2).join(' | ')})` : ''}${r.options ? ` · seçenekler ${r.options.join(' / ')} · varsayılan en yeni ${r.defaultIsLatest}` : ''}${r.text ? ` · ${r.text}` : ''}`)
 }

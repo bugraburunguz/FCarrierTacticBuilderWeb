@@ -514,7 +514,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
   it('FCA-27: eski sürüme bağlı kariyerde rozet "(eski sürüm)" der; squadVersion yoksa rozet yok', async () => {
     vi.mocked(endpoints.careers).mockResolvedValue([{ ...CAREER, squadVersion: { id: 1, versionNo: 1, label: 'İlk kadro (Sürüm 1)', exportedAt: null, latest: false } }] as never)
     const { unmount } = renderPage('/career/dashboard?sekme=ayarlar')
-    expect(await screen.findByText('Kadro: İlk kadro (Sürüm 1) (eski sürüm)')).toBeInTheDocument()
+    expect(await screen.findByText('Kadro: İlk kadro (Sürüm 1) · eski sürüm')).toBeInTheDocument()
     unmount()
     vi.mocked(endpoints.careers).mockResolvedValue([CAREER] as never)
     renderPage('/career/dashboard?sekme=ayarlar')

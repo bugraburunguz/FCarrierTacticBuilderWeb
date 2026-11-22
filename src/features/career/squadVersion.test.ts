@@ -23,7 +23,7 @@ describe('FCA-27 squadVersion', () => {
 
   it('rozet metni; eski sürümde ibare', () => {
     expect(formatCareerSquadBadge({ id: 1, versionNo: 1, label: 'X', exportedAt: null, latest: true })).toBe('Kadro: X')
-    expect(formatCareerSquadBadge({ id: 1, versionNo: 1, label: 'X', exportedAt: null, latest: false })).toBe('Kadro: X (eski sürüm)')
+    expect(formatCareerSquadBadge({ id: 1, versionNo: 1, label: 'X', exportedAt: null, latest: false })).toBe('Kadro: X · eski sürüm')
   })
 
   it('query key kariyer kimliği taşımaz', () => {
