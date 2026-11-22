@@ -10,6 +10,11 @@ describe('FCA-27 squadVersion', () => {
     expect(formatSquadVersion({ label: 'A', exportedAt: 'x' })).toBe('A')
   })
 
+  it('etiket tarihi zaten içeriyorsa tarih tekrar eklenmez', () => {
+    expect(formatSquadVersion({ label: 'Kadro güncellemesi 22.11.2026 (1.0.142)', exportedAt: '2026-11-22T11:51:11Z' }))
+      .toBe('Kadro güncellemesi 22.11.2026 (1.0.142)')
+  })
+
   it('varsayılan latest olan; yoksa ilk; boş listede yok', () => {
     expect(pickDefaultSquadVersion([v(1, false), v(2, true)])).toBe(2)
     expect(pickDefaultSquadVersion([v(3, false), v(1, false)])).toBe(3)

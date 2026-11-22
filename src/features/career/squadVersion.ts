@@ -15,7 +15,11 @@ export function formatSquadVersion(version: Pick<SquadVersion, 'label' | 'export
     return version.label
   }
   const date = new Date(version.exportedAt)
-  return Number.isNaN(date.getTime()) ? version.label : `${version.label} · ${DATE.format(date)}`
+  if (Number.isNaN(date.getTime())) {
+    return version.label
+  }
+  const formatted = DATE.format(date)
+  return version.label.includes(formatted) ? version.label : `${version.label} · ${formatted}`
 }
 
 export function pickDefaultSquadVersion(versions: SquadVersion[]): number | undefined {
