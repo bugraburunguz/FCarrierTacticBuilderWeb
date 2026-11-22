@@ -35,7 +35,7 @@ export function useCareerSquadData() {
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const events = useQuery({ queryKey: ['events', id], queryFn: () => endpoints.events(id!), enabled: id !== undefined })
   // FIT-3: oyuncu › Roller (RoleBasedAdvice) ile aynı anahtar (pahalı uç tek kez); kadro değişince careerQueries kapsamı tazeler.
-  const positionAdvice = useQuery({ queryKey: ['position-advice', id], queryFn: () => endpoints.positionAdvice(id!), enabled: id !== undefined && (squad.data?.length ?? 0) > 0, staleTime: 120_000 })
+  const positionAdvice = useQuery({ queryKey: ['position-advice', id], queryFn: () => endpoints.positionAdvice(id!), enabled: id !== undefined && squad.data?.length !== 0, staleTime: 120_000 })
   const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles })
   const fits = useMainTacticFits(id, squad.data)

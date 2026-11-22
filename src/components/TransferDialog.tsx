@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { endpoints } from '../api/endpoints'
 import type { CareerPlayer, Club } from '../api/types'
 import { AppDialog } from '../design/components/AppDialog'
+import { SEARCH_DEBOUNCE_MS, useDebouncedValue } from '../lib/useDebouncedValue'
 import { MoneyInput } from './MoneyInput'
 import { Button, ErrorBox, Field, Input } from './ui'
 
@@ -22,10 +23,11 @@ export function TransferDialog({ mode, entry, gender, pending, error, onSubmit, 
   const [feeValid, setFeeValid] = useState(true)
   const [term, setTerm] = useState('')
   const [club, setClub] = useState<Club | undefined>()
+  const searchTerm = useDebouncedValue(term, SEARCH_DEBOUNCE_MS)
   const clubs = useQuery({
-    queryKey: ['clubs', term, gender],
-    queryFn: () => endpoints.clubs(term, { gender, limit: 6 }),
-    enabled: term.trim().length >= 2 && !club,
+    queryKey: ['clubs', searchTerm, gender],
+    queryFn: () => endpoints.clubs(searchTerm, { gender, limit: 6 }),
+    enabled: searchTerm.trim().length >= 2 && !club,
   })
   const selling = mode === 'SELL'
 

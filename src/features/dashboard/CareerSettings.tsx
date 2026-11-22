@@ -55,7 +55,7 @@ export function CareerSettings({ career }: { career: Career }) {
     mutationFn: async (file: File) => endpoints.careerRestore(career.id, JSON.parse(await file.text()) as CareerBackup),
     onSuccess: (data) => {
       setNotice(`Yedek yüklendi: ${data.tags.length} etiket, ${data.shortlist.length} kısa liste, ${data.seasons.length} sezon.`)
-      void client.invalidateQueries()
+      void refresh()
     },
   })
 

@@ -7,6 +7,7 @@ import { MoneyInput } from '../../../components/MoneyInput'
 import { ErrorBox, Field, Input } from '../../../components/ui'
 import { Button, Chip, EmptyState, Panel } from '../../../design/components/primitives'
 import { formatEur } from '../../../lib/format'
+import { SEARCH_DEBOUNCE_MS, useDebouncedValue } from '../../../lib/useDebouncedValue'
 import { useInvalidateCareer } from '../../careerSquad/useCareerSquadData'
 
 export const EVENT_LABELS: Record<RosterEventType, string> = {
@@ -56,10 +57,11 @@ export function TransferMarket({ career, squadIds }: { career: Career; squadIds:
   // REVIEW O2: bedel para girişiyle (birim seçili); ham € alanı "15" yazana 15 € gönderiyordu.
   const [fee, setFee] = useState<number | undefined>()
   const [feeValid, setFeeValid] = useState(true)
+  const searchTerm = useDebouncedValue(term, SEARCH_DEBOUNCE_MS)
   const search = useQuery({
-    queryKey: ['transfer-search', term, career.gender],
-    queryFn: () => endpoints.players({ q: term, size: 8, gender: career.gender }),
-    enabled: term.trim().length >= 2,
+    queryKey: ['transfer-search', searchTerm, career.gender],
+    queryFn: () => endpoints.players({ q: searchTerm, size: 8, gender: career.gender }),
+    enabled: searchTerm.trim().length >= 2,
   })
   const apply = useMutation({
     mutationFn: (v: { type: RosterEventType; playerId: number; feeEur?: number }) => endpoints.applyEvent(career.id, v),
