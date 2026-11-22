@@ -6,6 +6,7 @@ import { endpoints } from '../../api/endpoints'
 import type { Career } from '../../api/types'
 import { useAuth } from '../../auth/AuthContext'
 import type { NavGroup } from '../../lib/navConfig'
+import { usePrefetchRoute } from '../../lib/usePrefetchRoute'
 import { careerStore, useActiveCareerId } from '../../state/careerStore'
 
 /** Oyun tarihi (YYYY-AA-GG) → "19 Eylül 2027". Saat dilimi kaymasın diye UTC. */
@@ -125,8 +126,9 @@ const sidebarTone = (active: boolean) =>
 
 /** İkon + etiket yatay; kaydedilmemiş Lab taslağında nokta ve erişilebilir ad (FAZ 4a kuralı). */
 function SidebarLink({ group, active, Icon, unsaved }: { group: NavGroup; active: boolean; Icon: LucideIcon; unsaved: boolean }) {
+  const prefetch = usePrefetchRoute(group.to)
   return (
-    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${group.label} · kaydedilmemiş taslak var` : undefined} title={group.label} className={`${SIDEBAR_ITEM} ${sidebarTone(active)}`}>
+    <Link to={group.to} onMouseEnter={prefetch} onFocus={prefetch} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${group.label} · kaydedilmemiş taslak var` : undefined} title={group.label} className={`${SIDEBAR_ITEM} ${sidebarTone(active)}`}>
       <span className="relative block">
         <Icon size={18} aria-hidden="true" />
         {unsaved && <span data-unsaved-dot aria-hidden="true" className="absolute -right-1 -top-0.5 h-2 w-2 rounded-full bg-[var(--accent)] ring-2 ring-[var(--glass-1)]" />}

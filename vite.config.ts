@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { configDefaults } from 'vitest/config'
+import { VENDOR_GROUPS } from './src/lib/vendorChunks.ts'
 
 const backend = process.env.VITE_BACKEND_URL ?? 'http://localhost:8080'
 
@@ -11,6 +12,9 @@ const base = process.env.VITE_BASE ?? '/'
 export default defineConfig({
   base,
   plugins: [react(), tailwindcss()],
+  build: {
+    rolldownOptions: { output: { codeSplitting: { groups: VENDOR_GROUPS } } },
+  },
   server: {
     port: 5173,
     proxy: { '/api': { target: backend, changeOrigin: true } },
