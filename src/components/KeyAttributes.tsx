@@ -6,7 +6,7 @@ import { AttrBar, Card } from './ui'
 const MAX_POSITIONS = 3
 
 export function KeyAttributes({ positions, attrs }: { positions: string[]; attrs: Record<string, number> }) {
-  const config = useQuery({ queryKey: ['key-attributes'], queryFn: endpoints.keyAttributes, staleTime: 3_600_000 })
+  const config = useQuery({ queryKey: ['key-attributes'], queryFn: endpoints.keyAttributes })
   const shown = positions.filter((p) => config.data?.positions[p]).slice(0, MAX_POSITIONS)
   if (shown.length === 0) {
     return null

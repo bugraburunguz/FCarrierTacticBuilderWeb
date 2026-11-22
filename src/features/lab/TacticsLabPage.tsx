@@ -8,7 +8,7 @@ import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { ModeCards, type LabMode } from './ModeCards'
 import { DEFAULT_TACTIC } from '../../lib/tactic'
 import { Button, EmptyState, Skeleton, TabPanel, Tabs } from '../../design/components/primitives'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { labStore, useLab } from '../../state/labStore'
 import { useActiveTactic, type ActiveTactic } from '../career/activeTactic'
 import { useTabParam } from '../player/playerPage'
@@ -82,13 +82,10 @@ const PREFIX = 'lab'
  * o slota uygulanmış yeni taslak. Parametreler adresten düşer.
  */
 export function TacticsLabPage() {
-  const careerId = useActiveCareerId()
   const client = useQueryClient()
   const { tab, setTab } = useTabParam(TABS)
   const [params, setParams] = useSearchParams()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  const id = career?.id
+  const { careers, career, id } = useActiveCareer()
   const lab = useLab(id)
   const draft = lab.drafts.find((d) => d.id === lab.activeId)
   const { active, isLoading } = useActiveTactic(id)
@@ -98,7 +95,7 @@ export function TacticsLabPage() {
   const requestedRole = params.get('rol') ?? undefined
   // ?rol= yalnız katalogda olan ve oyunda (EA listesi) seçilebilen bir rolse uygulanır; liste gelene kadar beklenir, alınamazsa yok sayılır.
   const eaRoles = useEaRoles()
-  const roleCatalog = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000, enabled: requestedRole !== undefined })
+  const roleCatalog = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, enabled: requestedRole !== undefined })
   const roleCheckPending = requestedRole !== undefined && (eaRoles.status === 'loading' || roleCatalog.isLoading)
   const catalogRole = roleCatalog.data?.find((r) => r.id === requestedRole)
   const wantedRole = catalogRole && eaRoles.allowed && catalogRole.positions.some((p) => eaRoles.allowed!.has(eaRoleKey(p, roleBaseName(catalogRole), catalogRole.focus)))

@@ -12,7 +12,7 @@ import { HelpPopover } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton, SourceTag, TabPanel, Tabs } from '../../design/components/primitives'
 import { formatEur } from '../../lib/format'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { LeagueLevelChip } from '../careerPlayers/LeagueLevelChip'
 import { RecommendationPanel } from '../recommend/RecommendationPanel'
 import { useMainTacticFits } from '../career/useMainTacticFits'
@@ -78,7 +78,6 @@ function CandidateExtra({ item, budget, leagueOvr }: { item: CareerRecommendatio
  * Katman 1-2: kayıt (kadro) ve kararlar (ana taktik, kısa liste, satış planı); Lab taslağı ve eski tek kopya depolar okunmaz (kariyerUxGates).
  */
 export function TransferCenterPage() {
-  const careerId = useActiveCareerId()
   const client = useQueryClient()
   const mobile = useIsMobile()
   const [filterOpen, setFilterOpen] = useState(false)
@@ -86,9 +85,7 @@ export function TransferCenterPage() {
   if (!mobile && filterOpen) {
     setFilterOpen(false)
   }
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  const id = career?.id
+  const { careers, career, id } = useActiveCareer()
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const facets = useQuery({ queryKey: ['player-facets', id], queryFn: () => endpoints.playerFacets(id!), enabled: id !== undefined, staleTime: STALE_MS })
   const { main, rows: fitRows, pending: fitsPending } = useMainTacticFits(id, squad.data)

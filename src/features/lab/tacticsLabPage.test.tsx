@@ -218,7 +218,8 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     renderAt()
     const picker = await screen.findByRole('combobox', { name: 'Taslak' })
     expect(within(picker).getAllByRole('option').map((o) => o.textContent)).toEqual(['Kayıtlı', 'Deneme •'])
-    fireEvent.click(screen.getByRole('button', { name: 'Kopyala' }))
+    const bar = picker.closest('div.flex-wrap') as HTMLElement
+    fireEvent.click(within(bar).getByRole('button', { name: 'Kopyala' }))
     expect(labStore.get(7).drafts.map((d) => d.name)).toEqual(['Kayıtlı', 'Deneme', 'Deneme (kopya)'])
     fireEvent.click(screen.getByRole('button', { name: 'Yeniden adlandır' }))
     fireEvent.change(screen.getByLabelText('Taslak adı'), { target: { value: 'Pres denemesi' } })

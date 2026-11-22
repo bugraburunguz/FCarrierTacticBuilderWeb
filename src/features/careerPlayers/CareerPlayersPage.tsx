@@ -20,7 +20,6 @@ import { activeCareerFilterCount, budgetKnown, careerFiltersFromParams, careerFi
 import { CareerFilterFields } from './CareerFilterFields'
 
 const STALE_MS = 120_000
-const ROLES_STALE_MS = 600_000
 const TEXTS = { noun: 'oyuncu', error: 'Oyuncular yüklenemedi.', empty: 'Kayıtta oyuncu yok.', emptyFiltered: 'Bu süzgeçlere uyan oyuncu yok.' }
 const SORT_LABEL: { id: CareerSort; label: string }[] = [
   { id: 'overall', label: 'OVR' },
@@ -72,7 +71,7 @@ function SortSelect({ filters, set }: { filters: CareerListFilters; set: (patch:
 
 /** Rol seçimi: sunucu tüm süzülmüş havuzu FitEngineV3 ile bu role göre sıralar (eski fit/roleFit uçları kullanılmaz). */
 function RoleSelect({ filters, set }: { filters: CareerListFilters; set: (patch: Partial<CareerListFilters>) => void }) {
-  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: ROLES_STALE_MS })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles })
   const sorted = useMemo(() => [...(roles.data ?? [])].sort((a, b) => `${a.positions[0]}${a.name}`.localeCompare(`${b.positions[0]}${b.name}`, 'tr')), [roles.data])
   return (
     <label className="flex flex-col gap-1 text-xs font-medium text-muted">

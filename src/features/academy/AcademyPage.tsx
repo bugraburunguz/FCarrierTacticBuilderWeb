@@ -6,7 +6,7 @@ import type { Academy } from '../../api/types'
 import { Chip, EmptyState, ErrorState, Panel, Segmented, SidePanel, Skeleton, SourceTag, type DataSource } from '../../design/components/primitives'
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { CareerPageHeader } from '../../design/components/CareerPageHeader'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { usePageParams } from '../player/playerPage'
 import { academyQuery } from './academyQuery'
 import { highlights, LINES, parseLine, parseSort, SORTS, visiblePlayers, type Highlight } from './academyRules'
@@ -91,10 +91,7 @@ function Body({ academy, careerId }: { academy: Academy; careerId: number }) {
  * hat filtresi (?sirala=, ?hat=), satıra tıklayınca sağ panel (mobilde ayrı sayfa). Yalnız sunucu verisi; legacy store ve taslak okunmaz.
  */
 export function AcademyPage() {
-  const activeId = useActiveCareerId()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === activeId) ?? careers.data?.[0]
-  const id = career?.id
+  const { careers, career, id } = useActiveCareer()
   const academy = useQuery({ ...academyQuery(id ?? 0), enabled: id !== undefined })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })
   const lastImport = (snapshots.data ?? []).find((s) => s.source === 'IMPORT')

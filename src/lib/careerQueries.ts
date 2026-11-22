@@ -32,6 +32,19 @@ const inScope = (careerId: number) => (query: Query) => {
   return query.queryKey[0] === 'careers' || part === careerId || part === String(careerId)
 }
 
+export const CAREER_STALE_MS = 300_000
+const STATIC_CATALOGS = ['formations', 'roles', 'presets', 'tags-all', 'ea-roles', 'key-attributes', 'credit-costs']
+
+/** FCA-35 W4: kariyer verisi yalnız mutasyonla değişir (hepsi invalidateCareerScope ya da anahtar bazlı tazeler); sabit kataloglar oturum boyu. */
+export function applyQueryDefaults(client: QueryClient): void {
+  for (const head of ['careers', ...CAREER_AT_1, ...CAREER_AT_2, 'slot-fit']) {
+    client.setQueryDefaults([head], { staleTime: CAREER_STALE_MS })
+  }
+  for (const head of STATIC_CATALOGS) {
+    client.setQueryDefaults([head], { staleTime: Infinity })
+  }
+}
+
 /** İçe aktarma, kadro hareketi/geri alma, ayar kaydı, yedekten dönüş sonrası: kariyere bağlı her şey ve kariyer listesi tazelenir. */
 export function invalidateCareerScope(client: QueryClient, careerId: number): Promise<void> {
   return client.invalidateQueries({ predicate: inScope(careerId) })

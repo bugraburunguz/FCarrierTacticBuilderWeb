@@ -6,6 +6,7 @@ import { invalidateCareerScope } from '../../lib/careerQueries'
 import { analyzeDepth } from '../../lib/depth'
 import type { TacticState } from '../../lib/tactic'
 import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { useUtRules } from '../../state/rulesStore'
 import { useMainTacticFits } from '../career/useMainTacticFits'
 
@@ -29,17 +30,14 @@ export type OutMove = { mode: 'SELL' | 'LOAN_OUT'; entry: CareerPlayer }
  */
 export function useCareerSquadData() {
   useUtRules()
-  const careerId = useActiveCareerId()
   const refresh = useInvalidateCareer()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  const id = career?.id
+  const { careers, career, id } = useActiveCareer()
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const events = useQuery({ queryKey: ['events', id], queryFn: () => endpoints.events(id!), enabled: id !== undefined })
   // FIT-3: oyuncu › Roller (RoleBasedAdvice) ile aynı anahtar (pahalı uç tek kez); kadro değişince careerQueries kapsamı tazeler.
   const positionAdvice = useQuery({ queryKey: ['position-advice', id], queryFn: () => endpoints.positionAdvice(id!), enabled: id !== undefined && (squad.data?.length ?? 0) > 0, staleTime: 120_000 })
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: Infinity })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: Infinity })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles })
   const fits = useMainTacticFits(id, squad.data)
   const tactic = fits.main.active?.tactic
   const formation = formations.data?.find((f) => f.id === tactic?.formation)

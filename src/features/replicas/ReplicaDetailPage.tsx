@@ -53,7 +53,7 @@ export function ReplicaDetailPage() {
   const list = useQuery({ queryKey: ['replicas'], queryFn: endpoints.replicas, staleTime: STALE_MS })
   const summary = list.data?.find((r) => r.id === id)
   const detail = useQuery({ queryKey: ['replica', id], queryFn: () => endpoints.replica(id), staleTime: STALE_MS, enabled: id !== '' })
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: STALE_MS })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   const legacy = useQuery({ queryKey: ['replica-legacy-ids'], queryFn: endpoints.replicaLegacyIds, staleTime: STALE_MS, enabled: detail.isError })
   const apply = useReplicaApply(id, tab === 'uygula')
   const formation = formations.data?.find((f) => f.id === summary?.formationId)
