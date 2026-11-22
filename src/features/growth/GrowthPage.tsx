@@ -8,7 +8,7 @@ import { EmptyState, ErrorState, Segmented, SidePanel, Skeleton } from '../../de
 import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { isPlateau } from '../../lib/deskRules'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { useYouthOpener } from '../academy/useYouthOpener'
 import { YouthList } from '../academy/YouthList'
 import { YouthDetailBody } from '../academy/YouthDetailBody'
@@ -51,11 +51,8 @@ const GROUP_PARAM: Record<AgeGroup, Exclude<GroupId, 'all'>> = { YOUTH: 'genc', 
  * önce→şimdi; plato satır içinde; iki içe aktarma ister). Oyuncu seçici ve geçmiş grafiği oyuncu sayfasının Gelişim sekmesinde.
  */
 export function GrowthPage() {
-  const careerId = useActiveCareerId()
   const [range, setRange] = useState<Range>('last')
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  const id = career?.id
+  const { careers, career, id } = useActiveCareer()
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const training = useQuery({ queryKey: ['training', id], queryFn: () => endpoints.training(id!), enabled: id !== undefined, staleTime: 300_000 })
   // GTR-b: satırdaki "Son N ayda" (önceki görüntü yoksa boş liste; hata verirse satır yok, sayfa çalışır).

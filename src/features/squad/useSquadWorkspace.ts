@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { endpoints } from '../../api/endpoints'
-import type { TacticCodeImport, TacticRequest } from '../../api/types'
+import type { TacticCodeImport } from '../../api/types'
 import { useEaRoles } from '../../lib/eaRoles'
 import { faceAverages } from '../../lib/faceAverages'
 import { swapSlots } from '../../lib/squadBuilder'
 import type { SlotPanel, SquadBinding, SquadMode } from './types'
+import { useWorkspaceCore } from './useWorkspaceCore'
 
 const STALE_NOTE = 'Kayıtlı formasyon/rol bilgisi güncel formasyonla uyuşmadığı için sıfırlandı.'
 const BUILD_UPS = ['Short', 'Balanced', 'Counter'] as const
@@ -21,29 +22,13 @@ export interface Selection {
  */
 export function useSquadWorkspace<T>(mode: SquadMode, binding: SquadBinding<T>) {
   const { state, patch } = binding
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
+  // Kayıtlı formasyon/rol/slot kayıtları güncel formasyonla uyuşmuyorsa (temizlenene kadar) çözme isteği gitmez (V3-00).
+  const { formations, formation, slots, stale, tactic } = useWorkspaceCore(state)
+  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles })
   const eaRoles = useEaRoles()
   const [selection, setSelection] = useState<Selection | null>(null)
   const [note, setNote] = useState<string>()
 
-  const formation = formations.data?.find((f) => f.id === state.formationId) ?? formations.data?.[0]
-  const slots = useMemo(() => formation?.slots ?? [], [formation])
-  // Kayıtlı formasyon/rol/slot kayıtları güncel formasyonla uyuşmuyorsa (temizlenene kadar) çözme isteği gitmez (V3-00).
-  const slotIds = new Set(slots.map((s) => s.slotId))
-  const knownFormation = formations.data?.some((f) => f.id === state.formationId) ?? false
-  const foreign = (ids: string[]) => ids.some((id) => !slotIds.has(id))
-  const stale = Boolean(formations.data?.length) && (!knownFormation || foreign(Object.keys(state.roleOverride)) || foreign(Object.keys(state.tags)) || foreign(Object.keys(state.assigned)))
-
-  const tactic: TacticRequest = useMemo(
-    () => ({
-      formation: formation?.id,
-      presetId: state.presetId,
-      slots: [...new Set([...Object.keys(state.roleOverride), ...Object.keys(state.tags)])].map((slotId) => ({ slotId, tags: state.tags[slotId] ?? [], roleId: state.roleOverride[slotId] })),
-      setup: state.setup,
-    }),
-    [formation?.id, state.presetId, state.roleOverride, state.tags, state.setup],
-  )
   // Bu çekirdekte tek çözme sorgusu: alt bileşenler (taktik kodu, rol etiketi) sonucu prop olarak alır.
   const resolved = useQuery({
     queryKey: ['resolve', mode, JSON.stringify(tactic)],

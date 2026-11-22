@@ -80,7 +80,7 @@ export function RecommendationPanel({ careerId, position, slotId, roleId, rowAct
   const [dontAsk, setDontAsk] = useState(false)
   const [stale, setStale] = useState(false)
 
-  const costs = useQuery({ queryKey: ['credit-costs'], queryFn: endpoints.creditCosts, staleTime: 600_000, retry: false })
+  const costs = useQuery({ queryKey: ['credit-costs'], queryFn: endpoints.creditCosts, retry: false })
   const premium = me?.subscriptionType === 'PREMIUM'
   const { freeBeta } = useAppConfig()
   const cost = costs.data?.recommend

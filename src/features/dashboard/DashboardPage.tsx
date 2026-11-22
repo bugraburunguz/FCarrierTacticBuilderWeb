@@ -12,7 +12,7 @@ import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { useMediaQuery } from '../../design/useMediaQuery'
 import { EVENT_LABEL } from '../../lib/deskRules'
 import { formatEur } from '../../lib/format'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { droppedText } from '../career/activeTactic'
 import { SeasonJobs } from '../career/SeasonJobs'
 import { StarterTacticPanel } from '../career/StarterTacticPanel'
@@ -135,12 +135,9 @@ function RecordGapsBanner({ gaps }: { gaps: RecordGap[] }) {
  * Ayarlar sekmesi eski Masa ayarları ile Kadro › kariyer sekmesini birleştirir.
  */
 export function DashboardPage() {
-  const careerId = useActiveCareerId()
   const navigate = useNavigate()
   const { tab, setTab } = useTabParam(TABS)
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  const id = career?.id
+  const { careers, career, id } = useActiveCareer()
   const squad = useQuery({ queryKey: ['squad', id], queryFn: () => endpoints.squad(id!), enabled: id !== undefined })
   const facets = useQuery({ queryKey: ['player-facets', id], queryFn: () => endpoints.playerFacets(id!), enabled: id !== undefined, staleTime: STALE_MS })
   const snapshots = useQuery({ queryKey: ['snapshots', id], queryFn: () => endpoints.snapshots(id!), enabled: id !== undefined, retry: false })

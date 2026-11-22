@@ -14,7 +14,7 @@ vi.mock('../../api/endpoints', () => {
   const none = () => Promise.resolve([])
   return {
     endpoints: {
-      careers: vi.fn(), squad: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), lineup: vi.fn(), formations: vi.fn(), roles: none, eaRoles: none,
+      careers: vi.fn(), squad: vi.fn(), mainTactic: vi.fn(), starterTactic: vi.fn(), lineup: vi.fn(), formations: vi.fn(), roles: vi.fn(none), eaRoles: vi.fn(none),
       resolveTactic: vi.fn(() => Promise.resolve({ formation: '4-3-3', slots: [] })), fitRole: vi.fn(), playerFacets: vi.fn(),
       snapshots: vi.fn(), events: vi.fn(), updateCareer: vi.fn(), managerProfile: vi.fn(), careerBackup: vi.fn(), careerRestore: vi.fn(), deleteCareer: vi.fn(),
       userTactics: none, saveUserTactic: vi.fn(), setMainTactic: vi.fn(), playerTags: none, snapshotDiff: vi.fn(() => Promise.resolve({ rows: [] })),
@@ -109,6 +109,26 @@ describe('Masa menajer satırı (MGR-b)', () => {
     vi.mocked(endpoints.careers).mockResolvedValue([] as never)
     renderPage()
     expect(await screen.findByRole('link', { name: 'Kulüp önerilerini gör' })).toHaveAttribute('href', '/career/new')
+  })
+})
+
+/** FCA-35: Masa gereksiz istek atmaz, kariyer listesini beklemez. */
+describe('Masa istekleri (FCA-35)', () => {
+  it('W1: kariyer listesi gelmeden kadro saklı kariyer kimliğiyle istenir', async () => {
+    vi.mocked(endpoints.careers).mockReturnValue(new Promise(() => undefined) as never)
+    renderPage()
+    await waitFor(() => expect(endpoints.squad).toHaveBeenCalledWith(1))
+  })
+
+  it('W3: salt okunur Masa taktik çözme ve rol kataloğu istemez; uyum yine tek /fit/lineup ile gelir', async () => {
+    vi.mocked(endpoints.resolveTactic).mockClear()
+    vi.mocked(endpoints.roles).mockClear()
+    vi.mocked(endpoints.eaRoles).mockClear()
+    renderPage()
+    await waitFor(() => expect(endpoints.lineup).toHaveBeenCalled())
+    expect(endpoints.resolveTactic).not.toHaveBeenCalled()
+    expect(endpoints.roles).not.toHaveBeenCalled()
+    expect(endpoints.eaRoles).not.toHaveBeenCalled()
   })
 })
 

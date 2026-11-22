@@ -1,13 +1,14 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { useMode } from './state/modeStore'
 import { useAuth } from './auth/AuthContext'
+import { RequireAuth } from './auth/RequireAuth'
 import { Layout } from './components/Layout'
 import { Spinner } from './components/ui'
 import { CaptureOnly } from './components/CaptureOnly'
 import { LegacySquadRedirect, RedirectWithSearch } from './components/RedirectWithSearch'
 
 const LAB_BUILDER = '/career/tactics-lab?sekme=kurucu'
-import { lazy, Suspense, type ReactNode } from 'react'
+import { lazy, Suspense } from 'react'
 import { AppShell } from './design/components/AppShell'
 import { HomeRoute } from './features/home/HomeRoute'
 import { isV3 } from './design/uiVersion'
@@ -101,18 +102,6 @@ function PlayerDetailRoute() {
     : <PlayerDetailPage />
 }
 
-function RequireAuth({ children }: { children: ReactNode }) {
-  const { authenticated, loading } = useAuth()
-  const location = useLocation()
-  if (!authenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />
-  }
-  if (loading) {
-    return <Spinner />
-  }
-  return <>{children}</>
-}
-
 export function App() {
   return (
     <Suspense fallback={<Spinner />}>
@@ -143,7 +132,7 @@ export function App() {
         <Route path="scouting" element={<Navigate to="/career/transfer" replace />} />
         <Route path="fit" element={isV3() ? <RedirectWithSearch to={LAB_BUILDER} /> : <Navigate to="/tactics/builder" replace />} />
         <Route path="recommend" element={<Navigate to="/career/transfer" replace />} />
-        <Route path="career/import" element={<RequireAuth>{isV3() ? <CareerImportPage /> : <ImportPage />}</RequireAuth>} />
+        <Route path="career/import" element={<RequireAuth waitForMe>{isV3() ? <CareerImportPage /> : <ImportPage />}</RequireAuth>} />
         {/* KARIYER-UX FAZ 2: v3 Kariyer Masası /career/dashboard; eski adres sorgu dizgisiyle (?sekme=ayarlar) yönlenir. v2 sayfası v2 için kalır. */}
         <Route path="career/dashboard" element={<RequireAuth>{isV3() ? <DashboardPage /> : <Navigate to="/career/desk" replace />}</RequireAuth>} />
         <Route path="career/desk" element={isV3() ? <RedirectWithSearch to="/career/dashboard" /> : <RequireAuth><CareerDeskPage /></RequireAuth>} />
@@ -171,7 +160,7 @@ export function App() {
         <Route path="ut/import" element={isV3() ? <UtImportV3Page /> : <UtImportPage />} />
         <Route path="ut/evo" element={<CaptureOnly title="Evolution">{isV3() ? <UtEvolutionsV3Page /> : <UtEvolutionsPage />}</CaptureOnly>} />
         <Route path="admin/ut" element={<AdminUtPage />} />
-        <Route path="profile" element={<RequireAuth>{isV3() ? <ProfileV3 /> : <ProfilePage />}</RequireAuth>} />
+        <Route path="profile" element={<RequireAuth waitForMe>{isV3() ? <ProfileV3 /> : <ProfilePage />}</RequireAuth>} />
         <Route path="subscription" element={<Navigate to="/profile" replace />} />
         {KariyerUxPreview && <Route path="onizleme/kariyer-ux" element={<KariyerUxPreview />} />}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -37,7 +37,7 @@ export const WONDERKID_PRESETS: { label: string; apply: Partial<WonderkidFilters
  */
 export function useWonderkids(filters: WonderkidFilters, careerId: number | undefined) {
   const leagues = useQuery({ queryKey: ['leagues', filters.gender], queryFn: () => endpoints.leagues(filters.gender), staleTime: 600_000 })
-  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles, staleTime: 600_000 })
+  const roles = useQuery({ queryKey: ['roles'], queryFn: endpoints.roles })
   const roleOptions = useMemo(
     () => (roles.data ?? []).filter((r) => !filters.position || r.positions.includes(filters.position)).sort((a, b) => a.name.localeCompare(b.name)),
     [roles.data, filters.position],

@@ -9,7 +9,7 @@ import { CAREER_PAGE_WIDTH } from '../../design/careerPage'
 import { CareerPageHeader } from '../../design/components/CareerPageHeader'
 import { Chip, EmptyState, ErrorState, OvrBox, Skeleton } from '../../design/components/primitives'
 import { formatAverageRating } from '../../lib/matchData'
-import { useActiveCareerId } from '../../state/careerStore'
+import { useActiveCareer } from '../../lib/activeCareer'
 import { mainTacticKey } from '../career/activeTactic'
 import { elevenDiff, flankLanes, groupOpponents, lineRows, missingText, pitchSlotsOf, type FlankLane } from './matchCenter'
 
@@ -57,10 +57,7 @@ const ref = (p?: PlayerRef) => p?.name
  * Fikstür yok; rakip elle seçilir. Rol kodları ham geldiği için sahada yalnız mevki. Eksik veri (missing[]) bölüm yerine açıklama; uç hatası sayfayı çökertmez.
  */
 export function MatchCenterPage() {
-  const careerId = useActiveCareerId()
-  const careers = useQuery({ queryKey: ['careers'], queryFn: endpoints.careers })
-  const career = careers.data?.find((c) => c.id === careerId) ?? careers.data?.[0]
-  const id = career?.id
+  const { career, id } = useActiveCareer()
   const [params, setParams] = useSearchParams()
   const raw = Number(params.get('rakip'))
   const teamId = Number.isInteger(raw) && raw > 0 ? raw : undefined
@@ -69,7 +66,7 @@ export function MatchCenterPage() {
   const opponents = useQuery({ queryKey: ['match-opponents', id], queryFn: () => endpoints.matchOpponents(id!), enabled: id !== undefined, retry: false, staleTime: STALE_MS })
   const report = useQuery({ queryKey: ['match-report', id, teamId], queryFn: () => endpoints.opponentReport(id!, teamId!), enabled: id !== undefined && teamId !== undefined, retry: false, staleTime: STALE_MS })
   const plan = useQuery({ queryKey: ['match-plan', id, teamId], queryFn: () => endpoints.matchPlan(id!, teamId!), enabled: id !== undefined && teamId !== undefined, retry: false, staleTime: STALE_MS })
-  const formations = useQuery({ queryKey: ['formations'], queryFn: () => endpoints.formations(), staleTime: Infinity, enabled: teamId !== undefined })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: () => endpoints.formations(), enabled: teamId !== undefined })
   const groups = useMemo(() => groupOpponents(opponents.data ?? [], search), [opponents.data, search])
 
   const choose = (value: string) => {

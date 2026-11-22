@@ -243,7 +243,7 @@ export function SbcSolvePage() {
   const setId = Number(params.setId)
   const { set, loading, error } = useSbcSet(setId)
   const challenge = set.challenges.find((c) => String(c.challengeId) === params.challengeId)
-  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations, staleTime: 600_000 })
+  const formations = useQuery({ queryKey: ['formations'], queryFn: endpoints.formations })
   // V3-07c: kulüpten "Şu SBC'de kullan" seçili kartları ?kilit= ile kilitli getirir.
   const [requestedLocks] = useState(() => parseLockParam(search))
   const [customize, setCustomize] = useState<Customize>(() => ({ ...DEFAULT_CUSTOMIZE, locked: requestedLocks }))
