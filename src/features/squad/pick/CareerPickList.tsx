@@ -1,4 +1,4 @@
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { endpoints } from '../../../api/endpoints'
 import type { CareerPlayer } from '../../../api/types'
@@ -30,16 +30,27 @@ export function CareerPickList({ position, roleId, tags, candidates, currentPlay
   }, [term])
 
   const filtered = useMemo(() => candidates.filter((c) => c.player.name.toLowerCase().includes(query)).sort((a, b) => b.player.overall - a.player.overall), [candidates, query])
-  const scored = filtered.slice(0, MAX_FIT_QUERIES)
+  const batchIds = useMemo(() => [...candidates].sort((a, b) => b.player.overall - a.player.overall).slice(0, MAX_FIT_QUERIES).map((c) => c.player.id), [candidates])
+  const batch = useQuery({
+    queryKey: ['slot-fit', 'v3-batch', batchIds.join(','), roleId, position, tags.join(',')],
+    queryFn: () => endpoints.compare({ ids: batchIds, roleId, position, tags, engineVersion: 'v3' }),
+    enabled: batchIds.length > 0,
+    retry: false,
+  })
+  const batchFits = batch.data?.every((r) => r.roleFit.engineVersion === 'v3') ? batch.data : undefined
+  const fallback = batch.isError || (batch.data !== undefined && batchFits === undefined)
+  const scored = fallback ? filtered.slice(0, MAX_FIT_QUERIES) : []
   const fits = useQueries({
     queries: scored.map((c) => ({
       queryKey: ['slot-fit', 'v3', c.player.id, roleId, position, tags.join(',')],
       queryFn: () => endpoints.fitRole({ playerId: c.player.id, roleId, position, tags, engineVersion: 'v3' }),
-      staleTime: 300_000,
       retry: false,
     })),
   })
-  const fitById = new Map(scored.map((c, i) => [c.player.id, fits[i]?.data?.roleFit]))
+  const fitById = new Map([
+    ...(batchFits ?? []).map((r) => [r.roleFit.playerId, r.roleFit] as const),
+    ...scored.flatMap((c, i) => (fits[i]?.data ? [[c.player.id, fits[i].data.roleFit] as const] : [])),
+  ])
 
   const rows: PickRow[] = filtered.map((c) => {
     const fit = fitById.get(c.player.id)
