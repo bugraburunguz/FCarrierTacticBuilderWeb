@@ -45,7 +45,9 @@ function analysisBody(careerId: number, setup: { buildUp: string; depth: number 
  * Uygun kontroller ve bilgi düzeyindeki bulgular dahil değil.
  */
 export function useTacticRisks({ careerId, setup, tactic, assigned }: TacticRiskInput) {
-  const settled = useDebouncedValue(setup ? `${setup.buildUp}|${setup.depth}` : '', RISK_DEBOUNCE_MS)
+  const setupKey = setup ? `${setup.buildUp}|${setup.depth}` : ''
+  const debouncedSetup = useDebouncedValue(setupKey, RISK_DEBOUNCE_MS)
+  const settled = debouncedSetup === '' ? setupKey : debouncedSetup
   const [buildUp, depthText] = settled.split('|')
   const depth = Number(depthText)
   const check = useQuery({
@@ -56,7 +58,8 @@ export function useTacticRisks({ careerId, setup, tactic, assigned }: TacticRisk
     retry: false,
   })
   const request = careerId !== undefined && setup && tactic?.formation ? JSON.stringify(analysisBody(careerId, setup, tactic, assigned ?? {})) : ''
-  const settledRequest = useDebouncedValue(request, RISK_DEBOUNCE_MS)
+  const debouncedRequest = useDebouncedValue(request, RISK_DEBOUNCE_MS)
+  const settledRequest = debouncedRequest === '' ? request : debouncedRequest
   const analysis = useQuery({
     queryKey: ['tactic-analysis', careerId, settledRequest],
     queryFn: () => endpoints.tacticAnalysis(JSON.parse(settledRequest) as TacticAnalysisRequest),

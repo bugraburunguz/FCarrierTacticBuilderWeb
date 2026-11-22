@@ -9,6 +9,7 @@ import { VerifyEmailBanner } from '../../components/VerifyEmailBanner'
 import { PrivacyNoticeBanner } from '../../features/legal/PrivacyNoticeBanner'
 import { extensionCaptureEnabled } from '../../lib/features'
 import { activeNav, homeFor, MODES, mobileBar, navFor, type NavGroup } from '../../lib/navConfig'
+import { usePrefetchRoute } from '../../lib/usePrefetchRoute'
 import { MobileSheet } from './MobileSheet'
 import { BETA_TEXT, useAppConfig } from '../../state/appConfig'
 import { useStorageError } from '../../state/bigStore'
@@ -59,9 +60,10 @@ const LAB_PATH = '/career/tactics-lab'
 function RailLink({ group, active, short = false, tight = false, onNavigate, unsaved = false }: { group: NavGroup; active: boolean; short?: boolean; tight?: boolean; onNavigate?: () => void; unsaved?: boolean }) {
   const Icon = ICONS[group.to] ?? Database
   const label = short ? group.mobileLabel ?? group.label : group.label
+  const prefetch = usePrefetchRoute(group.to)
   return (
     // Etkinlik grubun `match` listesinden (activeNav); NavLink yalnız kendi `to`'su eşleşince aria-current yazar, grup başka alt rotadayken (/squad/builder) yanlış olur.
-    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} className={`${RAIL_ITEM} ${railTone(active)} ${tight ? 'max-[359px]:px-0' : ''}`}>
+    <Link to={group.to} aria-current={active ? 'page' : undefined} aria-label={unsaved ? `${label} · kaydedilmemiş taslak var` : undefined} onClick={onNavigate} onMouseEnter={prefetch} onFocus={prefetch} className={`${RAIL_ITEM} ${railTone(active)} ${tight ? 'max-[359px]:px-0' : ''}`}>
       {/* Nokta yokken işaretleme öncekiyle birebir (UT rayı ve alt çubuğu piksel düzeyinde değişmez). */}
       {unsaved ? (
         <span className="relative block">

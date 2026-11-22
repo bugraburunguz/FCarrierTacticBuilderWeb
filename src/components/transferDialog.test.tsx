@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { endpoints } from '../api/endpoints'
 import type { CareerPlayer } from '../api/types'
 import { TransferDialog } from './TransferDialog'
 
@@ -20,5 +21,19 @@ describe('TransferDialog bedel girişi', () => {
 
     fireEvent.change(amount, { target: { value: '1,2,3' } })
     expect(screen.getByRole('button', { name: /Satışı onayla/ })).toBeDisabled()
+  })
+})
+
+/** FCA-35 W6: kulüp araması her tuşta değil, yazma durunca tek istek. */
+describe('TransferDialog kulüp araması', () => {
+  it('art arda yazılan harfler tek /clubs isteğine iner', async () => {
+    vi.mocked(endpoints.clubs).mockClear()
+    render(<QueryClientProvider client={new QueryClient()}><TransferDialog mode="SELL" entry={entry} pending={false} error={null} onClose={() => undefined} onSubmit={() => undefined} /></QueryClientProvider>)
+    const box = screen.getByLabelText(/Hangi kulübe satıldı/)
+    for (const value of ['Ga', 'Gal', 'Gala', 'Galat']) {
+      fireEvent.change(box, { target: { value } })
+    }
+    await waitFor(() => expect(endpoints.clubs).toHaveBeenCalledWith('Galat', expect.anything()))
+    expect(endpoints.clubs).toHaveBeenCalledTimes(1)
   })
 })

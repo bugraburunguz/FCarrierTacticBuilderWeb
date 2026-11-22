@@ -133,7 +133,7 @@ describe('"Ana taktiğim yap" sonrası yenilenen sorgular (FAZ 4a)', () => {
     })
     await act(() => result.current.mutateAsync({ slot: 1, name: 'T', tactic: { formation: '4-4-2', slots: {} }, lineup: {} }))
     const keys = spy.mock.calls.map(([f]) => JSON.stringify((f as { queryKey: unknown }).queryKey))
-    expect(keys).toEqual(expect.arrayContaining([JSON.stringify(['main-tactic', 7]), JSON.stringify(['user-tactics', 7]), JSON.stringify(['lineup', 7]), JSON.stringify(['starter-tactic', 7]), JSON.stringify(['slot-fit'])]))
+    expect(keys).toEqual(expect.arrayContaining([JSON.stringify(['main-tactic', 7]), JSON.stringify(['user-tactics', 7]), JSON.stringify(['lineup', 7]), JSON.stringify(['starter-tactic', 7]), JSON.stringify(['slot-fit', 'lineup', 7])]))
   })
 })
 

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+export const SEARCH_DEBOUNCE_MS = 250
+
 /**
  * Değeri `ms` boyunca değişmezse geçirir; ilk değer bekletilmez (sayfa açılışı gecikmez). GUV-2: Lab'da art arda atamalar tek
  * /fit/lineup isteğine iner (analiz kovası 60/dk).

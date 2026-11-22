@@ -7,6 +7,7 @@ import { X } from 'lucide-react'
 import { Chip, Segmented } from '../../design/components/primitives'
 import { ATTR_LABELS } from '../../lib/format'
 import { PLAYSTYLES } from '../../lib/playstyles'
+import { SEARCH_DEBOUNCE_MS, useDebouncedValue } from '../../lib/useDebouncedValue'
 import { ATTR_MIN_KEYS, BUCKETS, budgetKnown, CONTRACT_MONTHS, contractFilterAvailable, type CareerListFilters } from './careerFilters'
 
 const label = 'flex flex-col gap-1 text-xs font-medium text-muted'
@@ -96,7 +97,8 @@ export function CareerFilterFields({ careerId, filters, set, facets }: { careerI
   const [teamTerm, setTeamTerm] = useState('')
   const leagues = useQuery({ queryKey: ['leagues', filters.gender], queryFn: () => endpoints.leagues(filters.gender), staleTime: STALE_MS })
   const nationalities = useQuery({ queryKey: ['nationalities'], queryFn: endpoints.nationalities, staleTime: STALE_MS })
-  const teams = useQuery({ queryKey: ['career-teams', careerId, teamTerm], queryFn: () => endpoints.careerTeams(careerId, teamTerm), staleTime: STALE_MS })
+  const teamSearch = useDebouncedValue(teamTerm, SEARCH_DEBOUNCE_MS)
+  const teams = useQuery({ queryKey: ['career-teams', careerId, teamSearch], queryFn: () => endpoints.careerTeams(careerId, teamSearch), staleTime: STALE_MS })
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 min-[820px]:grid-cols-5">
