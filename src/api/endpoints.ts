@@ -249,7 +249,7 @@ export const endpoints = {
 
   fitRole: (body: { playerId: number; roleId: string; position?: string; tags?: string[]; engineVersion?: 'v1' | 'v3' }) =>
     api.post<FitRoleResult>('/fit/role', body, false),
-  compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[] }) =>
+  compare: (body: { ids: number[]; roleId: string; position?: string; tags?: string[]; engineVersion?: 'v1' | 'v3' }) =>
     api.post<FitRoleResult[]>('/players/compare', body, false),
   positionAdvice: (careerId: number) => api.get<PlayerPositionAdvice[]>(`/advisor/positions/${careerId}`),
   /** FIT-3 madde 11: gençler için gelişim planı önerisi (tahmin · kalibre edilmedi). */
