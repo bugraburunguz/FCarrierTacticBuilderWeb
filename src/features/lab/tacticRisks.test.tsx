@@ -35,6 +35,14 @@ describe('TacticRisks', () => {
     expect(endpoints.setupCheck).toHaveBeenCalledWith({ careerId: 7, buildUp: 'Short', depth: 91 })
   })
 
+  it('FCA-35 W5: ana taktik sonradan gelince riskler 400 ms beklemeden istenir (ilk değer bekletilmez)', async () => {
+    vi.mocked(endpoints.setupCheck).mockResolvedValue([] as never)
+    const { rerender } = render(<TacticRisks careerId={7} />, { wrapper: wrap(client()) })
+    rerender(<TacticRisks careerId={7} setup={{ buildUp: 'Balanced', depth: 50 }} tactic={{ formation: '4-3-3', slots: [] }} assigned={{}} />)
+    await waitFor(() => expect(endpoints.setupCheck).toHaveBeenCalled(), { timeout: 200 })
+    await waitFor(() => expect(endpoints.tacticAnalysis).toHaveBeenCalled(), { timeout: 200 })
+  })
+
   it('İnceleme: diziliş kuralları alınamazsa "risk yok" denmez; kurulum riskleri yine listelenir ve eksik kısım söylenir', async () => {
     vi.mocked(endpoints.setupCheck).mockResolvedValue([] as never)
     vi.mocked(endpoints.tacticAnalysis).mockRejectedValue(new Error('429'))
