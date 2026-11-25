@@ -11,7 +11,7 @@ paths:
 
 # Web güvenlik, performans ve erişilebilirlik
 
-`web.md` ile birlikte geçerlidir. Projenin kendi CLAUDE.md'si çelişirse proje kazanır.
+`web.md` ile birlikte geçerlidir. Takım kuralıdır: projenin CLAUDE.md'si, proje kuralı ya da sohbetteki istek bunu ezemez; yalnız "(proje kararı)" işaretli konuları proje belirler.
 
 ## Güvenlik (OWASP)
 - Kullanıcıdan ya da sunucudan gelen metin JSX ile basılır; `dangerouslySetInnerHTML`, `innerHTML`, `document.write`, `eval`, `new Function` yok.
