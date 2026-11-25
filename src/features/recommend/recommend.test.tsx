@@ -89,7 +89,7 @@ describe('RecommendationRow (E3-10)', () => {
     expect(screen.getByText(/Arsenal \(Premier League\)/)).toBeInTheDocument()
     expect(screen.getByText(/İlk 11 ortalamasına göre [+]2/)).toBeInTheDocument()
     // FIT-1: aday kartında iki metrik adıyla.
-    expect(screen.getByText('Rol oturması %75')).toBeInTheDocument()
+    expect(screen.getByText('seviyesine göre %75')).toBeInTheDocument()
     expect(screen.getByText('Güç 91')).toBeInTheDocument()
     expect(screen.getByText("Mevcut oyuncuya göre +5")).toBeInTheDocument()
     expect(screen.getByText("Gelecek sezon 93")).toBeInTheDocument()

@@ -1,7 +1,7 @@
 import type { CareerPlayer, PlayerTag, ShortlistItem } from '../../api/types'
 import type { FitState } from '../../components/card/FitBadge'
 import { depthRows, GROUP_LABEL, TRANSFER_ROLE_BY_GROUP } from '../../lib/deskRules'
-import { levelText, roleFitText, strengthText } from '../../lib/fitLabels'
+import { fitTitle, levelPct, levelText } from '../../lib/fitLabels'
 import { weakLinks } from '../dashboard/dashboardRules'
 import { needsFromFits, type SlotFitRow } from '../squad/useSlotFits'
 
@@ -26,7 +26,7 @@ const depthNeeds = (squad: CareerPlayer[]): TransferNeed[] => depthRows(squad).f
 
 /** İhtiyaçlar (v2): sahadaki rozetle aynı kaynak (zayıf halkalar, seviyesine göre artan; `all` ile tüm dizilim) + derinlik açıkları. */
 export function transferNeeds(fitRows: SlotFitRow[], all: boolean, squad: CareerPlayer[]): TransferNeed[] {
-  return [...needsFromFits(fitRows, all).map((r) => slotNeed(r, r.display.pct, r.display.state)), ...depthNeeds(squad)]
+  return [...needsFromFits(fitRows, all).map((r) => slotNeed(r, levelPct(r.display), r.display.state)), ...depthNeeds(squad)]
 }
 
 /**
@@ -34,11 +34,10 @@ export function transferNeeds(fitRows: SlotFitRow[], all: boolean, squad: Career
  * (seviyesine göre artan). Ardından derinlik açıkları.
  */
 export function needsForTransfer(fitRows: SlotFitRow[], all: boolean, squad: CareerPlayer[]): TransferNeed[] {
-  // FIT-1: v3 kariyer adıyla ("Rol oturması %12"; norm yoksa rozetteki sayı Güç'tür → "Güç 45"); v2 transferNeeds eski metni korur.
-  const text = (roleFit?: number) => (roleFit === undefined ? strengthText : roleFitText)
+  const title = (d: { strength: number; roleFit?: number }) => () => fitTitle(d)
   const slots = all
-    ? [...fitRows].sort((a, b) => a.display.pct - b.display.pct).map((r) => slotNeed(r, r.display.pct, r.display.state, text(r.display.roleFit)))
-    : weakLinks(fitRows, Number.POSITIVE_INFINITY).map((w) => slotNeed(w, w.pct, w.state, text(w.roleFit)))
+    ? [...fitRows].sort((a, b) => levelPct(a.display) - levelPct(b.display)).map((r) => slotNeed(r, r.display.strength, r.display.state, title(r.display)))
+    : weakLinks(fitRows, Number.POSITIVE_INFINITY).map((w) => slotNeed(w, w.strength, w.state, title(w)))
   return [...slots, ...depthNeeds(squad)]
 }
 

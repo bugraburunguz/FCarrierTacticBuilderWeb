@@ -24,11 +24,11 @@ describe('Transfer FAZ 5 hesapları', () => {
     expect(needs.at(-1)?.key).toMatch(/^depth-/)
   })
 
-  it('FIT-1: ihtiyaç metni rozetteki metriğin adıyla — Rol oturması varsa o, norm yoksa Güç', () => {
+  it('FCA-43: ihtiyaç metni önce Güç, sonra seviyesine göre %; norm yoksa yalnız Güç', () => {
     const withRole = { ...row('CM1', 1, 'WEAK', 30), display: { pct: 30, state: 'bad', strength: 55, roleFit: 30 } as never }
     const noNorm = { ...row('CM2', 2, 'WEAK', 45), display: { pct: 45, state: 'bad', strength: 45 } as never }
     const details = needsForTransfer([withRole, noNorm], true, []).filter((n) => n.slotId).map((n) => n.detail)
-    expect(details).toEqual(['P1 · Rol oturması %30', 'P2 · Güç 45'])
+    expect(details).toEqual(['P1 · Güç 55 · seviyesine göre %30', 'P2 · Güç 45'])
   })
 
   it('satış planı geliri = Σ FOR_SALE (istenen bedel, yoksa değer); ikisi de yoksa bilinmeyen sayılır; LOAN_OK gelir değil', () => {

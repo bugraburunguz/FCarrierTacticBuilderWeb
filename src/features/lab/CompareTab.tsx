@@ -4,7 +4,7 @@ import { endpoints } from '../../api/endpoints'
 import type { RoleFit, SquadFit, UserTactic } from '../../api/types'
 import { Field, Select } from '../../components/ui'
 import { EmptyState, Panel, Skeleton, StatTile } from '../../design/components/primitives'
-import { FIT_STATE_TEXT, FIT_TERMS, fitDisplay, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { FIT_STATE_TEXT, FIT_TERMS, fitDisplay, levelPct, strengthText, teamRoleFit, teamStrength } from '../../lib/fitLabels'
 import { fromUserTactic, toTacticRequest, type Lineup, type TacticState } from '../../lib/tactic'
 import type { CareerLab } from '../../state/labStore'
 import { matchSlots, type CompareSide } from './compareMatch'
@@ -34,8 +34,8 @@ function useSideFits(careerId: number, side: Side | undefined) {
 
 interface SlotFit {
   playerId?: number
-  /** Rol oturması (levelFit); yoksa Güç (fitDisplay.pct). */
   pct?: number
+  level?: number
   /** FIT-1: Güç (currentFit). */
   strength?: number
   label?: string
@@ -49,7 +49,7 @@ function slotFits(data: SquadFit | undefined, lineup: Lineup): Map<string, SlotF
       return []
     }
     const display = fitDisplay(s.roleFit as RoleFit)
-    return [[s.slotId, { playerId: s.playerId, pct: display.pct, strength: display.strength, label: FIT_STATE_TEXT[display.state].label, role: s.roleName || undefined }] as const]
+    return [[s.slotId, { playerId: s.playerId, pct: display.pct, level: levelPct(display), strength: display.strength, label: FIT_STATE_TEXT[display.state].label, role: s.roleName || undefined }] as const]
   }))
 }
 
@@ -84,8 +84,8 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
   }
   const match = matchSlots(sideSlots(a, fitsA.data), sideSlots(b, fitsB.data))
   // FIT-1: iki takım değeri iki adla — Takım gücü (Güç ortalaması) ve Rol oturması.
-  const roleA = teamRoleFit([...mapA.values()].map((f) => ({ roleFit: f.pct })))
-  const roleB = teamRoleFit([...mapB.values()].map((f) => ({ roleFit: f.pct })))
+  const roleA = teamRoleFit([...mapA.values()].map((f) => ({ roleFit: f.level })))
+  const roleB = teamRoleFit([...mapB.values()].map((f) => ({ roleFit: f.level })))
   const strengthA = teamStrength([...mapA.values()].flatMap((f) => (f.strength === undefined ? [] : [{ strength: f.strength }])))
   const strengthB = teamStrength([...mapB.values()].flatMap((f) => (f.strength === undefined ? [] : [{ strength: f.strength }])))
   const diffOf = (x?: number, y?: number) => (x !== undefined && y !== undefined ? y - x : undefined)
@@ -93,7 +93,7 @@ export function CompareTab({ careerId, lab, main }: { careerId: number; lab: Car
     { name: FIT_TERMS.strength.team, a: strengthA, b: strengthB, diff: diffOf(strengthA, strengthB), unit: '' },
     { name: FIT_TERMS.roleFit.team, a: roleA, b: roleB, diff: diffOf(roleA, roleB), unit: '%' },
   ]
-  const cell = (f: SlotFit | undefined) => (f?.pct === undefined ? '—' : `${f.playerId !== undefined ? nameOf.get(f.playerId) ?? `#${f.playerId}` : ''} %${f.pct}`)
+  const cell = (f: SlotFit | undefined) => (f?.pct === undefined ? '—' : `${f.playerId !== undefined ? nameOf.get(f.playerId) ?? `#${f.playerId}` : ''} ${strengthText(f.pct)}`)
 
   return (
     <div className="flex flex-col gap-3">

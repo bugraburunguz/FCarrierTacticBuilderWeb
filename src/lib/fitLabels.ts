@@ -28,13 +28,11 @@ export type FitMetric = typeof FIT_TERMS.strength.name | typeof FIT_TERMS.roleFi
 /** Kariyer ekranları (FIT-1): "Rol oturması %38", "Güç 65". */
 export const roleFitText = (value: number) => `${FIT_TERMS.roleFit.name} %${Math.round(value)}`
 export const strengthText = (value: number) => `${FIT_TERMS.strength.name} ${Math.round(value)}`
-/** FIT-2 madde 6: "Daha uygun rol: Inside Forward (Attack) · oturma %71" (norm yoksa "· Güç 70"). */
+export const levelFitText = (value: number) => `seviyesine göre %${Math.round(value)}`
 export const betterRoleText = (alt: { roleName: string; currentFit: number; levelFit?: number | null }) =>
-  `Daha uygun rol: ${alt.roleName} · ${alt.levelFit === undefined || alt.levelFit === null ? strengthText(alt.currentFit) : `oturma %${Math.round(alt.levelFit)}`}`
+  `Daha uygun rol: ${alt.roleName} · ${strengthText(alt.currentFit)}`
 
-/** FIT-2: rol alternatifinin metni — Rol oturması varsa o, norm yoksa Güç. */
-export const alternativeFitText = (fit: { currentFit: number; levelFit?: number | null }) =>
-  (fit.levelFit === undefined || fit.levelFit === null ? strengthText(fit.currentFit) : roleFitText(fit.levelFit))
+export const alternativeFitText = (fit: { currentFit: number; levelFit?: number | null }) => strengthText(fit.currentFit)
 
 /** UT ekranlarının eski adları (UT görünümü değişmez); kariyer roleFitText/strengthText kullanır. */
 export const levelText = (value: number) => `Seviyesine göre %${Math.round(value)}`
@@ -44,7 +42,7 @@ export const deltaText = (value: number) => `Mevcut oyuncuya göre ${signedWhole
 export const ovrGapText = (value: number) => `İlk 11 ortalamasına göre ${signedWhole(value)}`
 
 export const FIT_HELP = {
-  level: `${FIT_TERMS.roleFit.help} Rozet rengi bu değerden gelir.`,
+  level: `${FIT_TERMS.roleFit.help} Rozet rengi bu seviye değerinden gelir; oyuncuları kıyaslarken Güç'e bak.`,
   rolePoints: FIT_TERMS.strength.help,
   // Not: FIT_HELP yalnız kariyer öneri satırlarında; UT ROLES_HELP aşağıda değişmedi.
   future: 'Bir sezonluk gelişim/yaşlanma sonrası aynı rol puanı. Potansiyel gizli modunda gösterilmez.',
@@ -60,7 +58,7 @@ export const ROLES_HELP = {
 
 /** Kariyer oyuncu sayfası › Roller (FIT-1): aynı iki metrik, kariyer adlarıyla. */
 export const CAREER_ROLES_HELP = {
-  badge: `Rozetteki yüzde: ${FIT_TERMS.roleFit.help}`,
+  badge: `Rozetteki sayı Güç; rozet rengi seviyeye göre. ${FIT_TERMS.roleFit.help}`,
   rolePoints: FIT_TERMS.strength.help,
 } as const
 
@@ -73,7 +71,6 @@ export interface FitInput {
 }
 
 export interface FitDisplay {
-  /** Rozette gösterilen yüzde: Rol oturması (levelFit); yoksa Güç. Adı `metric`. */
   pct: number
   state: FitState
   /** Güç (currentFit); `strength` ile aynı, eski adı. */
@@ -91,12 +88,13 @@ export function fitDisplay(fit: FitInput): FitDisplay {
   const strength = Math.round(fit.currentFit ?? fit.score ?? 0)
   const roleFit = fit.levelFit === undefined || fit.levelFit === null ? undefined : Math.round(fit.levelFit)
   const state: FitState = fit.fitLabel ? { GOOD: 'good', AT_LEVEL: 'neutral', WEAK: 'ok', WRONG_ROLE: 'bad' }[fit.fitLabel] as FitState : FIT_STATE_OF[toneOf(fit.badge)]
-  return { pct: roleFit ?? strength, state, rolePoints: strength, strength, roleFit, metric: roleFit === undefined ? FIT_TERMS.strength.name : FIT_TERMS.roleFit.name }
+  return { pct: strength, state, rolePoints: strength, strength, roleFit, metric: FIT_TERMS.strength.name }
 }
 
-/** Rozet/kart title ve aria metni: hangi sayının ne olduğu adıyla ("Rol oturması %38 · Güç 65"). */
+export const levelPct = (display: Pick<FitDisplay, 'pct' | 'roleFit'>): number => display.roleFit ?? display.pct
+
 export function fitTitle(display: Pick<FitDisplay, 'strength' | 'roleFit'>): string {
-  return display.roleFit === undefined ? strengthText(display.strength) : `${roleFitText(display.roleFit)} · ${strengthText(display.strength)}`
+  return display.roleFit === undefined ? strengthText(display.strength) : `${strengthText(display.strength)} · ${levelFitText(display.roleFit)}`
 }
 
 const average = (values: number[]) => (values.length === 0 ? undefined : Math.round(values.reduce((a, b) => a + b, 0) / values.length))

@@ -1,5 +1,34 @@
 import { describe, expect, it } from 'vitest'
-import { deltaText, fitDisplay, FIT_HELP, FIT_TERMS, fitTitle, futureText, isWeakClass, isWeakFit, levelText, ovrGapText, roleFitText, rolePointsText, signedWhole, strengthText, SQUAD_FIT_TEXT, teamRoleFit, teamStrength, WEAK_CLASS_TEXT } from './fitLabels'
+import { alternativeFitText, betterRoleText, deltaText, fitDisplay, FIT_HELP, FIT_TERMS, fitTitle, futureText, isWeakClass, isWeakFit, levelFitText, levelText, ovrGapText, roleFitText, rolePointsText, signedWhole, strengthText, SQUAD_FIT_TEXT, teamRoleFit, teamStrength, WEAK_CLASS_TEXT } from './fitLabels'
+import { roleFitBasis } from './squadBuilder'
+
+describe('FCA-43: Güç ana sayı, seviye yüzdesi ikinci sırada', () => {
+  it('fitDisplay gösterilen sayıyı Güç yapar (Lolos 62 / Páez 74 yanılgısı)', () => {
+    const paez = fitDisplay({ levelFit: 53.3, currentFit: 64.7, fitLabel: 'AT_LEVEL' })
+    const lolos = fitDisplay({ levelFit: 60.2, currentFit: 40.7, fitLabel: 'AT_LEVEL' })
+    expect(paez).toMatchObject({ pct: 65, metric: 'Güç', strength: 65, roleFit: 53 })
+    expect(lolos).toMatchObject({ pct: 41, metric: 'Güç', roleFit: 60 })
+    expect(paez.pct).toBeGreaterThan(lolos.pct)
+  })
+
+  it('başlık önce Güç, sonra seviyesine göre yüzde', () => {
+    expect(levelFitText(38.4)).toBe('seviyesine göre %38')
+    expect(fitTitle(fitDisplay({ levelFit: 38.4, currentFit: 65.2 }))).toBe('Güç 65 · seviyesine göre %38')
+    expect(fitTitle(fitDisplay({ score: 65.2 }))).toBe('Güç 65')
+  })
+
+  it('rol alternatifi ve "Daha uygun rol" Güç ile yazılır ve Güç ile sıralanır', () => {
+    expect(alternativeFitText({ currentFit: 80.6, levelFit: 83.8 })).toBe('Güç 81')
+    expect(betterRoleText({ roleName: 'Fullback (Defend)', currentFit: 80.6, levelFit: 83.8 })).toBe('Daha uygun rol: Fullback (Defend) · Güç 81')
+    expect(roleFitBasis({ currentFit: 80.6, levelFit: 83.8 })).toBeGreaterThan(roleFitBasis({ currentFit: 77.5, levelFit: 91.9 }))
+    expect(roleFitBasis({ currentFit: 70, levelFit: null })).toBeGreaterThan(roleFitBasis({ currentFit: 60, levelFit: 95 }))
+  })
+
+  it('rozet renginin seviyeye göre olduğu yardımda yazar', () => {
+    expect(FIT_HELP.level).toContain('Rozet rengi')
+    expect(FIT_HELP.level).toContain('seviye')
+  })
+})
 
 describe('fitLabels (E3-10b): kariyer ekranlarında tek sözlük', () => {
   it('kullanıcı dilindeki etiketler (FIT-1: iki metrik iki ayrı ad)', () => {
@@ -30,10 +59,10 @@ describe('fitLabels (E3-10b): kariyer ekranlarında tek sözlük', () => {
     }
   })
 
-  it('aynı RoleFit sahada ve listelerde aynı yüzdeyi verir: Rol oturması (levelFit), yoksa Güç; rozetteki sayının adı da döner', () => {
-    expect(fitDisplay({ levelFit: 38.4, currentFit: 65.2, fitLabel: 'WEAK' })).toEqual({ pct: 38, state: 'ok', rolePoints: 65, strength: 65, roleFit: 38, metric: 'Rol oturması' })
+  it('aynı RoleFit sahada ve listelerde aynı sayıyı verir: Güç ana sayı, seviye ikinci; rozetteki sayının adı da döner', () => {
+    expect(fitDisplay({ levelFit: 38.4, currentFit: 65.2, fitLabel: 'WEAK' })).toEqual({ pct: 65, state: 'ok', rolePoints: 65, strength: 65, roleFit: 38, metric: 'Güç' })
     expect(fitDisplay({ score: 65.2 })).toMatchObject({ pct: 65, strength: 65, roleFit: undefined, metric: 'Güç' })
-    expect(fitTitle(fitDisplay({ levelFit: 38.4, currentFit: 65.2 }))).toBe('Rol oturması %38 · Güç 65')
+    expect(fitTitle(fitDisplay({ levelFit: 38.4, currentFit: 65.2 }))).toBe('Güç 65 · seviyesine göre %38')
     expect(fitTitle(fitDisplay({ score: 65.2 }))).toBe('Güç 65')
     expect(fitDisplay({ levelFit: 50, score: 60, fitLabel: 'AT_LEVEL' }).state).toBe('neutral')
     expect(fitDisplay({ levelFit: 80, score: 90, fitLabel: 'GOOD' }).state).toBe('good')

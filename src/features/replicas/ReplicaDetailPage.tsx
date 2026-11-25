@@ -25,13 +25,13 @@ const TABS: { id: TabId; label: string }[] = [
 const STALE_MS = 600_000
 const PREFIX = 'replika'
 
-function pitchSlots(summary: ReplicaSummary, formation: { slots: { slotId: string; position: string; x: number; y: number }[] }, applied?: ReplicaApplyResult): PitchSlot[] {
+function pitchSlots(summary: ReplicaSummary, formation: { slots: { slotId: string; position: string; x: number; y: number }[] }, mode: 'career' | 'ut', applied?: ReplicaApplyResult): PitchSlot[] {
   const roleBySlot = new Map(summary.slots.map((s) => [s.slotId, s]))
   const appliedBySlot = new Map((applied?.slots ?? []).map((s) => [s.slotId, s]))
   return formation.slots.map((s) => {
     const role = roleBySlot.get(s.slotId)
     const slot = appliedBySlot.get(s.slotId)
-    const fit = slot?.player ? slotFit(slot) : undefined
+    const fit = slot?.player ? slotFit(slot, mode) : undefined
     return {
       slotId: s.slotId,
       position: s.position,
@@ -39,7 +39,7 @@ function pitchSlots(summary: ReplicaSummary, formation: { slots: { slotId: strin
       y: s.y,
       roleLabel: role ? `${role.role} · ${role.focus}` : undefined,
       player: slot?.player ? cardPlayerOfSummary(slot.player, s.position) : undefined,
-      fit: fit ? { pct: fit.pct, state: fit.state } : undefined,
+      fit: fit ? { pct: fit.pct, state: fit.state, metric: fit.metric } : undefined,
       outOfPosition: slot?.outOfPosition,
     }
   })
@@ -57,7 +57,7 @@ export function ReplicaDetailPage() {
   const legacy = useQuery({ queryKey: ['replica-legacy-ids'], queryFn: endpoints.replicaLegacyIds, staleTime: STALE_MS, enabled: detail.isError })
   const apply = useReplicaApply(id, tab === 'uygula')
   const formation = formations.data?.find((f) => f.id === summary?.formationId)
-  const slots = useMemo(() => (summary && formation ? pitchSlots(summary, formation, tab === 'uygula' ? apply.result.data : undefined) : []), [summary, formation, tab, apply.result.data])
+  const slots = useMemo(() => (summary && formation ? pitchSlots(summary, formation, apply.mode, tab === 'uygula' ? apply.result.data : undefined) : []), [summary, formation, apply.mode, tab, apply.result.data])
 
   // Eski preset kimlikleriyle gelen bağlantılar yeni replikaya taşınır (eşleşme tablosu sunucuda).
   const moved = legacy.data?.[id]

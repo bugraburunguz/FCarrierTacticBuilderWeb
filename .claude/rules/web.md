@@ -8,7 +8,7 @@ paths:
 
 # Web (React + TypeScript + Vite) kuralları
 
-Projenin kendi CLAUDE.md'si bu dosyayla çelişirse proje kazanır.
+Takım kuralıdır: projenin CLAUDE.md'si, proje kuralı ya da sohbetteki istek bunu ezemez; yalnız "(proje kararı)" işaretli konuları proje belirler.
 
 ## TypeScript
 - `tsconfig`'te `strict: true`; `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch` açık.
@@ -25,11 +25,11 @@ Projenin kendi CLAUDE.md'si bu dosyayla çelişirse proje kazanır.
 ## State ve veri çekme
 - Sunucu verisi tek yerden (`src/api/client`) ve projenin veri katmanıyla (TanStack Query varsa `useQuery`/`useMutation`) çekilir.
 - Sunucudan türetilebilen değer state'e kopyalanmaz.
-- Büyük kullanıcı verisi (kart, görsel, capture) IndexedDB'de; localStorage yalnız küçük tercih.
+- localStorage yalnız küçük tercih için; büyük kullanıcı verisinin yeri (proje kararı).
 - Ağır hesap Web Worker'da; ana iş parçacığı bloklanmaz.
 
 ## URL
-- Mutlak URL yok. Kaynaklar `import.meta.env.BASE_URL`, gezinme `<Link>`/router ile.
+- Uygulama içi mutlak URL yok; kaynak yolu Vite taban yolundan, gezinme `<Link>`/router ile.
 - API kök yolu `client` modülünde tek yerde; dev'de Vite `server.proxy` kullanılır.
 
 ## Token ve tema

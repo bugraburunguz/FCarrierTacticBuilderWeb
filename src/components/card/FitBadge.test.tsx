@@ -10,6 +10,13 @@ describe('FitBadge yüzdesi', () => {
     expect(screen.queryByText('95%')).toBeNull()
   })
 
+  it('FCA-43: kariyerde sayı Güç; yüzde işareti yok, adı erişilebilir metinde', () => {
+    render(<FitBadge state="neutral" pct={65} metric="Güç" title="Güç 65 · seviyesine göre %53" />)
+    expect(screen.getByText('65')).toBeInTheDocument()
+    expect(screen.queryByText('%65')).toBeNull()
+    expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Rol için seviyesinde, Güç 65')
+  })
+
   it('compact rozette de aynı biçim; erişilebilir ad değişmez', () => {
     render(<FitBadge state="ok" pct={7} compact />)
     expect(screen.getByText('%7')).toBeInTheDocument()

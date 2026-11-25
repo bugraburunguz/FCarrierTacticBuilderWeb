@@ -6,7 +6,7 @@ import { FitBadge } from '../../components/card/FitBadge'
 import { FitNarrativeView } from '../../components/FitNarrativeView'
 import { HelpPopover } from '../../components/ui'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
-import { CAREER_ROLES_HELP, fitDisplay, fitTitle, ROLES_HELP, rolePointsText, strengthText, TAILORED_TEXT } from '../../lib/fitLabels'
+import { CAREER_ROLES_HELP, fitDisplay, fitTitle, levelFitText, levelPct, ROLES_HELP, rolePointsText, TAILORED_TEXT } from '../../lib/fitLabels'
 import { sortRoles } from '../cards/utPlayer'
 import { RoleBasedAdvice } from './RoleBasedAdvice'
 
@@ -23,8 +23,8 @@ function RoleRow({ role, tailored, career = false }: { role: PlayerRoleFit; tail
         <span className="min-w-0 flex-1 truncate text-sm font-medium max-[479px]:basis-full max-[479px]:whitespace-normal max-[479px]:break-words" title={role.roleName}>{role.roleName}</span>
         {tailored && <Chip tone="good">{TAILORED_TEXT}</Chip>}
         {/* FIT-1: kariyerde iki metrik adıyla (rozet: Rol oturması, yanında Güç); UT eski adlarla. */}
-        <FitBadge state={d.state} pct={d.pct} metric={career ? d.metric : undefined} title={career ? fitTitle(d) : undefined} />
-        {role.levelFit !== undefined && role.levelFit !== null && <span className="text-xs text-muted">{career ? strengthText(d.strength) : rolePointsText(d.rolePoints)}</span>}
+        <FitBadge state={d.state} pct={career ? d.pct : levelPct(d)} metric={career ? d.metric : undefined} title={career ? fitTitle(d) : undefined} />
+        {d.roleFit !== undefined && <span className="text-xs text-muted">{career ? levelFitText(d.roleFit) : rolePointsText(d.rolePoints)}</span>}
       </div>
       {role.narrative && (
         <details className="text-xs">

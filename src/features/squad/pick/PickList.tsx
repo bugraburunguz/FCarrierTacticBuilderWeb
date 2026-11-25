@@ -19,6 +19,7 @@ export interface PickRow {
   sub?: string
   /** Slotun rolüne uyum % (sahadaki % ile aynı hesap); sıralama buna göredir. */
   fitPct?: number
+  fitMetric?: string
   fitState?: FitState
   /** Slota konursa kimya önizlemesi (yalnız UT). */
   chem?: 0 | 1 | 2 | 3
@@ -118,9 +119,9 @@ export function PickList({ rows, loading, emptyText, search, onSearch, tabs, act
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-0.5 text-xs">
                   {row.fitPct !== undefined ? (
-                    <span className={`font-semibold tabular-nums ${FIT_TEXT_TONE[row.fitState ?? 'neutral']}`}>%{row.fitPct}</span>
+                    <span className={`font-semibold tabular-nums ${FIT_TEXT_TONE[row.fitState ?? 'neutral']}`}>{row.fitMetric ? `${row.fitMetric} ${row.fitPct}` : `%${row.fitPct}`}</span>
                   ) : (
-                    <span className="text-muted">%–</span>
+                    <span className="text-muted">{row.fitMetric ? `${row.fitMetric} –` : '%–'}</span>
                   )}
                   {row.chem !== undefined && <ChemDiamonds value={row.chem} size={10} />}
                   {row.price && <span className="font-[var(--font-num)] tabular-nums text-ink-2">{row.price}</span>}

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { endpoints } from '../../api/endpoints'
 import { CareerDeskPage } from '../../pages/CareerDeskPage'
 import { CareerTransferPage } from '../../pages/CareerTransferPage'
-import { fitDisplay, levelText } from '../../lib/fitLabels'
+import { fitDisplay, levelPct, levelText } from '../../lib/fitLabels'
 import { careerStore } from '../../state/careerStore'
 import { lineupStore } from '../../state/lineupStore'
 
@@ -38,7 +38,7 @@ describe('Masa ↔ saha ↔ İhtiyaçlar aynı değer (E3-10c)', () => {
 
   it('Masa: zayıf halka satırı sahadaki yüzdeyle aynı', async () => {
     wrap(<CareerDeskPage />)
-    const expected = levelText(fitDisplay(FIT as never).pct)
+    const expected = levelText(levelPct(fitDisplay(FIT as never)))
     expect(expected).toBe('Seviyesine göre %38')
     expect(await screen.findAllByText(expected)).not.toHaveLength(0)
     expect(vi.mocked(endpoints.fitRole).mock.calls.every(([b]) => b.engineVersion === 'v3')).toBe(true)

@@ -33,6 +33,6 @@ describe('İhtiyaçlar = yeni motor (E3-10b)', () => {
   it('aynı oyuncunun sahadaki ve İhtiyaçlar\'daki değeri aynı: ikisi de fitDisplay(RoleFit).pct', () => {
     const cm1 = rows[0]
     expect(needsFromFits(rows).find((r) => r.slotId === 'CM1')?.display.pct).toBe(fitDisplay(cm1.fit).pct)
-    expect(cm1.display.pct).toBe(38)
+    expect(cm1.display).toMatchObject({ pct: 65, roleFit: 38 })
   })
 })
