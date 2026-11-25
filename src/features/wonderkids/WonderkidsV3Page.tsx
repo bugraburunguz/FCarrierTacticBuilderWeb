@@ -9,7 +9,7 @@ import { ShortlistButton } from '../../components/ShortlistButton'
 import { HelpPopover, Input, Select } from '../../components/ui'
 import { MobileSheet, useIsMobile } from '../../design/components/MobileSheet'
 import { Button, Chip, EmptyState, ErrorState, Skeleton } from '../../design/components/primitives'
-import { fitDisplay, FIT_STATE_TEXT } from '../../lib/fitLabels'
+import { fitDisplay, fitTitle, FIT_STATE_TEXT, levelFitText } from '../../lib/fitLabels'
 import { POSITIONS } from '../../lib/format'
 import { useActiveCareerId } from '../../state/careerStore'
 import { BucketChip } from '../careerPlayers/BucketChip'
@@ -49,7 +49,8 @@ function RoleCell({ kid }: { kid: Wonderkid }) {
   const later = kid.projectedFitLabel ? fitDisplay({ fitLabel: kid.projectedFitLabel }).state : undefined
   return (
     <span className="inline-flex flex-wrap items-center gap-1.5">
-      <FitBadge state={now.state} pct={now.pct} />
+      <FitBadge state={now.state} pct={now.pct} metric={now.metric} title={fitTitle(now)} />
+      {now.roleFit !== undefined && <span className="text-xs text-ink-2">{levelFitText(now.roleFit)}</span>}
       {later && <span className="text-xs text-ink-2">→ {FIT_STATE_TEXT[later].label.replace('Rol için ', '')}</span>}
       {kid.rolePosition && <span className="text-xs text-ink-2">{kid.rolePosition}</span>}
     </span>

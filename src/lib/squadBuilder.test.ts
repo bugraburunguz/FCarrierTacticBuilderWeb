@@ -53,7 +53,7 @@ describe('squad builder yardımcıları', () => {
     expect(swapSlots(same, 'A', 'A')).toBe(same)
   })
 
-  it('FIT-2 madde 6: rol grupları ve odaklar oyuncuya göre (Rol oturması, yoksa Güç) en uygun önce; bilinmeyen rol sonda, sıra korunur', () => {
+  it('FIT-2 madde 6 / FCA-43: rol grupları ve odaklar oyuncuya göre Güç ile en uygun önce (normsuz rol de Güç ile kıyaslanır); bilinmeyen rol sonda, sıra korunur', () => {
     const groups = [
       { base: 'Winger', options: [{ focus: 'Balanced', roleId: 'w_b' }, { focus: 'Attack', roleId: 'w_a' }] },
       { base: 'Wide Playmaker', options: [{ focus: 'Attack', roleId: 'wp_a' }] },
@@ -70,8 +70,7 @@ describe('squad builder yardımcıları', () => {
     expect(ranked[0].options.map((o) => o.roleId)).toEqual(['if_a', 'if_b'])
     expect(ranked[1].options.map((o) => o.roleId)).toEqual(['w_a', 'w_b'])
     expect(rankRoleGroups(groups, undefined)).toBe(groups)
-    // İnceleme: normsuz rol (yalnız Güç, mutlak ölçek) oturmalı rollerin önüne geçmez.
     const withUnnormed = new Map<string, RoleAlternative>([...fits, ['wp_a', { roleId: 'wp_a', roleName: 'WP', currentFit: 90, levelFit: null }]])
-    expect(rankRoleGroups(groups, withUnnormed).map((g) => g.base)).toEqual(['Inside Forward', 'Winger', 'Wide Playmaker'])
+    expect(rankRoleGroups(groups, withUnnormed).map((g) => g.base)).toEqual(['Wide Playmaker', 'Inside Forward', 'Winger'])
   })
 })

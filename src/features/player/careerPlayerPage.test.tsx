@@ -167,8 +167,8 @@ describe('kariyer oyuncu sayfası (v3 Detay)', () => {
     // FIT-1: kariyerde iki metrik kariyer adlarıyla (Rol oturması, Güç).
     expect(notes[0]).toHaveTextContent(CAREER_ROLES_HELP.badge)
     expect(notes[0]).toHaveTextContent(CAREER_ROLES_HELP.rolePoints)
-    expect(within(panel).getAllByText(/^Güç \d+$/).length).toBeGreaterThan(0)
-    expect(within(panel).getAllByRole('img', { name: /Rol oturması %\d+/ }).length).toBeGreaterThan(0)
+    expect(within(panel).getAllByText(/^seviyesine göre %\d+$/).length).toBeGreaterThan(0)
+    expect(within(panel).getAllByRole('img', { name: /, Güç \d+$/ }).length).toBeGreaterThan(0)
     expect(within(panel).queryByText(/Seviye referansı/)).toBeNull()
     expect(within(panel).getAllByText('Biçilmiş kaftan')).toHaveLength(1)
     expect(within(panel).getByText('Neden?')).toBeInTheDocument()

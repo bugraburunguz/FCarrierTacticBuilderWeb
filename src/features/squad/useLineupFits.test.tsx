@@ -41,7 +41,7 @@ describe('useLineupFits', () => {
     expect(endpoints.lineup).toHaveBeenCalledWith(7, { formation: '4-4-2', slots: [] }, { GK: 1, LST: 9 }, true)
     expect(endpoints.fitRole).not.toHaveBeenCalled()
     const lst = result.current.rows.find((r) => r.slotId === 'LST')!
-    expect(lst).toMatchObject({ playerId: 9, playerName: 'Oyuncu 9', roleName: 'Forvet', display: { pct: 35, state: 'ok' } })
+    expect(lst).toMatchObject({ playerId: 9, playerName: 'Oyuncu 9', roleName: 'Forvet', display: { pct: 60, roleFit: 35, state: 'ok' } })
     expect(lst.fit.reasons).toEqual(['Finishing -4.0'])
     expect(result.current.fitBySlot.get('RST')).toBeUndefined()
   })

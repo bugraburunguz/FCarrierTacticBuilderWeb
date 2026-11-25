@@ -93,9 +93,9 @@ describe('CompareV3Page', () => {
     const items = within(list).getAllByRole('listitem')
     expect(items[0]).toHaveTextContent('Yavaş')
     // FIT-1: kariyerde iki metrik adıyla (Güç, Rol oturması); rozetin aria'sı sayının adını söyler.
-    expect(items[0]).toHaveTextContent('Güç 78')
-    expect(within(items[0]).getAllByLabelText('Rol için seviyesinde, Rol oturması %45').length).toBeGreaterThan(0)
-    expect(within(items[1]).getAllByLabelText('Rol için uygun, Rol oturması %80').length).toBeGreaterThan(0)
+    expect(items[0]).toHaveTextContent('seviyesine göre %45')
+    expect(within(items[0]).getAllByLabelText('Rol için seviyesinde, Güç 78').length).toBeGreaterThan(0)
+    expect(within(items[1]).getAllByLabelText('Rol için uygun, Güç 74').length).toBeGreaterThan(0)
   })
 
   it('FIT-1: UT modunda eski adlar (Rol puanı, yüzde) değişmez', async () => {

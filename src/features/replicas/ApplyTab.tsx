@@ -17,7 +17,7 @@ import { slotFit } from './slotFit'
 import { useReplicaApply } from './useReplicaApply'
 
 function SlotRow({ slot, mode, onSuggest }: { slot: ReplicaApplySlot; mode: 'career' | 'ut'; onSuggest: (slot: ReplicaApplySlot) => void }) {
-  const fit = slot.player ? slotFit(slot) : undefined
+  const fit = slot.player ? slotFit(slot, mode) : undefined
   return (
     <li className="glass-3 flex flex-wrap items-center gap-x-3 gap-y-1 p-2.5">
       <span className="w-12 shrink-0 font-[var(--font-num)] text-xs tabular-nums text-ink-2">{slot.position}</span>
@@ -33,8 +33,8 @@ function SlotRow({ slot, mode, onSuggest }: { slot: ReplicaApplySlot; mode: 'car
       {slot.player && <span className="font-[var(--font-num)] text-sm tabular-nums">{slot.player.overall}</span>}
       {fit && (
         <span className="flex flex-col items-end gap-0.5">
-          <FitBadge state={fit.state} pct={fit.pct} />
-          <span className="text-xs text-muted">{fit.text}</span>
+          <FitBadge state={fit.state} pct={fit.pct} metric={fit.metric} />
+          {fit.text && <span className="text-xs text-muted">{fit.text}</span>}
         </span>
       )}
       {slot.suggest &&

@@ -8,7 +8,7 @@ import { SquadRoleDialog, SquadWorkspaceView } from '../squad/SquadWorkspaceView
 import { TacticCodeCard } from '../squad/TacticCodeCard'
 import type { SlotPanel } from '../squad/types'
 import { useCareerSquadBuilder } from '../squad/useCareerSquadBuilder'
-import { betterRoleText, FIT_TERMS, teamRoleFit, teamStrength } from '../../lib/fitLabels'
+import { betterRoleText, FIT_TERMS, strengthText, teamRoleFit, teamStrength } from '../../lib/fitLabels'
 import { roleGroups } from '../../lib/squadBuilder'
 import { TacticRisks } from './TacticRisks'
 import { useLabBinding } from './useLabBinding'
@@ -42,7 +42,7 @@ export function LabBuilder({ initialSlot, onSlotOpened, blank = false }: { initi
   const placed = views.filter((v) => v.player)
   const fitted = placed.filter((v) => v.fit)
   const fitDisplays = fitted.flatMap((v) => (v.fit?.strength === undefined ? [] : [{ strength: v.fit.strength, roleFit: v.fit.roleFit }]))
-  const weakest = fitted.length ? fitted.reduce((a, c) => ((a.fit?.pct ?? 0) <= (c.fit?.pct ?? 0) ? a : c)) : undefined
+  const weakest = fitted.length ? fitted.reduce((a, c) => ((a.fit?.roleFit ?? a.fit?.pct ?? 0) <= (c.fit?.roleFit ?? c.fit?.pct ?? 0) ? a : c)) : undefined
   const panel: SlotPanel | undefined = selection?.panel === 'role' ? undefined : selection?.panel
   const current = slotTabs.find((t) => t.id === panel) ?? slotTabs[0]
   const avgOvr = placed.length ? Math.round(placed.reduce((s, v) => s + (v.player?.overall ?? 0), 0) / placed.length) : undefined
@@ -103,7 +103,7 @@ export function LabBuilder({ initialSlot, onSlotOpened, blank = false }: { initi
             <div className="grid grid-cols-2 gap-2">
               <StatTile label={FIT_TERMS.strength.team} value={pctText(teamStrength(fitDisplays))} />
               <StatTile label={FIT_TERMS.roleFit.team} value={pctText(teamRoleFit(fitDisplays))} />
-              <StatTile label="En zayıf" value={weakest ? `${weakest.position} %${weakest.fit?.pct}` : undefined} />
+              <StatTile label="En zayıf" value={weakest ? `${weakest.position} ${strengthText(weakest.fit?.pct ?? 0)}` : undefined} />
             </div>
             {suggestions.length > 0 && (
               <ul aria-label="Rol önerileri" className="flex flex-col gap-1.5">

@@ -225,7 +225,8 @@ describe('kadromla uygula', () => {
   it('kariyerde seviyeye göre %, boş ve zayıf slotlar "Öner" bağlantısı alır', () => {
     renderApply(applyOf('CAREER', [slot({}), slot({ slotId: 'LW', position: 'LW', state: 'WEAK', suggest: true, player: player(2, 'Bora Kanat'), levelFit: 41 }), slot({ slotId: 'RW', position: 'RW', state: 'EMPTY', suggest: true, player: null, currentFit: null, levelFit: null })]))
     expect(screen.getByText('Kariyer kadron')).toBeInTheDocument()
-    expect(screen.getByText('Rol oturması %74')).toBeInTheDocument()
+    expect(screen.getByText('seviyesine göre %74')).toBeInTheDocument()
+    expect(screen.getAllByRole('img', { name: /, Güç 82$/ }).length).toBeGreaterThan(0)
     const suggest = screen.getAllByRole('link', { name: /için oyuncu öner/ })
     expect(suggest.map((a) => a.getAttribute('href'))).toEqual(['/career/transfer?pos=LW', '/career/transfer?pos=RW'])
     expect(screen.getByText('Boş')).toBeInTheDocument()
@@ -238,6 +239,21 @@ describe('kadromla uygula', () => {
     renderApply(applyOf('SAMPLE', [slot({})], 'ut'))
     expect(screen.getByText('Kadro uyumu')).toBeInTheDocument()
     expect(screen.queryByText('Takım gücü')).toBeNull()
+  })
+
+  it('FCA-43: UT slotunda levelFit dolu olsa da rozet ve metin eskisi gibi seviye yüzdesi (UT değişmez)', () => {
+    renderApply(applyOf('SAMPLE', [slot({})], 'ut'))
+    expect(screen.getByText('%74')).toBeInTheDocument()
+    expect(screen.getByText('Rol oturması %74')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /yüzde 74/ })).toBeInTheDocument()
+    expect(screen.queryByText(/Güç 82/)).toBeNull()
+  })
+
+  it('FCA-43: kariyerde normu olmayan slotta da sayı Güç, yüzde işareti yok', () => {
+    renderApply(applyOf('CAREER', [slot({ levelFit: null })]))
+    expect(screen.getByRole('img', { name: /Güç 82/ })).toBeInTheDocument()
+    expect(screen.queryByText('%82')).toBeNull()
+    expect(screen.queryByText('Rol puanı 82')).toBeNull()
   })
 
   it('mevki dışı atama listede "ST→LW" etiketiyle işaretlenir; doğal atamada etiket yok', () => {
