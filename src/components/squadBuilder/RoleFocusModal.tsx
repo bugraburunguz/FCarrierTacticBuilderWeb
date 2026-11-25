@@ -73,8 +73,7 @@ export function RoleFocusPanel({ groups: given, lock, currentRoleId, onApply, on
             className={`rounded-md border px-2.5 py-1 text-[11.5px] ${o.roleId === roleId ? 'border-accent text-accent' : 'border-line text-muted'}`}
           >
             {o.focus}
-            {/* Oturma biliniyorsa yalnız yüzde; norm yoksa sayının adı (Güç) yazılır, iki ölçek karışmasın. */}
-            {fitOf(o.roleId) && <span className="text-muted"> · {fitOf(o.roleId)!.levelFit == null ? alternativeFitText(fitOf(o.roleId)!) : `%${Math.round(fitOf(o.roleId)!.levelFit!)}`}</span>}
+            {fitOf(o.roleId) && <span className="text-muted"> · {alternativeFitText(fitOf(o.roleId)!)}</span>}
           </button>
         ))}
       </div>

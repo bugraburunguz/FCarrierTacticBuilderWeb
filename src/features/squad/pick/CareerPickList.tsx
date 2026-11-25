@@ -61,6 +61,7 @@ export function CareerPickList({ position, roleId, tags, candidates, currentPlay
       positions: c.player.positions,
       sub: c.player.club,
       fitPct: fit ? fitDisplay(fit).pct : undefined,
+      fitMetric: fit ? fitDisplay(fit).metric : undefined,
       fitState: fit ? fitDisplay(fit).state : undefined,
       note: c.form !== undefined ? `form ${c.form}` : undefined,
       current: c.player.id === currentPlayerId,

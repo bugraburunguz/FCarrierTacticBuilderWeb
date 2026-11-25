@@ -19,7 +19,7 @@ export function FitBadge({ state, pct, compact = false, tailored = false, classN
   title?: string
 }) {
   const s = { ...FIT_BADGE_COLORS[state], ...(tailored ? TAILORED_BADGE : FIT_STATE_TEXT[state]) }
-  const amount = pct === undefined ? '' : metric ? `, ${metric} %${pct}` : `, yüzde ${pct}`
+  const amount = pct === undefined ? '' : metric ? `, ${metric} ${pct}` : `, yüzde ${pct}`
   return (
     <span
       role="img"
@@ -29,7 +29,7 @@ export function FitBadge({ state, pct, compact = false, tailored = false, classN
       style={{ background: s.bg, color: s.fg, boxShadow: state === 'neutral' ? 'inset 0 0 0 1px rgba(244,246,255,0.55)' : undefined, clipPath: 'polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))' }}
     >
       {!compact && <span>{s.text}</span>}
-      {pct !== undefined && <span className="num">%{pct}</span>}
+      {pct !== undefined && <span className="num">{metric ? pct : `%${pct}`}</span>}
     </span>
   )
 }

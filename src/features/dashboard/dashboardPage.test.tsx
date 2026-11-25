@@ -420,7 +420,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     renderPage()
     const weak = await screen.findByRole('region', { name: 'Zayıf halkalar' })
     const [card] = await within(weak).findAllByRole('listitem')
-    expect(card).toHaveTextContent('Daha uygun rol: Inside Forward (Attack) · oturma %71')
+    expect(card).toHaveTextContent('Daha uygun rol: Inside Forward (Attack) · Güç 70')
     const href = '/career/tactics-lab?sekme=kurucu&slot=CM2&rol=inside_forward_attack'
     expect(within(card).getByRole('link', { name: /Rolü değiştir/ })).toHaveAttribute('href', href)
   })
@@ -438,7 +438,7 @@ describe('Kariyer Masası (KARIYER-UX FAZ 2)', () => {
     const cards = await within(weak).findAllByRole('listitem')
     expect(cards).toHaveLength(1)
     expect(cards[0]).toHaveTextContent('Kalite açığı + rol uyumsuz')
-    expect(cards[0]).toHaveTextContent('Rol oturması %12 · Güç 40')
+    expect(cards[0]).toHaveTextContent('Güç 40 · seviyesine göre %12')
     expect(cards[0]).toHaveTextContent('Rol için eksik')
   })
 

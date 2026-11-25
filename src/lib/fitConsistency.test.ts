@@ -16,9 +16,9 @@ const RANK = { bad: 0, ok: 1, neutral: 2, good: 3 } as const
 
 /** V3-07c 0a: rozet etiketi ve gösterilen yüzde aynı sayıdan (levelFit). Ham rol puanı (score / roleFitScore) yüzde olarak rozet yanında gösterilmez. */
 describe('rozet tutarlılığı', () => {
-  it('yüzde levelFit; levelFit varken ham rol puanı yüzde olarak çıkmaz', () => {
-    expect(fitDisplay({ score: 52, currentFit: 52, levelFit: 70, fitLabel: 'GOOD' })).toMatchObject({ pct: 70, state: 'good', rolePoints: 52 })
-    expect(fitDisplay({ score: 62, currentFit: 62, levelFit: 50, fitLabel: 'AT_LEVEL' })).toMatchObject({ pct: 50, state: 'neutral' })
+  it('FCA-43: sayı Güç, seviye yüzdesi roleFit; etiket sunucunun seviyeye göre etiketi', () => {
+    expect(fitDisplay({ score: 52, currentFit: 52, levelFit: 70, fitLabel: 'GOOD' })).toMatchObject({ pct: 52, roleFit: 70, state: 'good', rolePoints: 52 })
+    expect(fitDisplay({ score: 62, currentFit: 62, levelFit: 50, fitLabel: 'AT_LEVEL' })).toMatchObject({ pct: 62, roleFit: 50, state: 'neutral' })
   })
 
   it('yüzde arttıkça etiket kötüleşmez', () => {

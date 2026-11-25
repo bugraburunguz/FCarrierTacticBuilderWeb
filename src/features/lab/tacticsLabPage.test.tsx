@@ -79,7 +79,7 @@ beforeEach(() => {
   endpoints.eaRoles.mockResolvedValue([])
   endpoints.resolveTactic.mockImplementation((t: { formation: string }) => Promise.resolve({ formation: t.formation, slots: [] }))
   endpoints.fitRole.mockImplementation((b: { playerId: number }) => Promise.resolve({ roleFit: { playerId: b.playerId, roleId: 'r', roleName: 'Rol', score: 70, reasons: [], weaponChecks: [], projectedRating: 70, outOfPosition: false,
-    ...(b.playerId === 12 ? { levelFit: 40, fitLabel: 'WEAK' } : { levelFit: 70, fitLabel: 'GOOD' }) } }))
+    ...(b.playerId === 12 ? { score: 40, levelFit: 40, fitLabel: 'WEAK' } : { levelFit: 70, fitLabel: 'GOOD' }) } }))
   // Kilitsiz çağrı = otomatik dizme; kilitli çağrı = rol uyumu (FAZ 4b toplu uyum), fitRole fikstüründen.
   const fits = lineupFromFitRole(endpoints.fitRole as never, (slotId) => POSITIONS[SLOTS.indexOf(slotId)] ?? 'CM')
   endpoints.lineup.mockImplementation((c: number, t: unknown, locked?: Record<string, number>) => (locked
@@ -315,7 +315,7 @@ describe('Taktik Laboratuvarı (/career/tactics-lab, KARIYER-UX FAZ 4a)', () => 
     const d = draft('Deneme')
     renderAt('/career/tactics-lab?sekme=kurucu')
     const uyum = await screen.findByRole('region', { name: 'Uyum' })
-    const suggestion = await within(uyum).findByText('Daha uygun rol: Playmaker (Attack) · oturma %71')
+    const suggestion = await within(uyum).findByText('Daha uygun rol: Playmaker (Attack) · Güç 70')
     expect(endpoints.lineup).toHaveBeenCalledWith(7, expect.anything(), expect.anything(), true)
     await userEvent.click(within(suggestion.closest('li')!).getByRole('button', { name: 'CM: Playmaker (Attack) rolünü uygula' }))
     await waitFor(() => expect(labStore.get(7).drafts.find((x) => x.id === d.id)?.tactic.slots.LCM?.roleId).toBe('playmaker_attack'))

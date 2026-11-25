@@ -22,7 +22,7 @@ export function pitchSlotsOf(slots: SlotView[]): PitchSlot[] {
       faceLabels: s.player.faceLabels,
       faceStatsApproximate: s.player.faceStatsApproximate,
     },
-    fit: s.fit && { pct: s.fit.pct, state: s.fit.state },
+    fit: s.fit && { pct: s.fit.pct, state: s.fit.state, metric: s.fit.metric, title: s.fit.title },
     roleLabel: s.roleLabel,
     selected: s.selected,
   }))

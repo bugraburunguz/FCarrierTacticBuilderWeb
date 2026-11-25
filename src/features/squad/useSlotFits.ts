@@ -2,7 +2,7 @@ import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { endpoints } from '../../api/endpoints'
 import type { DepthEntry, PlayerSummary, RoleAlternative, RoleFit } from '../../api/types'
-import { fitDisplay, isWeakFit, type FitDisplay, type WeakClass } from '../../lib/fitLabels'
+import { fitDisplay, isWeakFit, levelPct, type FitDisplay, type WeakClass } from '../../lib/fitLabels'
 import type { DeskSlot } from '../../lib/deskRules'
 import type { SquadWorkspaceApi } from './useSquadWorkspace'
 
@@ -57,14 +57,14 @@ export function useSlotFits(ws: SquadWorkspaceApi<number>, playerById: Map<numbe
 
 /** İhtiyaçlar: yalnız sarı (WEAK) ve kırmızı (WRONG_ROLE) bantlar, seviyesine göre artan; `all` ile tüm kadro. */
 export function needsFromFits(rows: SlotFitRow[], all = false): SlotFitRow[] {
-  return rows.filter((r) => all || isWeakFit(r.fit.fitLabel)).sort((a, b) => a.display.pct - b.display.pct || a.slotId.localeCompare(b.slotId))
+  return rows.filter((r) => all || isWeakFit(r.fit.fitLabel)).sort((a, b) => levelPct(a.display) - levelPct(b.display) || a.slotId.localeCompare(b.slotId))
 }
 
 /** Takım uyumu (V3-06d, tek tanım): dizilimdeki slotların seviyesine göre % ortalaması; Masa göstergesi ve kadro kurucu "Kadro uyumu" aynı fonksiyon. */
-export function teamFitPct(displays: { pct: number }[]): number | undefined {
-  return displays.length === 0 ? undefined : Math.round(displays.reduce((sum, d) => sum + d.pct, 0) / displays.length)
+export function teamFitPct(displays: Pick<FitDisplay, 'pct' | 'roleFit'>[]): number | undefined {
+  return displays.length === 0 ? undefined : Math.round(displays.reduce((sum, d) => sum + levelPct(d), 0) / displays.length)
 }
 
 /** Masa kuralları için aynı satırlar (aynı yüzde, aynı etiket). */
 export const toDeskSlots = (rows: SlotFitRow[]): DeskSlot[] =>
-  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: r.display.pct, fitLabel: r.fit.fitLabel, weakClass: r.weakClass, strength: r.display.strength, betterRoleId: r.betterRole?.roleId, depth: r.depth }))
+  rows.map((r) => ({ slotId: r.slotId, position: r.position, roleId: r.roleId, playerId: r.playerId, playerName: r.playerName, pct: levelPct(r.display), fitLabel: r.fit.fitLabel, weakClass: r.weakClass, strength: r.display.strength, betterRoleId: r.betterRole?.roleId, depth: r.depth }))

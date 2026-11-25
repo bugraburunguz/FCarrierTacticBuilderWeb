@@ -82,10 +82,11 @@ describe('WonderkidsV3Page', () => {
     expect(screen.getByTestId('where')).toHaveTextContent('mevki=ST')
   })
 
-  it('rol seçiliyken uyum yüzdesi ve etiketi aynı sayıdan (levelFit), ham rol puanı gösterilmez', async () => {
+  it('FCA-43: rol seçiliyken rozetin sayısı Güç ("%" yok), etiketi sunucunun seviyeye göre etiketi; seviye yüzdesi ikinci metin', async () => {
     vi.mocked(endpoints.wonderkids).mockResolvedValue([KID(1, { roleScore: 52, roleLevelFit: 70, roleFitLabel: 'GOOD', roleBadge: 'GREEN', projectedFitLabel: 'GOOD', rolePosition: 'ST' })] as never)
     renderAt('/wonderkids?rol=poacher_attack&mevki=ST')
-    expect((await screen.findAllByLabelText('Rol için uygun, yüzde 70')).length).toBeGreaterThan(0)
+    expect((await screen.findAllByLabelText('Rol için uygun, Güç 52')).length).toBeGreaterThan(0)
+    expect(screen.getAllByText('seviyesine göre %70').length).toBeGreaterThan(0)
     expect(screen.queryByText('%52')).toBeNull()
   })
 
